@@ -30,13 +30,13 @@ class ScannerService:
 		:param game_path:
 			Game path relative to /data directory (e.g., "darkside", "crosswords")
 		:param language:
-			Language code (ru, eng, ger, pol)
+			Language code (rus, eng, ger, pol)
 		:param game_data_path:
 			Base path to game data
 		:return:
 			Dictionary with counts of scanned items and objects
 		"""
-		language_suffix = f"_{language}" if language != "ru" else ""
+		language_suffix = f"_{language}" if language != "rus" else ""
 		file_path = f"{game_data_path}/{game_path}/loc_ses{language_suffix}.kfs"
 
 		items = self._game_scanner.scan_items(file_path)
