@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from src.domain.game.entities.Location import Location
 from src.domain.game.ILocationRepository import ILocationRepository
-from src.domain.game.repositories.mappers.models import LocationModel
+from src.domain.game.repositories.mappers.LocationMapper import LocationMapper
 
 
 class LocationRepository(ILocationRepository):
@@ -10,48 +10,49 @@ class LocationRepository(ILocationRepository):
 		self._session = session
 
 	def create(self, location: Location) -> Location:
-		model = LocationModel(
+		mapper = LocationMapper(
 			kb_id=location.kb_id,
 			name=location.name
 		)
-		self._session.add(model)
+		self._session.add(mapper)
 		self._session.commit()
-		self._session.refresh(model)
-		return self._model_to_entity(model)
+		self._session.refresh(mapper)
+		return self._mapper_to_entity(mapper)
 
 	def get_by_id(self, location_id: int) -> Location | None:
-		model = self._session.query(LocationModel).filter(
-			LocationModel.id == location_id
+		mapper = self._session.query(LocationMapper).filter(
+			LocationMapper.id == location_id
 		).first()
-		return self._model_to_entity(model) if model else None
+		return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_kb_id(self, kb_id: str) -> Location | None:
-		model = self._session.query(LocationModel).filter(
-			LocationModel.kb_id == kb_id
+		mapper = self._session.query(LocationMapper).filter(
+			LocationMapper.kb_id == kb_id
 		).first()
-		return self._model_to_entity(model) if model else None
+		return self._mapper_to_entity(mapper) if mapper else None
 
 	def list_all(self) -> list[Location]:
-		models = self._session.query(LocationModel).all()
-		return [self._model_to_entity(m) for m in models]
+		mappers = self._session.query(LocationMapper).all()
+		return [self._mapper_to_entity(m) for m in mappers]
 
 	def create_batch(self, locations: list[Location]) -> list[Location]:
-		models = [
-			LocationModel(
+		mappers = [
+			LocationMapper(
 				kb_id=loc.kb_id,
 				name=loc.name
 			)
 			for loc in locations
 		]
-		self._session.add_all(models)
+		self._session.add_all(mappers)
 		self._session.commit()
-		for model in models:
-			self._session.refresh(model)
-		return [self._model_to_entity(m) for m in models]
+		for mapper in mappers:
+			self._session.refresh(mapper)
+		return [self._mapper_to_entity(m) for m in mappers]
 
-	def _model_to_entity(self, model: LocationModel) -> Location:
+	@staticmethod
+	def _mapper_to_entity(mapper: LocationMapper) -> Location:
 		return Location(
-			id=model.id,
-			kb_id=model.kb_id,
-			name=model.name
+			id=mapper.id,
+			kb_id=mapper.kb_id,
+			name=mapper.name
 		)

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from src.domain.game.entities.ObjectHasItem import ObjectHasItem
 from src.domain.game.IObjectHasItemRepository import IObjectHasItemRepository
-from src.domain.game.repositories.mappers.models import ObjectHasItemModel
+from src.domain.game.repositories.mappers.ObjectHasItemMapper import ObjectHasItemMapper
 
 
 class ObjectHasItemRepository(IObjectHasItemRepository):
@@ -10,32 +10,32 @@ class ObjectHasItemRepository(IObjectHasItemRepository):
 		self._session = session
 
 	def create(self, link: ObjectHasItem) -> ObjectHasItem:
-		model = ObjectHasItemModel(
+		mapper = ObjectHasItemMapper(
 			item_id=link.item_id,
 			object_id=link.object_id,
 			profile_id=link.profile_id,
 			count=link.count
 		)
-		self._session.add(model)
+		self._session.add(mapper)
 		self._session.commit()
-		return self._model_to_entity(model)
+		return self._mapper_to_entity(mapper)
 
 	def get_by_profile(self, profile_id: int) -> list[ObjectHasItem]:
-		models = self._session.query(ObjectHasItemModel).filter(
-			ObjectHasItemModel.profile_id == profile_id
+		mappers = self._session.query(ObjectHasItemMapper).filter(
+			ObjectHasItemMapper.profile_id == profile_id
 		).all()
-		return [self._model_to_entity(m) for m in models]
+		return [self._mapper_to_entity(m) for m in mappers]
 
 	def get_by_item(
 		self,
 		item_id: int,
 		profile_id: int
 	) -> list[ObjectHasItem]:
-		models = self._session.query(ObjectHasItemModel).filter(
-			ObjectHasItemModel.item_id == item_id,
-			ObjectHasItemModel.profile_id == profile_id
+		mappers = self._session.query(ObjectHasItemMapper).filter(
+			ObjectHasItemMapper.item_id == item_id,
+			ObjectHasItemMapper.profile_id == profile_id
 		).all()
-		return [self._model_to_entity(m) for m in models]
+		return [self._mapper_to_entity(m) for m in mappers]
 
 	def delete(
 		self,
@@ -43,17 +43,18 @@ class ObjectHasItemRepository(IObjectHasItemRepository):
 		object_id: int,
 		profile_id: int
 	) -> None:
-		self._session.query(ObjectHasItemModel).filter(
-			ObjectHasItemModel.item_id == item_id,
-			ObjectHasItemModel.object_id == object_id,
-			ObjectHasItemModel.profile_id == profile_id
+		self._session.query(ObjectHasItemMapper).filter(
+			ObjectHasItemMapper.item_id == item_id,
+			ObjectHasItemMapper.object_id == object_id,
+			ObjectHasItemMapper.profile_id == profile_id
 		).delete()
 		self._session.commit()
 
-	def _model_to_entity(self, model: ObjectHasItemModel) -> ObjectHasItem:
+	@staticmethod
+	def _mapper_to_entity(mapper: ObjectHasItemMapper) -> ObjectHasItem:
 		return ObjectHasItem(
-			item_id=model.item_id,
-			object_id=model.object_id,
-			profile_id=model.profile_id,
-			count=model.count
+			item_id=mapper.item_id,
+			object_id=mapper.object_id,
+			profile_id=mapper.profile_id,
+			count=mapper.count
 		)

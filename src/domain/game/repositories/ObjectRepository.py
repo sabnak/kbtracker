@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from src.domain.game.entities.Object import Object
 from src.domain.game.IObjectRepository import IObjectRepository
-from src.domain.game.repositories.mappers.models import ObjectModel
+from src.domain.game.repositories.mappers.ObjectMapper import ObjectMapper
 
 
 class ObjectRepository(IObjectRepository):
@@ -10,43 +10,43 @@ class ObjectRepository(IObjectRepository):
 		self._session = session
 
 	def create(self, obj: Object) -> Object:
-		model = ObjectModel(
+		mapper = ObjectMapper(
 			kb_id=obj.kb_id,
 			location_id=obj.location_id,
 			name=obj.name,
 			hint=obj.hint,
 			msg=obj.msg
 		)
-		self._session.add(model)
+		self._session.add(mapper)
 		self._session.commit()
-		self._session.refresh(model)
-		return self._model_to_entity(model)
+		self._session.refresh(mapper)
+		return self._mapper_to_entity(mapper)
 
 	def get_by_id(self, object_id: int) -> Object | None:
-		model = self._session.query(ObjectModel).filter(
-			ObjectModel.id == object_id
+		mapper = self._session.query(ObjectMapper).filter(
+			ObjectMapper.id == object_id
 		).first()
-		return self._model_to_entity(model) if model else None
+		return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_kb_id(self, kb_id: int) -> Object | None:
-		model = self._session.query(ObjectModel).filter(
-			ObjectModel.kb_id == kb_id
+		mapper = self._session.query(ObjectMapper).filter(
+			ObjectMapper.kb_id == kb_id
 		).first()
-		return self._model_to_entity(model) if model else None
+		return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_location_id(self, location_id: int) -> list[Object]:
-		models = self._session.query(ObjectModel).filter(
-			ObjectModel.location_id == location_id
+		mappers = self._session.query(ObjectMapper).filter(
+			ObjectMapper.location_id == location_id
 		).all()
-		return [self._model_to_entity(m) for m in models]
+		return [self._mapper_to_entity(m) for m in mappers]
 
 	def list_all(self) -> list[Object]:
-		models = self._session.query(ObjectModel).all()
-		return [self._model_to_entity(m) for m in models]
+		mappers = self._session.query(ObjectMapper).all()
+		return [self._mapper_to_entity(m) for m in mappers]
 
 	def create_batch(self, objects: list[Object]) -> list[Object]:
-		models = [
-			ObjectModel(
+		mappers = [
+			ObjectMapper(
 				kb_id=obj.kb_id,
 				location_id=obj.location_id,
 				name=obj.name,
@@ -55,18 +55,19 @@ class ObjectRepository(IObjectRepository):
 			)
 			for obj in objects
 		]
-		self._session.add_all(models)
+		self._session.add_all(mappers)
 		self._session.commit()
-		for model in models:
-			self._session.refresh(model)
-		return [self._model_to_entity(m) for m in models]
+		for mapper in mappers:
+			self._session.refresh(mapper)
+		return [self._mapper_to_entity(m) for m in mappers]
 
-	def _model_to_entity(self, model: ObjectModel) -> Object:
+	@staticmethod
+	def _mapper_to_entity(mapper: ObjectMapper) -> Object:
 		return Object(
-			id=model.id,
-			kb_id=model.kb_id,
-			location_id=model.location_id,
-			name=model.name,
-			hint=model.hint,
-			msg=model.msg
+			id=mapper.id,
+			kb_id=mapper.kb_id,
+			location_id=mapper.location_id,
+			name=mapper.name,
+			hint=mapper.hint,
+			msg=mapper.msg
 		)

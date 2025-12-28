@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from src.domain.game.entities.Item import Item
 from src.domain.game.IItemRepository import IItemRepository
-from src.domain.game.repositories.mappers.models import ItemModel
+from src.domain.game.repositories.mappers.ItemMapper import ItemMapper
 
 
 class ItemRepository(IItemRepository):
@@ -10,43 +10,43 @@ class ItemRepository(IItemRepository):
 		self._session = session
 
 	def create(self, item: Item) -> Item:
-		model = ItemModel(
+		mapper = ItemMapper(
 			kb_id=item.kb_id,
 			name=item.name,
 			price=item.price,
 			hint=item.hint,
 			propbits=item.propbits
 		)
-		self._session.add(model)
+		self._session.add(mapper)
 		self._session.commit()
-		self._session.refresh(model)
-		return self._model_to_entity(model)
+		self._session.refresh(mapper)
+		return self._mapper_to_entity(mapper)
 
 	def get_by_id(self, item_id: int) -> Item | None:
-		model = self._session.query(ItemModel).filter(
-			ItemModel.id == item_id
+		mapper = self._session.query(ItemMapper).filter(
+			ItemMapper.id == item_id
 		).first()
-		return self._model_to_entity(model) if model else None
+		return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_kb_id(self, kb_id: str) -> Item | None:
-		model = self._session.query(ItemModel).filter(
-			ItemModel.kb_id == kb_id
+		mapper = self._session.query(ItemMapper).filter(
+			ItemMapper.kb_id == kb_id
 		).first()
-		return self._model_to_entity(model) if model else None
+		return self._mapper_to_entity(mapper) if mapper else None
 
 	def list_all(self) -> list[Item]:
-		models = self._session.query(ItemModel).all()
-		return [self._model_to_entity(m) for m in models]
+		mappers = self._session.query(ItemMapper).all()
+		return [self._mapper_to_entity(m) for m in mappers]
 
 	def search_by_name(self, query: str) -> list[Item]:
-		models = self._session.query(ItemModel).filter(
-			ItemModel.name.ilike(f"%{query}%")
+		mappers = self._session.query(ItemMapper).filter(
+			ItemMapper.name.ilike(f"%{query}%")
 		).all()
-		return [self._model_to_entity(m) for m in models]
+		return [self._mapper_to_entity(m) for m in mappers]
 
 	def create_batch(self, items: list[Item]) -> list[Item]:
-		models = [
-			ItemModel(
+		mappers = [
+			ItemMapper(
 				kb_id=item.kb_id,
 				name=item.name,
 				price=item.price,
@@ -55,18 +55,19 @@ class ItemRepository(IItemRepository):
 			)
 			for item in items
 		]
-		self._session.add_all(models)
+		self._session.add_all(mappers)
 		self._session.commit()
-		for model in models:
-			self._session.refresh(model)
-		return [self._model_to_entity(m) for m in models]
+		for mapper in mappers:
+			self._session.refresh(mapper)
+		return [self._mapper_to_entity(m) for m in mappers]
 
-	def _model_to_entity(self, model: ItemModel) -> Item:
+	@staticmethod
+	def _mapper_to_entity(mapper: ItemMapper) -> Item:
 		return Item(
-			id=model.id,
-			kb_id=model.kb_id,
-			name=model.name,
-			price=model.price,
-			hint=model.hint,
-			propbits=model.propbits
+			id=mapper.id,
+			kb_id=mapper.kb_id,
+			name=mapper.name,
+			price=mapper.price,
+			hint=mapper.hint,
+			propbits=mapper.propbits
 		)

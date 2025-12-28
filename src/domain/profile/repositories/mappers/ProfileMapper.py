@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, String, Integer, DateTime
 from sqlalchemy.orm import relationship
 
-from src.domain.game.repositories.mappers.models import Base
+from src.domain.game.repositories.mappers.base import Base
 
 
 class ProfileMapper(Base):
@@ -14,4 +14,4 @@ class ProfileMapper(Base):
 	game_version = Column(String, nullable=False)
 	created_at = Column(DateTime, nullable=False, default=datetime.now())
 
-	object_items = relationship("ObjectHasItemModel", back_populates="profile")
+	object_items = relationship("ObjectHasItemMapper", back_populates="profile")
