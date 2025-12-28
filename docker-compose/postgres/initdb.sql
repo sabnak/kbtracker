@@ -3,7 +3,9 @@
 -- Create profile table first (referenced by objects_has_items)
 CREATE TABLE profile (
 	id SERIAL PRIMARY KEY,
-	name VARCHAR(255) NOT NULL
+	name VARCHAR(255) NOT NULL,
+	game_path VARCHAR(100) NOT NULL,
+	created_at TIMESTAMP NOT NULL
 );
 
 -- Create location table (referenced by object)

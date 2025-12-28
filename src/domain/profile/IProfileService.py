@@ -6,14 +6,14 @@ from src.domain.profile.entities.ProfileEntity import ProfileEntity
 class IProfileService(ABC):
 
 	@abstractmethod
-	def create_profile(self, name: str, game_version: str) -> ProfileEntity:
+	def create_profile(self, name: str, game_path: str) -> ProfileEntity:
 		"""
 		Create new game profile
 
 		:param name:
 			Profile name
-		:param game_version:
-			Game version identifier
+		:param game_path:
+			Game path relative to /data directory (e.g., "darkside", "crosswords")
 		:return:
 			Created profile
 		"""

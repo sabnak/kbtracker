@@ -3,6 +3,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from dependency_injector.wiring import inject, Provide
 from src.web.profiles.forms import ProfileCreateForm
+from src.domain.filesystem.services.GamePathService import GamePathService
 from src.domain.profile.services.ProfileService import ProfileService
 
 
@@ -24,10 +25,18 @@ async def index(
 
 
 @router.get("/profiles/create", response_class=HTMLResponse)
-async def create_profile_form(request: Request):
+@inject
+async def create_profile_form(
+	request: Request,
+	game_path_service: GamePathService = Depends(Provide["game_path_service"])
+):
+	available_paths = game_path_service.get_available_game_paths()
 	return templates.TemplateResponse(
 		"pages/profile_create.html",
-		{"request": request}
+		{
+			"request": request,
+			"available_game_paths": available_paths
+		}
 	)
 
 
@@ -35,11 +44,11 @@ async def create_profile_form(request: Request):
 @inject
 async def create_profile(
 	name: str = Form(...),
-	game_version: str = Form(...),
+	game_path: str = Form(...),
 	profile_service: ProfileService = Depends(Provide["profile_service"])
 ):
-	form_data = ProfileCreateForm(name=name, game_version=game_version)
-	profile_service.create_profile(form_data.name, form_data.game_version)
+	form_data = ProfileCreateForm(name=name, game_path=game_path)
+	profile_service.create_profile(form_data.name, form_data.game_path)
 	return RedirectResponse(url="/", status_code=303)
 
 

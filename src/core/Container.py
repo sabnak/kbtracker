@@ -1,5 +1,6 @@
 from dependency_injector import containers, providers
 
+from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameScanner import IGameScanner
 from src.domain.game.IItemRepository import IItemRepository
 from src.domain.game.ILocationRepository import ILocationRepository
@@ -27,6 +28,7 @@ class Container(containers.DeclarativeContainer):
 
 	game_scanner = providers.AbstractSingleton(IGameScanner)
 
+	game_path_service = providers.AbstractFactory(IGamePathService)
 	profile_service = providers.AbstractFactory(IProfileService)
 	scanner_service = providers.AbstractFactory(IGameScanner)
 	item_tracking_service = providers.AbstractFactory()

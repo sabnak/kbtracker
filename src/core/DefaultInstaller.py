@@ -3,6 +3,7 @@ import os
 from dependency_injector import providers
 
 from src.core.Container import Container
+from src.domain.filesystem.services.GamePathService import GamePathService
 from src.domain.game.repositories.ItemRepository import ItemRepository
 from src.domain.game.repositories.LocationRepository import LocationRepository
 from src.domain.game.repositories.ObjectHasItemRepository import ObjectHasItemRepository
@@ -34,6 +35,13 @@ class DefaultInstaller:
 		)
 
 	def _install_services(self):
+
+		self._container.game_path_service.override(
+			providers.Factory(
+				GamePathService,
+				game_data_path=self._container.config.game_data_path
+			)
+		)
 
 		self._container.profile_service.override(
 			providers.Factory(

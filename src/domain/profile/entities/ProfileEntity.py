@@ -6,5 +6,5 @@ from datetime import datetime
 class ProfileEntity:
 	id: int
 	name: str
-	game_version: str
+	game_path: str
 	created_at: datetime

@@ -8,7 +8,7 @@
 		<h1 class="mb-4">Scan Game Files</h1>
 
 		<div class="alert alert-info">
-			<strong>Profile:</strong> {{ profile.name }} ({{ profile.game_version }})
+			<strong>Profile:</strong> {{ profile.name }} ({{ profile.game_path }})
 		</div>
 
 		{% if error %}
@@ -51,7 +51,7 @@
 
 		<div class="alert alert-secondary mt-4">
 			<h5>Note:</h5>
-			<p>The scanner will read game data files from the mounted game directory. Make sure the game files are accessible in the Docker container at <code>/data/{{ profile.game_version }}/</code></p>
+			<p>The scanner will read game data files from the mounted game directory. Make sure the game files are accessible in the Docker container at <code>/data/{{ profile.game_path }}/</code></p>
 		</div>
 	</div>
 </div>

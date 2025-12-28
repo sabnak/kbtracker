@@ -20,15 +20,15 @@ class ScannerService:
 
 	def scan_game_files(
 		self,
-		game_version: str,
+		game_path: str,
 		language: str,
 		game_data_path: str
 	) -> dict[str, int]:
 		"""
 		Scan game files and populate database
 
-		:param game_version:
-			Game version (e.g., "darkside")
+		:param game_path:
+			Game path relative to /data directory (e.g., "darkside", "crosswords")
 		:param language:
 			Language code (ru, eng, ger, pol)
 		:param game_data_path:
@@ -37,7 +37,7 @@ class ScannerService:
 			Dictionary with counts of scanned items and objects
 		"""
 		language_suffix = f"_{language}" if language != "ru" else ""
-		file_path = f"{game_data_path}/{game_version}/loc_ses{language_suffix}.kfs"
+		file_path = f"{game_data_path}/{game_path}/loc_ses{language_suffix}.kfs"
 
 		items = self._game_scanner.scan_items(file_path)
 		self._item_repository.create_batch(items)

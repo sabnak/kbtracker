@@ -17,16 +17,18 @@
 					</div>
 
 					<div class="mb-3">
-						<label for="game_version" class="form-label">Game Version</label>
-						<select class="form-select" id="game_version" name="game_version" required>
-							<option value="">Select game version...</option>
-							<option value="darkside">King's Bounty: Dark Side</option>
-							<option value="warriors_of_the_north">King's Bounty: Warriors of the North</option>
-							<option value="crossworlds">King's Bounty: Crossworlds</option>
-							<option value="armored_princess">King's Bounty: Armored Princess</option>
-							<option value="the_legend">King's Bounty: The Legend</option>
+						<label for="game_path" class="form-label">Game Path</label>
+						<select class="form-select" id="game_path" name="game_path" required>
+							<option value="">Select game path...</option>
+							{% if available_game_paths %}
+								{% for path in available_game_paths %}
+								<option value="{{ path }}">{{ path }}</option>
+								{% endfor %}
+							{% else %}
+								<option value="" disabled>No game paths found in /data directory</option>
+							{% endif %}
 						</select>
-						<div class="form-text">Select which game you're tracking</div>
+						<div class="form-text">Select the game path in /data directory</div>
 					</div>
 
 					<div class="d-grid gap-2">

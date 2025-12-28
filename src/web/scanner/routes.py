@@ -54,7 +54,7 @@ async def scan_game_files(
 		settings = Settings()
 
 		result = scanner_service.scan_game_files(
-			game_version=profile.game_version,
+			game_path=profile.game_path,
 			language=form_data.language.value,
 			game_data_path=settings.game_data_path
 		)

@@ -11,7 +11,7 @@ class ProfileMapper(Base):
 
 	id = Column(Integer, primary_key=True, autoincrement=True)
 	name = Column(String, nullable=False)
-	game_version = Column(String, nullable=False)
+	game_path = Column(String, nullable=False)
 	created_at = Column(DateTime, nullable=False, default=datetime.now())
 
 	object_items = relationship("ObjectHasItemMapper", back_populates="profile")

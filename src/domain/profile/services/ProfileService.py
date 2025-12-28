@@ -13,21 +13,21 @@ class ProfileService(IProfileService):
 	def __init__(self, profile_repository: IProfileRepository = Provide[Container.profile_repository]):
 		self._profile_repository = profile_repository
 
-	def create_profile(self, name: str, game_version: str) -> ProfileEntity:
+	def create_profile(self, name: str, game_path: str) -> ProfileEntity:
 		"""
 		Create new game profile
 
 		:param name:
 			Profile name
-		:param game_version:
-			Game version identifier
+		:param game_path:
+			Game path relative to /data directory (e.g., "darkside", "crosswords")
 		:return:
 			Created profile
 		"""
 		profile = ProfileEntity(
 			id=0,
 			name=name,
-			game_version=game_version,
+			game_path=game_path,
 			created_at=datetime.utcnow()
 		)
 		return self._profile_repository.create(profile)
