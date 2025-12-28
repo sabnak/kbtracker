@@ -22,3 +22,6 @@ configs/local*
 
 # Docker
 docker-compose.override.yml
+
+# Tests
+/tests/game_files/
