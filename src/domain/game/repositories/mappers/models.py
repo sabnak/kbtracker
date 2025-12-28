@@ -48,7 +48,7 @@ class ObjectHasItemModel(Base):
 
 	item_id = Column(Integer, ForeignKey("items.id"), primary_key=True)
 	object_id = Column(Integer, ForeignKey("objects.id"), primary_key=True)
-	profile_id = Column(Integer, ForeignKey("profiles.id"), primary_key=True)
+	profile_id = Column(Integer, ForeignKey("profile.id"), primary_key=True)
 	count = Column(Integer, nullable=False, default=1)
 
 	item = relationship("ItemModel", back_populates="object_items")
