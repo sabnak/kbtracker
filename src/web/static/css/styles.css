@@ -1,0 +1,30 @@
+body {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+main {
+	flex: 1;
+}
+
+.card {
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card:hover {
+	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+	transition: box-shadow 0.3s ease-in-out;
+}
+
+.table {
+	margin-bottom: 0;
+}
+
+.navbar-brand {
+	font-weight: bold;
+}
+
+footer {
+	margin-top: auto;
+}

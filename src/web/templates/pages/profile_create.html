@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Create Profile - King's Bounty Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+	<div class="col-md-6">
+		<h1 class="mb-4">Create New Profile</h1>
+
+		<div class="card">
+			<div class="card-body">
+				<form method="POST" action="/profiles/create">
+					<div class="mb-3">
+						<label for="name" class="form-label">Profile Name</label>
+						<input type="text" class="form-control" id="name" name="name" required>
+						<div class="form-text">A friendly name for this game playthrough</div>
+					</div>
+
+					<div class="mb-3">
+						<label for="game_version" class="form-label">Game Version</label>
+						<select class="form-select" id="game_version" name="game_version" required>
+							<option value="">Select game version...</option>
+							<option value="darkside">King's Bounty: Dark Side</option>
+							<option value="warriors_of_the_north">King's Bounty: Warriors of the North</option>
+							<option value="crossworlds">King's Bounty: Crossworlds</option>
+							<option value="armored_princess">King's Bounty: Armored Princess</option>
+							<option value="the_legend">King's Bounty: The Legend</option>
+						</select>
+						<div class="form-text">Select which game you're tracking</div>
+					</div>
+
+					<div class="d-grid gap-2">
+						<button type="submit" class="btn btn-primary">Create Profile</button>
+						<a href="/" class="btn btn-secondary">Cancel</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

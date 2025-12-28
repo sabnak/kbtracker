@@ -1,10 +1,24 @@
 # IDE
 .idea/
 
-# Python
-.venv/
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
-.Python
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+configs/local*
+
+# Claude
+.claude
+.mcp.json
+
+# Docker
+docker-compose.override.yml

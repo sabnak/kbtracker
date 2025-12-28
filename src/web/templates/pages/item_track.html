@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Track Item - King's Bounty Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+	<div class="col-md-8">
+		<h1 class="mb-4">Track Item Location</h1>
+
+		<div class="alert alert-info">
+			<strong>Profile:</strong> {{ profile.name }}<br>
+			<strong>Item:</strong> {{ item.name }} ({{ item.price }} gold)
+		</div>
+
+		<div class="card">
+			<div class="card-body">
+				<form method="POST" action="/profiles/{{ profile.id }}/items/{{ item.id }}/track" id="trackForm">
+					<div class="mb-3">
+						<label for="location_id" class="form-label">Location</label>
+						<select class="form-select" id="location_id" name="location_id" required onchange="loadObjects()">
+							<option value="">Select location...</option>
+							{% for location in locations %}
+							<option value="{{ location.id }}">{{ location.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<div class="mb-3">
+						<label for="object_id" class="form-label">Merchant/Shop</label>
+						<select class="form-select" id="object_id" name="object_id" required disabled>
+							<option value="">Select location first...</option>
+						</select>
+					</div>
+
+					<div class="mb-3">
+						<label for="count" class="form-label">Quantity</label>
+						<input type="number" class="form-control" id="count" name="count" value="1" min="1" required>
+					</div>
+
+					<div class="d-grid gap-2">
+						<button type="submit" class="btn btn-primary">Save</button>
+						<a href="/profiles/{{ profile.id }}/items" class="btn btn-secondary">Cancel</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+async function loadObjects() {
+	const locationId = document.getElementById('location_id').value;
+	const objectSelect = document.getElementById('object_id');
+
+	if (!locationId) {
+		objectSelect.disabled = true;
+		objectSelect.innerHTML = '<option value="">Select location first...</option>';
+		return;
+	}
+
+	try {
+		const response = await fetch(`/api/locations/${locationId}/objects`);
+		const objects = await response.json();
+
+		objectSelect.disabled = false;
+		objectSelect.innerHTML = '<option value="">Select merchant...</option>';
+
+		objects.forEach(obj => {
+			const option = document.createElement('option');
+			option.value = obj.id;
+			option.textContent = obj.name;
+			objectSelect.appendChild(option);
+		});
+	} catch (error) {
+		console.error('Error loading objects:', error);
+		objectSelect.innerHTML = '<option value="">Error loading merchants</option>';
+	}
+}
+</script>
+{% endblock %}

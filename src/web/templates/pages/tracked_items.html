@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Tracked Items - King's Bounty Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<h1 class="mb-4">Tracked Items for {{ profile.name }}</h1>
+
+		{% if tracked_items %}
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<thead>
+					<tr>
+						<th>Item</th>
+						<th>Price</th>
+						<th>Location</th>
+						<th>Merchant</th>
+						<th>Quantity</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for tracked in tracked_items %}
+					<tr>
+						<td>
+							<strong>{{ tracked.item.name }}</strong><br>
+							<small class="text-muted">{{ tracked.item.hint[:80] if tracked.item.hint else '' }}</small>
+						</td>
+						<td>{{ tracked.item.price }}</td>
+						<td>{{ tracked.location.name if tracked.location else 'Unknown' }}</td>
+						<td>{{ tracked.object.name if tracked.object else 'Unknown' }}</td>
+						<td>{{ tracked.count }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		{% else %}
+		<div class="alert alert-info">
+			No items tracked yet. Browse the item list and start tracking where you find items!
+		</div>
+		{% endif %}
+
+		<div class="mt-3">
+			<a href="/" class="btn btn-secondary">Back to Profiles</a>
+			<a href="/profiles/{{ profile.id }}/items" class="btn btn-primary">Browse Items</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
