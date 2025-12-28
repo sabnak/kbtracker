@@ -3,7 +3,7 @@ from enum import Enum
 
 
 class LanguageEnum(str, Enum):
-	RUSSIAN = "ru"
+	RUSSIAN = "rus"
 	ENGLISH = "eng"
 	GERMAN = "ger"
 	POLISH = "pol"

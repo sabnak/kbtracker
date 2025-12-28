@@ -4,7 +4,7 @@ from src.domain.game.repositories.mappers.base import Base
 
 
 class LocationMapper(Base):
-	__tablename__ = "locations"
+	__tablename__ = "location"
 
 	id = Column(Integer, primary_key=True, autoincrement=True)
 	kb_id = Column(String, nullable=False, index=True)

@@ -24,7 +24,7 @@ async def scan_form(
 		return RedirectResponse(url="/", status_code=303)
 
 	languages = [
-		{"value": "ru", "label": "Russian"},
+		{"value": "rus", "label": "Russian"},
 		{"value": "eng", "label": "English"},
 		{"value": "ger", "label": "German"},
 		{"value": "pol", "label": "Polish"}
@@ -51,12 +51,10 @@ async def scan_game_files(
 
 	try:
 		form_data = ScanForm(language=language)
-		settings = Settings()
 
 		result = scanner_service.scan_game_files(
 			game_path=profile.game_path,
-			language=form_data.language.value,
-			game_data_path=settings.game_data_path
+			language=form_data.language.value
 		)
 
 		return templates.TemplateResponse(
@@ -70,7 +68,7 @@ async def scan_game_files(
 		)
 	except NotImplementedError as e:
 		languages = [
-			{"value": "ru", "label": "Russian"},
+			{"value": "rus", "label": "Russian"},
 			{"value": "eng", "label": "English"},
 			{"value": "ger", "label": "German"},
 			{"value": "pol", "label": "Polish"}

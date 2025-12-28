@@ -6,8 +6,8 @@ from src.domain.game.repositories.mappers.base import Base
 class ObjectHasItemMapper(Base):
 	__tablename__ = "objects_has_items"
 
-	item_id = Column(Integer, ForeignKey("items.id"), primary_key=True)
-	object_id = Column(Integer, ForeignKey("objects.id"), primary_key=True)
+	item_id = Column(Integer, ForeignKey("item.id"), primary_key=True)
+	object_id = Column(Integer, ForeignKey("object.id"), primary_key=True)
 	profile_id = Column(Integer, ForeignKey("profile.id"), primary_key=True)
 	count = Column(Integer, nullable=False, default=1)
 

@@ -26,8 +26,6 @@ class Container(containers.DeclarativeContainer):
 	object_has_item_repository = providers.AbstractSingleton(IObjectHasItemRepository)
 	profile_repository = providers.AbstractSingleton(IProfileRepository)
 
-	game_scanner = providers.AbstractSingleton(IGameScanner)
-
 	game_path_service = providers.AbstractFactory(IGamePathService)
 	profile_service = providers.AbstractFactory(IProfileService)
 	scanner_service = providers.AbstractFactory(IGameScanner)

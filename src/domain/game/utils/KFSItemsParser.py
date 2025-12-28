@@ -4,7 +4,7 @@ from src.domain.game.utils.KFSExtractor import KFSExtractor
 
 class KFSItemsParser:
 
-	def __init__(self, sessions_path: str):
+	def __init__(self, sessions_path: str, lang: str = 'rus'):
 		"""
 		Initialize KFS items parser
 
@@ -12,6 +12,7 @@ class KFSItemsParser:
 			Absolute path to sessions directory containing .kfs archives
 		"""
 		self._sessions_path = sessions_path
+		self._lang = lang
 
 	def parse(self) -> list[Item]:
 		"""
@@ -42,7 +43,11 @@ class KFSItemsParser:
 		:return:
 			Tuple of (items_content, localization_content)
 		"""
-		tables = ["ses.kfs/items.txt", "loc_ses.kfs/rus_items.lng"]
+		tables = [
+			"ses.kfs/items.txt",
+			f"loc_ses{'_' + self._lang if self._lang != 'rus' else ''}.kfs/{self._lang}_items.lng"
+		]
+
 		extractor = KFSExtractor(self._sessions_path, tables)
 		results = extractor.extract()
 		return results[0], results[1]

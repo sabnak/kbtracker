@@ -4,7 +4,7 @@ from src.domain.game.repositories.mappers.base import Base
 
 
 class ItemMapper(Base):
-	__tablename__ = "items"
+	__tablename__ = "item"
 
 	id = Column(Integer, primary_key=True, autoincrement=True)
 	kb_id = Column(String, unique=True, nullable=False, index=True)

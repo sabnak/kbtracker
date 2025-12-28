@@ -4,11 +4,11 @@ from src.domain.game.repositories.mappers.base import Base
 
 
 class ObjectMapper(Base):
-	__tablename__ = "objects"
+	__tablename__ = "object"
 
 	id = Column(Integer, primary_key=True, autoincrement=True)
 	kb_id = Column(Integer, unique=True, nullable=False, index=True)
-	location_id = Column(Integer, ForeignKey("locations.id"), nullable=False)
+	location_id = Column(Integer, ForeignKey("location.id"), nullable=False)
 	name = Column(String, nullable=False)
 	hint = Column(Text, nullable=True)
 	msg = Column(Text, nullable=True)

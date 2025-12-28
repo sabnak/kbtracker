@@ -53,7 +53,6 @@ class DefaultInstaller:
 		self._container.scanner_service.override(
 			providers.Factory(
 				ScannerService,
-				game_scanner=self._container.game_scanner,
 				item_repository=self._container.item_repository,
 				location_repository=self._container.location_repository,
 				object_repository=self._container.object_repository
