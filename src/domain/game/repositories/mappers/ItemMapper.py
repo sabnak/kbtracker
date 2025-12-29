@@ -13,6 +13,9 @@ class ItemMapper(Base):
 	price = Column(Integer, nullable=False, default=0)
 	hint = Column(Text, nullable=True)
 	propbits = Column(ARRAY(String), nullable=True)
+	item_set_id = Column(Integer, ForeignKey("item_set.id"), nullable=True)
+	level = Column(Integer, nullable=False, default=1)
 
 	game = relationship("GameMapper", back_populates="items")
 	shop_items = relationship("ShopHasItemMapper", back_populates="item")
+	item_set = relationship("ItemSetMapper")

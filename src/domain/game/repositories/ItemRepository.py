@@ -21,11 +21,13 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		"""
 		return ItemMapper(
 			game_id=entity.game_id,
+			item_set_id=entity.item_set_id,
 			kb_id=entity.kb_id,
 			name=entity.name,
 			price=entity.price,
 			hint=entity.hint,
-			propbits=entity.propbits
+			propbits=entity.propbits,
+			level=entity.level
 		)
 
 	def _get_entity_type_name(self) -> str:
@@ -109,9 +111,11 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		return Item(
 			id=mapper.id,
 			game_id=mapper.game_id,
+			item_set_id=mapper.item_set_id,
 			kb_id=mapper.kb_id,
 			name=mapper.name,
 			price=mapper.price,
 			hint=mapper.hint,
-			propbits=mapper.propbits
+			propbits=mapper.propbits,
+			level=mapper.level
 		)
