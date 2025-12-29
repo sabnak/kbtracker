@@ -251,24 +251,28 @@ class ItemTrackingManager {
 		let html = '<div class="tracked-shops-list mb-2">';
 		trackedShops.forEach(ts => {
 			html += `
-				<div class="tracked-shop-item d-flex align-items-center mb-1">
-					<small class="text-truncate flex-grow-1" title="${this.escapeHtml(ts.shop_name)} - ${this.escapeHtml(ts.location_name)}">
-						${this.escapeHtml(ts.shop_name)}
-					</small>
-					<input type="number"
-						   class="form-control form-control-sm quantity-input mx-1"
-						   style="width: 60px;"
-						   value="${ts.count}"
-						   min="0"
-						   max="99999"
-						   data-item-id="${itemId}"
-						   data-shop-id="${ts.shop_id}">
-					<button class="btn btn-sm btn-outline-danger delete-shop-btn"
-							data-item-id="${itemId}"
-							data-shop-id="${ts.shop_id}"
-							title="Remove shop">
-						×
-					</button>
+				<div class="tracked-shop-item d-flex mb-1">
+					<div class="shop-name-row">
+						<span class="shop-name text-truncate" title="${this.escapeHtml(ts.location_name)} / ${this.escapeHtml(ts.shop_name)}">
+							${this.escapeHtml(ts.location_name)} / ${this.escapeHtml(ts.shop_name)}
+						</span>
+					</div>
+					<div class="controls-row">
+						<input type="number"
+							   class="form-control form-control-sm quantity-input"
+							   style="width: 60px;"
+							   value="${ts.count}"
+							   min="0"
+							   max="99999"
+							   data-item-id="${itemId}"
+							   data-shop-id="${ts.shop_id}">
+						<button class="btn btn-sm btn-outline-danger delete-shop-btn"
+								data-item-id="${itemId}"
+								data-shop-id="${ts.shop_id}"
+								title="Remove shop">
+							×
+						</button>
+					</div>
 				</div>
 			`;
 		});

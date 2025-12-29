@@ -151,10 +151,24 @@ footer {
 
 .tracked-shop-item {
 	gap: 0.25rem;
+	flex-direction: column;
+	align-items: flex-start !important;
 }
 
-.tracked-shop-item small {
-	max-width: 100px;
+.tracked-shop-item .shop-name-row {
+	width: 100%;
+}
+
+.tracked-shop-item .controls-row {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	margin-top: 0.25rem;
+}
+
+.tracked-shop-item .shop-name {
+	max-width: 200px;
 }
 
 .add-shop-form select {

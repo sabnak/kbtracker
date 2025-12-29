@@ -149,8 +149,8 @@
 								{% endif %}
 							</span>
 						</th>
-						<th>Type</th>
-						<th id="tracking-column-header" class="d-none">Tracked Shops</th>
+						<th style="max-width: 100px;">Type</th>
+						<th id="tracking-column-header" class="d-none">Shops</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -190,7 +190,7 @@
 						<td>
 							<span class="quality-{{ item.level }}">{{ item.level }}</span>
 						</td>
-						<td>
+						<td style="max-width: 100px;">
 							{% if item.propbits %}
 							<small>{{ ', '.join(item.propbits[:3]) }}</small>
 							{% else %}
