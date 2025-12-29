@@ -1,4 +1,3 @@
-from sqlalchemy.orm import Session
 from src.domain.CrudRepository import CrudRepository
 from src.domain.game.entities.Location import Location
 from src.domain.game.ILocationRepository import ILocationRepository
@@ -6,9 +5,6 @@ from src.domain.game.repositories.mappers.LocationMapper import LocationMapper
 
 
 class LocationRepository(CrudRepository[Location, LocationMapper], ILocationRepository):
-
-	def __init__(self, session: Session):
-		super().__init__(session)
 
 	def _entity_to_mapper(self, entity: Location) -> LocationMapper:
 		"""
@@ -57,20 +53,23 @@ class LocationRepository(CrudRepository[Location, LocationMapper], ILocationRepo
 		return self._create_single(location)
 
 	def get_by_id(self, location_id: int) -> Location | None:
-		mapper = self._session.query(LocationMapper).filter(
-			LocationMapper.id == location_id
-		).first()
-		return self._mapper_to_entity(mapper) if mapper else None
+		with self._session_factory() as session:
+			mapper = session.query(LocationMapper).filter(
+				LocationMapper.id == location_id
+			).first()
+			return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_kb_id(self, kb_id: str) -> Location | None:
-		mapper = self._session.query(LocationMapper).filter(
-			LocationMapper.kb_id == kb_id
-		).first()
-		return self._mapper_to_entity(mapper) if mapper else None
+		with self._session_factory() as session:
+			mapper = session.query(LocationMapper).filter(
+				LocationMapper.kb_id == kb_id
+			).first()
+			return self._mapper_to_entity(mapper) if mapper else None
 
 	def list_all(self) -> list[Location]:
-		mappers = self._session.query(LocationMapper).all()
-		return [self._mapper_to_entity(m) for m in mappers]
+		with self._session_factory() as session:
+			mappers = session.query(LocationMapper).all()
+			return [self._mapper_to_entity(m) for m in mappers]
 
 	def create_batch(self, locations: list[Location]) -> list[Location]:
 		"""
@@ -84,10 +83,11 @@ class LocationRepository(CrudRepository[Location, LocationMapper], ILocationRepo
 		return self._create_batch(locations)
 
 	def list_by_game_id(self, game_id: int) -> list[Location]:
-		mappers = self._session.query(LocationMapper).filter(
-			LocationMapper.game_id == game_id
-		).all()
-		return [self._mapper_to_entity(m) for m in mappers]
+		with self._session_factory() as session:
+			mappers = session.query(LocationMapper).filter(
+				LocationMapper.game_id == game_id
+			).all()
+			return [self._mapper_to_entity(m) for m in mappers]
 
 	def _mapper_to_entity(self, mapper: LocationMapper) -> Location:
 		return Location(

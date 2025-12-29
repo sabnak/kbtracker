@@ -36,6 +36,21 @@ CREATE TABLE location (
 CREATE INDEX idx_location_game_id ON location(game_id);
 CREATE INDEX idx_location_kb_id ON location(kb_id);
 
+-- Create item_set table (referenced by item)
+CREATE TABLE item_set (
+	id SERIAL PRIMARY KEY,
+	game_id INTEGER NOT NULL,
+	kb_id VARCHAR(255) NOT NULL,
+	name VARCHAR(255) NOT NULL,
+	hint TEXT,
+	CONSTRAINT fk_item_set_game FOREIGN KEY (game_id) REFERENCES game(id) ON DELETE CASCADE,
+	UNIQUE(game_id, kb_id)
+);
+
+-- Create indexes for game_id and kb_id in item_set
+CREATE INDEX idx_item_set_game_id ON item_set(game_id);
+CREATE INDEX idx_item_set_kb_id ON item_set(kb_id);
+
 -- Create item table (referenced by shops_has_items)
 CREATE TABLE item (
 	id SERIAL PRIMARY KEY,
@@ -45,13 +60,16 @@ CREATE TABLE item (
 	price INTEGER NOT NULL,
 	hint TEXT,
 	propbits VARCHAR(255)[],
+	item_set_id INTEGER,
 	CONSTRAINT fk_item_game FOREIGN KEY (game_id) REFERENCES game(id) ON DELETE CASCADE,
+	CONSTRAINT fk_item_item_set FOREIGN KEY (item_set_id) REFERENCES item_set(id) ON DELETE SET NULL,
 	UNIQUE(game_id, kb_id)
 );
 
 -- Create indexes for game_id and kb_id in item
 CREATE INDEX idx_item_game_id ON item(game_id);
 CREATE INDEX idx_item_kb_id ON item(kb_id);
+CREATE INDEX idx_item_item_set_id ON item(item_set_id);
 
 -- Create shop table (referenced by shops_has_items)
 CREATE TABLE shop (

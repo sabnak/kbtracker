@@ -6,3 +6,4 @@ class ScanResults:
 	items: int
 	locations: int
 	shops: int
+	sets: int

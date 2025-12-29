@@ -14,5 +14,6 @@ class GameMapper(Base):
 	# Relationships (will be fully functional after other mappers are updated)
 	profiles = relationship("ProfileMapper", back_populates="game", cascade="all, delete-orphan")
 	items = relationship("ItemMapper", back_populates="game", cascade="all, delete-orphan")
+	item_sets = relationship("ItemSetMapper", back_populates="game", cascade="all, delete-orphan")
 	locations = relationship("LocationMapper", back_populates="game", cascade="all, delete-orphan")
 	shops = relationship("ShopMapper", back_populates="game", cascade="all, delete-orphan")

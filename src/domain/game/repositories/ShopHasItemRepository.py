@@ -1,4 +1,3 @@
-from sqlalchemy.orm import Session
 from src.domain.CrudRepository import CrudRepository
 from src.domain.game.entities.ShopHasItem import ShopHasItem
 from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
@@ -6,9 +5,6 @@ from src.domain.game.repositories.mappers.ShopHasItemMapper import ShopHasItemMa
 
 
 class ShopHasItemRepository(CrudRepository[ShopHasItem, ShopHasItemMapper], IShopHasItemRepository):
-
-	def __init__(self, session: Session):
-		super().__init__(session)
 
 	def _entity_to_mapper(self, entity: ShopHasItem) -> ShopHasItemMapper:
 		"""
@@ -58,21 +54,23 @@ class ShopHasItemRepository(CrudRepository[ShopHasItem, ShopHasItemMapper], ISho
 		return self._create_single(link)
 
 	def get_by_profile(self, profile_id: int) -> list[ShopHasItem]:
-		mappers = self._session.query(ShopHasItemMapper).filter(
-			ShopHasItemMapper.profile_id == profile_id
-		).all()
-		return [self._mapper_to_entity(m) for m in mappers]
+		with self._session_factory() as session:
+			mappers = session.query(ShopHasItemMapper).filter(
+				ShopHasItemMapper.profile_id == profile_id
+			).all()
+			return [self._mapper_to_entity(m) for m in mappers]
 
 	def get_by_item(
 		self,
 		item_id: int,
 		profile_id: int
 	) -> list[ShopHasItem]:
-		mappers = self._session.query(ShopHasItemMapper).filter(
-			ShopHasItemMapper.item_id == item_id,
-			ShopHasItemMapper.profile_id == profile_id
-		).all()
-		return [self._mapper_to_entity(m) for m in mappers]
+		with self._session_factory() as session:
+			mappers = session.query(ShopHasItemMapper).filter(
+				ShopHasItemMapper.item_id == item_id,
+				ShopHasItemMapper.profile_id == profile_id
+			).all()
+			return [self._mapper_to_entity(m) for m in mappers]
 
 	def delete(
 		self,
@@ -91,12 +89,13 @@ class ShopHasItemRepository(CrudRepository[ShopHasItem, ShopHasItemMapper], ISho
 			Profile ID
 		:return:
 		"""
-		query = self._session.query(ShopHasItemMapper).filter(
-			ShopHasItemMapper.item_id == item_id,
-			ShopHasItemMapper.shop_id == shop_id,
-			ShopHasItemMapper.profile_id == profile_id
-		)
-		self._delete_by_query(query)
+		with self._session_factory() as session:
+			session.query(ShopHasItemMapper).filter(
+				ShopHasItemMapper.item_id == item_id,
+				ShopHasItemMapper.shop_id == shop_id,
+				ShopHasItemMapper.profile_id == profile_id
+			).delete()
+			session.commit()
 
 	def update_count(
 		self,
@@ -119,23 +118,24 @@ class ShopHasItemRepository(CrudRepository[ShopHasItem, ShopHasItemMapper], ISho
 		:return:
 			Updated link
 		"""
-		mapper = self._session.query(ShopHasItemMapper).filter(
-			ShopHasItemMapper.item_id == item_id,
-			ShopHasItemMapper.shop_id == shop_id,
-			ShopHasItemMapper.profile_id == profile_id
-		).first()
+		with self._session_factory() as session:
+			mapper = session.query(ShopHasItemMapper).filter(
+				ShopHasItemMapper.item_id == item_id,
+				ShopHasItemMapper.shop_id == shop_id,
+				ShopHasItemMapper.profile_id == profile_id
+			).first()
 
-		if not mapper:
-			from src.domain.exceptions import EntityNotFoundException
-			raise EntityNotFoundException(
-				f"ShopHasItem not found: item_id={item_id}, shop_id={shop_id}, profile_id={profile_id}"
-			)
+			if not mapper:
+				from src.domain.exceptions import EntityNotFoundException
+				raise EntityNotFoundException(
+					f"ShopHasItem not found: item_id={item_id}, shop_id={shop_id}, profile_id={profile_id}"
+				)
 
-		mapper.count = new_count
-		self._session.commit()
-		self._session.refresh(mapper)
+			mapper.count = new_count
+			session.commit()
+			session.refresh(mapper)
 
-		return self._mapper_to_entity(mapper)
+			return self._mapper_to_entity(mapper)
 
 	def _mapper_to_entity(self, mapper: ShopHasItemMapper) -> ShopHasItem:
 		return ShopHasItem(

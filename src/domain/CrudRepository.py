@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import TypeVar, Generic
-from sqlalchemy.orm import Session
+from dependency_injector.wiring import Provide, inject
+from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
+from src.core.Container import Container
 from src.domain.exceptions import (
 	DuplicateEntityException,
 	DatabaseOperationException
@@ -18,8 +20,9 @@ class CrudRepository(ABC, Generic[TEntity, TMapper]):
 	Base CRUD repository with common error handling
 	"""
 
-	def __init__(self, session: Session):
-		self._session = session
+	@inject
+	def __init__(self, session_factory: sessionmaker[Session] = Provide[Container.db_session_factory]):
+		self._session_factory = session_factory
 
 	@abstractmethod
 	def _entity_to_mapper(self, entity: TEntity) -> TMapper:
@@ -82,32 +85,33 @@ class CrudRepository(ABC, Generic[TEntity, TMapper]):
 		"""
 		mapper = self._entity_to_mapper(entity)
 
-		try:
-			self._session.add(mapper)
-			self._session.commit()
-			self._session.refresh(mapper)
-			return self._mapper_to_entity(mapper)
-		except IntegrityError as e:
-			self._session.rollback()
-			error_msg = str(e.orig)
-			if "unique" in error_msg.lower() or "duplicate" in error_msg.lower():
-				raise DuplicateEntityException(
-					entity_type=self._get_entity_type_name(),
-					identifier=self._get_duplicate_identifier(entity),
+		with self._session_factory() as session:
+			try:
+				session.add(mapper)
+				session.commit()
+				session.refresh(mapper)
+				return self._mapper_to_entity(mapper)
+			except IntegrityError as e:
+				session.rollback()
+				error_msg = str(e.orig)
+				if "unique" in error_msg.lower() or "duplicate" in error_msg.lower():
+					raise DuplicateEntityException(
+						entity_type=self._get_entity_type_name(),
+						identifier=self._get_duplicate_identifier(entity),
+						original_exception=e
+					)
+				raise DatabaseOperationException(
+					operation=f"create {self._get_entity_type_name()}",
+					details=error_msg,
 					original_exception=e
 				)
-			raise DatabaseOperationException(
-				operation=f"create {self._get_entity_type_name()}",
-				details=error_msg,
-				original_exception=e
-			)
-		except SQLAlchemyError as e:
-			self._session.rollback()
-			raise DatabaseOperationException(
-				operation=f"create {self._get_entity_type_name()}",
-				details=str(e),
-				original_exception=e
-			)
+			except SQLAlchemyError as e:
+				session.rollback()
+				raise DatabaseOperationException(
+					operation=f"create {self._get_entity_type_name()}",
+					details=str(e),
+					original_exception=e
+				)
 
 	def _create_batch(self, entities: list[TEntity]) -> list[TEntity]:
 		"""
@@ -124,33 +128,34 @@ class CrudRepository(ABC, Generic[TEntity, TMapper]):
 		"""
 		mappers = [self._entity_to_mapper(entity) for entity in entities]
 
-		try:
-			self._session.add_all(mappers)
-			self._session.commit()
-			for mapper in mappers:
-				self._session.refresh(mapper)
-			return [self._mapper_to_entity(m) for m in mappers]
-		except IntegrityError as e:
-			self._session.rollback()
-			error_msg = str(e.orig)
-			if "unique" in error_msg.lower() or "duplicate" in error_msg.lower():
-				raise DuplicateEntityException(
-					entity_type=f"{self._get_entity_type_name()} batch",
-					identifier=f"{len(entities)} items",
+		with self._session_factory() as session:
+			try:
+				session.add_all(mappers)
+				session.commit()
+				for mapper in mappers:
+					session.refresh(mapper)
+				return [self._mapper_to_entity(m) for m in mappers]
+			except IntegrityError as e:
+				session.rollback()
+				error_msg = str(e.orig)
+				if "unique" in error_msg.lower() or "duplicate" in error_msg.lower():
+					raise DuplicateEntityException(
+						entity_type=f"{self._get_entity_type_name()} batch",
+						identifier=f"{len(entities)} items",
+						original_exception=e
+					)
+				raise DatabaseOperationException(
+					operation=f"batch create {self._get_entity_type_name()}",
+					details=error_msg,
 					original_exception=e
 				)
-			raise DatabaseOperationException(
-				operation=f"batch create {self._get_entity_type_name()}",
-				details=error_msg,
-				original_exception=e
-			)
-		except SQLAlchemyError as e:
-			self._session.rollback()
-			raise DatabaseOperationException(
-				operation=f"batch create {self._get_entity_type_name()}",
-				details=str(e),
-				original_exception=e
-			)
+			except SQLAlchemyError as e:
+				session.rollback()
+				raise DatabaseOperationException(
+					operation=f"batch create {self._get_entity_type_name()}",
+					details=str(e),
+					original_exception=e
+				)
 
 	def _delete_by_query(self, query) -> None:
 		"""
@@ -162,27 +167,28 @@ class CrudRepository(ABC, Generic[TEntity, TMapper]):
 		:raises DatabaseOperationException:
 			When database operation fails
 		"""
-		try:
-			query.delete()
-			self._session.commit()
-		except IntegrityError as e:
-			self._session.rollback()
-			error_msg = str(e.orig)
-			if "foreign key" in error_msg.lower():
+		with self._session_factory() as session:
+			try:
+				query.delete()
+				session.commit()
+			except IntegrityError as e:
+				session.rollback()
+				error_msg = str(e.orig)
+				if "foreign key" in error_msg.lower():
+					raise DatabaseOperationException(
+						operation=f"delete {self._get_entity_type_name()}",
+						details="Cannot delete: entity is referenced by other records",
+						original_exception=e
+					)
 				raise DatabaseOperationException(
 					operation=f"delete {self._get_entity_type_name()}",
-					details="Cannot delete: entity is referenced by other records",
+					details=error_msg,
 					original_exception=e
 				)
-			raise DatabaseOperationException(
-				operation=f"delete {self._get_entity_type_name()}",
-				details=error_msg,
-				original_exception=e
-			)
-		except SQLAlchemyError as e:
-			self._session.rollback()
-			raise DatabaseOperationException(
-				operation=f"delete {self._get_entity_type_name()}",
-				details=str(e),
-				original_exception=e
-			)
+			except SQLAlchemyError as e:
+				session.rollback()
+				raise DatabaseOperationException(
+					operation=f"delete {self._get_entity_type_name()}",
+					details=str(e),
+					original_exception=e
+				)

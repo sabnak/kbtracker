@@ -6,10 +6,12 @@ from src.core.Config import Config
 from src.core.Container import Container
 from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.IItemRepository import IItemRepository
+from src.domain.game.IItemSetRepository import IItemSetRepository
 from src.domain.game.ILocationRepository import ILocationRepository
 from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.dto.ScanResults import ScanResults
 from src.domain.game.entities.Item import Item
+from src.domain.game.entities.ItemSet import ItemSet
 from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
 from src.domain.game.utils.KFSItemsParser import KFSItemsParser
@@ -22,12 +24,14 @@ class ScannerService:
 		self,
 		game_repository: IGameRepository,
 		item_repository: IItemRepository,
+		item_set_repository: IItemSetRepository,
 		location_repository: ILocationRepository,
 		shop_repository: IShopRepository,
 		config: Config = Provide[Container.config]
 	):
 		self._game_repository = game_repository
 		self._item_repository = item_repository
+		self._item_set_repository = item_set_repository
 		self._location_repository = location_repository
 		self._shop_repository = shop_repository
 		self._config = config
@@ -45,7 +49,7 @@ class ScannerService:
 		:param language:
 			Language code (rus, eng, ger, pol)
 		:return:
-			ScanResults with counts of scanned items, locations, and shops
+			ScanResults with counts of scanned items, locations, shops, and sets
 		"""
 		game = self._game_repository.get_by_id(game_id)
 		if not game:
@@ -53,25 +57,60 @@ class ScannerService:
 
 		sessions_path = os.path.join(self._config['game_data_path'], game.path, "sessions")
 
-		# Parse and save items
-		items = self._parse_items(sessions_path, language, game_id)
-		self._item_repository.create_batch(items)
+		parse_results = self._parse_items_and_sets(sessions_path, language, game_id)
 
-		# Parse and save locations and shops
+		total_items = 0
+		total_sets = 0
+
+		for set_kb_id, set_data in parse_results.items():
+			if set_kb_id == "setless":
+				items = set_data["items"]
+				self._item_repository.create_batch(items)
+				total_items += len(items)
+			else:
+				item_set = ItemSet(
+					id=0,
+					game_id=game_id,
+					kb_id=set_kb_id,
+					name=set_data["name"],
+					hint=set_data["hint"]
+				)
+				created_set = self._item_set_repository.create(item_set)
+				total_sets += 1
+
+				items = set_data["items"]
+				for item in items:
+					item.item_set_id = created_set.id
+				self._item_repository.create_batch(items)
+				total_items += len(items)
+
 		locations, shops = self._parse_locations_and_shops(sessions_path, language, game_id)
 
 		return ScanResults(
-			items=len(items),
+			items=total_items,
 			locations=len(locations),
-			shops=len(shops)
+			shops=len(shops),
+			sets=total_sets
 		)
 
-	def _parse_items(
+	def _parse_items_and_sets(
 		self,
 		session_path: str,
 		language: str,
 		game_id: int
-	) -> list[Item]:
+	) -> dict[str, dict[str, any]]:
+		"""
+		Parse items and sets from game files
+
+		:param session_path:
+			Path to sessions directory
+		:param language:
+			Language code
+		:param game_id:
+			Game ID
+		:return:
+			Dictionary with sets and items grouped by set membership
+		"""
 		parser = KFSItemsParser(session_path, language, game_id)
 		return parser.parse()
 

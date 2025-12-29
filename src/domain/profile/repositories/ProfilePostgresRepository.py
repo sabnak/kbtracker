@@ -1,5 +1,3 @@
-from sqlalchemy.orm import Session
-
 from src.domain.CrudRepository import CrudRepository
 from src.domain.profile.IProfileRepository import IProfileRepository
 from src.domain.profile.entities.ProfileEntity import ProfileEntity
@@ -7,9 +5,6 @@ from src.domain.profile.repositories.mappers.ProfileMapper import ProfileMapper
 
 
 class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IProfileRepository):
-
-	def __init__(self, session: Session):
-		super().__init__(session)
 
 	def _entity_to_mapper(self, entity: ProfileEntity) -> ProfileMapper:
 		"""
@@ -58,16 +53,18 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 		return self._create_single(profile)
 
 	def get_by_id(self, profile_id: int) -> ProfileEntity | None:
-		model = self._session.query(ProfileMapper).filter(
-			ProfileMapper.id == profile_id
-		).first()
-		return self._mapper_to_entity(model) if model else None
+		with self._session_factory() as session:
+			model = session.query(ProfileMapper).filter(
+				ProfileMapper.id == profile_id
+			).first()
+			return self._mapper_to_entity(model) if model else None
 
 	def list_all(self) -> list[ProfileEntity]:
-		models = self._session.query(ProfileMapper).order_by(
-			ProfileMapper.created_at.desc()
-		).all()
-		return [self._mapper_to_entity(m) for m in models]
+		with self._session_factory() as session:
+			models = session.query(ProfileMapper).order_by(
+				ProfileMapper.created_at.desc()
+			).all()
+			return [self._mapper_to_entity(m) for m in models]
 
 	def delete(self, profile_id: int) -> None:
 		"""
@@ -77,10 +74,11 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 			Profile ID to delete
 		:return:
 		"""
-		query = self._session.query(ProfileMapper).filter(
-			ProfileMapper.id == profile_id
-		)
-		self._delete_by_query(query)
+		with self._session_factory() as session:
+			session.query(ProfileMapper).filter(
+				ProfileMapper.id == profile_id
+			).delete()
+			session.commit()
 
 	def _mapper_to_entity(self, mapper: ProfileMapper) -> ProfileEntity:
 		return ProfileEntity(**{

@@ -1,4 +1,3 @@
-from sqlalchemy.orm import Session
 from src.domain.CrudRepository import CrudRepository
 from src.domain.game.entities.Shop import Shop
 from src.domain.game.IShopRepository import IShopRepository
@@ -6,9 +5,6 @@ from src.domain.game.repositories.mappers.ShopMapper import ShopMapper
 
 
 class ShopRepository(CrudRepository[Shop, ShopMapper], IShopRepository):
-
-	def __init__(self, session: Session):
-		super().__init__(session)
 
 	def _entity_to_mapper(self, entity: Shop) -> ShopMapper:
 		"""
@@ -60,22 +56,25 @@ class ShopRepository(CrudRepository[Shop, ShopMapper], IShopRepository):
 		return self._create_single(shop)
 
 	def get_by_id(self, shop_id: int) -> Shop | None:
-		mapper = self._session.query(ShopMapper).filter(
-			ShopMapper.id == shop_id
-		).first()
-		return self._mapper_to_entity(mapper) if mapper else None
+		with self._session_factory() as session:
+			mapper = session.query(ShopMapper).filter(
+				ShopMapper.id == shop_id
+			).first()
+			return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_kb_id(self, kb_id: int) -> Shop | None:
-		mapper = self._session.query(ShopMapper).filter(
-			ShopMapper.kb_id == kb_id
-		).first()
-		return self._mapper_to_entity(mapper) if mapper else None
+		with self._session_factory() as session:
+			mapper = session.query(ShopMapper).filter(
+				ShopMapper.kb_id == kb_id
+			).first()
+			return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_location_id(self, location_id: int) -> list[Shop]:
-		mappers = self._session.query(ShopMapper).filter(
-			ShopMapper.location_id == location_id
-		).all()
-		return [self._mapper_to_entity(m) for m in mappers]
+		with self._session_factory() as session:
+			mappers = session.query(ShopMapper).filter(
+				ShopMapper.location_id == location_id
+			).all()
+			return [self._mapper_to_entity(m) for m in mappers]
 
 	def list_by_game_id(self, game_id: int) -> list[Shop]:
 		"""
@@ -86,14 +85,16 @@ class ShopRepository(CrudRepository[Shop, ShopMapper], IShopRepository):
 		:return:
 			List of shops for the game
 		"""
-		mappers = self._session.query(ShopMapper).filter(
-			ShopMapper.game_id == game_id
-		).all()
-		return [self._mapper_to_entity(m) for m in mappers]
+		with self._session_factory() as session:
+			mappers = session.query(ShopMapper).filter(
+				ShopMapper.game_id == game_id
+			).all()
+			return [self._mapper_to_entity(m) for m in mappers]
 
 	def list_all(self) -> list[Shop]:
-		mappers = self._session.query(ShopMapper).all()
-		return [self._mapper_to_entity(m) for m in mappers]
+		with self._session_factory() as session:
+			mappers = session.query(ShopMapper).all()
+			return [self._mapper_to_entity(m) for m in mappers]
 
 	def create_batch(self, shops: list[Shop]) -> list[Shop]:
 		"""

@@ -1,5 +1,3 @@
-from sqlalchemy.orm import Session
-
 from src.domain.CrudRepository import CrudRepository
 from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.entities.Game import Game
@@ -7,9 +5,6 @@ from src.domain.game.repositories.mappers.GameMapper import GameMapper
 
 
 class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
-
-	def __init__(self, session: Session):
-		super().__init__(session)
 
 	def _entity_to_mapper(self, entity: Game) -> GameMapper:
 		"""
@@ -57,22 +52,25 @@ class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
 		return self._create_single(game)
 
 	def get_by_id(self, game_id: int) -> Game | None:
-		mapper = self._session.query(GameMapper).filter(
-			GameMapper.id == game_id
-		).first()
-		return self._mapper_to_entity(mapper) if mapper else None
+		with self._session_factory() as session:
+			mapper = session.query(GameMapper).filter(
+				GameMapper.id == game_id
+			).first()
+			return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_path(self, path: str) -> Game | None:
-		mapper = self._session.query(GameMapper).filter(
-			GameMapper.path == path
-		).first()
-		return self._mapper_to_entity(mapper) if mapper else None
+		with self._session_factory() as session:
+			mapper = session.query(GameMapper).filter(
+				GameMapper.path == path
+			).first()
+			return self._mapper_to_entity(mapper) if mapper else None
 
 	def list_all(self) -> list[Game]:
-		mappers = self._session.query(GameMapper).order_by(
-			GameMapper.name.asc()
-		).all()
-		return [self._mapper_to_entity(m) for m in mappers]
+		with self._session_factory() as session:
+			mappers = session.query(GameMapper).order_by(
+				GameMapper.name.asc()
+			).all()
+			return [self._mapper_to_entity(m) for m in mappers]
 
 	def delete(self, game_id: int) -> None:
 		"""
@@ -82,10 +80,11 @@ class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
 			Game ID to delete
 		:return:
 		"""
-		query = self._session.query(GameMapper).filter(
-			GameMapper.id == game_id
-		)
-		self._delete_by_query(query)
+		with self._session_factory() as session:
+			session.query(GameMapper).filter(
+				GameMapper.id == game_id
+			).delete()
+			session.commit()
 
 	def _mapper_to_entity(self, mapper: GameMapper) -> Game:
 		return Game(

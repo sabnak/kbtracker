@@ -15,18 +15,6 @@ def create_db_engine(database_url: str):
 	return create_engine(database_url, echo=False)
 
 
-def create_session_factory(engine):
-	"""
-	Create session factory
-
-	:param engine:
-		SQLAlchemy engine
-	:return:
-		Session factory
-	"""
-	return sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
 def init_db(database_url: str) -> None:
 	"""
 	Initialize database and create all tables
