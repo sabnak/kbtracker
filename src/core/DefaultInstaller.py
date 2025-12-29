@@ -4,10 +4,12 @@ from dependency_injector import providers
 
 from src.core.Container import Container
 from src.domain.filesystem.services.GamePathService import GamePathService
+from src.domain.game.repositories.GameRepository import GameRepository
 from src.domain.game.repositories.ItemRepository import ItemRepository
 from src.domain.game.repositories.LocationRepository import LocationRepository
 from src.domain.game.repositories.ShopHasItemRepository import ShopHasItemRepository
 from src.domain.game.repositories.ShopRepository import ShopRepository
+from src.domain.game.services.GameService import GameService
 from src.domain.game.services.ItemTrackingService import ItemTrackingService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.profile.repositories.ProfilePostgresRepository import ProfilePostgresRepository
@@ -43,6 +45,13 @@ class DefaultInstaller:
 			)
 		)
 
+		self._container.game_service.override(
+			providers.Factory(
+				GameService,
+				game_repository=self._container.game_repository
+			)
+		)
+
 		self._container.profile_service.override(
 			providers.Factory(
 				ProfileService,
@@ -53,6 +62,7 @@ class DefaultInstaller:
 		self._container.scanner_service.override(
 			providers.Factory(
 				ScannerService,
+				game_repository=self._container.game_repository,
 				item_repository=self._container.item_repository,
 				location_repository=self._container.location_repository,
 				shop_repository=self._container.shop_repository
@@ -70,6 +80,13 @@ class DefaultInstaller:
 		)
 
 	def _install_repositories(self):
+		self._container.game_repository.override(
+			providers.Singleton(
+				GameRepository,
+				session=self._container.db_session_factory()
+			)
+		)
+
 		self._container.item_repository.override(
 			providers.Singleton(
 				ItemRepository,

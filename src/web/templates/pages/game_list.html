@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Games - King's Bounty Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h1>Games</h1>
+			<a href="/games/create" class="btn btn-primary">Create New Game</a>
+		</div>
+
+		{% if games %}
+		<div class="row">
+			{% for game in games %}
+			<div class="col-md-4 mb-3">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">{{ game.name }}</h5>
+						<p class="card-text">
+							<strong>Path:</strong> {{ game.path }}
+						</p>
+						<form method="POST" action="/games/{{ game.id }}/delete" onsubmit="return confirm('Are you sure? This will delete all profiles and data for this game!');">
+							<button type="submit" class="btn btn-sm btn-danger w-100">Delete</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+		{% else %}
+		<div class="alert alert-info">
+			No games found. Create your first game to get started!
+		</div>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

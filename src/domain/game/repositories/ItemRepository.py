@@ -11,6 +11,7 @@ class ItemRepository(IItemRepository):
 
 	def create(self, item: Item) -> Item:
 		mapper = ItemMapper(
+			game_id=item.game_id,
 			kb_id=item.kb_id,
 			name=item.name,
 			price=item.price,
@@ -47,6 +48,7 @@ class ItemRepository(IItemRepository):
 	def create_batch(self, items: list[Item]) -> list[Item]:
 		mappers = [
 			ItemMapper(
+				game_id=item.game_id,
 				kb_id=item.kb_id,
 				name=item.name,
 				price=item.price,
@@ -65,6 +67,7 @@ class ItemRepository(IItemRepository):
 	def _mapper_to_entity(mapper: ItemMapper) -> Item:
 		return Item(
 			id=mapper.id,
+			game_id=mapper.game_id,
 			kb_id=mapper.kb_id,
 			name=mapper.name,
 			price=mapper.price,

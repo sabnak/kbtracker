@@ -11,6 +11,7 @@ class ShopRepository(IShopRepository):
 
 	def create(self, shop: Shop) -> Shop:
 		mapper = ShopMapper(
+			game_id=shop.game_id,
 			kb_id=shop.kb_id,
 			location_id=shop.location_id,
 			name=shop.name,
@@ -47,6 +48,7 @@ class ShopRepository(IShopRepository):
 	def create_batch(self, shops: list[Shop]) -> list[Shop]:
 		mappers = [
 			ShopMapper(
+				game_id=obj.game_id,
 				kb_id=obj.kb_id,
 				location_id=obj.location_id,
 				name=obj.name,
@@ -65,6 +67,7 @@ class ShopRepository(IShopRepository):
 	def _mapper_to_entity(mapper: ShopMapper) -> Shop:
 		return Shop(
 			id=mapper.id,
+			game_id=mapper.game_id,
 			kb_id=mapper.kb_id,
 			location_id=mapper.location_id,
 			name=mapper.name,

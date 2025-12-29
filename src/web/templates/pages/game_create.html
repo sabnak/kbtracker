@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Create Game - King's Bounty Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+	<div class="col-md-6">
+		<h1 class="mb-4">Create New Game</h1>
+
+		<div class="card">
+			<div class="card-body">
+				<form method="POST" action="/games/create">
+					<div class="mb-3">
+						<label for="path" class="form-label">Game Path</label>
+						<select class="form-select" id="path" name="path" required onchange="updateNameField()">
+							<option value="">Select game path...</option>
+							{% if available_game_paths %}
+								{% for path in available_game_paths %}
+								<option value="{{ path }}">{{ path }}</option>
+								{% endfor %}
+							{% else %}
+								<option value="" disabled>No game paths found in /data directory</option>
+							{% endif %}
+						</select>
+						<div class="form-text">Select the game directory from /data</div>
+					</div>
+
+					<div class="mb-3">
+						<label for="name" class="form-label">Game Name</label>
+						<input type="text" class="form-control" id="name" name="name" required>
+						<div class="form-text">Display name for this game (defaults to path)</div>
+					</div>
+
+					<div class="d-grid gap-2">
+						<button type="submit" class="btn btn-primary">Create Game</button>
+						<a href="/games" class="btn btn-secondary">Cancel</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+function updateNameField() {
+	const pathSelect = document.getElementById('path');
+	const nameInput = document.getElementById('name');
+	const selectedPath = pathSelect.value;
+
+	if (selectedPath && !nameInput.value) {
+		nameInput.value = selectedPath;
+	}
+}
+</script>
+{% endblock %}

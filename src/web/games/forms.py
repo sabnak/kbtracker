@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
 
-class ProfileCreateForm(BaseModel):
+class GameCreateForm(BaseModel):
 	name: str = Field(..., min_length=1, max_length=255)
-	game_id: int = Field(..., gt=0)
+	path: str = Field(..., min_length=1, max_length=100)

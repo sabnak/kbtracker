@@ -9,6 +9,7 @@
 
 		<div class="card">
 			<div class="card-body">
+				{% if games %}
 				<form method="POST" action="/profiles/create">
 					<div class="mb-3">
 						<label for="name" class="form-label">Profile Name</label>
@@ -17,18 +18,14 @@
 					</div>
 
 					<div class="mb-3">
-						<label for="game_path" class="form-label">Game Path</label>
-						<select class="form-select" id="game_path" name="game_path" required>
-							<option value="">Select game path...</option>
-							{% if available_game_paths %}
-								{% for path in available_game_paths %}
-								<option value="{{ path }}">{{ path }}</option>
-								{% endfor %}
-							{% else %}
-								<option value="" disabled>No game paths found in /data directory</option>
-							{% endif %}
+						<label for="game_id" class="form-label">Game</label>
+						<select class="form-select" id="game_id" name="game_id" required>
+							<option value="">Select game...</option>
+							{% for game in games %}
+							<option value="{{ game.id }}">{{ game.name }} ({{ game.path }})</option>
+							{% endfor %}
 						</select>
-						<div class="form-text">Select the game path in /data directory</div>
+						<div class="form-text">Select which game this profile is for</div>
 					</div>
 
 					<div class="d-grid gap-2">
@@ -36,6 +33,13 @@
 						<a href="/" class="btn btn-secondary">Cancel</a>
 					</div>
 				</form>
+				{% else %}
+				<div class="alert alert-warning">
+					<h5>No Games Available</h5>
+					<p>Please create a game first before creating a profile.</p>
+					<a href="/games/create" class="btn btn-primary">Create Game</a>
+				</div>
+				{% endif %}
 			</div>
 		</div>
 	</div>

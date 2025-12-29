@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from dependency_injector.wiring import inject, Provide
 from src.web.scanner.forms import ScanForm
 from src.domain.game.services.ScannerService import ScannerService
-from src.domain.profile.services.ProfileService import ProfileService
+from src.domain.profile.IProfileService import IProfileService
 from src.config import Settings
 
 
@@ -17,7 +17,7 @@ templates = Jinja2Templates(directory="src/web/templates")
 async def scan_form(
 	request: Request,
 	profile_id: int,
-	profile_service: ProfileService = Depends(Provide["profile_service"])
+	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
 	profile = profile_service.get_profile(profile_id)
 	if not profile:
@@ -43,7 +43,7 @@ async def scan_game_files(
 	profile_id: int,
 	language: str = Form(...),
 	scanner_service: ScannerService = Depends(Provide["scanner_service"]),
-	profile_service: ProfileService = Depends(Provide["profile_service"])
+	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
 	profile = profile_service.get_profile(profile_id)
 	if not profile:
@@ -53,7 +53,7 @@ async def scan_game_files(
 		form_data = ScanForm(language=language)
 
 		result = scanner_service.scan_game_files(
-			game_path=profile.game_path,
+			game_id=profile.game_id,
 			language=form_data.language.value
 		)
 

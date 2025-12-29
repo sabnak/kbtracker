@@ -11,6 +11,7 @@ class LocationRepository(ILocationRepository):
 
 	def create(self, location: Location) -> Location:
 		mapper = LocationMapper(
+			game_id=location.game_id,
 			kb_id=location.kb_id,
 			name=location.name
 		)
@@ -38,6 +39,7 @@ class LocationRepository(ILocationRepository):
 	def create_batch(self, locations: list[Location]) -> list[Location]:
 		mappers = [
 			LocationMapper(
+				game_id=loc.game_id,
 				kb_id=loc.kb_id,
 				name=loc.name
 			)
@@ -53,6 +55,7 @@ class LocationRepository(ILocationRepository):
 	def _mapper_to_entity(mapper: LocationMapper) -> Location:
 		return Location(
 			id=mapper.id,
+			game_id=mapper.game_id,
 			kb_id=mapper.kb_id,
 			name=mapper.name
 		)

@@ -13,7 +13,7 @@ class ProfilePostgresRepository(IProfileRepository):
 	def create(self, profile: ProfileEntity) -> ProfileEntity:
 		model = ProfileMapper(
 			name=profile.name,
-			game_path=profile.game_path,
+			game_id=profile.game_id,
 			created_at=profile.created_at
 		)
 		self._session.add(model)
@@ -44,6 +44,6 @@ class ProfilePostgresRepository(IProfileRepository):
 		return ProfileEntity(**{
 			"id": mapper.id,
 			"name": mapper.name,
-			"game_path": mapper.game_path,
+			"game_id": mapper.game_id,
 			"created_at": mapper.created_at
 		})

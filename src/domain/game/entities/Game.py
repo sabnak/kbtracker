@@ -2,8 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Location:
+class Game:
 	id: int
-	game_id: int
-	kb_id: str
 	name: str
+	path: str

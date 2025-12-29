@@ -22,10 +22,12 @@ def create_app() -> FastAPI:
 	from src.web.profiles.routes import router as profiles_router
 	from src.web.scanner.routes import router as scanner_router
 	from src.web.items.routes import router as items_router
+	from src.web.games.routes import router as games_router
 
 	app.include_router(profiles_router)
 	app.include_router(scanner_router)
 	app.include_router(items_router)
+	app.include_router(games_router)
 
 	return app
 
