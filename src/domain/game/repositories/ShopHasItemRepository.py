@@ -1,24 +1,61 @@
 from sqlalchemy.orm import Session
+from src.domain.CrudRepository import CrudRepository
 from src.domain.game.entities.ShopHasItem import ShopHasItem
 from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
 from src.domain.game.repositories.mappers.ShopHasItemMapper import ShopHasItemMapper
 
 
-class ShopHasItemRepository(IShopHasItemRepository):
+class ShopHasItemRepository(CrudRepository[ShopHasItem, ShopHasItemMapper], IShopHasItemRepository):
 
 	def __init__(self, session: Session):
-		self._session = session
+		super().__init__(session)
+
+	def _entity_to_mapper(self, entity: ShopHasItem) -> ShopHasItemMapper:
+		"""
+		Convert ShopHasItem entity to ShopHasItemMapper
+
+		:param entity:
+			ShopHasItem entity to convert
+		:return:
+			ShopHasItemMapper instance
+		"""
+		return ShopHasItemMapper(
+			item_id=entity.item_id,
+			shop_id=entity.shop_id,
+			profile_id=entity.profile_id,
+			count=entity.count
+		)
+
+	def _get_entity_type_name(self) -> str:
+		"""
+		Get entity type name
+
+		:return:
+			Entity type name
+		"""
+		return "ShopHasItem"
+
+	def _get_duplicate_identifier(self, entity: ShopHasItem) -> str:
+		"""
+		Get duplicate identifier for ShopHasItem
+
+		:param entity:
+			ShopHasItem entity
+		:return:
+			Identifier string
+		"""
+		return f"item_id={entity.item_id}, shop_id={entity.shop_id}, profile_id={entity.profile_id}"
 
 	def create(self, link: ShopHasItem) -> ShopHasItem:
-		mapper = ShopHasItemMapper(
-			item_id=link.item_id,
-			shop_id=link.shop_id,
-			profile_id=link.profile_id,
-			count=link.count
-		)
-		self._session.add(mapper)
-		self._session.commit()
-		return self._mapper_to_entity(mapper)
+		"""
+		Create new shop-item link
+
+		:param link:
+			ShopHasItem entity to create
+		:return:
+			Created link
+		"""
+		return self._create_single(link)
 
 	def get_by_profile(self, profile_id: int) -> list[ShopHasItem]:
 		mappers = self._session.query(ShopHasItemMapper).filter(
@@ -43,15 +80,25 @@ class ShopHasItemRepository(IShopHasItemRepository):
 		shop_id: int,
 		profile_id: int
 	) -> None:
-		self._session.query(ShopHasItemMapper).filter(
+		"""
+		Delete shop-item link
+
+		:param item_id:
+			Item ID
+		:param shop_id:
+			Shop ID
+		:param profile_id:
+			Profile ID
+		:return:
+		"""
+		query = self._session.query(ShopHasItemMapper).filter(
 			ShopHasItemMapper.item_id == item_id,
 			ShopHasItemMapper.shop_id == shop_id,
 			ShopHasItemMapper.profile_id == profile_id
-		).delete()
-		self._session.commit()
+		)
+		self._delete_by_query(query)
 
-	@staticmethod
-	def _mapper_to_entity(mapper: ShopHasItemMapper) -> ShopHasItem:
+	def _mapper_to_entity(self, mapper: ShopHasItemMapper) -> ShopHasItem:
 		return ShopHasItem(
 			item_id=mapper.item_id,
 			shop_id=mapper.shop_id,

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}{{ error_title }} - King's Bounty Tracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+	<div class="col-md-8">
+		<div class="alert alert-danger">
+			<h4 class="alert-heading">{{ error_title }}</h4>
+			<p class="mb-0"><strong>{{ error_message }}</strong></p>
+			{% if error_details %}
+			<hr>
+			<p class="mb-0">{{ error_details }}</p>
+			{% endif %}
+		</div>
+
+		<div class="d-grid gap-2">
+			<a href="{{ back_url }}" class="btn btn-primary">Go Back</a>
+			<a href="/" class="btn btn-secondary">Go to Home</a>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -8,6 +8,7 @@ from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameService import IGameService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services import ItemTrackingService
+from src.domain.RepositoryExceptions import DuplicateEntityException, DatabaseOperationException
 
 
 router = APIRouter(tags=["games"])
@@ -143,6 +144,29 @@ async def scan_game_files(
 				"languages": languages,
 				"success": True,
 				"result": result
+			}
+		)
+	except DuplicateEntityException as e:
+		return templates.TemplateResponse(
+			"pages/scan.html",
+			{
+				"request": request,
+				"game": game,
+				"languages": languages,
+				"error": (
+					f"Data already exists: {e.message}. "
+					f"This game may have already been scanned."
+				)
+			}
+		)
+	except DatabaseOperationException as e:
+		return templates.TemplateResponse(
+			"pages/scan.html",
+			{
+				"request": request,
+				"game": game,
+				"languages": languages,
+				"error": f"Database error: {e.message}"
 			}
 		)
 	except NotImplementedError as e:

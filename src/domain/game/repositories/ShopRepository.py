@@ -1,27 +1,63 @@
 from sqlalchemy.orm import Session
+from src.domain.CrudRepository import CrudRepository
 from src.domain.game.entities.Shop import Shop
 from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.repositories.mappers.ShopMapper import ShopMapper
 
 
-class ShopRepository(IShopRepository):
+class ShopRepository(CrudRepository[Shop, ShopMapper], IShopRepository):
 
 	def __init__(self, session: Session):
-		self._session = session
+		super().__init__(session)
+
+	def _entity_to_mapper(self, entity: Shop) -> ShopMapper:
+		"""
+		Convert Shop entity to ShopMapper
+
+		:param entity:
+			Shop entity to convert
+		:return:
+			ShopMapper instance
+		"""
+		return ShopMapper(
+			game_id=entity.game_id,
+			kb_id=entity.kb_id,
+			location_id=entity.location_id,
+			name=entity.name,
+			hint=entity.hint,
+			msg=entity.msg
+		)
+
+	def _get_entity_type_name(self) -> str:
+		"""
+		Get entity type name
+
+		:return:
+			Entity type name
+		"""
+		return "Shop"
+
+	def _get_duplicate_identifier(self, entity: Shop) -> str:
+		"""
+		Get duplicate identifier for Shop
+
+		:param entity:
+			Shop entity
+		:return:
+			Identifier string
+		"""
+		return f"game_id={entity.game_id}, kb_id={entity.kb_id}"
 
 	def create(self, shop: Shop) -> Shop:
-		mapper = ShopMapper(
-			game_id=shop.game_id,
-			kb_id=shop.kb_id,
-			location_id=shop.location_id,
-			name=shop.name,
-			hint=shop.hint,
-			msg=shop.msg
-		)
-		self._session.add(mapper)
-		self._session.commit()
-		self._session.refresh(mapper)
-		return self._mapper_to_entity(mapper)
+		"""
+		Create new shop
+
+		:param shop:
+			Shop entity to create
+		:return:
+			Created shop with database ID
+		"""
+		return self._create_single(shop)
 
 	def get_by_id(self, shop_id: int) -> Shop | None:
 		mapper = self._session.query(ShopMapper).filter(
@@ -46,25 +82,17 @@ class ShopRepository(IShopRepository):
 		return [self._mapper_to_entity(m) for m in mappers]
 
 	def create_batch(self, shops: list[Shop]) -> list[Shop]:
-		mappers = [
-			ShopMapper(
-				game_id=obj.game_id,
-				kb_id=obj.kb_id,
-				location_id=obj.location_id,
-				name=obj.name,
-				hint=obj.hint,
-				msg=obj.msg
-			)
-			for obj in shops
-		]
-		self._session.add_all(mappers)
-		self._session.commit()
-		for mapper in mappers:
-			self._session.refresh(mapper)
-		return [self._mapper_to_entity(m) for m in mappers]
+		"""
+		Create multiple shops
 
-	@staticmethod
-	def _mapper_to_entity(mapper: ShopMapper) -> Shop:
+		:param shops:
+			List of shop entities to create
+		:return:
+			List of created shops with database IDs
+		"""
+		return self._create_batch(shops)
+
+	def _mapper_to_entity(self, mapper: ShopMapper) -> Shop:
 		return Shop(
 			id=mapper.id,
 			game_id=mapper.game_id,

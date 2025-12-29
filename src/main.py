@@ -3,6 +3,16 @@ from fastapi.staticfiles import StaticFiles
 from src.core.Container import Container
 from src.core.DefaultInstaller import DefaultInstaller
 from src.config import Settings
+from src.web.exception_handlers import (
+	duplicate_entity_exception_handler,
+	entity_not_found_exception_handler,
+	database_operation_exception_handler
+)
+from src.domain.RepositoryExceptions import (
+	DuplicateEntityException,
+	EntityNotFoundException,
+	DatabaseOperationException
+)
 
 
 def create_app() -> FastAPI:
@@ -16,6 +26,19 @@ def create_app() -> FastAPI:
 
 	app = FastAPI(title="King's Bounty Tracker", version="1.0.0")
 	app.container = container
+
+	app.add_exception_handler(
+		DuplicateEntityException,
+		duplicate_entity_exception_handler
+	)
+	app.add_exception_handler(
+		EntityNotFoundException,
+		entity_not_found_exception_handler
+	)
+	app.add_exception_handler(
+		DatabaseOperationException,
+		database_operation_exception_handler
+	)
 
 	app.mount("/static", StaticFiles(directory="src/web/static"), name="static")
 
