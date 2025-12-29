@@ -40,7 +40,7 @@ class TestKFSLocationsAndShopsParser:
 
 		result = parser.parse()
 
-		# Find amasonia location with shop 1173
+		# Find amasonia location with shop amasonia_1173
 		amasonia_entry = next(
 			(entry for entry in result if entry['location'].kb_id == 'amasonia'),
 			None
@@ -48,9 +48,9 @@ class TestKFSLocationsAndShopsParser:
 
 		assert amasonia_entry is not None
 
-		# Find shop 1173
+		# Find shop amasonia_1173
 		shop_1173 = next(
-			(shop for shop in amasonia_entry['shops'] if shop.kb_id == 1173),
+			(shop for shop in amasonia_entry['shops'] if shop.kb_id == 'amasonia_1173'),
 			None
 		)
 
@@ -144,7 +144,8 @@ class TestKFSLocationsAndShopsParser:
 			assert location.name != '', f"Location {location.kb_id} has empty name"
 
 			for shop in entry['shops']:
-				assert shop.kb_id > 0, f"Shop has invalid kb_id: {shop.kb_id}"
+				assert shop.kb_id != '', f"Shop has empty kb_id"
+				assert '_' in shop.kb_id, f"Shop kb_id must be composite: {shop.kb_id}"
 				assert shop.name != '', f"Shop {shop.kb_id} has empty name"
 
 	def test_location_and_shop_ids_are_zero(self):

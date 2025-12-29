@@ -112,14 +112,16 @@ class KFSLocationsAndShopsParser:
 			if not all(field in fields for field in required_fields):
 				continue
 
-			# Extract location_kb_id and shop_kb_id from composite key
+			# Extract location_kb_id from composite key
 			parts = composite_key.rsplit('_', 1)
 			if len(parts) != 2:
 				continue
 
 			location_kb_id = parts[0]
+
+			# Validate that last part is numeric (shop number)
 			try:
-				shop_kb_id = int(parts[1])
+				int(parts[1])
 			except ValueError:
 				continue
 
@@ -145,11 +147,11 @@ class KFSLocationsAndShopsParser:
 					'shops': []
 				}
 
-			# Create shop entity
+			# Create shop entity with composite key as kb_id
 			shop = Shop(
 				id=0,
 				game_id=self._game_id,
-				kb_id=shop_kb_id,
+				kb_id=composite_key,
 				location_id=0,
 				name=shop_name,
 				hint=shop_hint if shop_hint else None,

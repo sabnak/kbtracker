@@ -57,7 +57,7 @@ CREATE INDEX idx_item_kb_id ON item(kb_id);
 CREATE TABLE shop (
 	id SERIAL PRIMARY KEY,
 	game_id INTEGER NOT NULL,
-	kb_id INTEGER NOT NULL,
+	kb_id VARCHAR(255) NOT NULL,
 	location_id INTEGER NOT NULL,
 	name VARCHAR(255) NOT NULL,
 	hint TEXT,

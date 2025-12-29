@@ -5,7 +5,7 @@ from dataclasses import dataclass
 class Shop:
 	id: int
 	game_id: int
-	kb_id: int
+	kb_id: str
 	location_id: int
 	name: str
 	hint: str | None
