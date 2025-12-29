@@ -111,26 +111,6 @@ docker-compose down -v
 1. Click "Tracked" on your profile
 2. View all items you've recorded with their locations
 
-## Project Structure
-
-```
-kbtracker/
-├── docker-compose/          # Docker configuration
-│   └── app/
-│       └── Dockerfile
-├── src/
-│   ├── domain/              # Domain layer (entities, interfaces, services)
-│   ├── infrastructure/      # Infrastructure layer (repositories, database)
-│   ├── web/                 # Web layer (routes, templates, static files)
-│   ├── di/                  # Dependency injection configuration
-│   ├── config.py            # Application configuration
-│   └── main.py              # Application entry point
-├── docker-compose.yml       # Docker services definition
-├── requirements.txt         # Python dependencies
-├── .env                     # Environment variables
-└── README.md               # This file
-```
-
 ## Development
 
 ### Running Tests
@@ -146,16 +126,6 @@ The application follows domain-driven design principles:
 3. **Web Layer**: Add routes and templates
 4. **Dependency Injection**: Wire new components in AppInstaller
 
-## Roadmap
-
-- [ ] Implement game file scanner (KFS archive parsing)
-- [ ] Add automated save file analysis
-- [ ] Implement item filtering by type
-- [ ] Add export functionality
-- [ ] Create API endpoints for external tools
-- [ ] Add unit and integration tests
-- [ ] Implement database migrations with Alembic
-
 ## Game Data Files
 
 The application expects game data files in this format:
@@ -163,44 +133,14 @@ The application expects game data files in this format:
 ```
 /data/
 ├── darkside/
-│   ├── loc_ses.kfs          # Russian version
-│   ├── loc_ses_eng.kfs      # English version
-│   ├── loc_ses_ger.kfs      # German version
-│   └── loc_ses_pol.kfs      # Polish version
+│   ├── sessions/
+│   │   ├── ses.kfs              # Game data
+│   │   ├── loc_ses.kfs          # Russian localization
+│   │   ├── loc_ses_eng.kfs      # English localization
+│   │   ├── loc_ses_ger.kfs      # German localization
+│   │   └── loc_ses_pol.kfs      # Polish localization
 └── other_games/
     └── ...
 ```
 
-KFS files are ZIP archives containing:
-- `rus_items.lng` - Item definitions
-- `rus_atoms_info.lng` - Merchant/object definitions
-
-## Troubleshooting
-
-### Database Connection Issues
-
-If you see database connection errors:
-1. Check that PostgreSQL container is running: `docker-compose ps`
-2. Wait a few seconds for the health check to pass
-3. Restart the app container: `docker-compose restart app`
-
-### Port Already in Use
-
-If port 9333 is already in use:
-1. Edit `.env` and change `APP_PORT` to a different port
-2. Restart: `docker-compose down && docker-compose up -d`
-
-### Game Files Not Found
-
-Ensure your game directories are correctly mounted in `docker-compose.yml`:
-- Paths must be absolute
-- Use `:ro` (read-only) flag for safety
-- The directory structure inside the container should match the game version name
-
-## License
-
-This project is for personal use. King's Bounty is a trademark of its respective owners.
-
-## Contributing
-
-This is a personal project, but suggestions and feedback are welcome!
+KFS files are ZIP archives containing.
