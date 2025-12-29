@@ -193,6 +193,8 @@ async def list_items(
 	hint_regex: str = Query(default=""),
 	propbit: str = Query(default=""),
 	item_set_id_str: str = Query(default="", alias="item_set_id"),
+	sort_by: str = Query(default="name"),
+	sort_order: str = Query(default="asc"),
 	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
 	game_service: IGameService = Depends(Provide["game_service"])
 ):
@@ -212,6 +214,13 @@ async def list_items(
 	hint_query = hint_regex.strip() if hint_regex.strip() else None
 	propbit_query = propbit.strip() if propbit.strip() else None
 
+	# Validate sort parameters
+	allowed_sort_fields = ["name", "price", "level"]
+	sort_field = sort_by if sort_by in allowed_sort_fields else "name"
+
+	allowed_sort_orders = ["asc", "desc"]
+	sort_direction = sort_order.lower() if sort_order.lower() in allowed_sort_orders else "asc"
+
 	# Fetch dropdown options
 	available_levels = item_tracking_service.get_available_levels(game_id)
 	available_propbits = item_tracking_service.get_available_propbits()
@@ -226,7 +235,9 @@ async def list_items(
 			level=level,
 			hint_regex=hint_query,
 			propbit=propbit_query,
-			item_set_id=item_set_id
+			item_set_id=item_set_id,
+			sort_by=sort_field,
+			sort_order=sort_direction
 		)
 	except InvalidRegexException as e:
 		error_message = f"Invalid regex pattern: {e.message}"
@@ -244,6 +255,9 @@ async def list_items(
 			"hint_regex": hint_regex,
 			"selected_propbit": propbit,
 			"selected_set_id": item_set_id,
+			# Sort state
+			"sort_by": sort_field,
+			"sort_order": sort_direction,
 			# Dropdown options
 			"available_levels": available_levels,
 			"available_propbits": available_propbits,

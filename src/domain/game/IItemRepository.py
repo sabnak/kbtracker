@@ -75,12 +75,21 @@ class IItemRepository(ABC):
 		pass
 
 	@abstractmethod
-	def list_by_game_id(self, game_id: int) -> list[Item]:
+	def list_by_game_id(
+		self,
+		game_id: int,
+		sort_by: str = "name",
+		sort_order: str = "asc"
+	) -> list[Item]:
 		"""
 		Get all items for a specific game
 
 		:param game_id:
 			Game ID
+		:param sort_by:
+			Field to sort by (name, price, level)
+		:param sort_order:
+			Sort direction (asc, desc)
 		:return:
 			List of items for the game
 		"""
@@ -120,7 +129,9 @@ class IItemRepository(ABC):
 		level: int | None = None,
 		hint_regex: str | None = None,
 		propbit: str | None = None,
-		item_set_id: int | None = None
+		item_set_id: int | None = None,
+		sort_by: str = "name",
+		sort_order: str = "asc"
 	) -> list[Item]:
 		"""
 		Search items with multiple filter criteria using AND logic
@@ -137,6 +148,10 @@ class IItemRepository(ABC):
 			Optional propbit value (matches if ANY propbit matches)
 		:param item_set_id:
 			Optional item set ID filter
+		:param sort_by:
+			Field to sort by (name, price, level)
+		:param sort_order:
+			Sort direction (asc, desc)
 		:return:
 			List of items matching all provided criteria
 		"""

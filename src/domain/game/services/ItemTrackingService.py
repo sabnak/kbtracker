@@ -50,7 +50,9 @@ class ItemTrackingService:
 		level: int | None = None,
 		hint_regex: str | None = None,
 		propbit: str | None = None,
-		item_set_id: int | None = None
+		item_set_id: int | None = None,
+		sort_by: str = "name",
+		sort_order: str = "asc"
 	) -> list[dict]:
 		"""
 		Get items with their set information using multiple filters
@@ -67,6 +69,10 @@ class ItemTrackingService:
 			Optional propbit type filter
 		:param item_set_id:
 			Optional item set ID filter
+		:param sort_by:
+			Field to sort by (name, price, level)
+		:param sort_order:
+			Sort direction (asc, desc)
 		:return:
 			List of dictionaries with item and set data
 		"""
@@ -88,10 +94,16 @@ class ItemTrackingService:
 					level=level,
 					hint_regex=hint_regex,
 					propbit=propbit,
-					item_set_id=item_set_id
+					item_set_id=item_set_id,
+					sort_by=sort_by,
+					sort_order=sort_order
 				)
 			else:
-				items = self._item_repository.list_by_game_id(game_id)
+				items = self._item_repository.list_by_game_id(
+					game_id=game_id,
+					sort_by=sort_by,
+					sort_order=sort_order
+				)
 		except Exception as e:
 			# Check if it's a regex error (PostgreSQL will throw specific error)
 			if "invalid regular expression" in str(e).lower():

@@ -100,11 +100,20 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		"""
 		return self._create_batch(items)
 
-	def list_by_game_id(self, game_id: int) -> list[Item]:
+	def list_by_game_id(
+		self,
+		game_id: int,
+		sort_by: str = "name",
+		sort_order: str = "asc"
+	) -> list[Item]:
 		with self._session_factory() as session:
-			mappers = session.query(ItemMapper).filter(
+			query = session.query(ItemMapper).filter(
 				ItemMapper.game_id == game_id
-			).all()
+			)
+
+			query = self._apply_sorting(query, sort_by, sort_order)
+
+			mappers = query.all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
 	def search_by_name_and_game(self, query: str, game_id: int) -> list[Item]:
@@ -137,7 +146,9 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		level: int | None = None,
 		hint_regex: str | None = None,
 		propbit: str | None = None,
-		item_set_id: int | None = None
+		item_set_id: int | None = None,
+		sort_by: str = "name",
+		sort_order: str = "asc"
 	) -> list[Item]:
 		"""
 		Search items with multiple filter criteria using AND logic
@@ -154,6 +165,10 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			Optional propbit value (matches if ANY propbit matches)
 		:param item_set_id:
 			Optional item set ID filter
+		:param sort_by:
+			Field to sort by (name, price, level)
+		:param sort_order:
+			Sort direction (asc, desc)
 		:return:
 			List of items matching all provided criteria
 		"""
@@ -175,8 +190,34 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			if item_set_id is not None:
 				query = query.filter(ItemMapper.item_set_id == item_set_id)
 
+			query = self._apply_sorting(query, sort_by, sort_order)
+
 			mappers = query.all()
 			return [self._mapper_to_entity(m) for m in mappers]
+
+	def _apply_sorting(self, query, sort_by: str, sort_order: str):
+		"""
+		Apply ORDER BY clause to SQLAlchemy query
+
+		:param query:
+			SQLAlchemy query object
+		:param sort_by:
+			Field to sort by (name, price, level)
+		:param sort_order:
+			Sort direction (asc, desc)
+		:return:
+			Query with ORDER BY applied
+		"""
+		sort_column = {
+			"name": ItemMapper.name,
+			"price": ItemMapper.price,
+			"level": ItemMapper.level
+		}.get(sort_by, ItemMapper.name)
+
+		if sort_order.lower() == "desc":
+			return query.order_by(sort_column.desc())
+		else:
+			return query.order_by(sort_column.asc())
 
 	def get_distinct_levels(self, game_id: int) -> list[int]:
 		"""
