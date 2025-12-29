@@ -1,7 +1,9 @@
 from src.domain.CrudRepository import CrudRepository
 from src.domain.game.entities.Item import Item
+from src.domain.game.entities.Propbit import Propbit
 from src.domain.game.IItemRepository import IItemRepository
 from src.domain.game.repositories.mappers.ItemMapper import ItemMapper
+from src.domain.exceptions import InvalidPropbitException
 
 
 class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
@@ -15,6 +17,10 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		:return:
 			ItemMapper instance
 		"""
+		propbits_str = None
+		if entity.propbits is not None:
+			propbits_str = self._convert_propbits_to_strings(entity.propbits)
+
 		return ItemMapper(
 			game_id=entity.game_id,
 			item_set_id=entity.item_set_id,
@@ -22,7 +28,7 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			name=entity.name,
 			price=entity.price,
 			hint=entity.hint,
-			propbits=entity.propbits,
+			propbits=propbits_str,
 			level=entity.level
 		)
 
@@ -124,7 +130,58 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			).all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
+	def _convert_propbits_to_enum(self, propbits: list[str]) -> list[Propbit]:
+		"""
+		Convert list of propbit strings to Propbit enums
+
+		:param propbits:
+			List of propbit string values from database
+		:return:
+			List of Propbit enum values
+		:raises InvalidPropbitException:
+			When any propbit value is invalid
+		"""
+		result = []
+		valid_values = [pb.value for pb in Propbit]
+
+		for propbit_str in propbits:
+			try:
+				result.append(Propbit(propbit_str))
+			except ValueError as e:
+				raise InvalidPropbitException(
+					invalid_value=propbit_str,
+					valid_values=valid_values,
+					original_exception=e
+				)
+
+		return result
+
+	def _convert_propbits_to_strings(self, propbits: list[Propbit]) -> list[str]:
+		"""
+		Convert list of Propbit enums to strings for database
+
+		:param propbits:
+			List of Propbit enum values
+		:return:
+			List of string values
+		"""
+		return [pb.value for pb in propbits]
+
 	def _mapper_to_entity(self, mapper: ItemMapper) -> Item:
+		"""
+		Convert ItemMapper to Item entity
+
+		:param mapper:
+			ItemMapper to convert
+		:return:
+			Item entity
+		:raises InvalidPropbitException:
+			When mapper contains invalid propbit values
+		"""
+		propbits_enum = None
+		if mapper.propbits is not None:
+			propbits_enum = self._convert_propbits_to_enum(mapper.propbits)
+
 		return Item(
 			id=mapper.id,
 			game_id=mapper.game_id,
@@ -133,6 +190,6 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			name=mapper.name,
 			price=mapper.price,
 			hint=mapper.hint,
-			propbits=mapper.propbits,
+			propbits=propbits_enum,
 			level=mapper.level
 		)

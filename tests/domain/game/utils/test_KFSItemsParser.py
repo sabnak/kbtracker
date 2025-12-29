@@ -2,6 +2,7 @@ import pytest
 from pathlib import Path
 from src.domain.game.utils.KFSItemsParser import KFSItemsParser
 from src.domain.game.entities.Item import Item
+from src.domain.game.entities.Propbit import Propbit
 
 
 class TestKFSItemsParser:
@@ -57,7 +58,7 @@ class TestKFSItemsParser:
 		assert snake_belt.name != ''
 		assert snake_belt.price == 15000
 		assert snake_belt.hint is not None
-		assert snake_belt.propbits == ['belt']
+		assert snake_belt.propbits == [Propbit.BELT]
 
 	def test_propbits_parsing(self):
 		"""
@@ -72,7 +73,7 @@ class TestKFSItemsParser:
 		items_with_propbits = [item for item in items if item.propbits is not None]
 		assert len(items_with_propbits) > 0
 
-		single_propbit = [item for item in items if item.propbits == ['belt']]
+		single_propbit = [item for item in items if item.propbits == [Propbit.BELT]]
 		assert len(single_propbit) > 0
 
 	def test_item_with_no_hint(self):
@@ -136,8 +137,8 @@ class TestKFSItemsParser:
 
 		assert len(multi_propbit_items) > 0
 		for item in multi_propbit_items:
-			assert all(isinstance(pb, str) for pb in item.propbits)
-			assert all(pb.strip() == pb for pb in item.propbits)
+			assert all(isinstance(pb, Propbit) for pb in item.propbits)
+			assert all(pb.value.strip() == pb.value for pb in item.propbits)
 
 	def test_parse_extracts_set_metadata(self):
 		"""

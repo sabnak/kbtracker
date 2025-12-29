@@ -2,7 +2,9 @@ import os
 import zipfile
 
 from src.domain.game.entities.Item import Item
+from src.domain.game.entities.Propbit import Propbit
 from src.domain.game.utils.KFSExtractor import KFSExtractor
+from src.domain.exceptions import InvalidPropbitException
 
 
 class KFSItemsParser:
@@ -226,6 +228,33 @@ class KFSItemsParser:
 
 		return item_data, i
 
+	def _parse_propbits(self, propbits_str: str) -> list[Propbit]:
+		"""
+		Parse comma-separated propbits string into Propbit enum list
+
+		:param propbits_str:
+			Comma-separated string of propbit values
+		:return:
+			List of Propbit enum values
+		:raises InvalidPropbitException:
+			When any propbit value is invalid
+		"""
+		propbit_strings = [p.strip() for p in propbits_str.split(',')]
+		result = []
+		valid_values = [pb.value for pb in Propbit]
+
+		for propbit_str in propbit_strings:
+			try:
+				result.append(Propbit(propbit_str))
+			except ValueError as e:
+				raise InvalidPropbitException(
+					invalid_value=propbit_str,
+					valid_values=valid_values,
+					original_exception=e
+				)
+
+		return result
+
 	def _build_item_entity(
 		self,
 		item_data: dict[str, any],
@@ -240,6 +269,8 @@ class KFSItemsParser:
 			Dictionary of localization strings
 		:return:
 			Item entity or None if name lookup fails
+		:raises InvalidPropbitException:
+			When item_data contains invalid propbit values
 		"""
 		kb_id = item_data.get('kb_id', '')
 		label = item_data.get('label', '')
@@ -266,7 +297,7 @@ class KFSItemsParser:
 		propbits_str = item_data.get('propbits', '')
 		propbits = None
 		if propbits_str:
-			propbits = [p.strip() for p in propbits_str.split(',')]
+			propbits = self._parse_propbits(propbits_str)
 
 		return Item(
 			id=0,

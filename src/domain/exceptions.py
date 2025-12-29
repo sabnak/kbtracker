@@ -97,3 +97,36 @@ class DatabaseOperationException(RepositoryException):
 	@property
 	def details(self) -> str:
 		return self._details
+
+
+class InvalidPropbitException(KBTrackerException):
+	"""
+	Raised when an invalid propbit value is encountered
+	"""
+
+	def __init__(
+		self,
+		invalid_value: str,
+		valid_values: list[str] | None = None,
+		original_exception: Exception | None = None
+	):
+		self._invalid_value = invalid_value
+		self._valid_values = valid_values
+
+		if valid_values:
+			message = (
+				f"Invalid propbit value '{invalid_value}'. "
+				f"Valid values: {', '.join(valid_values)}"
+			)
+		else:
+			message = f"Invalid propbit value '{invalid_value}'"
+
+		super().__init__(message, original_exception)
+
+	@property
+	def invalid_value(self) -> str:
+		return self._invalid_value
+
+	@property
+	def valid_values(self) -> list[str] | None:
+		return self._valid_values
