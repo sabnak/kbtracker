@@ -98,6 +98,45 @@ class ShopHasItemRepository(CrudRepository[ShopHasItem, ShopHasItemMapper], ISho
 		)
 		self._delete_by_query(query)
 
+	def update_count(
+		self,
+		item_id: int,
+		shop_id: int,
+		profile_id: int,
+		new_count: int
+	) -> ShopHasItem:
+		"""
+		Update count for item-shop link
+
+		:param item_id:
+			Item ID
+		:param shop_id:
+			Shop ID
+		:param profile_id:
+			Profile ID
+		:param new_count:
+			New count value
+		:return:
+			Updated link
+		"""
+		mapper = self._session.query(ShopHasItemMapper).filter(
+			ShopHasItemMapper.item_id == item_id,
+			ShopHasItemMapper.shop_id == shop_id,
+			ShopHasItemMapper.profile_id == profile_id
+		).first()
+
+		if not mapper:
+			from src.domain.exceptions import EntityNotFoundException
+			raise EntityNotFoundException(
+				f"ShopHasItem not found: item_id={item_id}, shop_id={shop_id}, profile_id={profile_id}"
+			)
+
+		mapper.count = new_count
+		self._session.commit()
+		self._session.refresh(mapper)
+
+		return self._mapper_to_entity(mapper)
+
 	def _mapper_to_entity(self, mapper: ShopHasItemMapper) -> ShopHasItem:
 		return ShopHasItem(
 			item_id=mapper.item_id,

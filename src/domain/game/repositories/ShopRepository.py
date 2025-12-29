@@ -77,6 +77,20 @@ class ShopRepository(CrudRepository[Shop, ShopMapper], IShopRepository):
 		).all()
 		return [self._mapper_to_entity(m) for m in mappers]
 
+	def list_by_game_id(self, game_id: int) -> list[Shop]:
+		"""
+		Get all shops for a specific game
+
+		:param game_id:
+			Game ID
+		:return:
+			List of shops for the game
+		"""
+		mappers = self._session.query(ShopMapper).filter(
+			ShopMapper.game_id == game_id
+		).all()
+		return [self._mapper_to_entity(m) for m in mappers]
+
 	def list_all(self) -> list[Shop]:
 		mappers = self._session.query(ShopMapper).all()
 		return [self._mapper_to_entity(m) for m in mappers]

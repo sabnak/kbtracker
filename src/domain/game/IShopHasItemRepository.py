@@ -65,3 +65,27 @@ class IShopHasItemRepository(ABC):
 		:return:
 		"""
 		pass
+
+	@abstractmethod
+	def update_count(
+		self,
+		item_id: int,
+		shop_id: int,
+		profile_id: int,
+		new_count: int
+	) -> ShopHasItem:
+		"""
+		Update count for item-shop link
+
+		:param item_id:
+			Item ID
+		:param shop_id:
+			Shop ID
+		:param profile_id:
+			Profile ID
+		:param new_count:
+			New count value
+		:return:
+			Updated link
+		"""
+		pass

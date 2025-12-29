@@ -53,6 +53,18 @@ class IShopRepository(ABC):
 		pass
 
 	@abstractmethod
+	def list_by_game_id(self, game_id: int) -> list[Shop]:
+		"""
+		Get all shops for a specific game
+
+		:param game_id:
+			Game ID
+		:return:
+			List of shops for the game
+		"""
+		pass
+
+	@abstractmethod
 	def list_all(self) -> list[Shop]:
 		"""
 		Get all shops
