@@ -9,6 +9,7 @@ from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameService import IGameService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services import ItemTrackingService
+from src.domain.profile.IProfileService import IProfileService
 from src.domain.exceptions import DuplicateEntityException, DatabaseOperationException, InvalidRegexException
 
 
@@ -266,3 +267,24 @@ async def list_items(
 			"error": error_message
 		}
 	)
+
+
+@router.get("/api/games/{game_id}/profiles")
+@inject
+async def get_profiles_by_game(
+	game_id: int,
+	profile_service: IProfileService = Depends(Provide["profile_service"])
+):
+	"""
+	Get all profiles for a specific game
+
+	:param game_id:
+		The game ID to filter profiles by
+	:param profile_service:
+		Profile service dependency
+	:return:
+		List of profile objects with id and name
+	"""
+	all_profiles = profile_service.list_profiles()
+	game_profiles = [p for p in all_profiles if p.game_id == game_id]
+	return [{"id": p.id, "name": p.name} for p in game_profiles]

@@ -123,27 +123,3 @@ async def track_item(
 	)
 
 	return RedirectResponse(url=f"/profiles/{profile_id}/tracked", status_code=303)
-
-
-@router.get("/profiles/{profile_id}/tracked", response_class=HTMLResponse)
-@inject
-async def tracked_items(
-	request: Request,
-	profile_id: int,
-	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
-	profile_service: IProfileService = Depends(Provide["profile_service"])
-):
-	profile = profile_service.get_profile(profile_id)
-	if not profile:
-		return RedirectResponse(url="/", status_code=303)
-
-	tracked = item_tracking_service.get_tracked_items(profile_id)
-
-	return templates.TemplateResponse(
-		"pages/tracked_items.html",
-		{
-			"request": request,
-			"profile": profile,
-			"tracked_items": tracked
-		}
-	)

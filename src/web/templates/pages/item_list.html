@@ -4,8 +4,28 @@
 
 {% block content %}
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-12" data-game-id="{{ game.id }}">
 		<h1 class="mb-4">Items for {{ game.name }}</h1>
+
+		<!-- Profile Selection Section -->
+		<div class="card mb-3">
+			<div class="card-body">
+				<div class="row align-items-center">
+					<div class="col-md-4">
+						<label for="profile-select" class="form-label">Tracking Profile</label>
+						<select id="profile-select" class="form-select">
+							<option value="">None (No Tracking)</option>
+							<!-- Populated by JavaScript -->
+						</select>
+					</div>
+					<div class="col-md-8">
+						<small class="text-muted">
+							Select a profile to enable item tracking. Your selection is saved automatically.
+						</small>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<div class="card mb-4">
 			<div class="card-body">
@@ -130,12 +150,13 @@
 							</span>
 						</th>
 						<th>Type</th>
+						<th id="tracking-column-header" class="d-none">Tracked Shops</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for item_data in items_with_sets %}
 					{% set item = item_data.item %}
-					<tr>
+					<tr data-item-id="{{ item.id }}">
 						<td>
 							<strong>{{ item.name }}</strong><br>
 							{% if item.hint %}
@@ -176,6 +197,7 @@
 							-
 							{% endif %}
 						</td>
+						<td class="tracking-cell d-none"></td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -194,7 +216,7 @@
 
 		<div class="alert alert-secondary mt-4">
 			<h5>Note:</h5>
-			<p>This is a read-only view of game items. To track items to shops, visit a profile's "View Tracked Items" page.</p>
+			<p>Select a tracking profile above to track items to shops. Filter and sort items to find what you're looking for.</p>
 		</div>
 
 		<div class="mt-3">
@@ -202,6 +224,12 @@
 		</div>
 	</div>
 </div>
+
+<script>
+	const GAME_ID = {{ game.id }};
+</script>
+<script src="{{ url_for('static', path='/js/cookie-utils.js') }}"></script>
+<script src="{{ url_for('static', path='/js/item-tracking-enhanced.js') }}"></script>
 
 <script>
 	// Item list sorting functionality

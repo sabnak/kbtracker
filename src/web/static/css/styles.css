@@ -135,3 +135,36 @@ footer {
 .sortable:hover .hover-icon {
 	opacity: 0.4;
 }
+
+
+/* Tracking Column Styles */
+.tracking-cell {
+	min-width: 200px;
+	max-width: 300px;
+	vertical-align: top;
+	padding: 0.5rem;
+}
+
+.tracked-shops-list {
+	font-size: 0.85rem;
+}
+
+.tracked-shop-item {
+	gap: 0.25rem;
+}
+
+.tracked-shop-item small {
+	max-width: 100px;
+}
+
+.add-shop-form select {
+	font-size: 0.85rem;
+}
+
+.add-shop-form .gap-1 {
+	gap: 0.25rem;
+}
+
+#profile-select {
+	max-width: 300px;
+}
