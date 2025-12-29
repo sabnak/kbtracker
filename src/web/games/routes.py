@@ -8,7 +8,7 @@ from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameService import IGameService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services import ItemTrackingService
-from src.domain.RepositoryExceptions import DuplicateEntityException, DatabaseOperationException
+from src.domain.exceptions import DuplicateEntityException, DatabaseOperationException
 
 
 router = APIRouter(tags=["games"])

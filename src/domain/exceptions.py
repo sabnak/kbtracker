@@ -1,6 +1,6 @@
-class RepositoryException(Exception):
+class KBTrackerException(Exception):
 	"""
-	Base exception for all repository-related errors
+	Base exception for all KB Tracker application errors
 	"""
 
 	def __init__(self, message: str, original_exception: Exception | None = None):
@@ -15,6 +15,13 @@ class RepositoryException(Exception):
 	@property
 	def original_exception(self) -> Exception | None:
 		return self._original_exception
+
+
+class RepositoryException(KBTrackerException):
+	"""
+	Base exception for all repository-related errors
+	"""
+	pass
 
 
 class DuplicateEntityException(RepositoryException):

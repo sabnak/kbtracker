@@ -3,7 +3,7 @@ from typing import TypeVar, Generic
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
-from src.domain.RepositoryExceptions import (
+from src.domain.exceptions import (
 	DuplicateEntityException,
 	DatabaseOperationException
 )

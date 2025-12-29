@@ -2,7 +2,7 @@ from fastapi import Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from src.domain.RepositoryExceptions import (
+from src.domain.exceptions import (
 	DuplicateEntityException,
 	EntityNotFoundException,
 	DatabaseOperationException

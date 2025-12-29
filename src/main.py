@@ -8,7 +8,7 @@ from src.web.exception_handlers import (
 	entity_not_found_exception_handler,
 	database_operation_exception_handler
 )
-from src.domain.RepositoryExceptions import (
+from src.domain.exceptions import (
 	DuplicateEntityException,
 	EntityNotFoundException,
 	DatabaseOperationException
