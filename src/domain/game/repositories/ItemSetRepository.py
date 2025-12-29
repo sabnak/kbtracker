@@ -75,6 +75,24 @@ class ItemSetRepository(CrudRepository[ItemSet, ItemSetMapper], IItemSetReposito
 			).all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
+	def list_by_ids(self, item_set_ids: list[int]) -> list[ItemSet]:
+		"""
+		Get multiple item sets by their IDs
+
+		:param item_set_ids:
+			List of item set IDs
+		:return:
+			List of item sets
+		"""
+		if not item_set_ids:
+			return []
+
+		with self._session_factory() as session:
+			mappers = session.query(ItemSetMapper).filter(
+				ItemSetMapper.id.in_(item_set_ids)
+			).all()
+			return [self._mapper_to_entity(m) for m in mappers]
+
 	def list_all(self) -> list[ItemSet]:
 		with self._session_factory() as session:
 			mappers = session.query(ItemSetMapper).all()

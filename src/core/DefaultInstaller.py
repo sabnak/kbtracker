@@ -77,7 +77,8 @@ class DefaultInstaller:
 				item_repository=self._container.item_repository,
 				location_repository=self._container.location_repository,
 				shop_repository=self._container.shop_repository,
-				shop_has_item_repository=self._container.shop_has_item_repository
+				shop_has_item_repository=self._container.shop_has_item_repository,
+				item_set_repository=self._container.item_set_repository
 			)
 		)
 

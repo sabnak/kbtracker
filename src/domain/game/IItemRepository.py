@@ -99,3 +99,15 @@ class IItemRepository(ABC):
 			List of matching items for the game
 		"""
 		pass
+
+	@abstractmethod
+	def list_by_item_set_id(self, item_set_id: int) -> list[Item]:
+		"""
+		Get all items belonging to a specific item set
+
+		:param item_set_id:
+			Item set ID
+		:return:
+			List of items in the set
+		"""
+		pass

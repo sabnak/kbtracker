@@ -3,6 +3,7 @@ from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
 from src.domain.game.entities.ShopHasItem import ShopHasItem
 from src.domain.game.IItemRepository import IItemRepository
+from src.domain.game.IItemSetRepository import IItemSetRepository
 from src.domain.game.ILocationRepository import ILocationRepository
 from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
@@ -15,12 +16,14 @@ class ItemTrackingService:
 		item_repository: IItemRepository,
 		location_repository: ILocationRepository,
 		shop_repository: IShopRepository,
-		shop_has_item_repository: IShopHasItemRepository
+		shop_has_item_repository: IShopHasItemRepository,
+		item_set_repository: IItemSetRepository
 	):
 		self._item_repository = item_repository
 		self._location_repository = location_repository
 		self._shop_repository = shop_repository
 		self._shop_has_item_repository = shop_has_item_repository
+		self._item_set_repository = item_set_repository
 
 	def search_items(self, game_id: int, query: str) -> list[Item]:
 		"""
@@ -36,6 +39,54 @@ class ItemTrackingService:
 		if not query or query.strip() == "":
 			return self._item_repository.list_by_game_id(game_id)
 		return self._item_repository.search_by_name_and_game(query, game_id)
+
+	def get_items_with_sets(self, game_id: int, query: str) -> list[dict]:
+		"""
+		Get items with their set information
+
+		:param game_id:
+			Game ID
+		:param query:
+			Search query
+		:return:
+			List of dictionaries with item and set data
+		"""
+		# Get items
+		if not query or query.strip() == "":
+			items = self._item_repository.list_by_game_id(game_id)
+		else:
+			items = self._item_repository.search_by_name_and_game(query, game_id)
+
+		# Collect unique item_set_ids
+		set_ids = {item.item_set_id for item in items if item.item_set_id is not None}
+
+		# Batch fetch all sets
+		sets_map = {}
+		if set_ids:
+			sets = self._item_set_repository.list_by_ids(list(set_ids))
+			sets_map = {s.id: s for s in sets}
+
+		# Fetch items for each set
+		set_items_map = {}
+		for set_id in set_ids:
+			set_items_map[set_id] = self._item_repository.list_by_item_set_id(set_id)
+
+		# Build enriched result
+		result = []
+		for item in items:
+			item_data = {
+				"item": item,
+				"item_set": None,
+				"set_items": []
+			}
+
+			if item.item_set_id and item.item_set_id in sets_map:
+				item_data["item_set"] = sets_map[item.item_set_id]
+				item_data["set_items"] = set_items_map.get(item.item_set_id, [])
+
+			result.append(item_data)
+
+		return result
 
 	def get_locations(self, game_id: int) -> list[Location]:
 		"""

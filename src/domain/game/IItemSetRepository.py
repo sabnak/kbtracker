@@ -55,6 +55,18 @@ class IItemSetRepository(ABC):
 		pass
 
 	@abstractmethod
+	def list_by_ids(self, item_set_ids: list[int]) -> list[ItemSet]:
+		"""
+		Get multiple item sets by their IDs
+
+		:param item_set_ids:
+			List of item set IDs
+		:return:
+			List of item sets
+		"""
+		pass
+
+	@abstractmethod
 	def list_all(self) -> list[ItemSet]:
 		"""
 		Get all item sets

@@ -109,6 +109,21 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			).all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
+	def list_by_item_set_id(self, item_set_id: int) -> list[Item]:
+		"""
+		Get all items belonging to a specific item set
+
+		:param item_set_id:
+			Item set ID
+		:return:
+			List of items in the set
+		"""
+		with self._session_factory() as session:
+			mappers = session.query(ItemMapper).filter(
+				ItemMapper.item_set_id == item_set_id
+			).all()
+			return [self._mapper_to_entity(m) for m in mappers]
+
 	def _mapper_to_entity(self, mapper: ItemMapper) -> Item:
 		return Item(
 			id=mapper.id,

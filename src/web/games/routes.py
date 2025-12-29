@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 from dependency_injector.wiring import inject, Provide
 
 from src.web.games.forms import GameCreateForm, ScanForm
+from src.web.template_filters import register_filters
 from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameService import IGameService
 from src.domain.game.services.ScannerService import ScannerService
@@ -13,6 +14,7 @@ from src.domain.exceptions import DuplicateEntityException, DatabaseOperationExc
 
 router = APIRouter(tags=["games"])
 templates = Jinja2Templates(directory="src/web/templates")
+register_filters(templates)
 
 
 @router.get("/games", response_class=HTMLResponse)
@@ -191,20 +193,20 @@ async def list_items(
 	game_service: IGameService = Depends(Provide["game_service"])
 ):
 	"""
-	List all items for a game (read-only)
+	List all items for a game with set information (read-only)
 	"""
 	game = game_service.get_game(game_id)
 	if not game:
 		return RedirectResponse(url="/games", status_code=303)
 
-	items = item_tracking_service.search_items(game_id, query)
+	items_with_sets = item_tracking_service.get_items_with_sets(game_id, query)
 
 	return templates.TemplateResponse(
 		"pages/item_list.html",
 		{
 			"request": request,
 			"game": game,
-			"items": items,
+			"items_with_sets": items_with_sets,
 			"query": query
 		}
 	)

@@ -19,24 +19,54 @@
 			</div>
 		</div>
 
-		{% if items %}
+		{% if items_with_sets %}
 		<div class="table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
 						<th>Name</th>
 						<th>Price</th>
+						<th>Level</th>
 						<th>Type</th>
 					</tr>
 				</thead>
 				<tbody>
-					{% for item in items %}
+					{% for item_data in items_with_sets %}
+					{% set item = item_data.item %}
 					<tr>
 						<td>
 							<strong>{{ item.name }}</strong><br>
-							<small class="text-muted">{{ item.hint[:100] if item.hint else 'No description' }}</small>
+							{% if item.hint %}
+							<small class="text-muted">{{ item.hint|format_text|safe }}</small>
+							{% else %}
+							<small class="text-muted">No description</small>
+							{% endif %}
+
+							{% if item_data.item_set %}
+							<div class="set-info">
+								{% if item_data.item_set.hint %}
+								<div class="set-hint">
+									<strong>Set: {{ item_data.item_set.name }}</strong><br>
+									{{ item_data.item_set.hint|format_text|safe }}
+								</div>
+								{% endif %}
+
+								{% if item_data.set_items %}
+								<ul class="set-items">
+									{% for set_item in item_data.set_items %}
+									<li class="{% if set_item.id == item.id %}current-item{% endif %}">
+										{{ set_item.name }}
+									</li>
+									{% endfor %}
+								</ul>
+								{% endif %}
+							</div>
+							{% endif %}
 						</td>
-						<td>{{ item.price }}</td>
+						<td>{{ item.price|format_price }}</td>
+						<td>
+							<span class="quality-{{ item.level }}">{{ item.level }}</span>
+						</td>
 						<td>
 							{% if item.propbits %}
 							<small>{{ ', '.join(item.propbits[:3]) }}</small>

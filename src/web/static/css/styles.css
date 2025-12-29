@@ -28,3 +28,73 @@ main {
 footer {
 	margin-top: auto;
 }
+
+
+/* Item Quality Colors */
+.quality-1 {
+	color: #9d9d9d;  /* Gray - Common */
+}
+
+.quality-2 {
+	color: #1eff00;  /* Green - Uncommon */
+}
+
+.quality-3 {
+	color: #0070dd;  /* Blue - Rare */
+}
+
+.quality-4 {
+	color: #a335ee;  /* Purple - Epic */
+}
+
+.quality-5 {
+	color: #ff8000;  /* Orange/Red - Legendary */
+}
+
+
+/* Set Information Display */
+.set-info {
+	margin-top: 0.5rem;
+	padding-top: 0.5rem;
+	border-top: 1px solid #dee2e6;
+}
+
+.set-hint {
+	font-size: 0.9rem;
+	color: #6c757d;
+	margin-bottom: 0.25rem;
+}
+
+.set-items {
+	font-size: 0.85rem;
+	color: #9d9d9d;
+	margin: 0;
+	padding-left: 1.25rem;
+}
+
+.set-items li {
+	margin-bottom: 0.125rem;
+}
+
+.set-items .current-item {
+	font-weight: bold;
+	color: #495057;
+}
+
+
+/* Item List Table Column Widths */
+.table td:nth-child(1) {
+	max-width: 500px;  /* Limit name column width */
+}
+
+.table td:nth-child(2),
+.table th:nth-child(2) {
+	white-space: nowrap;  /* Price on single line */
+}
+
+
+/* BBCode System Text */
+.sys-text {
+	color: #d4af37;  /* Gold color for system/special text */
+	font-weight: 500;
+}
