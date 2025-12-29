@@ -2,10 +2,9 @@ from fastapi import APIRouter, Request, Form, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from dependency_injector.wiring import inject, Provide
-from src.web.profiles.forms import ProfileCreateForm, ItemTrackForm
+from src.web.profiles.forms import ProfileCreateForm
 from src.domain.game.IGameService import IGameService
 from src.domain.profile.IProfileService import IProfileService
-from src.domain.game.services import ItemTrackingService
 
 
 router = APIRouter(tags=["profiles"])
@@ -71,55 +70,3 @@ async def delete_profile(
 ):
 	profile_service.delete_profile(profile_id)
 	return RedirectResponse(url="/", status_code=303)
-
-
-@router.get("/profiles/{profile_id}/items/{item_id}/track", response_class=HTMLResponse)
-@inject
-async def track_item_form(
-	request: Request,
-	profile_id: int,
-	item_id: int,
-	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
-	profile_service: IProfileService = Depends(Provide["profile_service"])
-):
-	profile = profile_service.get_profile(profile_id)
-	if not profile:
-		return RedirectResponse(url="/", status_code=303)
-
-	items = item_tracking_service.search_items(profile.game_id, "")
-	item = next((i for i in items if i.id == item_id), None)
-	if not item:
-		return RedirectResponse(url=f"/profiles/{profile_id}/tracked", status_code=303)
-
-	locations = item_tracking_service.get_locations(profile.game_id)
-
-	return templates.TemplateResponse(
-		"pages/item_track.html",
-		{
-			"request": request,
-			"profile": profile,
-			"item": item,
-			"locations": locations
-		}
-	)
-
-
-@router.post("/profiles/{profile_id}/items/{item_id}/track")
-@inject
-async def track_item(
-	profile_id: int,
-	item_id: int,
-	shop_id: int = Form(...),
-	count: int = Form(default=1),
-	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"])
-):
-	form_data = ItemTrackForm(item_id=item_id, shop_id=shop_id, count=count)
-
-	item_tracking_service.link_item_to_shop(
-		profile_id=profile_id,
-		item_id=form_data.item_id,
-		shop_id=form_data.shop_id,
-		count=form_data.count
-	)
-
-	return RedirectResponse(url=f"/profiles/{profile_id}/tracked", status_code=303)
