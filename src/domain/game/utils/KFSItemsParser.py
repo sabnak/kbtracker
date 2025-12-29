@@ -1,3 +1,6 @@
+import os
+import zipfile
+
 from src.domain.game.entities.Item import Item
 from src.domain.game.utils.KFSExtractor import KFSExtractor
 
@@ -23,39 +26,88 @@ class KFSItemsParser:
 		"""
 		Extract and parse item data from game files
 
-		Extracts items.txt and rus_items.lng from KFS archives,
-		parses both files, and returns list of Item entities.
+		Extracts all items*.txt files and localization file from KFS archives,
+		parses all files, and returns list of Item entities.
 
 		:return:
 			List of Item entities with populated fields
 		"""
-		items_content, localization_content = self._extract_files()
+		items_contents, localization_content = self._extract_files()
 		localization = self._parse_localization(localization_content)
-		item_data_list = self._parse_items_file(items_content)
 
 		items = []
-		for item_data in item_data_list:
-			item = self._build_item_entity(item_data, localization)
-			if item is not None:
-				items.append(item)
+		for items_content in items_contents:
+			item_data_list = self._parse_items_file(items_content)
+			for item_data in item_data_list:
+				item = self._build_item_entity(item_data, localization)
+				if item is not None:
+					items.append(item)
 
 		return items
 
-	def _extract_files(self) -> tuple[str, str]:
+	def _extract_files(self) -> tuple[list[str], str]:
 		"""
-		Use KFSExtractor to get items.txt and rus_items.lng
+		Use KFSExtractor to get all items*.txt files and localization file
 
 		:return:
-			Tuple of (items_content, localization_content)
+			Tuple of (list of items_contents, localization_content)
 		"""
-		tables = [
-			"ses.kfs/items.txt",
-			f"loc_ses{'_' + self._lang if self._lang != 'rus' else ''}.kfs/{self._lang}_items.lng"
-		]
+		items_files = self._discover_items_files()
+		localization_file = f"loc_ses{'_' + self._lang if self._lang != 'rus' else ''}.kfs/{self._lang}_items.lng"
+
+		tables = items_files + [localization_file]
 
 		extractor = KFSExtractor(self._sessions_path, tables)
 		results = extractor.extract()
-		return results[0], results[1]
+
+		items_contents = results[:-1]
+		localization_content = results[-1]
+
+		return items_contents, localization_content
+
+	def _discover_items_files(self) -> list[str]:
+		"""
+		Discover all items*.txt files in ses.kfs archive
+
+		:return:
+			List of file paths in format 'ses.kfs/items*.txt'
+		:raises FileNotFoundError:
+			If ses.kfs archive not found
+		"""
+		ses_archive_path = self._find_ses_archive()
+		items_files = []
+
+		with zipfile.ZipFile(ses_archive_path, 'r') as archive:
+			for file_name in archive.namelist():
+				if file_name.startswith('items') and file_name.endswith('.txt'):
+					items_files.append(f"ses.kfs/{file_name}")
+
+		return sorted(items_files)
+
+	def _find_ses_archive(self) -> str:
+		"""
+		Find ses.kfs archive in sessions directory
+
+		:return:
+			Full path to ses.kfs archive
+		:raises FileNotFoundError:
+			If sessions directory or ses.kfs archive not found
+		"""
+		if not os.path.exists(self._sessions_path):
+			raise FileNotFoundError(
+				f"Sessions directory not found: {self._sessions_path}"
+			)
+
+		for entry in os.listdir(self._sessions_path):
+			entry_path = os.path.join(self._sessions_path, entry)
+			if os.path.isdir(entry_path):
+				ses_archive = os.path.join(entry_path, "ses.kfs")
+				if os.path.exists(ses_archive):
+					return ses_archive
+
+		raise FileNotFoundError(
+			f"Archive 'ses.kfs' not found in {self._sessions_path}"
+		)
 
 	def _parse_localization(self, content: str) -> dict[str, str]:
 		"""
