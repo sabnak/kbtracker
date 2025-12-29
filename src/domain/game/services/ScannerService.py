@@ -4,10 +4,9 @@ from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
-from src.domain.game.IGameScanner import IGameScanner
 from src.domain.game.IItemRepository import IItemRepository
 from src.domain.game.ILocationRepository import ILocationRepository
-from src.domain.game.IObjectRepository import IObjectRepository
+from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.entities.Item import Item
 from src.domain.game.utils.KFSItemsParser import KFSItemsParser
 
@@ -18,12 +17,12 @@ class ScannerService:
 		self,
 		item_repository: IItemRepository,
 		location_repository: ILocationRepository,
-		object_repository: IObjectRepository,
+		shop_repository: IShopRepository,
 		config: Config = Provide[Container.config]
 	):
 		self._item_repository = item_repository
 		self._location_repository = location_repository
-		self._object_repository = object_repository
+		self._shop_repository = shop_repository
 		self._config = config
 
 	def scan_game_files(
@@ -41,7 +40,7 @@ class ScannerService:
 		:param game_data_path:
 			Base path to game data
 		:return:
-			Dictionary with counts of scanned items and objects
+			Dictionary with counts of scanned items and shops
 		"""
 		items = self._parse_items(
 			os.path.join(self._config['game_data_path'], game_path, "sessions"),
@@ -51,7 +50,7 @@ class ScannerService:
 		return {
 			"items": len(items),
 			# "locations": len(created_locations),
-			# "objects": len(objects_to_create)
+			# "shops": len(shops_to_create)
 		}
 
 	def _parse_items(self, session_path: str, language: str) -> list[Item]:

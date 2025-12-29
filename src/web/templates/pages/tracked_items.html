@@ -28,7 +28,7 @@
 						</td>
 						<td>{{ tracked.item.price }}</td>
 						<td>{{ tracked.location.name if tracked.location else 'Unknown' }}</td>
-						<td>{{ tracked.object.name if tracked.object else 'Unknown' }}</td>
+						<td>{{ tracked.shop.name if tracked.shop else 'Unknown' }}</td>
 						<td>{{ tracked.count }}</td>
 					</tr>
 					{% endfor %}

@@ -17,7 +17,7 @@
 				<form method="POST" action="/profiles/{{ profile.id }}/items/{{ item.id }}/track" id="trackForm">
 					<div class="mb-3">
 						<label for="location_id" class="form-label">Location</label>
-						<select class="form-select" id="location_id" name="location_id" required onchange="loadObjects()">
+						<select class="form-select" id="location_id" name="location_id" required onchange="loadShops()">
 							<option value="">Select location...</option>
 							{% for location in locations %}
 							<option value="{{ location.id }}">{{ location.name }}</option>
@@ -26,8 +26,8 @@
 					</div>
 
 					<div class="mb-3">
-						<label for="object_id" class="form-label">Merchant/Shop</label>
-						<select class="form-select" id="object_id" name="object_id" required disabled>
+						<label for="shop_id" class="form-label">Merchant/Shop</label>
+						<select class="form-select" id="shop_id" name="shop_id" required disabled>
 							<option value="">Select location first...</option>
 						</select>
 					</div>
@@ -48,32 +48,32 @@
 </div>
 
 <script>
-async function loadObjects() {
+async function loadShops() {
 	const locationId = document.getElementById('location_id').value;
-	const objectSelect = document.getElementById('object_id');
+	const shopSelect = document.getElementById('shop_id');
 
 	if (!locationId) {
-		objectSelect.disabled = true;
-		objectSelect.innerHTML = '<option value="">Select location first...</option>';
+		shopSelect.disabled = true;
+		shopSelect.innerHTML = '<option value="">Select location first...</option>';
 		return;
 	}
 
 	try {
-		const response = await fetch(`/api/locations/${locationId}/objects`);
-		const objects = await response.json();
+		const response = await fetch(`/api/locations/${locationId}/shops`);
+		const shops = await response.json();
 
-		objectSelect.disabled = false;
-		objectSelect.innerHTML = '<option value="">Select merchant...</option>';
+		shopSelect.disabled = false;
+		shopSelect.innerHTML = '<option value="">Select merchant...</option>';
 
-		objects.forEach(obj => {
+		shops.forEach(obj => {
 			const option = document.createElement('option');
 			option.value = obj.id;
 			option.textContent = obj.name;
-			objectSelect.appendChild(option);
+			shopSelect.appendChild(option);
 		});
 	} catch (error) {
-		console.error('Error loading objects:', error);
-		objectSelect.innerHTML = '<option value="">Error loading merchants</option>';
+		console.error('Error loading shops:', error);
+		shopSelect.innerHTML = '<option value="">Error loading merchants</option>';
 	}
 }
 </script>

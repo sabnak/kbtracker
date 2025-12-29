@@ -1,11 +1,11 @@
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Location import Location
-from src.domain.game.entities.Object import Object
-from src.domain.game.entities.ObjectHasItem import ObjectHasItem
+from src.domain.game.entities.Shop import Shop
+from src.domain.game.entities.ShopHasItem import ShopHasItem
 from src.domain.game.IItemRepository import IItemRepository
 from src.domain.game.ILocationRepository import ILocationRepository
-from src.domain.game.IObjectRepository import IObjectRepository
-from src.domain.game.IObjectHasItemRepository import IObjectHasItemRepository
+from src.domain.game.IShopRepository import IShopRepository
+from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
 
 
 class ItemTrackingService:
@@ -14,13 +14,13 @@ class ItemTrackingService:
 		self,
 		item_repository: IItemRepository,
 		location_repository: ILocationRepository,
-		object_repository: IObjectRepository,
-		object_has_item_repository: IObjectHasItemRepository
+		shop_repository: IShopRepository,
+		shop_has_item_repository: IShopHasItemRepository
 	):
 		self._item_repository = item_repository
 		self._location_repository = location_repository
-		self._object_repository = object_repository
-		self._object_has_item_repository = object_has_item_repository
+		self._shop_repository = shop_repository
+		self._shop_has_item_repository = shop_has_item_repository
 
 	def search_items(self, query: str) -> list[Item]:
 		"""
@@ -44,65 +44,65 @@ class ItemTrackingService:
 		"""
 		return self._location_repository.list_all()
 
-	def get_objects_by_location(self, location_id: int) -> list[Object]:
+	def get_shops_by_location(self, location_id: int) -> list[Shop]:
 		"""
-		Get all objects in a location
+		Get all shops in a location
 
 		:param location_id:
 			Location ID
 		:return:
-			List of objects
+			List of shops
 		"""
-		return self._object_repository.get_by_location_id(location_id)
+		return self._shop_repository.get_by_location_id(location_id)
 
-	def link_item_to_object(
+	def link_item_to_shop(
 		self,
 		profile_id: int,
 		item_id: int,
-		object_id: int,
+		shop_id: int,
 		count: int
 	) -> None:
 		"""
-		Link item to object for a profile
+		Link item to shop for a profile
 
 		:param profile_id:
 			Profile ID
 		:param item_id:
 			Item ID
-		:param object_id:
-			Object ID (merchant)
+		:param shop_id:
+			Shop ID
 		:param count:
 			Number of items available
 		:return:
 		"""
-		link = ObjectHasItem(
+		link = ShopHasItem(
 			item_id=item_id,
-			object_id=object_id,
+			shop_id=shop_id,
 			profile_id=profile_id,
 			count=count
 		)
-		self._object_has_item_repository.create(link)
+		self._shop_has_item_repository.create(link)
 
 	def get_tracked_items(self, profile_id: int) -> list[dict]:
 		"""
-		Get all tracked items for a profile with location and object info
+		Get all tracked items for a profile with location and shop info
 
 		:param profile_id:
 			Profile ID
 		:return:
-			List of dictionaries with item, object, and location data
+			List of dictionaries with item, shop, and location data
 		"""
-		links = self._object_has_item_repository.get_by_profile(profile_id)
+		links = self._shop_has_item_repository.get_by_profile(profile_id)
 
 		result = []
 		for link in links:
 			item = self._item_repository.get_by_id(link.item_id)
-			obj = self._object_repository.get_by_id(link.object_id)
-			location = self._location_repository.get_by_id(obj.location_id) if obj else None
+			shop = self._shop_repository.get_by_id(link.shop_id)
+			location = self._location_repository.get_by_id(shop.location_id) if shop else None
 
 			result.append({
 				"item": item,
-				"object": obj,
+				"shop": shop,
 				"location": location,
 				"count": link.count
 			})

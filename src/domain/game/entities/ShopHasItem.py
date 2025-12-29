@@ -2,8 +2,8 @@ from dataclasses import dataclass
 
 
 @dataclass
-class ObjectHasItem:
+class ShopHasItem:
 	item_id: int
-	object_id: int
+	shop_id: int
 	profile_id: int
 	count: int

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class Object:
+class Shop:
 	id: int
 	kb_id: int
 	location_id: int

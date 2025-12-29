@@ -13,4 +13,4 @@ class ItemMapper(Base):
 	hint = Column(Text, nullable=True)
 	propbits = Column(ARRAY(String), nullable=True)
 
-	object_items = relationship("ObjectHasItemMapper", back_populates="item")
+	shop_items = relationship("ShopHasItemMapper", back_populates="item")

@@ -1,12 +1,12 @@
 from .ItemMapper import ItemMapper
 from .LocationMapper import LocationMapper
-from .ObjectMapper import ObjectMapper
-from .ObjectHasItemMapper import ObjectHasItemMapper
+from .ShopMapper import ShopMapper
+from .ShopHasItemMapper import ShopHasItemMapper
 
 
 __all__ = [
 	"ItemMapper",
 	"LocationMapper",
-	"ObjectMapper",
-	"ObjectHasItemMapper",
+	"ShopMapper",
+	"ShopHasItemMapper",
 ]

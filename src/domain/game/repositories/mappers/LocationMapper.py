@@ -10,4 +10,4 @@ class LocationMapper(Base):
 	kb_id = Column(String, nullable=False, index=True)
 	name = Column(String, nullable=False)
 
-	objects = relationship("ObjectMapper", back_populates="location")
+	shops = relationship("ShopMapper", back_populates="location")

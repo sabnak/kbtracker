@@ -14,4 +14,4 @@ class ProfileMapper(Base):
 	game_path = Column(String, nullable=False)
 	created_at = Column(DateTime, nullable=False, default=datetime.now())
 
-	object_items = relationship("ObjectHasItemMapper", back_populates="profile")
+	shop_items = relationship("ShopHasItemMapper", back_populates="profile")

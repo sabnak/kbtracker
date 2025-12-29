@@ -6,8 +6,8 @@ from src.core.Container import Container
 from src.domain.filesystem.services.GamePathService import GamePathService
 from src.domain.game.repositories.ItemRepository import ItemRepository
 from src.domain.game.repositories.LocationRepository import LocationRepository
-from src.domain.game.repositories.ObjectHasItemRepository import ObjectHasItemRepository
-from src.domain.game.repositories.ObjectRepository import ObjectRepository
+from src.domain.game.repositories.ShopHasItemRepository import ShopHasItemRepository
+from src.domain.game.repositories.ShopRepository import ShopRepository
 from src.domain.game.services.ItemTrackingService import ItemTrackingService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.profile.repositories.ProfilePostgresRepository import ProfilePostgresRepository
@@ -55,7 +55,7 @@ class DefaultInstaller:
 				ScannerService,
 				item_repository=self._container.item_repository,
 				location_repository=self._container.location_repository,
-				object_repository=self._container.object_repository
+				shop_repository=self._container.shop_repository
 			)
 		)
 
@@ -64,8 +64,8 @@ class DefaultInstaller:
 				ItemTrackingService,
 				item_repository=self._container.item_repository,
 				location_repository=self._container.location_repository,
-				object_repository=self._container.object_repository,
-				object_has_item_repository=self._container.object_has_item_repository
+				shop_repository=self._container.shop_repository,
+				shop_has_item_repository=self._container.shop_has_item_repository
 			)
 		)
 
@@ -84,16 +84,16 @@ class DefaultInstaller:
 			)
 		)
 
-		self._container.object_repository.override(
+		self._container.shop_repository.override(
 			providers.Singleton(
-				ObjectRepository,
+				ShopRepository,
 				session=self._container.db_session_factory()
 			)
 		)
 
-		self._container.object_has_item_repository.override(
+		self._container.shop_has_item_repository.override(
 			providers.Singleton(
-				ObjectHasItemRepository,
+				ShopHasItemRepository,
 				session=self._container.db_session_factory()
 			)
 		)

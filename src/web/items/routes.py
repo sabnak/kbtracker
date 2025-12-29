@@ -73,16 +73,16 @@ async def track_item_form(
 async def track_item(
 	profile_id: int,
 	item_id: int,
-	object_id: int = Form(...),
+	shop_id: int = Form(...),
 	count: int = Form(default=1),
 	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"])
 ):
-	form_data = ItemTrackForm(item_id=item_id, object_id=object_id, count=count)
+	form_data = ItemTrackForm(item_id=item_id, shop_id=shop_id, count=count)
 
-	item_tracking_service.link_item_to_object(
+	item_tracking_service.link_item_to_shop(
 		profile_id=profile_id,
 		item_id=form_data.item_id,
-		object_id=form_data.object_id,
+		shop_id=form_data.shop_id,
 		count=form_data.count
 	)
 
