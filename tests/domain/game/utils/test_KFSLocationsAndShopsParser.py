@@ -1,0 +1,194 @@
+import pytest
+from pathlib import Path
+from src.domain.game.utils.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
+from src.domain.game.entities.Location import Location
+from src.domain.game.entities.Shop import Shop
+
+
+class TestKFSLocationsAndShopsParser:
+
+	@staticmethod
+	def _get_sessions_path() -> str:
+		"""Get sessions path relative to project root"""
+		return str(Path(__file__).parent.parent.parent.parent.parent / "tests" / "game_files" / "sessions")
+
+	def test_parse_returns_list_of_dicts(self):
+		"""
+		Test that parse returns a list of dicts with location and shops keys
+		"""
+		sessions_path = self._get_sessions_path()
+		parser = KFSLocationsAndShopsParser(sessions_path)
+
+		result = parser.parse()
+
+		assert isinstance(result, list)
+		assert len(result) > 0
+		for item in result:
+			assert isinstance(item, dict)
+			assert 'location' in item
+			assert 'shops' in item
+			assert isinstance(item['location'], Location)
+			assert isinstance(item['shops'], list)
+			assert all(isinstance(shop, Shop) for shop in item['shops'])
+
+	def test_shop_fields_populated_correctly(self):
+		"""
+		Test that Shop fields are populated correctly for known entry
+		"""
+		sessions_path = self._get_sessions_path()
+		parser = KFSLocationsAndShopsParser(sessions_path)
+
+		result = parser.parse()
+
+		# Find amasonia location with shop 1173
+		amasonia_entry = next(
+			(entry for entry in result if entry['location'].kb_id == 'amasonia'),
+			None
+		)
+
+		assert amasonia_entry is not None
+
+		# Find shop 1173
+		shop_1173 = next(
+			(shop for shop in amasonia_entry['shops'] if shop.kb_id == 1173),
+			None
+		)
+
+		assert shop_1173 is not None
+		assert shop_1173.name == 'Замок изгоев'
+		assert shop_1173.hint == 'Замок изгоев'
+		assert shop_1173.msg == 'Здесь живут рассерженные мужчины'
+		assert shop_1173.game_id == 0
+
+	def test_locations_are_unique(self):
+		"""
+		Test that each location appears only once
+		"""
+		sessions_path = self._get_sessions_path()
+		parser = KFSLocationsAndShopsParser(sessions_path)
+
+		result = parser.parse()
+
+		location_kb_ids = [entry['location'].kb_id for entry in result]
+		assert len(location_kb_ids) == len(set(location_kb_ids)), "Duplicate location kb_ids found"
+
+	def test_shops_grouped_by_location(self):
+		"""
+		Test that all shops in each dict belong to that location
+		"""
+		sessions_path = self._get_sessions_path()
+		parser = KFSLocationsAndShopsParser(sessions_path)
+
+		result = parser.parse()
+
+		# All shops within a location entry should be part of that location
+		# (we can't verify this directly without the raw data, but we can
+		# verify the structure is consistent)
+		for entry in result:
+			assert len(entry['shops']) > 0, f"Location {entry['location'].kb_id} has no shops"
+
+	def test_prefix_stripped_from_values(self):
+		"""
+		Test that ^?^ prefix is removed from values
+		"""
+		sessions_path = self._get_sessions_path()
+		parser = KFSLocationsAndShopsParser(sessions_path)
+
+		result = parser.parse()
+
+		# Check no values start with ^?^
+		for entry in result:
+			location = entry['location']
+			assert not location.name.startswith('^?^')
+
+			for shop in entry['shops']:
+				assert not shop.name.startswith('^?^')
+				if shop.hint:
+					assert not shop.hint.startswith('^?^')
+				if shop.msg:
+					assert not shop.msg.startswith('^?^')
+
+	def test_empty_hint_and_msg_allowed(self):
+		"""
+		Test that shops can have empty hint or msg (None values)
+		"""
+		sessions_path = self._get_sessions_path()
+		parser = KFSLocationsAndShopsParser(sessions_path)
+
+		result = parser.parse()
+
+		# Collect all shops
+		all_shops = []
+		for entry in result:
+			all_shops.extend(entry['shops'])
+
+		# Check that None values are allowed for hint and msg
+		# (this test just verifies the structure allows it)
+		for shop in all_shops:
+			# hint and msg should be either str or None
+			assert shop.hint is None or isinstance(shop.hint, str)
+			assert shop.msg is None or isinstance(shop.msg, str)
+
+	def test_all_shops_have_required_fields(self):
+		"""
+		Test that all parsed shops have required non-empty fields
+		"""
+		sessions_path = self._get_sessions_path()
+		parser = KFSLocationsAndShopsParser(sessions_path)
+
+		result = parser.parse()
+
+		for entry in result:
+			location = entry['location']
+			assert location.kb_id != '', "Location has empty kb_id"
+			assert location.name != '', f"Location {location.kb_id} has empty name"
+
+			for shop in entry['shops']:
+				assert shop.kb_id > 0, f"Shop has invalid kb_id: {shop.kb_id}"
+				assert shop.name != '', f"Shop {shop.kb_id} has empty name"
+
+	def test_location_and_shop_ids_are_zero(self):
+		"""
+		Test that all Location.id, Shop.id, and Shop.location_id are 0
+		"""
+		sessions_path = self._get_sessions_path()
+		parser = KFSLocationsAndShopsParser(sessions_path)
+
+		result = parser.parse()
+
+		for entry in result:
+			location = entry['location']
+			assert location.id == 0, f"Location {location.kb_id} has non-zero id: {location.id}"
+
+			for shop in entry['shops']:
+				assert shop.id == 0, f"Shop {shop.kb_id} has non-zero id: {shop.id}"
+				assert shop.location_id == 0, f"Shop {shop.kb_id} has non-zero location_id: {shop.location_id}"
+
+	def test_multiple_locations_parsed(self):
+		"""
+		Test that multiple different locations are found
+		"""
+		sessions_path = self._get_sessions_path()
+		parser = KFSLocationsAndShopsParser(sessions_path)
+
+		result = parser.parse()
+
+		# Should have multiple locations
+		assert len(result) > 1, "Only one location found"
+
+		location_kb_ids = {entry['location'].kb_id for entry in result}
+		# Known locations from test file
+		assert 'amasonia' in location_kb_ids
+
+	def test_each_location_has_shops(self):
+		"""
+		Test that each location dict has at least one shop
+		"""
+		sessions_path = self._get_sessions_path()
+		parser = KFSLocationsAndShopsParser(sessions_path)
+
+		result = parser.parse()
+
+		for entry in result:
+			assert len(entry['shops']) > 0, \
+				f"Location {entry['location'].kb_id} has no shops"
