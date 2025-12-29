@@ -22,27 +22,31 @@ class ItemTrackingService:
 		self._shop_repository = shop_repository
 		self._shop_has_item_repository = shop_has_item_repository
 
-	def search_items(self, query: str) -> list[Item]:
+	def search_items(self, game_id: int, query: str) -> list[Item]:
 		"""
-		Search items by name
+		Search items by name for a specific game
 
+		:param game_id:
+			Game ID
 		:param query:
 			Search query
 		:return:
 			List of matching items
 		"""
 		if not query or query.strip() == "":
-			return self._item_repository.list_all()
-		return self._item_repository.search_by_name(query)
+			return self._item_repository.list_by_game_id(game_id)
+		return self._item_repository.search_by_name_and_game(query, game_id)
 
-	def get_locations(self) -> list[Location]:
+	def get_locations(self, game_id: int) -> list[Location]:
 		"""
-		Get all locations
+		Get all locations for a specific game
 
+		:param game_id:
+			Game ID
 		:return:
 			List of all locations
 		"""
-		return self._location_repository.list_all()
+		return self._location_repository.list_by_game_id(game_id)
 
 	def get_shops_by_location(self, location_id: int) -> list[Shop]:
 		"""

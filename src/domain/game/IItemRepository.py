@@ -73,3 +73,29 @@ class IItemRepository(ABC):
 			Created items with IDs
 		"""
 		pass
+
+	@abstractmethod
+	def list_by_game_id(self, game_id: int) -> list[Item]:
+		"""
+		Get all items for a specific game
+
+		:param game_id:
+			Game ID
+		:return:
+			List of items for the game
+		"""
+		pass
+
+	@abstractmethod
+	def search_by_name_and_game(self, query: str, game_id: int) -> list[Item]:
+		"""
+		Search items by name for a specific game
+
+		:param query:
+			Search query
+		:param game_id:
+			Game ID
+		:return:
+			List of matching items for the game
+		"""
+		pass

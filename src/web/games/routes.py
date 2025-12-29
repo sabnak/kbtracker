@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Request, Form, Depends
+from fastapi import APIRouter, Request, Form, Query, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from dependency_injector.wiring import inject, Provide
 
-from src.web.games.forms import GameCreateForm
+from src.web.games.forms import GameCreateForm, ScanForm
 from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameService import IGameService
+from src.domain.game.services.ScannerService import ScannerService
+from src.domain.game.services import ItemTrackingService
 
 
 router = APIRouter(tags=["games"])
@@ -73,3 +75,110 @@ async def delete_game(
 	"""
 	game_service.delete_game(game_id)
 	return RedirectResponse(url="/games", status_code=303)
+
+
+@router.get("/games/{game_id}/scan", response_class=HTMLResponse)
+@inject
+async def scan_form(
+	request: Request,
+	game_id: int,
+	game_service: IGameService = Depends(Provide["game_service"])
+):
+	"""
+	Show game file scanner form
+	"""
+	game = game_service.get_game(game_id)
+	if not game:
+		return RedirectResponse(url="/games", status_code=303)
+
+	languages = [
+		{"value": "rus", "label": "Russian"},
+		{"value": "eng", "label": "English"},
+		{"value": "ger", "label": "German"},
+		{"value": "pol", "label": "Polish"}
+	]
+
+	return templates.TemplateResponse(
+		"pages/scan.html",
+		{"request": request, "game": game, "languages": languages}
+	)
+
+
+@router.post("/games/{game_id}/scan")
+@inject
+async def scan_game_files(
+	request: Request,
+	game_id: int,
+	language: str = Form(...),
+	scanner_service: ScannerService = Depends(Provide["scanner_service"]),
+	game_service: IGameService = Depends(Provide["game_service"])
+):
+	"""
+	Execute game file scan
+	"""
+	game = game_service.get_game(game_id)
+	if not game:
+		return RedirectResponse(url="/games", status_code=303)
+
+	try:
+		form_data = ScanForm(language=language)
+
+		result = scanner_service.scan_game_files(
+			game_id=game_id,
+			language=form_data.language.value
+		)
+
+		return templates.TemplateResponse(
+			"pages/scan.html",
+			{
+				"request": request,
+				"game": game,
+				"success": True,
+				"result": result
+			}
+		)
+	except NotImplementedError as e:
+		languages = [
+			{"value": "rus", "label": "Russian"},
+			{"value": "eng", "label": "English"},
+			{"value": "ger", "label": "German"},
+			{"value": "pol", "label": "Polish"}
+		]
+		return templates.TemplateResponse(
+			"pages/scan.html",
+			{
+				"request": request,
+				"game": game,
+				"languages": languages,
+				"error": str(e)
+			}
+		)
+
+
+@router.get("/games/{game_id}/items", response_class=HTMLResponse)
+@inject
+async def list_items(
+	request: Request,
+	game_id: int,
+	query: str = Query(default=""),
+	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
+	game_service: IGameService = Depends(Provide["game_service"])
+):
+	"""
+	List all items for a game (read-only)
+	"""
+	game = game_service.get_game(game_id)
+	if not game:
+		return RedirectResponse(url="/games", status_code=303)
+
+	items = item_tracking_service.search_items(game_id, query)
+
+	return templates.TemplateResponse(
+		"pages/item_list.html",
+		{
+			"request": request,
+			"game": game,
+			"items": items,
+			"query": query
+		}
+	)

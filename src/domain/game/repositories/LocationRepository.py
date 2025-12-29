@@ -51,6 +51,12 @@ class LocationRepository(ILocationRepository):
 			self._session.refresh(mapper)
 		return [self._mapper_to_entity(m) for m in mappers]
 
+	def list_by_game_id(self, game_id: int) -> list[Location]:
+		mappers = self._session.query(LocationMapper).filter(
+			LocationMapper.game_id == game_id
+		).all()
+		return [self._mapper_to_entity(m) for m in mappers]
+
 	@staticmethod
 	def _mapper_to_entity(mapper: LocationMapper) -> Location:
 		return Location(

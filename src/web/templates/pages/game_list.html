@@ -20,6 +20,10 @@
 						<p class="card-text">
 							<strong>Path:</strong> {{ game.path }}
 						</p>
+						<div class="btn-group w-100 mb-2" role="group">
+							<a href="/games/{{ game.id }}/scan" class="btn btn-sm btn-outline-primary">Scan</a>
+							<a href="/games/{{ game.id }}/items" class="btn btn-sm btn-outline-secondary">Items</a>
+						</div>
 						<form method="POST" action="/games/{{ game.id }}/delete" onsubmit="return confirm('Are you sure? This will delete all profiles and data for this game!');">
 							<button type="submit" class="btn btn-sm btn-danger w-100">Delete</button>
 						</form>

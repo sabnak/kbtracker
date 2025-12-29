@@ -63,6 +63,19 @@ class ItemRepository(IItemRepository):
 			self._session.refresh(mapper)
 		return [self._mapper_to_entity(m) for m in mappers]
 
+	def list_by_game_id(self, game_id: int) -> list[Item]:
+		mappers = self._session.query(ItemMapper).filter(
+			ItemMapper.game_id == game_id
+		).all()
+		return [self._mapper_to_entity(m) for m in mappers]
+
+	def search_by_name_and_game(self, query: str, game_id: int) -> list[Item]:
+		mappers = self._session.query(ItemMapper).filter(
+			ItemMapper.name.ilike(f"%{query}%"),
+			ItemMapper.game_id == game_id
+		).all()
+		return [self._mapper_to_entity(m) for m in mappers]
+
 	@staticmethod
 	def _mapper_to_entity(mapper: ItemMapper) -> Item:
 		return Item(

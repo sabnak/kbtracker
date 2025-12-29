@@ -5,15 +5,15 @@
 {% block content %}
 <div class="row">
 	<div class="col-md-12">
-		<h1 class="mb-4">Items for {{ profile.name }}</h1>
+		<h1 class="mb-4">Items for {{ game.name }}</h1>
 
 		<div class="card mb-4">
 			<div class="card-body">
-				<form method="GET" action="/profiles/{{ profile.id }}/items">
+				<form method="GET" action="/games/{{ game.id }}/items">
 					<div class="input-group">
 						<input type="text" class="form-control" name="query" placeholder="Search items..." value="{{ query }}">
 						<button class="btn btn-primary" type="submit">Search</button>
-						<a href="/profiles/{{ profile.id }}/items" class="btn btn-secondary">Clear</a>
+						<a href="/games/{{ game.id }}/items" class="btn btn-secondary">Clear</a>
 					</div>
 				</form>
 			</div>
@@ -27,7 +27,6 @@
 						<th>Name</th>
 						<th>Price</th>
 						<th>Type</th>
-						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -45,9 +44,6 @@
 							-
 							{% endif %}
 						</td>
-						<td>
-							<a href="/profiles/{{ profile.id }}/items/{{ item.id }}/track" class="btn btn-sm btn-primary">Track</a>
-						</td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -59,9 +55,13 @@
 		</div>
 		{% endif %}
 
+		<div class="alert alert-secondary mt-4">
+			<h5>Note:</h5>
+			<p>This is a read-only view of game items. To track items to shops, visit a profile's "View Tracked Items" page.</p>
+		</div>
+
 		<div class="mt-3">
-			<a href="/" class="btn btn-secondary">Back to Profiles</a>
-			<a href="/profiles/{{ profile.id }}/tracked" class="btn btn-info">View Tracked Items</a>
+			<a href="/games" class="btn btn-secondary">Back to Games</a>
 		</div>
 	</div>
 </div>

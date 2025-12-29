@@ -8,7 +8,8 @@
 		<h1 class="mb-4">Scan Game Files</h1>
 
 		<div class="alert alert-info">
-			<strong>Profile:</strong> {{ profile.name }} ({{ profile.game_path }})
+			<strong>Game:</strong> {{ game.name }}<br>
+			<strong>Path:</strong> {{ game.path }}
 		</div>
 
 		{% if error %}
@@ -29,7 +30,7 @@
 
 		<div class="card">
 			<div class="card-body">
-				<form method="POST" action="/profiles/{{ profile.id }}/scan">
+				<form method="POST" action="/games/{{ game.id }}/scan">
 					<div class="mb-3">
 						<label for="language" class="form-label">Select Language</label>
 						<select class="form-select" id="language" name="language" required>
@@ -43,7 +44,7 @@
 
 					<div class="d-grid gap-2">
 						<button type="submit" class="btn btn-primary">Start Scan</button>
-						<a href="/" class="btn btn-secondary">Back to Profiles</a>
+						<a href="/games" class="btn btn-secondary">Back to Games</a>
 					</div>
 				</form>
 			</div>
@@ -51,7 +52,7 @@
 
 		<div class="alert alert-secondary mt-4">
 			<h5>Note:</h5>
-			<p>The scanner will read game data files from the mounted game directory. Make sure the game files are accessible in the Docker container at <code>/data/{{ profile.game_path }}/</code></p>
+			<p>The scanner will read game data files from the mounted game directory. Make sure the game files are accessible in the Docker container at <code>/data/{{ game.path }}/</code></p>
 		</div>
 	</div>
 </div>
