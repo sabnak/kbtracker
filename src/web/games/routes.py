@@ -9,7 +9,7 @@ from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameService import IGameService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services import ItemTrackingService
-from src.domain.exceptions import DuplicateEntityException, DatabaseOperationException
+from src.domain.exceptions import DuplicateEntityException, DatabaseOperationException, InvalidRegexException
 
 
 router = APIRouter(tags=["games"])
@@ -189,17 +189,48 @@ async def list_items(
 	request: Request,
 	game_id: int,
 	query: str = Query(default=""),
+	level_str: str = Query(default="", alias="level"),
+	hint_regex: str = Query(default=""),
+	propbit: str = Query(default=""),
+	item_set_id_str: str = Query(default="", alias="item_set_id"),
 	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
 	game_service: IGameService = Depends(Provide["game_service"])
 ):
 	"""
-	List all items for a game with set information (read-only)
+	List all items for a game with set information and advanced filters
 	"""
 	game = game_service.get_game(game_id)
 	if not game:
 		return RedirectResponse(url="/games", status_code=303)
 
-	items_with_sets = item_tracking_service.get_items_with_sets(game_id, query)
+	# Convert string parameters to proper types
+	level = int(level_str) if level_str else None
+	item_set_id = int(item_set_id_str) if item_set_id_str else None
+
+	# Normalize empty strings to None for optional filters
+	name_query = query.strip() if query.strip() else None
+	hint_query = hint_regex.strip() if hint_regex.strip() else None
+	propbit_query = propbit.strip() if propbit.strip() else None
+
+	# Fetch dropdown options
+	available_levels = item_tracking_service.get_available_levels(game_id)
+	available_propbits = item_tracking_service.get_available_propbits()
+	available_sets = item_tracking_service.get_available_item_sets(game_id)
+
+	# Apply filters
+	error_message = None
+	try:
+		items_with_sets = item_tracking_service.get_items_with_sets(
+			game_id=game_id,
+			name_query=name_query,
+			level=level,
+			hint_regex=hint_query,
+			propbit=propbit_query,
+			item_set_id=item_set_id
+		)
+	except InvalidRegexException as e:
+		error_message = f"Invalid regex pattern: {e.message}"
+		items_with_sets = []
 
 	return templates.TemplateResponse(
 		"pages/item_list.html",
@@ -207,6 +238,17 @@ async def list_items(
 			"request": request,
 			"game": game,
 			"items_with_sets": items_with_sets,
-			"query": query
+			# Preserve filter values
+			"query": query,
+			"selected_level": level,
+			"hint_regex": hint_regex,
+			"selected_propbit": propbit,
+			"selected_set_id": item_set_id,
+			# Dropdown options
+			"available_levels": available_levels,
+			"available_propbits": available_propbits,
+			"available_sets": available_sets,
+			# Error handling
+			"error": error_message
 		}
 	)

@@ -130,6 +130,69 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			).all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
+	def search_with_filters(
+		self,
+		game_id: int,
+		name_query: str | None = None,
+		level: int | None = None,
+		hint_regex: str | None = None,
+		propbit: str | None = None,
+		item_set_id: int | None = None
+	) -> list[Item]:
+		"""
+		Search items with multiple filter criteria using AND logic
+
+		:param game_id:
+			Game ID to filter by
+		:param name_query:
+			Optional name search (case-insensitive LIKE)
+		:param level:
+			Optional level filter (exact match)
+		:param hint_regex:
+			Optional PostgreSQL regex pattern for hint field
+		:param propbit:
+			Optional propbit value (matches if ANY propbit matches)
+		:param item_set_id:
+			Optional item set ID filter
+		:return:
+			List of items matching all provided criteria
+		"""
+		with self._session_factory() as session:
+			query = session.query(ItemMapper).filter(ItemMapper.game_id == game_id)
+
+			if name_query:
+				query = query.filter(ItemMapper.name.ilike(f"%{name_query}%"))
+
+			if level is not None:
+				query = query.filter(ItemMapper.level == level)
+
+			if hint_regex:
+				query = query.filter(ItemMapper.hint.op('~*')(hint_regex))
+
+			if propbit:
+				query = query.filter(ItemMapper.propbits.any(propbit))
+
+			if item_set_id is not None:
+				query = query.filter(ItemMapper.item_set_id == item_set_id)
+
+			mappers = query.all()
+			return [self._mapper_to_entity(m) for m in mappers]
+
+	def get_distinct_levels(self, game_id: int) -> list[int]:
+		"""
+		Get list of distinct level values for a game
+
+		:param game_id:
+			Game ID
+		:return:
+			Sorted list of distinct levels
+		"""
+		with self._session_factory() as session:
+			levels = session.query(ItemMapper.level).filter(
+				ItemMapper.game_id == game_id
+			).distinct().order_by(ItemMapper.level).all()
+			return [level[0] for level in levels]
+
 	def _convert_propbits_to_enum(self, propbits: list[str]) -> list[Propbit]:
 		"""
 		Convert list of propbit strings to Propbit enums

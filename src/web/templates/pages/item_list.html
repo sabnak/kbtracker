@@ -10,14 +10,86 @@
 		<div class="card mb-4">
 			<div class="card-body">
 				<form method="GET" action="/games/{{ game.id }}/items">
-					<div class="input-group">
-						<input type="text" class="form-control" name="query" placeholder="Search items..." value="{{ query }}">
-						<button class="btn btn-primary" type="submit">Search</button>
-						<a href="/games/{{ game.id }}/items" class="btn btn-secondary">Clear</a>
+					<div class="row g-3">
+						<!-- Name Search -->
+						<div class="col-md-6">
+							<label for="query" class="form-label">Item Name</label>
+							<input
+								type="text"
+								class="form-control"
+								id="query"
+								name="query"
+								placeholder="Search by name..."
+								value="{{ query }}">
+						</div>
+
+						<!-- Level Filter -->
+						<div class="col-md-3">
+							<label for="level" class="form-label">Level</label>
+							<select class="form-select" id="level" name="level">
+								<option value="">All Levels</option>
+								{% for lvl in available_levels %}
+								<option value="{{ lvl }}" {% if selected_level == lvl %}selected{% endif %}>
+									Level {{ lvl }}
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+
+						<!-- Type (Propbit) Filter -->
+						<div class="col-md-3">
+							<label for="propbit" class="form-label">Type</label>
+							<select class="form-select" id="propbit" name="propbit">
+								<option value="">All Types</option>
+								{% for pb in available_propbits %}
+								<option value="{{ pb }}" {% if selected_propbit == pb %}selected{% endif %}>
+									{{ pb|capitalize }}
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+
+						<!-- Hint Regex Search -->
+						<div class="col-md-6">
+							<label for="hint_regex" class="form-label">Description Pattern (Regex)</label>
+							<input
+								type="text"
+								class="form-control"
+								id="hint_regex"
+								name="hint_regex"
+								placeholder="e.g., .*magic.*|.*spell.*"
+								value="{{ hint_regex }}">
+							<div class="form-text">PostgreSQL regex pattern (case-insensitive)</div>
+						</div>
+
+						<!-- Item Set Filter -->
+						<div class="col-md-6">
+							<label for="item_set_id" class="form-label">Item Set</label>
+							<select class="form-select" id="item_set_id" name="item_set_id">
+								<option value="">All Sets / No Set</option>
+								{% for item_set in available_sets %}
+								<option value="{{ item_set.id }}" {% if selected_set_id == item_set.id %}selected{% endif %}>
+									{{ item_set.name }}
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+
+						<!-- Buttons -->
+						<div class="col-12">
+							<button class="btn btn-primary" type="submit">Apply Filters</button>
+							<a href="/games/{{ game.id }}/items" class="btn btn-secondary">Clear All</a>
+						</div>
 					</div>
 				</form>
 			</div>
 		</div>
+
+		{% if error %}
+		<div class="alert alert-danger">
+			<strong>Error:</strong> {{ error }}
+		</div>
+		{% endif %}
 
 		{% if items_with_sets %}
 		<div class="table-responsive">
@@ -81,7 +153,12 @@
 		</div>
 		{% else %}
 		<div class="alert alert-info">
-			No items found. {% if not query %}Scan game files first to populate the database.{% else %}Try a different search query.{% endif %}
+			No items found.
+			{% if query or selected_level or hint_regex or selected_propbit or selected_set_id %}
+				Try adjusting your filter criteria.
+			{% else %}
+				Scan game files first to populate the database.
+			{% endif %}
 		</div>
 		{% endif %}
 

@@ -130,3 +130,22 @@ class InvalidPropbitException(KBTrackerException):
 	@property
 	def valid_values(self) -> list[str] | None:
 		return self._valid_values
+
+
+class InvalidRegexException(KBTrackerException):
+	"""
+	Raised when an invalid regex pattern is provided
+	"""
+
+	def __init__(
+		self,
+		pattern: str,
+		original_exception: Exception | None = None
+	):
+		self._pattern = pattern
+		message = f"Invalid regex pattern: '{pattern}'"
+		super().__init__(message, original_exception)
+
+	@property
+	def pattern(self) -> str:
+		return self._pattern

@@ -111,3 +111,45 @@ class IItemRepository(ABC):
 			List of items in the set
 		"""
 		pass
+
+	@abstractmethod
+	def search_with_filters(
+		self,
+		game_id: int,
+		name_query: str | None = None,
+		level: int | None = None,
+		hint_regex: str | None = None,
+		propbit: str | None = None,
+		item_set_id: int | None = None
+	) -> list[Item]:
+		"""
+		Search items with multiple filter criteria using AND logic
+
+		:param game_id:
+			Game ID to filter by
+		:param name_query:
+			Optional name search (case-insensitive LIKE)
+		:param level:
+			Optional level filter (exact match)
+		:param hint_regex:
+			Optional PostgreSQL regex pattern for hint field
+		:param propbit:
+			Optional propbit value (matches if ANY propbit matches)
+		:param item_set_id:
+			Optional item set ID filter
+		:return:
+			List of items matching all provided criteria
+		"""
+		pass
+
+	@abstractmethod
+	def get_distinct_levels(self, game_id: int) -> list[int]:
+		"""
+		Get list of distinct level values for a game
+
+		:param game_id:
+			Game ID
+		:return:
+			Sorted list of distinct levels
+		"""
+		pass

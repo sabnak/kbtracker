@@ -1,5 +1,7 @@
 from src.domain.game.entities.Item import Item
+from src.domain.game.entities.ItemSet import ItemSet
 from src.domain.game.entities.Location import Location
+from src.domain.game.entities.Propbit import Propbit
 from src.domain.game.entities.Shop import Shop
 from src.domain.game.entities.ShopHasItem import ShopHasItem
 from src.domain.game.IItemRepository import IItemRepository
@@ -7,6 +9,7 @@ from src.domain.game.IItemSetRepository import IItemSetRepository
 from src.domain.game.ILocationRepository import ILocationRepository
 from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
+from src.domain.exceptions import InvalidRegexException
 
 
 class ItemTrackingService:
@@ -40,22 +43,60 @@ class ItemTrackingService:
 			return self._item_repository.list_by_game_id(game_id)
 		return self._item_repository.search_by_name_and_game(query, game_id)
 
-	def get_items_with_sets(self, game_id: int, query: str) -> list[dict]:
+	def get_items_with_sets(
+		self,
+		game_id: int,
+		name_query: str | None = None,
+		level: int | None = None,
+		hint_regex: str | None = None,
+		propbit: str | None = None,
+		item_set_id: int | None = None
+	) -> list[dict]:
 		"""
-		Get items with their set information
+		Get items with their set information using multiple filters
 
 		:param game_id:
 			Game ID
-		:param query:
-			Search query
+		:param name_query:
+			Optional name search query
+		:param level:
+			Optional level filter
+		:param hint_regex:
+			Optional regex pattern for hint
+		:param propbit:
+			Optional propbit type filter
+		:param item_set_id:
+			Optional item set ID filter
 		:return:
 			List of dictionaries with item and set data
 		"""
-		# Get items
-		if not query or query.strip() == "":
-			items = self._item_repository.list_by_game_id(game_id)
-		else:
-			items = self._item_repository.search_by_name_and_game(query, game_id)
+		# Check if any filter is provided
+		has_filters = any([
+			name_query,
+			level is not None,
+			hint_regex,
+			propbit,
+			item_set_id is not None
+		])
+
+		# Get items - use advanced search if filters, otherwise all items
+		try:
+			if has_filters:
+				items = self._item_repository.search_with_filters(
+					game_id=game_id,
+					name_query=name_query,
+					level=level,
+					hint_regex=hint_regex,
+					propbit=propbit,
+					item_set_id=item_set_id
+				)
+			else:
+				items = self._item_repository.list_by_game_id(game_id)
+		except Exception as e:
+			# Check if it's a regex error (PostgreSQL will throw specific error)
+			if "invalid regular expression" in str(e).lower():
+				raise InvalidRegexException(hint_regex or "", e)
+			raise
 
 		# Collect unique item_set_ids
 		set_ids = {item.item_set_id for item in items if item.item_set_id is not None}
@@ -278,3 +319,34 @@ class ItemTrackingService:
 			shop_id=shop_id,
 			profile_id=profile_id
 		)
+
+	def get_available_levels(self, game_id: int) -> list[int]:
+		"""
+		Get all distinct item levels for a game
+
+		:param game_id:
+			Game ID
+		:return:
+			Sorted list of levels
+		"""
+		return self._item_repository.get_distinct_levels(game_id)
+
+	def get_available_propbits(self) -> list[str]:
+		"""
+		Get all available propbit types
+
+		:return:
+			List of propbit string values
+		"""
+		return [propbit.value for propbit in Propbit]
+
+	def get_available_item_sets(self, game_id: int) -> list[ItemSet]:
+		"""
+		Get all item sets for a game
+
+		:param game_id:
+			Game ID
+		:return:
+			List of item sets
+		"""
+		return self._item_set_repository.list_by_game_id(game_id)
