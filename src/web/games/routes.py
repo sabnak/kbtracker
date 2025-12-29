@@ -120,6 +120,13 @@ async def scan_game_files(
 	if not game:
 		return RedirectResponse(url="/games", status_code=303)
 
+	languages = [
+		{"value": "rus", "label": "Russian"},
+		{"value": "eng", "label": "English"},
+		{"value": "ger", "label": "German"},
+		{"value": "pol", "label": "Polish"}
+	]
+
 	try:
 		form_data = ScanForm(language=language)
 
@@ -133,17 +140,12 @@ async def scan_game_files(
 			{
 				"request": request,
 				"game": game,
+				"languages": languages,
 				"success": True,
 				"result": result
 			}
 		)
 	except NotImplementedError as e:
-		languages = [
-			{"value": "rus", "label": "Russian"},
-			{"value": "eng", "label": "English"},
-			{"value": "ger", "label": "German"},
-			{"value": "pol", "label": "Polish"}
-		]
 		return templates.TemplateResponse(
 			"pages/scan.html",
 			{

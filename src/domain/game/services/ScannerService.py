@@ -8,6 +8,7 @@ from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.IItemRepository import IItemRepository
 from src.domain.game.ILocationRepository import ILocationRepository
 from src.domain.game.IShopRepository import IShopRepository
+from src.domain.game.dto.ScanResults import ScanResults
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
@@ -35,7 +36,7 @@ class ScannerService:
 		self,
 		game_id: int,
 		language: str
-	) -> dict[str, int]:
+	) -> ScanResults:
 		"""
 		Scan game files and populate database
 
@@ -44,7 +45,7 @@ class ScannerService:
 		:param language:
 			Language code (rus, eng, ger, pol)
 		:return:
-			Dictionary with counts of scanned items, locations, and shops
+			ScanResults with counts of scanned items, locations, and shops
 		"""
 		game = self._game_repository.get_by_id(game_id)
 		if not game:
@@ -59,11 +60,11 @@ class ScannerService:
 		# Parse and save locations and shops
 		locations, shops = self._parse_locations_and_shops(sessions_path, language, game_id)
 
-		return {
-			"items": len(items),
-			"locations": len(locations),
-			"shops": len(shops)
-		}
+		return ScanResults(
+			items=len(items),
+			locations=len(locations),
+			shops=len(shops)
+		)
 
 	def _parse_items(
 		self,
