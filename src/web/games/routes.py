@@ -11,6 +11,8 @@ from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services import ItemTrackingService
 from src.domain.profile.IProfileService import IProfileService
 from src.domain.exceptions import DuplicateEntityException, DatabaseOperationException, InvalidRegexException
+from src.web.dependencies.game_context import get_game_context, GameContext
+from src.domain.CrudRepository import _game_context
 
 
 router = APIRouter(tags=["games"])
@@ -114,12 +116,15 @@ async def scan_game_files(
 	request: Request,
 	game_id: int,
 	language: str = Form(...),
+	game_context: GameContext = Depends(get_game_context),
 	scanner_service: ScannerService = Depends(Provide["scanner_service"]),
 	game_service: IGameService = Depends(Provide["game_service"])
 ):
 	"""
 	Execute game file scan
 	"""
+	_game_context.set(game_context)
+
 	game = game_service.get_game(game_id)
 	if not game:
 		return RedirectResponse(url="/games", status_code=303)
@@ -196,12 +201,15 @@ async def list_items(
 	item_set_id_str: str = Query(default="", alias="item_set_id"),
 	sort_by: str = Query(default="name"),
 	sort_order: str = Query(default="asc"),
+	game_context: GameContext = Depends(get_game_context),
 	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
 	game_service: IGameService = Depends(Provide["game_service"])
 ):
 	"""
 	List all items for a game with set information and advanced filters
 	"""
+	_game_context.set(game_context)
+
 	game = game_service.get_game(game_id)
 	if not game:
 		return RedirectResponse(url="/games", status_code=303)
@@ -223,15 +231,14 @@ async def list_items(
 	sort_direction = sort_order.lower() if sort_order.lower() in allowed_sort_orders else "asc"
 
 	# Fetch dropdown options
-	available_levels = item_tracking_service.get_available_levels(game_id)
+	available_levels = item_tracking_service.get_available_levels()
 	available_propbits = item_tracking_service.get_available_propbits()
-	available_sets = item_tracking_service.get_available_item_sets(game_id)
+	available_sets = item_tracking_service.get_available_item_sets()
 
 	# Apply filters
 	error_message = None
 	try:
 		items_with_sets = item_tracking_service.get_items_with_sets(
-			game_id=game_id,
 			name_query=name_query,
 			level=level,
 			hint_regex=hint_query,
@@ -273,6 +280,7 @@ async def list_items(
 @inject
 async def get_profiles_by_game(
 	game_id: int,
+	game_context: GameContext = Depends(get_game_context),
 	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
 	"""
@@ -280,11 +288,14 @@ async def get_profiles_by_game(
 
 	:param game_id:
 		The game ID to filter profiles by
+	:param game_context:
+		Game context with schema information
 	:param profile_service:
 		Profile service dependency
 	:return:
 		List of profile objects with id and name
 	"""
-	all_profiles = profile_service.list_profiles()
-	game_profiles = [p for p in all_profiles if p.game_id == game_id]
-	return [{"id": p.id, "name": p.name} for p in game_profiles]
+	_game_context.set(game_context)
+
+	profiles = profile_service.list_profiles()
+	return [{"id": p.id, "name": p.name} for p in profiles]

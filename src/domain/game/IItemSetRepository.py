@@ -29,28 +29,14 @@ class IItemSetRepository(ABC):
 		pass
 
 	@abstractmethod
-	def get_by_kb_id(self, kb_id: str, game_id: int) -> ItemSet | None:
+	def get_by_kb_id(self, kb_id: str) -> ItemSet | None:
 		"""
-		Get item set by game identifier and game ID
+		Get item set by game identifier
 
 		:param kb_id:
 			Game identifier
-		:param game_id:
-			Game ID
 		:return:
 			Item set or None if not found
-		"""
-		pass
-
-	@abstractmethod
-	def list_by_game_id(self, game_id: int) -> list[ItemSet]:
-		"""
-		Get all item sets for a specific game
-
-		:param game_id:
-			Game ID
-		:return:
-			List of item sets for the game
 		"""
 		pass
 

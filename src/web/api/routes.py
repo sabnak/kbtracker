@@ -4,23 +4,31 @@ from src.web.api.models import AddShopToItemRequest, UpdateShopCountRequest
 from src.domain.game.services.ItemTrackingService import ItemTrackingService
 from src.domain.profile.IProfileService import IProfileService
 from src.domain.exceptions import EntityNotFoundException, DuplicateEntityException
+from src.web.dependencies.game_context import get_game_context, GameContext
+from src.domain.CrudRepository import _game_context
 
 
 router = APIRouter(prefix="/api", tags=["api"])
 
 
-@router.get("/profiles/{profile_id}/tracked")
+@router.get("/games/{game_id}/profiles/{profile_id}/tracked")
 @inject
 async def get_tracked_items(
+	game_id: int,
 	profile_id: int,
+	game_context: GameContext = Depends(get_game_context),
 	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
 	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
 	"""
 	Get all items with tracked shops for a profile
 
+	:param game_id:
+		Game ID
 	:param profile_id:
 		Profile ID
+	:param game_context:
+		Game context with schema information
 	:param item_tracking_service:
 		Item tracking service
 	:param profile_service:
@@ -28,14 +36,13 @@ async def get_tracked_items(
 	:return:
 		List of items with tracked shops
 	"""
+	_game_context.set(game_context)
+
 	profile = profile_service.get_profile(profile_id)
 	if not profile:
 		raise HTTPException(status_code=404, detail=f"Profile {profile_id} not found")
 
-	items_data = item_tracking_service.get_all_items_with_tracked_shops(
-		profile_id=profile_id,
-		game_id=profile.game_id
-	)
+	items_data = item_tracking_service.get_all_items_with_tracked_shops(profile_id=profile_id)
 
 	result = []
 	for item_data in items_data:
@@ -65,24 +72,30 @@ async def get_tracked_items(
 	return result
 
 
-@router.post("/profiles/{profile_id}/items/{item_id}/shops")
+@router.post("/games/{game_id}/profiles/{profile_id}/items/{item_id}/shops")
 @inject
 async def add_shop_to_item(
+	game_id: int,
 	profile_id: int,
 	item_id: int,
 	request_data: AddShopToItemRequest,
+	game_context: GameContext = Depends(get_game_context),
 	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
 	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
 	"""
 	Add shop tracking to an item
 
+	:param game_id:
+		Game ID
 	:param profile_id:
 		Profile ID
 	:param item_id:
 		Item ID
 	:param request_data:
 		Request data with shop_id and count
+	:param game_context:
+		Game context with schema information
 	:param item_tracking_service:
 		Item tracking service
 	:param profile_service:
@@ -90,6 +103,8 @@ async def add_shop_to_item(
 	:return:
 		Success message
 	"""
+	_game_context.set(game_context)
+
 	profile = profile_service.get_profile(profile_id)
 	if not profile:
 		raise HTTPException(status_code=404, detail=f"Profile {profile_id} not found")
@@ -108,19 +123,23 @@ async def add_shop_to_item(
 		raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.patch("/profiles/{profile_id}/items/{item_id}/shops/{shop_id}")
+@router.patch("/games/{game_id}/profiles/{profile_id}/items/{item_id}/shops/{shop_id}")
 @inject
 async def update_shop_count(
+	game_id: int,
 	profile_id: int,
 	item_id: int,
 	shop_id: int,
 	request_data: UpdateShopCountRequest,
+	game_context: GameContext = Depends(get_game_context),
 	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
 	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
 	"""
 	Update quantity for item-shop tracking
 
+	:param game_id:
+		Game ID
 	:param profile_id:
 		Profile ID
 	:param item_id:
@@ -129,6 +148,8 @@ async def update_shop_count(
 		Shop ID
 	:param request_data:
 		Request data with new count
+	:param game_context:
+		Game context with schema information
 	:param item_tracking_service:
 		Item tracking service
 	:param profile_service:
@@ -136,6 +157,8 @@ async def update_shop_count(
 	:return:
 		Success message
 	"""
+	_game_context.set(game_context)
+
 	profile = profile_service.get_profile(profile_id)
 	if not profile:
 		raise HTTPException(status_code=404, detail=f"Profile {profile_id} not found")
@@ -154,24 +177,30 @@ async def update_shop_count(
 		raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.delete("/profiles/{profile_id}/items/{item_id}/shops/{shop_id}")
+@router.delete("/games/{game_id}/profiles/{profile_id}/items/{item_id}/shops/{shop_id}")
 @inject
 async def remove_shop_from_item(
+	game_id: int,
 	profile_id: int,
 	item_id: int,
 	shop_id: int,
+	game_context: GameContext = Depends(get_game_context),
 	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
 	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
 	"""
 	Remove shop tracking from an item
 
+	:param game_id:
+		Game ID
 	:param profile_id:
 		Profile ID
 	:param item_id:
 		Item ID
 	:param shop_id:
 		Shop ID
+	:param game_context:
+		Game context with schema information
 	:param item_tracking_service:
 		Item tracking service
 	:param profile_service:
@@ -179,6 +208,8 @@ async def remove_shop_from_item(
 	:return:
 		Success message
 	"""
+	_game_context.set(game_context)
+
 	profile = profile_service.get_profile(profile_id)
 	if not profile:
 		raise HTTPException(status_code=404, detail=f"Profile {profile_id} not found")
@@ -198,6 +229,7 @@ async def remove_shop_from_item(
 @inject
 async def get_shops_grouped_by_location(
 	game_id: int,
+	game_context: GameContext = Depends(get_game_context),
 	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"])
 ):
 	"""
@@ -205,12 +237,16 @@ async def get_shops_grouped_by_location(
 
 	:param game_id:
 		Game ID
+	:param game_context:
+		Game context with schema information
 	:param item_tracking_service:
 		Item tracking service
 	:return:
 		Shops grouped by location
 	"""
-	groups = item_tracking_service.get_shops_grouped_by_location(game_id)
+	_game_context.set(game_context)
+
+	groups = item_tracking_service.get_shops_grouped_by_location()
 
 	result = []
 	for group in groups:

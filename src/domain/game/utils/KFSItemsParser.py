@@ -9,7 +9,7 @@ from src.domain.exceptions import InvalidPropbitException
 
 class KFSItemsParser:
 
-	def __init__(self, sessions_path: str, lang: str = 'rus', game_id: int = 0):
+	def __init__(self, sessions_path: str, lang: str = 'rus'):
 		"""
 		Initialize KFS items parser
 
@@ -17,12 +17,9 @@ class KFSItemsParser:
 			Absolute path to sessions directory containing .kfs archives
 		:param lang:
 			Language code
-		:param game_id:
-			Game ID to associate with items
 		"""
 		self._sessions_path = sessions_path
 		self._lang = lang
-		self._game_id = game_id
 
 	def parse(self) -> dict[str, dict[str, any]]:
 		"""
@@ -301,7 +298,6 @@ class KFSItemsParser:
 
 		return Item(
 			id=0,
-			game_id=self._game_id,
 			item_set_id=None,
 			kb_id=kb_id,
 			name=name,

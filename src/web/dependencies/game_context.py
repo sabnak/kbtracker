@@ -1,5 +1,5 @@
 from fastapi import Depends, Path
-from dependency_injector.wiring import Provide
+from dependency_injector.wiring import Provide, inject
 
 from src.core.Container import Container
 from src.domain.game.ISchemaManagementService import ISchemaManagementService
@@ -15,6 +15,7 @@ class GameContext:
 		self.schema_name = schema_name
 
 
+@inject
 def get_game_context(
 	game_id: int = Path(...),
 	schema_mgmt: ISchemaManagementService = Depends(Provide[Container.schema_management_service])

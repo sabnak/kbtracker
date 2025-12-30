@@ -75,41 +75,6 @@ class IItemRepository(ABC):
 		pass
 
 	@abstractmethod
-	def list_by_game_id(
-		self,
-		game_id: int,
-		sort_by: str = "name",
-		sort_order: str = "asc"
-	) -> list[Item]:
-		"""
-		Get all items for a specific game
-
-		:param game_id:
-			Game ID
-		:param sort_by:
-			Field to sort by (name, price, level)
-		:param sort_order:
-			Sort direction (asc, desc)
-		:return:
-			List of items for the game
-		"""
-		pass
-
-	@abstractmethod
-	def search_by_name_and_game(self, query: str, game_id: int) -> list[Item]:
-		"""
-		Search items by name for a specific game
-
-		:param query:
-			Search query
-		:param game_id:
-			Game ID
-		:return:
-			List of matching items for the game
-		"""
-		pass
-
-	@abstractmethod
 	def list_by_item_set_id(self, item_set_id: int) -> list[Item]:
 		"""
 		Get all items belonging to a specific item set
@@ -124,7 +89,6 @@ class IItemRepository(ABC):
 	@abstractmethod
 	def search_with_filters(
 		self,
-		game_id: int,
 		name_query: str | None = None,
 		level: int | None = None,
 		hint_regex: str | None = None,
@@ -136,8 +100,6 @@ class IItemRepository(ABC):
 		"""
 		Search items with multiple filter criteria using AND logic
 
-		:param game_id:
-			Game ID to filter by
 		:param name_query:
 			Optional name search (case-insensitive LIKE)
 		:param level:
@@ -158,12 +120,10 @@ class IItemRepository(ABC):
 		pass
 
 	@abstractmethod
-	def get_distinct_levels(self, game_id: int) -> list[int]:
+	def get_distinct_levels(self) -> list[int]:
 		"""
-		Get list of distinct level values for a game
+		Get list of distinct level values
 
-		:param game_id:
-			Game ID
 		:return:
 			Sorted list of distinct levels
 		"""

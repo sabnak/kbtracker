@@ -42,12 +42,10 @@ class ILocalizationRepository(ABC):
 		pass
 
 	@abstractmethod
-	def get_by_kb_id(self, game_id: int, kb_id: str) -> Localization | None:
+	def get_by_kb_id(self, kb_id: str) -> Localization | None:
 		"""
-		Get localization by game ID and game identifier (composite unique key)
+		Get localization by game identifier
 
-		:param game_id:
-			Game ID
 		:param kb_id:
 			Game identifier
 		:return:

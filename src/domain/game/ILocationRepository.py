@@ -61,15 +61,3 @@ class ILocationRepository(ABC):
 			Created locations with IDs
 		"""
 		pass
-
-	@abstractmethod
-	def list_by_game_id(self, game_id: int) -> list[Location]:
-		"""
-		Get all locations for a specific game
-
-		:param game_id:
-			Game ID
-		:return:
-			List of locations for the game
-		"""
-		pass

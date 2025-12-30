@@ -22,7 +22,6 @@ class KFSLocalizationParser:
 
 	def parse(
 		self,
-		game_id: int,
 		sessions_path: str,
 		file_name: str,
 		kb_id_pattern: re.Pattern = None,
@@ -32,8 +31,6 @@ class KFSLocalizationParser:
 		"""
 		Parse localization file and return Localization entities
 
-		:param game_id:
-			Game database ID for which localizations are being parsed
 		:param sessions_path:
 			Absolute path to sessions directory containing .kfs archives
 		:param file_name:
@@ -46,7 +43,7 @@ class KFSLocalizationParser:
 		:param tag:
 			Optional tag to categorize localization entries
 		:return:
-			List of Localization entities with id=0, game_id=game_id, and source=file_name
+			List of Localization entities with id=0 and source=file_name
 		:raises InvalidRegexPatternException:
 			When kb_id_pattern missing required 'kb_id' named group
 		:raises NoLocalizationMatchesException:
@@ -64,7 +61,7 @@ class KFSLocalizationParser:
 		content = extractor.extract()[0]
 
 		final_pattern = self._build_final_pattern(kb_id_pattern)
-		localizations = self._parse_content(content, final_pattern, game_id, file_name, lang, tag)
+		localizations = self._parse_content(content, final_pattern, file_name, lang, tag)
 
 		return localizations
 
@@ -116,7 +113,6 @@ class KFSLocalizationParser:
 		self,
 		content: str,
 		pattern: re.Pattern,
-		game_id: int,
 		file_name: str,
 		lang: str,
 		tag: str | None = None
@@ -128,8 +124,6 @@ class KFSLocalizationParser:
 			Raw file content
 		:param pattern:
 			Regex pattern with kb_id and text groups
-		:param game_id:
-			Game database ID
 		:param file_name:
 			Source file name for Localization.source field
 		:param lang:
@@ -161,7 +155,6 @@ class KFSLocalizationParser:
 
 			localization = Localization(
 				id=0,
-				game_id=game_id,
 				kb_id=kb_id,
 				text=text,
 				source=file_name,

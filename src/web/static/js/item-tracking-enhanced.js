@@ -153,7 +153,7 @@ class ItemTrackingManager {
 	 * :return:
 	 */
 	async loadTrackedItems() {
-		const response = await fetch(`/api/profiles/${this.profileId}/tracked`);
+		const response = await fetch(`/api/games/${this.gameId}/profiles/${this.profileId}/tracked`);
 		if (!response.ok) {
 			throw new Error('Failed to load tracked items');
 		}
@@ -421,7 +421,7 @@ class ItemTrackingManager {
 	async updateQuantity(itemId, shopId, count) {
 		try {
 			const response = await fetch(
-				`/api/profiles/${this.profileId}/items/${itemId}/shops/${shopId}`,
+				`/api/games/${this.gameId}/profiles/${this.profileId}/items/${itemId}/shops/${shopId}`,
 				{
 					method: 'PATCH',
 					headers: {
@@ -458,7 +458,7 @@ class ItemTrackingManager {
 
 		try {
 			const response = await fetch(
-				`/api/profiles/${this.profileId}/items/${itemId}/shops/${shopId}`,
+				`/api/games/${this.gameId}/profiles/${this.profileId}/items/${itemId}/shops/${shopId}`,
 				{
 					method: 'DELETE'
 				}
@@ -489,7 +489,7 @@ class ItemTrackingManager {
 	async addShop(itemId, shopId, count) {
 		try {
 			const response = await fetch(
-				`/api/profiles/${this.profileId}/items/${itemId}/shops`,
+				`/api/games/${this.gameId}/profiles/${this.profileId}/items/${itemId}/shops`,
 				{
 					method: 'POST',
 					headers: {

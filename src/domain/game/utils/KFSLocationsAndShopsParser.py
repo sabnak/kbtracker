@@ -5,7 +5,7 @@ from src.domain.game.utils.KFSExtractor import KFSExtractor
 
 class KFSLocationsAndShopsParser:
 
-	def __init__(self, sessions_path: str, lang: str = 'rus', game_id: int = 0):
+	def __init__(self, sessions_path: str, lang: str = 'rus'):
 		"""
 		Initialize KFS locations and shops parser
 
@@ -13,12 +13,9 @@ class KFSLocationsAndShopsParser:
 			Absolute path to sessions directory containing .kfs archives
 		:param lang:
 			Language code
-		:param game_id:
-			Game ID to associate with locations and shops
 		"""
 		self._sessions_path = sessions_path
 		self._lang = lang
-		self._game_id = game_id
 
 	def parse(self) -> list[dict[str, Location | list[Shop]]]:
 		"""
@@ -140,7 +137,6 @@ class KFSLocationsAndShopsParser:
 				locations_map[location_kb_id] = {
 					'location': Location(
 						id=0,
-						game_id=self._game_id,
 						kb_id=location_kb_id,
 						name=location_name
 					),
@@ -150,7 +146,6 @@ class KFSLocationsAndShopsParser:
 			# Create shop entity with composite key as kb_id
 			shop = Shop(
 				id=0,
-				game_id=self._game_id,
 				kb_id=composite_key,
 				location_id=0,
 				name=shop_name,
