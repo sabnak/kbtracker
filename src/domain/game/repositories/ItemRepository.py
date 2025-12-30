@@ -60,12 +60,12 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		:param session:
 			Database session
 		:return:
-			SQLAlchemy query with localization joins
+			Tuple of (query, NameLocalization alias, HintLocalization alias)
 		"""
 		NameLocalization = aliased(LocalizationMapper)
 		HintLocalization = aliased(LocalizationMapper)
 
-		return session.query(
+		query = session.query(
 			ItemMapper,
 			NameLocalization.text.label('loc_name'),
 			HintLocalization.text.label('loc_hint')
@@ -76,6 +76,8 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			HintLocalization,
 			HintLocalization.kb_id == func.concat('itm_', ItemMapper.kb_id, '_hint')
 		)
+
+		return query, NameLocalization, HintLocalization
 
 	def _row_to_entity(self, row: tuple) -> Item:
 		"""
@@ -125,27 +127,26 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 
 	def get_by_id(self, item_id: int) -> Item | None:
 		with self._get_session() as session:
-			query = self._build_query_with_localization(session)
+			query, *_ = self._build_query_with_localization(session)
 			row = query.filter(ItemMapper.id == item_id).first()
 			return self._row_to_entity(row) if row else None
 
 	def get_by_kb_id(self, kb_id: str) -> Item | None:
 		with self._get_session() as session:
-			query = self._build_query_with_localization(session)
+			query, *_ = self._build_query_with_localization(session)
 			row = query.filter(ItemMapper.kb_id == kb_id).first()
 			return self._row_to_entity(row) if row else None
 
 	def list_all(self, sort_by: str = "name", sort_order: str = "asc") -> list[Item]:
 		with self._get_session() as session:
-			query = self._build_query_with_localization(session)
+			query, *_ = self._build_query_with_localization(session)
 			query = self._apply_sorting_with_localization(query, sort_by, sort_order)
 			rows = query.all()
 			return [self._row_to_entity(row) for row in rows]
 
 	def search_by_name(self, query: str) -> list[Item]:
 		with self._get_session() as session:
-			base_query = self._build_query_with_localization(session)
-			NameLocalization = aliased(LocalizationMapper)
+			base_query, NameLocalization, *_ = self._build_query_with_localization(session)
 			rows = base_query.filter(
 				NameLocalization.text.ilike(f"%{query}%")
 			).all()
@@ -173,7 +174,7 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			List of items in the set
 		"""
 		with self._get_session() as session:
-			query = self._build_query_with_localization(session)
+			query, *_ = self._build_query_with_localization(session)
 			rows = query.filter(ItemMapper.item_set_id == item_set_id).all()
 			return [self._row_to_entity(row) for row in rows]
 
@@ -208,10 +209,7 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			List of items matching all provided criteria
 		"""
 		with self._get_session() as session:
-			query = self._build_query_with_localization(session)
-
-			NameLocalization = aliased(LocalizationMapper)
-			HintLocalization = aliased(LocalizationMapper)
+			query, NameLocalization, HintLocalization = self._build_query_with_localization(session)
 
 			if name_query:
 				query = query.filter(NameLocalization.text.ilike(f"%{name_query}%"))
