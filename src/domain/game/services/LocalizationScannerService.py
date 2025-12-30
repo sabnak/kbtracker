@@ -1,5 +1,4 @@
 from dependency_injector.wiring import Provide, inject
-import re
 
 from src.core.Config import Config
 from src.core.Container import Container
@@ -32,7 +31,6 @@ class LocalizationScannerService(ILocalizationScannerService):
 	def scan(
 		self,
 		sessions_path: str,
-		kb_id_pattern: re.Pattern = None,
 		lang: str = 'rus'
 	) -> list[Localization]:
 		"""
@@ -40,8 +38,6 @@ class LocalizationScannerService(ILocalizationScannerService):
 
 		:param sessions_path:
 			Absolute path to sessions directory
-		:param kb_id_pattern:
-			Optional regex pattern
 		:param lang:
 			Language code
 		:return:
@@ -49,12 +45,13 @@ class LocalizationScannerService(ILocalizationScannerService):
 		"""
 		all_localizations = []
 
-		for file_name in self._config.localization_files:
+		for localization_config in self._config.localization_config:
 			localizations = self._parser.parse(
 				sessions_path=sessions_path,
-				file_name=file_name,
-				kb_id_pattern=kb_id_pattern,
-				lang=lang
+				file_name=localization_config.file,
+				kb_id_pattern=localization_config.pattern,
+				lang=lang,
+				tag=localization_config.tag
 			)
 			all_localizations.extend(localizations)
 

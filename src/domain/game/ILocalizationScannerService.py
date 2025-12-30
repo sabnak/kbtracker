@@ -10,7 +10,6 @@ class ILocalizationScannerService(ABC):
 	def scan(
 		self,
 		sessions_path: str,
-		kb_id_pattern: re.Pattern = None,
 		lang: str = 'rus'
 	) -> list[Localization]:
 		"""
