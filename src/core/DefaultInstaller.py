@@ -3,6 +3,7 @@ import os
 from dependency_injector import providers
 from sqlalchemy.orm import sessionmaker
 
+from src.core.Config import Config
 from src.core.Container import Container
 from src.domain.filesystem.services.GamePathService import GamePathService
 from src.domain.game.repositories.GameRepository import GameRepository
@@ -27,6 +28,7 @@ class DefaultInstaller:
 		self._container = container
 
 	def install(self):
+		self._container.config.override(providers.Singleton(Config))
 		self._install_db()
 		self._install_repositories()
 		self._install_services()
@@ -44,7 +46,7 @@ class DefaultInstaller:
 		self._container.game_path_service.override(
 			providers.Factory(
 				GamePathService,
-				game_data_path=self._container.config.game_data_path
+				game_data_path=self._container.config().game_data_path
 			)
 		)
 

@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+
+from src.core.Config import Config
 from src.core.Container import Container
 from src.core.DefaultInstaller import DefaultInstaller
-from src.config import Settings
+
 from src.web.exception_handlers import (
 	duplicate_entity_exception_handler,
 	entity_not_found_exception_handler,
@@ -16,10 +18,8 @@ from src.domain.exceptions import (
 
 
 def create_app() -> FastAPI:
-	settings = Settings()
 
 	container = Container()
-	container.config.from_dict(settings.model_dump())
 
 	installer = DefaultInstaller(container)
 	installer.install()

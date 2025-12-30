@@ -1,7 +1,7 @@
 from dependency_injector.wiring import Provide, inject
 import re
 
-from src.config import Settings
+from src.core.Config import Config
 from src.core.Container import Container
 from src.domain.game.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.ILocalizationScannerService import ILocalizationScannerService
@@ -15,7 +15,7 @@ class LocalizationScannerService(ILocalizationScannerService):
 	def __init__(
 		self,
 		repository: ILocalizationRepository = Provide[Container.localization_repository],
-		config: Settings = Provide[Container.config]
+		config: Config = Provide[Container.config]
 	):
 		"""
 		Initialize localization scanner service

@@ -19,7 +19,7 @@ class Container(containers.DeclarativeContainer):
 		packages=["src.domain.profile", "src.domain.game", "src.web"]
 	)
 
-	config = providers.Configuration()
+	config = providers.AbstractSingleton()
 
 	db_session_factory = providers.AbstractFactory()
 
