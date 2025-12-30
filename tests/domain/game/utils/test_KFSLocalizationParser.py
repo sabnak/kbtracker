@@ -40,7 +40,7 @@ class TestKFSLocalizationParser:
 		"""
 		Test parsing with default kb_id pattern
 		"""
-		localizations = parser.parse(sessions_path, 'items')
+		localizations = parser.parse(1, sessions_path, 'items')
 
 		assert len(localizations) > 0
 		assert all(loc.id == 0 for loc in localizations)
@@ -52,7 +52,7 @@ class TestKFSLocalizationParser:
 		"""
 		Test archive path for Russian language
 		"""
-		localizations = parser.parse(sessions_path, 'items', lang='rus')
+		localizations = parser.parse(1, sessions_path, 'items', lang='rus')
 
 		assert len(localizations) > 0
 
@@ -70,7 +70,7 @@ class TestKFSLocalizationParser:
 		"""
 		Test that specific kb_id and text pairs are extracted correctly
 		"""
-		localizations = parser.parse(sessions_path, 'items')
+		localizations = parser.parse(1, sessions_path, 'items')
 		localization_dict = {loc.kb_id: loc.text for loc in localizations}
 
 		assert kb_id in localization_dict
@@ -83,6 +83,7 @@ class TestKFSLocalizationParser:
 		custom_pattern = re.compile(r'^(?P<kb_id>valk\w+)', re.I)
 
 		localizations = parser.parse(
+			1,
 			sessions_path,
 			'items',
 			kb_id_pattern=custom_pattern
@@ -102,7 +103,7 @@ class TestKFSLocalizationParser:
 		invalid_pattern = re.compile(r'^([-\w]+)')
 
 		with pytest.raises(InvalidRegexPatternException) as exc_info:
-			parser.parse(sessions_path, 'items', kb_id_pattern=invalid_pattern)
+			parser.parse(1, sessions_path, 'items', kb_id_pattern=invalid_pattern)
 
 		assert exc_info.value.missing_group == 'kb_id'
 		assert exc_info.value.pattern == r'^([-\w]+)'
@@ -114,7 +115,7 @@ class TestKFSLocalizationParser:
 		no_match_pattern = re.compile(r'^(?P<kb_id>XXXNONEXISTENT)', re.I)
 
 		with pytest.raises(NoLocalizationMatchesException) as exc_info:
-			parser.parse(sessions_path, 'items', kb_id_pattern=no_match_pattern)
+			parser.parse(1, sessions_path, 'items', kb_id_pattern=no_match_pattern)
 
 		assert exc_info.value.file_name == 'items'
 		assert exc_info.value.lang == 'rus'
@@ -123,7 +124,7 @@ class TestKFSLocalizationParser:
 		"""
 		Test parsing file with multiple localization entries
 		"""
-		localizations = parser.parse(sessions_path, 'items')
+		localizations = parser.parse(1, sessions_path, 'items')
 
 		assert len(localizations) > 10
 
@@ -131,6 +132,6 @@ class TestKFSLocalizationParser:
 		"""
 		Test that source field is set correctly
 		"""
-		localizations = parser.parse(sessions_path, 'items')
+		localizations = parser.parse(1, sessions_path, 'items')
 
 		assert all(loc.source == 'items' for loc in localizations)

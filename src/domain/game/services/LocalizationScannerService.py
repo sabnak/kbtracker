@@ -35,6 +35,7 @@ class LocalizationScannerService(ILocalizationScannerService):
 
 		for localization_config in self._config.localization_config:
 			localizations = self._parser.parse(
+				game_id=game_id,
 				sessions_path=sessions_path,
 				file_name=localization_config.file,
 				kb_id_pattern=localization_config.pattern,

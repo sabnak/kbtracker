@@ -17,3 +17,4 @@ class GameMapper(Base):
 	item_sets = relationship("ItemSetMapper", back_populates="game", cascade="all, delete-orphan")
 	locations = relationship("LocationMapper", back_populates="game", cascade="all, delete-orphan")
 	shops = relationship("ShopMapper", back_populates="game", cascade="all, delete-orphan")
+	localizations = relationship("LocalizationMapper", back_populates="game", cascade="all, delete-orphan")
