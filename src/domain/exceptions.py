@@ -149,3 +149,84 @@ class InvalidRegexException(KBTrackerException):
 	@property
 	def pattern(self) -> str:
 		return self._pattern
+
+
+class InvalidRegexPatternException(KBTrackerException):
+	"""
+	Raised when a regex pattern is missing required named groups
+	"""
+
+	def __init__(
+		self,
+		pattern: str,
+		missing_group: str,
+		original_exception: Exception | None = None
+	):
+		self._pattern = pattern
+		self._missing_group = missing_group
+		message = f"Regex pattern missing required named group '{missing_group}': {pattern}"
+		super().__init__(message, original_exception)
+
+	@property
+	def pattern(self) -> str:
+		return self._pattern
+
+	@property
+	def missing_group(self) -> str:
+		return self._missing_group
+
+
+class InvalidKbIdException(KBTrackerException):
+	"""
+	Raised when a kb_id doesn't match the required format
+	"""
+
+	def __init__(
+		self,
+		kb_id: str,
+		source: str,
+		original_exception: Exception | None = None
+	):
+		self._kb_id = kb_id
+		self._source = source
+		message = f"Invalid kb_id '{kb_id}' in {source}: must match pattern ^[-\\w]+$"
+		super().__init__(message, original_exception)
+
+	@property
+	def kb_id(self) -> str:
+		return self._kb_id
+
+	@property
+	def source(self) -> str:
+		return self._source
+
+
+class NoLocalizationMatchesException(KBTrackerException):
+	"""
+	Raised when no localization entries are found in a file
+	"""
+
+	def __init__(
+		self,
+		file_name: str,
+		pattern: str,
+		lang: str,
+		original_exception: Exception | None = None
+	):
+		self._file_name = file_name
+		self._pattern = pattern
+		self._lang = lang
+		message = f"No localization entries found in {lang}_{file_name}.lng using pattern: {pattern}"
+		super().__init__(message, original_exception)
+
+	@property
+	def file_name(self) -> str:
+		return self._file_name
+
+	@property
+	def pattern(self) -> str:
+		return self._pattern
+
+	@property
+	def lang(self) -> str:
+		return self._lang

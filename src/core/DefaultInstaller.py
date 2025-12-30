@@ -14,6 +14,7 @@ from src.domain.game.repositories.ShopHasItemRepository import ShopHasItemReposi
 from src.domain.game.repositories.ShopRepository import ShopRepository
 from src.domain.game.services.GameService import GameService
 from src.domain.game.services.ItemTrackingService import ItemTrackingService
+from src.domain.game.services.LocalizationScannerService import LocalizationScannerService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.profile.repositories.ProfilePostgresRepository import ProfilePostgresRepository
 from src.domain.profile.services.ProfileService import ProfileService
@@ -80,6 +81,14 @@ class DefaultInstaller:
 				shop_repository=self._container.shop_repository,
 				shop_has_item_repository=self._container.shop_has_item_repository,
 				item_set_repository=self._container.item_set_repository
+			)
+		)
+
+		self._container.localization_scanner_service.override(
+			providers.Factory(
+				LocalizationScannerService,
+				repository=self._container.localization_repository,
+				config=self._container.config
 			)
 		)
 

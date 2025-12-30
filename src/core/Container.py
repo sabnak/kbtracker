@@ -37,3 +37,4 @@ class Container(containers.DeclarativeContainer):
 	profile_service = providers.AbstractFactory(IProfileService)
 	scanner_service = providers.AbstractFactory()
 	item_tracking_service = providers.AbstractFactory()
+	localization_scanner_service = providers.AbstractFactory()
