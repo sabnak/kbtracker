@@ -100,6 +100,12 @@ footer {
 }
 
 
+/* Text Size Utilities */
+.text-xxs {
+	font-size: 0.6em;
+}
+
+
 /* Sortable Table Headers */
 .sortable {
 	user-select: none;
