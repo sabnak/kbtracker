@@ -39,4 +39,6 @@ class Container(containers.DeclarativeContainer):
 	scanner_service = providers.AbstractFactory()
 	item_tracking_service = providers.AbstractFactory()
 	localization_scanner_service = providers.AbstractFactory()
+	items_and_sets_scanner_service = providers.AbstractFactory()
+	shops_and_locations_scanner_service = providers.AbstractFactory()
 	schema_management_service = providers.AbstractFactory(ISchemaManagementService)

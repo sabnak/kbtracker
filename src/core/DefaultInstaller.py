@@ -14,10 +14,12 @@ from src.domain.game.repositories.LocationRepository import LocationRepository
 from src.domain.game.repositories.ShopHasItemRepository import ShopHasItemRepository
 from src.domain.game.repositories.ShopRepository import ShopRepository
 from src.domain.game.services.GameService import GameService
+from src.domain.game.services.ItemsAndSetsScannerService import ItemsAndSetsScannerService
 from src.domain.game.services.ItemTrackingService import ItemTrackingService
 from src.domain.game.services.LocalizationScannerService import LocalizationScannerService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services.SchemaManagementService import SchemaManagementService
+from src.domain.game.services.ShopsAndLocationsScannerService import ShopsAndLocationsScannerService
 from src.domain.profile.repositories.ProfilePostgresRepository import ProfilePostgresRepository
 from src.domain.profile.services.ProfileService import ProfileService
 from src.utils.db import create_db_engine
@@ -52,47 +54,31 @@ class DefaultInstaller:
 		)
 
 		self._container.game_service.override(
-			providers.Factory(
-				GameService,
-				game_repository=self._container.game_repository
-			)
+			providers.Factory(GameService)
 		)
 
 		self._container.profile_service.override(
-			providers.Factory(
-				ProfileService,
-				profile_repository=self._container.profile_repository
-			)
+			providers.Factory(ProfileService)
 		)
 
 		self._container.scanner_service.override(
-			providers.Factory(
-				ScannerService,
-				game_repository=self._container.game_repository,
-				item_repository=self._container.item_repository,
-				item_set_repository=self._container.item_set_repository,
-				location_repository=self._container.location_repository,
-				shop_repository=self._container.shop_repository
-			)
+			providers.Factory(ScannerService)
 		)
 
 		self._container.item_tracking_service.override(
-			providers.Factory(
-				ItemTrackingService,
-				item_repository=self._container.item_repository,
-				location_repository=self._container.location_repository,
-				shop_repository=self._container.shop_repository,
-				shop_has_item_repository=self._container.shop_has_item_repository,
-				item_set_repository=self._container.item_set_repository
-			)
+			providers.Factory(ItemTrackingService)
 		)
 
 		self._container.localization_scanner_service.override(
-			providers.Factory(
-				LocalizationScannerService,
-				repository=self._container.localization_repository,
-				config=self._container.config
-			)
+			providers.Factory(LocalizationScannerService)
+		)
+
+		self._container.items_and_sets_scanner_service.override(
+			providers.Factory(ItemsAndSetsScannerService)
+		)
+
+		self._container.shops_and_locations_scanner_service.override(
+			providers.Factory(ShopsAndLocationsScannerService)
 		)
 
 		self._container.schema_management_service.override(

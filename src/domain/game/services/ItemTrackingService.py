@@ -1,3 +1,6 @@
+from dependency_injector.wiring import Provide
+
+from src.core.Container import Container
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.ItemSet import ItemSet
 from src.domain.game.entities.Location import Location
@@ -16,11 +19,11 @@ class ItemTrackingService:
 
 	def __init__(
 		self,
-		item_repository: IItemRepository,
-		location_repository: ILocationRepository,
-		shop_repository: IShopRepository,
-		shop_has_item_repository: IShopHasItemRepository,
-		item_set_repository: IItemSetRepository
+		item_repository: IItemRepository = Provide[Container.item_repository],
+		location_repository: ILocationRepository = Provide[Container.location_repository],
+		shop_repository: IShopRepository = Provide[Container.shop_repository],
+		shop_has_item_repository: IShopHasItemRepository = Provide[Container.shop_has_item_repository],
+		item_set_repository: IItemSetRepository = Provide[Container.item_set_repository]
 	):
 		self._item_repository = item_repository
 		self._location_repository = location_repository
