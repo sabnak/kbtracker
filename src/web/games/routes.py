@@ -1,5 +1,8 @@
+import json
+from collections.abc import Generator
+
 from fastapi import APIRouter, Request, Form, Query, Depends
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from dependency_injector.wiring import inject, Provide
 
@@ -9,6 +12,8 @@ from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameService import IGameService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services import ItemTrackingService
+from src.domain.game.events.ScanEventType import ScanEventType
+from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
 from src.domain.profile.IProfileService import IProfileService
 from src.domain.exceptions import DuplicateEntityException, DatabaseOperationException, InvalidRegexException
 from src.web.dependencies.game_context import get_game_context, GameContext
@@ -187,6 +192,97 @@ async def scan_game_files(
 				"error": str(e)
 			}
 		)
+
+
+@router.get("/games/{game_id}/scan/stream")
+@inject
+async def scan_game_files_stream(
+	game_id: int,
+	language: str = Query(...),
+	game_context: GameContext = Depends(get_game_context),
+	scanner_service: ScannerService = Depends(Provide["scanner_service"]),
+	game_service: IGameService = Depends(Provide["game_service"])
+):
+	"""
+	Stream scan progress events using Server-Sent Events
+
+	:param game_id:
+		Game ID to scan
+	:param language:
+		Language code (rus, eng, ger, pol)
+	:param game_context:
+		Game context with schema information
+	:param scanner_service:
+		Scanner service dependency
+	:param game_service:
+		Game service dependency
+	:return:
+		StreamingResponse with text/event-stream content type
+	"""
+	_game_context.set(game_context)
+
+	game = game_service.get_game(game_id)
+	if not game:
+		# Return error event immediately
+		def error_stream() -> Generator[str, None, None]:
+			event = ScanProgressEvent(
+				event_type=ScanEventType.SCAN_ERROR,
+				error="Game not found",
+				message=f"Game with ID {game_id} not found"
+			)
+			yield f"data: {json.dumps(event.to_dict())}\n\n"
+
+		return StreamingResponse(
+			error_stream(),
+			media_type="text/event-stream"
+		)
+
+	def event_stream() -> Generator[str, None, None]:
+		"""
+		Generate SSE-formatted events
+
+		:return:
+			Generator yielding SSE formatted strings
+		"""
+		try:
+			for event in scanner_service.scan_game_files_stream(game_id, language):
+				# Format as SSE: "data: {json}\n\n"
+				event_data = json.dumps(event.to_dict())
+				yield f"data: {event_data}\n\n"
+
+		except DuplicateEntityException as e:
+			error_event = ScanProgressEvent(
+				event_type=ScanEventType.SCAN_ERROR,
+				error=f"Data already exists: {e.message}",
+				message="This game may have already been scanned"
+			)
+			yield f"data: {json.dumps(error_event.to_dict())}\n\n"
+
+		except DatabaseOperationException as e:
+			error_event = ScanProgressEvent(
+				event_type=ScanEventType.SCAN_ERROR,
+				error=f"Database error: {e.message}",
+				message="Database operation failed"
+			)
+			yield f"data: {json.dumps(error_event.to_dict())}\n\n"
+
+		except Exception as e:
+			error_event = ScanProgressEvent(
+				event_type=ScanEventType.SCAN_ERROR,
+				error=str(e),
+				message="Unexpected error during scan"
+			)
+			yield f"data: {json.dumps(error_event.to_dict())}\n\n"
+
+	return StreamingResponse(
+		event_stream(),
+		media_type="text/event-stream",
+		headers={
+			"Cache-Control": "no-cache",
+			"Connection": "keep-alive",
+			"X-Accel-Buffering": "no"
+		}
+	)
 
 
 @router.get("/games/{game_id}/items", response_class=HTMLResponse)
