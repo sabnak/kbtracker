@@ -105,6 +105,16 @@
 			</div>
 		</div>
 
+		<!-- Items Count Info -->
+		{% if items_with_sets %}
+		<div class="alert alert-info">
+			<strong>Found {{ items_with_sets|length }} item(s)</strong>
+			{% if query or selected_level or hint_regex or selected_propbit or selected_set_id %}
+				matching your filter criteria.
+			{% endif %}
+		</div>
+		{% endif %}
+
 		{% if error %}
 		<div class="alert alert-danger">
 			<strong>Error:</strong> {{ error }}
