@@ -19,6 +19,7 @@ def format_text(text: str | None) -> str:
 	"""
 	Format game text with HTML tags
 	- Converts BBCode tags: [s], [b] to <b>, [u] to <u>, [sys] to <span class="sys-text">
+	- Automatically closes unclosed BBCode tags
 	- Preserves [d] as placeholder for in-game digits
 	- Preserves <br> tags
 	- Removes special characters like ^?^
@@ -26,13 +27,26 @@ def format_text(text: str | None) -> str:
 	:param text:
 		Raw text from game
 	:return:
-		HTML-formatted text
+		HTML-formatted text with properly closed tags
 	"""
 	if not text:
 		return ""
 
 	# Remove special characters like ^?^
 	formatted = text.replace("^?^", "")
+
+	# Count unclosed tags BEFORE replacement
+	# [u] tags
+	u_unclosed = formatted.count("[u]") - formatted.count("[/u]")
+
+	# [s] and [b] tags (both convert to <b>)
+	bold_unclosed = (
+		formatted.count("[s]") + formatted.count("[b]")
+		- formatted.count("[/s]") - formatted.count("[/b]")
+	)
+
+	# [sys] tags
+	sys_unclosed = formatted.count("[sys]") - formatted.count("[/sys]")
 
 	# Replace BBCode bold tags
 	formatted = formatted.replace("[s]", "<b>").replace("[/s]", "</b>")
@@ -44,6 +58,14 @@ def format_text(text: str | None) -> str:
 	# Replace [sys] with styled span (for system/special text)
 	formatted = formatted.replace("[sys]", '<span class="sys-text">')
 	formatted = formatted.replace("[/sys]", "</span>")
+
+	# Close unclosed tags
+	if u_unclosed > 0:
+		formatted += "</u>" * u_unclosed
+	if bold_unclosed > 0:
+		formatted += "</b>" * bold_unclosed
+	if sys_unclosed > 0:
+		formatted += "</span>" * sys_unclosed
 
 	# [d] is kept as-is (placeholder for in-game digits)
 	# <br> tags are already HTML, no conversion needed
