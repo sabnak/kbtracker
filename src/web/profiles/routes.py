@@ -14,25 +14,40 @@ templates = Jinja2Templates(directory="src/web/templates")
 
 
 @router.get("/", response_class=HTMLResponse)
+async def index():
+	"""
+	Redirect to games page (new landing page)
+	"""
+	return RedirectResponse(url="/games", status_code=303)
+
+
+@router.get("/games/{game_id}/profiles", response_class=HTMLResponse)
 @inject
-async def index(
+async def list_game_profiles(
 	request: Request,
+	game_id: int,
+	game_context: GameContext = Depends(get_game_context),
 	profile_service: IProfileService = Depends(Provide["profile_service"]),
 	game_service: IGameService = Depends(Provide["game_service"])
 ):
+	"""
+	List all profiles for a specific game
+	"""
+	_game_context.set(game_context)
+
+	game = game_service.get_game(game_id)
+	if not game:
+		return RedirectResponse(url="/games", status_code=303)
+
 	profiles = profile_service.list_profiles()
 
-	profiles_data = []
-	for profile in profiles:
-		game = game_service.get_game(profile.game_id)
-		profiles_data.append({
-			"profile": profile,
-			"game": game
-		})
-
 	return templates.TemplateResponse(
-		"pages/index.html",
-		{"request": request, "profiles_data": profiles_data}
+		"pages/game_profiles.html",
+		{
+			"request": request,
+			"game": game,
+			"profiles": profiles
+		}
 	)
 
 

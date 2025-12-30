@@ -9,37 +9,24 @@
 
 		<div class="card">
 			<div class="card-body">
-				{% if games %}
-				<form method="POST" action="/profiles/create">
+				<form method="POST" action="/games/{{ game.id }}/profiles">
 					<div class="mb-3">
-						<label for="name" class="form-label">Profile Name</label>
-						<input type="text" class="form-control" id="name" name="name" required>
-						<div class="form-text">A friendly name for this game playthrough</div>
+						<label for="game" class="form-label">Game</label>
+						<input type="text" class="form-control" id="game" value="{{ game.name }} ({{ game.path }})" readonly>
+						<div class="form-text">Creating profile for this game</div>
 					</div>
 
 					<div class="mb-3">
-						<label for="game_id" class="form-label">Game</label>
-						<select class="form-select" id="game_id" name="game_id" required>
-							<option value="">Select game...</option>
-							{% for game in games %}
-							<option value="{{ game.id }}">{{ game.name }} ({{ game.path }})</option>
-							{% endfor %}
-						</select>
-						<div class="form-text">Select which game this profile is for</div>
+						<label for="name" class="form-label">Profile Name</label>
+						<input type="text" class="form-control" id="name" name="name" required autofocus>
+						<div class="form-text">A friendly name for this game playthrough</div>
 					</div>
 
 					<div class="d-grid gap-2">
 						<button type="submit" class="btn btn-primary">Create Profile</button>
-						<a href="/" class="btn btn-secondary">Cancel</a>
+						<a href="/games/{{ game.id }}/items" class="btn btn-secondary">Cancel</a>
 					</div>
 				</form>
-				{% else %}
-				<div class="alert alert-warning">
-					<h5>No Games Available</h5>
-					<p>Please create a game first before creating a profile.</p>
-					<a href="/games/create" class="btn btn-primary">Create Game</a>
-				</div>
-				{% endif %}
 			</div>
 		</div>
 	</div>
