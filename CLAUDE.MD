@@ -17,6 +17,23 @@ Each game has its own PostgreSQL schema (game_1, game_2, etc.). The `game` table
 
 Example: `/games/1/items` automatically queries `game_1.item` table.
 
+## Docker Environment
+
+**MANDATORY**: Application runs in Docker container.
+
+- **Container name**: `kbtracker_app`
+- **All application scripts MUST run inside the container**
+- **Tests MUST be run in the container**: `docker exec kbtracker_app bash -c 'cd /app && pytest'`
+- **Never run application code on host machine**
+
+## Database Operations
+
+**MANDATORY**: For executing raw SQL queries, you MUST use the toolbox MCP server.
+
+- **Tool**: `mcp__toolbox__execute_postgresq_local-tool`
+- **Do NOT use**: `docker exec` with psql or other direct database commands
+- **Always use the MCP tool** for any SQL operations
+
 ## Project Tech Stack
 
 @~/.ai_context/playbooks_create_instructions/inst-pps,pytest,di,fastapi,docker.md
