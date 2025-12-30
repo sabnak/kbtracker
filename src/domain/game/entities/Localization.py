@@ -8,3 +8,4 @@ class Localization:
 	kb_id: str
 	text: str
 	source: str | None
+	tag: str | None = None

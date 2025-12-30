@@ -21,7 +21,8 @@ class LocalizationRepository(
 		return LocalizationMapper(
 			kb_id=entity.kb_id,
 			text=entity.text,
-			source=entity.source
+			source=entity.source,
+			tag=entity.tag
 		)
 
 	def _mapper_to_entity(self, mapper: LocalizationMapper) -> Localization:
@@ -37,7 +38,8 @@ class LocalizationRepository(
 			id=mapper.id,
 			kb_id=mapper.kb_id,
 			text=mapper.text,
-			source=mapper.source
+			source=mapper.source,
+			tag=mapper.tag
 		)
 
 	def _get_entity_type_name(self) -> str:

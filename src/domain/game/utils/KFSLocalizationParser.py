@@ -25,7 +25,8 @@ class KFSLocalizationParser:
 		sessions_path: str,
 		file_name: str,
 		kb_id_pattern: re.Pattern = None,
-		lang: str = 'rus'
+		lang: str = 'rus',
+		tag: str | None = None
 	) -> list[Localization]:
 		"""
 		Parse localization file and return Localization entities
@@ -36,9 +37,11 @@ class KFSLocalizationParser:
 			Base name of localization file (e.g., 'items' for rus_items.lng)
 		:param kb_id_pattern:
 			Optional regex pattern to match kb_id (must contain 'kb_id' named group)
-			Default: ^(?P<kb_id>[-\w]+)
+			Default: ^(?P<kb_id>[-\\w]+)
 		:param lang:
 			Language code (default: 'rus')
+		:param tag:
+			Optional tag to categorize localization entries
 		:return:
 			List of Localization entities with id=0 and source=file_name
 		:raises InvalidRegexPatternException:
@@ -46,7 +49,7 @@ class KFSLocalizationParser:
 		:raises NoLocalizationMatchesException:
 			When no matches found in file
 		:raises InvalidKbIdException:
-			When extracted kb_id doesn't match pattern ^[-\w]+$
+			When extracted kb_id doesn't match pattern ^[-\\w]+$
 		"""
 		if kb_id_pattern is None:
 			kb_id_pattern = re.compile(r'^(?P<kb_id>[-\w]+)', re.I | re.MULTILINE)
@@ -58,7 +61,7 @@ class KFSLocalizationParser:
 		content = extractor.extract()[0]
 
 		final_pattern = self._build_final_pattern(kb_id_pattern)
-		localizations = self._parse_content(content, final_pattern, file_name, lang)
+		localizations = self._parse_content(content, final_pattern, file_name, lang, tag)
 
 		return localizations
 
@@ -111,7 +114,8 @@ class KFSLocalizationParser:
 		content: str,
 		pattern: re.Pattern,
 		file_name: str,
-		lang: str
+		lang: str,
+		tag: str | None = None
 	) -> list[Localization]:
 		"""
 		Parse file content and create Localization entities
@@ -124,6 +128,8 @@ class KFSLocalizationParser:
 			Source file name for Localization.source field
 		:param lang:
 			Language code for error messages
+		:param tag:
+			Optional tag to categorize localization entries
 		:return:
 			List of Localization entities
 		:raises NoLocalizationMatchesException:
@@ -151,7 +157,8 @@ class KFSLocalizationParser:
 				id=0,
 				kb_id=kb_id,
 				text=text,
-				source=file_name
+				source=file_name,
+				tag=tag
 			)
 			localizations.append(localization)
 
@@ -166,7 +173,7 @@ class KFSLocalizationParser:
 		:param source:
 			Source file name for error messages
 		:raises InvalidKbIdException:
-			When kb_id doesn't match ^[-\w]+$
+			When kb_id doesn't match ^[-\\w]+$
 		"""
 		strict_pattern = re.compile(r'^[-\w]+$')
 		if not strict_pattern.match(kb_id):
