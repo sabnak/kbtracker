@@ -7,5 +7,3 @@ class ItemSetMapper(Base):
 
 	id = Column(Integer, primary_key=True, autoincrement=True)
 	kb_id = Column(String, nullable=False, unique=True)
-	name = Column(String, nullable=False)
-	hint = Column(Text, nullable=True)

@@ -1,9 +1,13 @@
+from sqlalchemy import func
+from sqlalchemy.orm import aliased
+
 from src.domain.CrudRepository import CrudRepository
+from src.domain.exceptions import InvalidPropbitException, LocalizationNotFoundException
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Propbit import Propbit
 from src.domain.game.IItemRepository import IItemRepository
 from src.domain.game.repositories.mappers.ItemMapper import ItemMapper
-from src.domain.exceptions import InvalidPropbitException
+from src.domain.game.repositories.mappers.LocalizationMapper import LocalizationMapper
 
 
 class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
@@ -24,9 +28,7 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		return ItemMapper(
 			item_set_id=entity.item_set_id,
 			kb_id=entity.kb_id,
-			name=entity.name,
 			price=entity.price,
-			hint=entity.hint,
 			propbits=propbits_str,
 			level=entity.level
 		)
@@ -51,6 +53,65 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		"""
 		return f"kb_id={entity.kb_id}"
 
+	def _build_query_with_localization(self, session):
+		"""
+		Build base query with localization JOINs for name and hint
+
+		:param session:
+			Database session
+		:return:
+			SQLAlchemy query with localization joins
+		"""
+		NameLocalization = aliased(LocalizationMapper)
+		HintLocalization = aliased(LocalizationMapper)
+
+		return session.query(
+			ItemMapper,
+			NameLocalization.text.label('loc_name'),
+			HintLocalization.text.label('loc_hint')
+		).join(
+			NameLocalization,
+			NameLocalization.kb_id == func.concat('itm_', ItemMapper.kb_id, '_name')
+		).outerjoin(
+			HintLocalization,
+			HintLocalization.kb_id == func.concat('itm_', ItemMapper.kb_id, '_hint')
+		)
+
+	def _row_to_entity(self, row: tuple) -> Item:
+		"""
+		Convert query row with localization to Item entity
+
+		:param row:
+			Tuple of (ItemMapper, name_text, hint_text)
+		:return:
+			Item entity
+		:raises LocalizationNotFoundException:
+			When name localization is missing
+		"""
+		mapper, name, hint = row
+
+		if not name:
+			raise LocalizationNotFoundException(
+				entity_type="Item",
+				kb_id=mapper.kb_id,
+				localization_key=f"itm_{mapper.kb_id}_name"
+			)
+
+		propbits_enum = None
+		if mapper.propbits is not None:
+			propbits_enum = self._convert_propbits_to_enum(mapper.propbits)
+
+		return Item(
+			id=mapper.id,
+			item_set_id=mapper.item_set_id,
+			kb_id=mapper.kb_id,
+			name=name,
+			price=mapper.price,
+			hint=hint,
+			propbits=propbits_enum,
+			level=mapper.level
+		)
+
 	def create(self, item: Item) -> Item:
 		"""
 		Create new item
@@ -64,31 +125,31 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 
 	def get_by_id(self, item_id: int) -> Item | None:
 		with self._get_session() as session:
-			mapper = session.query(ItemMapper).filter(
-				ItemMapper.id == item_id
-			).first()
-			return self._mapper_to_entity(mapper) if mapper else None
+			query = self._build_query_with_localization(session)
+			row = query.filter(ItemMapper.id == item_id).first()
+			return self._row_to_entity(row) if row else None
 
 	def get_by_kb_id(self, kb_id: str) -> Item | None:
 		with self._get_session() as session:
-			mapper = session.query(ItemMapper).filter(
-				ItemMapper.kb_id == kb_id
-			).first()
-			return self._mapper_to_entity(mapper) if mapper else None
+			query = self._build_query_with_localization(session)
+			row = query.filter(ItemMapper.kb_id == kb_id).first()
+			return self._row_to_entity(row) if row else None
 
 	def list_all(self, sort_by: str = "name", sort_order: str = "asc") -> list[Item]:
 		with self._get_session() as session:
-			query = session.query(ItemMapper)
-			query = self._apply_sorting(query, sort_by, sort_order)
-			mappers = query.all()
-			return [self._mapper_to_entity(m) for m in mappers]
+			query = self._build_query_with_localization(session)
+			query = self._apply_sorting_with_localization(query, sort_by, sort_order)
+			rows = query.all()
+			return [self._row_to_entity(row) for row in rows]
 
 	def search_by_name(self, query: str) -> list[Item]:
 		with self._get_session() as session:
-			mappers = session.query(ItemMapper).filter(
-				ItemMapper.name.ilike(f"%{query}%")
+			base_query = self._build_query_with_localization(session)
+			NameLocalization = aliased(LocalizationMapper)
+			rows = base_query.filter(
+				NameLocalization.text.ilike(f"%{query}%")
 			).all()
-			return [self._mapper_to_entity(m) for m in mappers]
+			return [self._row_to_entity(row) for row in rows]
 
 	def create_batch(self, items: list[Item]) -> list[Item]:
 		"""
@@ -112,10 +173,9 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			List of items in the set
 		"""
 		with self._get_session() as session:
-			mappers = session.query(ItemMapper).filter(
-				ItemMapper.item_set_id == item_set_id
-			).all()
-			return [self._mapper_to_entity(m) for m in mappers]
+			query = self._build_query_with_localization(session)
+			rows = query.filter(ItemMapper.item_set_id == item_set_id).all()
+			return [self._row_to_entity(row) for row in rows]
 
 	def search_with_filters(
 		self,
@@ -148,16 +208,19 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			List of items matching all provided criteria
 		"""
 		with self._get_session() as session:
-			query = session.query(ItemMapper)
+			query = self._build_query_with_localization(session)
+
+			NameLocalization = aliased(LocalizationMapper)
+			HintLocalization = aliased(LocalizationMapper)
 
 			if name_query:
-				query = query.filter(ItemMapper.name.ilike(f"%{name_query}%"))
+				query = query.filter(NameLocalization.text.ilike(f"%{name_query}%"))
 
 			if level is not None:
 				query = query.filter(ItemMapper.level == level)
 
 			if hint_regex:
-				query = query.filter(ItemMapper.hint.op('~*')(hint_regex))
+				query = query.filter(HintLocalization.text.op('~*')(hint_regex))
 
 			if propbit:
 				query = query.filter(ItemMapper.propbits.any(propbit))
@@ -165,17 +228,17 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			if item_set_id is not None:
 				query = query.filter(ItemMapper.item_set_id == item_set_id)
 
-			query = self._apply_sorting(query, sort_by, sort_order)
+			query = self._apply_sorting_with_localization(query, sort_by, sort_order)
 
-			mappers = query.all()
-			return [self._mapper_to_entity(m) for m in mappers]
+			rows = query.all()
+			return [self._row_to_entity(row) for row in rows]
 
-	def _apply_sorting(self, query, sort_by: str, sort_order: str):
+	def _apply_sorting_with_localization(self, query, sort_by: str, sort_order: str):
 		"""
-		Apply ORDER BY clause to SQLAlchemy query
+		Apply ORDER BY clause to query with localization
 
 		:param query:
-			SQLAlchemy query object
+			SQLAlchemy query with localization joins
 		:param sort_by:
 			Field to sort by (name, price, level)
 		:param sort_order:
@@ -183,16 +246,21 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		:return:
 			Query with ORDER BY applied
 		"""
-		sort_column = {
-			"name": ItemMapper.name,
-			"price": ItemMapper.price,
-			"level": ItemMapper.level
-		}.get(sort_by, ItemMapper.name)
+		from sqlalchemy import desc, asc, text
+
+		if sort_by == "name":
+			sort_column = text('loc_name')
+		elif sort_by == "price":
+			sort_column = ItemMapper.price
+		elif sort_by == "level":
+			sort_column = ItemMapper.level
+		else:
+			sort_column = text('loc_name')
 
 		if sort_order.lower() == "desc":
-			return query.order_by(sort_column.desc())
+			return query.order_by(desc(sort_column))
 		else:
-			return query.order_by(sort_column.asc())
+			return query.order_by(asc(sort_column))
 
 	def get_distinct_levels(self) -> list[int]:
 		"""
@@ -246,24 +314,13 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		"""
 		Convert ItemMapper to Item entity
 
+		Note: This method is called after creating entities. Since name/hint
+		are stored in localization table, we fetch the full entity with localization.
+
 		:param mapper:
 			ItemMapper to convert
 		:return:
-			Item entity
-		:raises InvalidPropbitException:
-			When mapper contains invalid propbit values
+			Item entity with localized name and hint
 		"""
-		propbits_enum = None
-		if mapper.propbits is not None:
-			propbits_enum = self._convert_propbits_to_enum(mapper.propbits)
+		return self.get_by_id(mapper.id)
 
-		return Item(
-			id=mapper.id,
-			item_set_id=mapper.item_set_id,
-			kb_id=mapper.kb_id,
-			name=mapper.name,
-			price=mapper.price,
-			hint=mapper.hint,
-			propbits=propbits_enum,
-			level=mapper.level
-		)

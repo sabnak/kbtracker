@@ -5,5 +5,5 @@ from dataclasses import dataclass
 class ItemSet:
 	id: int
 	kb_id: str
-	name: str
-	hint: str | None
+	name: str | None = None
+	hint: str | None = None

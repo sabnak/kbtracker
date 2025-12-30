@@ -230,3 +230,37 @@ class NoLocalizationMatchesException(KBTrackerException):
 	@property
 	def lang(self) -> str:
 		return self._lang
+
+
+class LocalizationNotFoundException(RepositoryException):
+	"""
+	Raised when required localization is not found
+	"""
+
+	def __init__(
+		self,
+		entity_type: str,
+		kb_id: str,
+		localization_key: str,
+		original_exception: Exception | None = None
+	):
+		self._entity_type = entity_type
+		self._kb_id = kb_id
+		self._localization_key = localization_key
+		message = (
+			f"Required localization not found for {entity_type} '{kb_id}': "
+			f"missing '{localization_key}'"
+		)
+		super().__init__(message, original_exception)
+
+	@property
+	def entity_type(self) -> str:
+		return self._entity_type
+
+	@property
+	def kb_id(self) -> str:
+		return self._kb_id
+
+	@property
+	def localization_key(self) -> str:
+		return self._localization_key

@@ -52,9 +52,7 @@ class SchemaManagementService(ISchemaManagementService):
 			session.execute(text(f"""
 				CREATE TABLE {schema_name}.item_set (
 					id SERIAL PRIMARY KEY,
-					kb_id VARCHAR(255) NOT NULL UNIQUE,
-					name VARCHAR(255) NOT NULL,
-					hint TEXT
+					kb_id VARCHAR(255) NOT NULL UNIQUE
 				)
 			"""))
 
@@ -63,9 +61,7 @@ class SchemaManagementService(ISchemaManagementService):
 				CREATE TABLE {schema_name}.item (
 					id SERIAL PRIMARY KEY,
 					kb_id VARCHAR(255) NOT NULL UNIQUE,
-					name VARCHAR(255) NOT NULL,
 					price INTEGER DEFAULT 0,
-					hint TEXT,
 					propbits VARCHAR(255)[],
 					item_set_id INTEGER REFERENCES {schema_name}.item_set(id),
 					level INTEGER DEFAULT 1

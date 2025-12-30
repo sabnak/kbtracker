@@ -45,6 +45,7 @@ class TestKFSItemsParser:
 	def test_item_fields_populated_correctly(self):
 		"""
 		Test that Item fields are populated correctly for snake_belt
+		Note: name and hint will be empty - populated from localization table
 		"""
 		sessions_path = self._get_sessions_path()
 		parser = KFSItemsParser(sessions_path)
@@ -55,9 +56,9 @@ class TestKFSItemsParser:
 		snake_belt = next((item for item in items if item.kb_id == 'snake_belt'), None)
 		assert snake_belt is not None
 		assert snake_belt.kb_id == 'snake_belt'
-		assert snake_belt.name != ''
+		assert snake_belt.name == ''  # Empty - comes from localization table
 		assert snake_belt.price == 15000
-		assert snake_belt.hint is not None
+		assert snake_belt.hint is None  # None - comes from localization table
 		assert snake_belt.propbits == [Propbit.BELT]
 
 	def test_propbits_parsing(self):
@@ -78,7 +79,7 @@ class TestKFSItemsParser:
 
 	def test_item_with_no_hint(self):
 		"""
-		Test that items without hint have None value
+		Test that items have None hint (populated from localization table)
 		"""
 		sessions_path = self._get_sessions_path()
 		parser = KFSItemsParser(sessions_path)
@@ -86,8 +87,8 @@ class TestKFSItemsParser:
 		result = parser.parse()
 		items = self._get_all_items(result)
 
-		items_without_hint = [item for item in items if item.hint is None]
-		assert isinstance(items_without_hint, list)
+		# All items have None hint until populated from localization
+		assert all(item.hint is None for item in items)
 
 	def test_large_file_performance(self):
 		"""
@@ -102,11 +103,12 @@ class TestKFSItemsParser:
 		assert len(items) > 100
 		assert all(item.id == 0 for item in items)
 		assert all(item.kb_id != '' for item in items)
-		assert all(item.name != '' for item in items)
+		assert all(item.name == '' for item in items)  # Empty until populated from localization
 
 	def test_all_items_have_required_fields(self):
 		"""
 		Test that all parsed items have required fields populated
+		Note: name will be empty string, hint will be None
 		"""
 		sessions_path = self._get_sessions_path()
 		parser = KFSItemsParser(sessions_path)
@@ -116,7 +118,7 @@ class TestKFSItemsParser:
 
 		for item in items:
 			assert item.kb_id != '', f"Item has empty kb_id"
-			assert item.name != '', f"Item {item.kb_id} has empty name"
+			assert item.name == '', f"Item {item.kb_id} should have empty name"
 			assert isinstance(item.price, int), f"Item {item.kb_id} price is not int"
 			assert item.price >= 0, f"Item {item.kb_id} has negative price"
 

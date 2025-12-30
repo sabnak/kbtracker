@@ -61,7 +61,7 @@ class ScannerService:
 
 		localizations_string = len(self._localization_scanner.scan(game_id, language))
 
-		parse_results = self._parse_items_and_sets(sessions_path, language)
+		parse_results = self._parse_items_and_sets(sessions_path)
 
 		total_items = 0
 		total_sets = 0
@@ -74,9 +74,7 @@ class ScannerService:
 			else:
 				item_set = ItemSet(
 					id=0,
-					kb_id=set_kb_id,
-					name=set_data["name"],
-					hint=set_data["hint"]
+					kb_id=set_kb_id
 				)
 				created_set = self._item_set_repository.create(item_set)
 				total_sets += 1
@@ -97,22 +95,16 @@ class ScannerService:
 			localizations=localizations_string
 		)
 
-	def _parse_items_and_sets(
-		self,
-		session_path: str,
-		language: str
-	) -> dict[str, dict[str, any]]:
+	def _parse_items_and_sets(self, session_path: str) -> dict[str, dict[str, any]]:
 		"""
 		Parse items and sets from game files
 
 		:param session_path:
 			Path to sessions directory
-		:param language:
-			Language code
 		:return:
 			Dictionary with sets and items grouped by set membership
 		"""
-		parser = KFSItemsParser(session_path, language)
+		parser = KFSItemsParser(session_path)
 		return parser.parse()
 
 	def _parse_locations_and_shops(

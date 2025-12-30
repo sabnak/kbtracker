@@ -28,3 +28,4 @@ class Propbit(str, Enum):
 	USABLE = "usable"
 	WEAPON = "weapon"
 	WIFE = "wife"
+	MAP = "map"
