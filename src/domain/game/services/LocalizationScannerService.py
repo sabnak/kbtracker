@@ -1,7 +1,10 @@
+import os
+
 from dependency_injector.wiring import Provide, inject
 
 from src.core.Config import Config
 from src.core.Container import Container
+from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.ILocalizationScannerService import ILocalizationScannerService
 from src.domain.game.entities.Localization import Localization
@@ -14,35 +17,20 @@ class LocalizationScannerService(ILocalizationScannerService):
 	def __init__(
 		self,
 		repository: ILocalizationRepository = Provide[Container.localization_repository],
+		game_repository: IGameRepository = Provide[Container.game_repository],
 		config: Config = Provide[Container.config]
 	):
-		"""
-		Initialize localization scanner service
-
-		:param repository:
-			Localization repository for persistence
-		:param config:
-			Application configuration
-		"""
 		self._parser = KFSLocalizationParser()
 		self._repository = repository
+		self._game_repository = game_repository
 		self._config = config
 
-	def scan(
-		self,
-		sessions_path: str,
-		lang: str = 'rus'
-	) -> list[Localization]:
-		"""
-		Scan and import localization entries from game files
+	def scan(self, game_id: int, lang: str = 'rus') -> list[Localization]:
+		game = self._game_repository.get_by_id(game_id)
+		if not game:
+			raise ValueError(f"Game with ID {game_id} not found")
 
-		:param sessions_path:
-			Absolute path to sessions directory
-		:param lang:
-			Language code
-		:return:
-			Created localizations with database IDs
-		"""
+		sessions_path = os.path.join(self._config.game_data_path, game.path, "sessions")
 		all_localizations = []
 
 		for localization_config in self._config.localization_config:

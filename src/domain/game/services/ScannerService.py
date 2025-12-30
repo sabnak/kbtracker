@@ -10,10 +10,10 @@ from src.domain.game.IItemSetRepository import IItemSetRepository
 from src.domain.game.ILocationRepository import ILocationRepository
 from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.dto.ScanResults import ScanResults
-from src.domain.game.entities.Item import Item
 from src.domain.game.entities.ItemSet import ItemSet
 from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
+from src.domain.game.services.LocalizationScannerService import LocalizationScannerService
 from src.domain.game.utils.KFSItemsParser import KFSItemsParser
 from src.domain.game.utils.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
 
@@ -27,6 +27,7 @@ class ScannerService:
 		item_set_repository: IItemSetRepository,
 		location_repository: ILocationRepository,
 		shop_repository: IShopRepository,
+		localization_service: LocalizationScannerService = Provide[Container.localization_scanner_service],
 		config: Config = Provide[Container.config]
 	):
 		self._game_repository = game_repository
@@ -34,6 +35,7 @@ class ScannerService:
 		self._item_set_repository = item_set_repository
 		self._location_repository = location_repository
 		self._shop_repository = shop_repository
+		self._localization_scanner = localization_service
 		self._config = config
 
 	def scan_game_files(
@@ -55,7 +57,9 @@ class ScannerService:
 		if not game:
 			raise ValueError(f"Game with ID {game_id} not found")
 
-		sessions_path = os.path.join(self._config['game_data_path'], game.path, "sessions")
+		sessions_path = os.path.join(self._config.game_data_path, game.path, "sessions")
+
+		localizations_string = len(self._localization_scanner.scan(game_id, language))
 
 		parse_results = self._parse_items_and_sets(sessions_path, language, game_id)
 
@@ -90,7 +94,8 @@ class ScannerService:
 			items=total_items,
 			locations=len(locations),
 			shops=len(shops),
-			sets=total_sets
+			sets=total_sets,
+			localizations=localizations_string
 		)
 
 	def _parse_items_and_sets(

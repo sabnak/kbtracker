@@ -7,3 +7,4 @@ class ScanResults:
 	locations: int
 	shops: int
 	sets: int
+	localizations: int
