@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
 from src.domain.game.entities.Localization import Localization
-from src.domain.game.entities.LocalizationType import LocalizationType
 
 
 class ILocalizationRepository(ABC):
@@ -43,60 +42,24 @@ class ILocalizationRepository(ABC):
 		pass
 
 	@abstractmethod
-	def get_by_kb_id_and_type(
-		self,
-		kb_id: str,
-		type: LocalizationType
-	) -> Localization | None:
+	def get_by_kb_id(self, kb_id: str) -> Localization | None:
 		"""
-		Get localization by game identifier and type (composite unique key)
+		Get localization by game identifier (unique key)
 
 		:param kb_id:
 			Game identifier
-		:param type:
-			Localization type
 		:return:
 			Localization or None if not found
 		"""
 		pass
 
 	@abstractmethod
-	def list_by_type(self, type: LocalizationType) -> list[Localization]:
+	def search_by_text(self, query: str) -> list[Localization]:
 		"""
-		Get all localizations of a specific type
-
-		:param type:
-			Localization type
-		:return:
-			List of localizations of the specified type
-		"""
-		pass
-
-	@abstractmethod
-	def list_by_kb_id(self, kb_id: str) -> list[Localization]:
-		"""
-		Get all localizations for a specific kb_id (all types)
-
-		:param kb_id:
-			Game identifier
-		:return:
-			List of localizations with the specified kb_id
-		"""
-		pass
-
-	@abstractmethod
-	def search_by_text(
-		self,
-		query: str,
-		type: LocalizationType | None = None
-	) -> list[Localization]:
-		"""
-		Search localization text, optionally filtered by type
+		Search localization text (case-insensitive)
 
 		:param query:
-			Search query (case-insensitive)
-		:param type:
-			Optional localization type filter
+			Search query
 		:return:
 			List of matching localizations
 		"""

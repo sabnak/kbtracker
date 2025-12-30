@@ -1,9 +1,7 @@
 from src.domain.CrudRepository import CrudRepository
 from src.domain.game.entities.Localization import Localization
-from src.domain.game.entities.LocalizationType import LocalizationType
 from src.domain.game.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.repositories.mappers.LocalizationMapper import LocalizationMapper
-from src.domain.exceptions import InvalidLocalizationTypeException
 
 
 class LocalizationRepository(
@@ -23,7 +21,7 @@ class LocalizationRepository(
 		return LocalizationMapper(
 			kb_id=entity.kb_id,
 			text=entity.text,
-			type=entity.type.value
+			source=entity.source
 		)
 
 	def _mapper_to_entity(self, mapper: LocalizationMapper) -> Localization:
@@ -34,16 +32,12 @@ class LocalizationRepository(
 			LocalizationMapper to convert
 		:return:
 			Localization entity
-		:raises InvalidLocalizationTypeException:
-			When mapper contains invalid type value
 		"""
-		type_enum = self._convert_type_to_enum(mapper.type)
-
 		return Localization(
 			id=mapper.id,
 			kb_id=mapper.kb_id,
 			text=mapper.text,
-			type=type_enum
+			source=mapper.source
 		)
 
 	def _get_entity_type_name(self) -> str:
@@ -64,29 +58,7 @@ class LocalizationRepository(
 		:return:
 			Identifier string
 		"""
-		return f"kb_id={entity.kb_id}, type={entity.type.value}"
-
-	def _convert_type_to_enum(self, type_str: str) -> LocalizationType:
-		"""
-		Convert string to LocalizationType enum
-
-		:param type_str:
-			Type string value from database
-		:return:
-			LocalizationType enum value
-		:raises InvalidLocalizationTypeException:
-			When type_str is invalid
-		"""
-		valid_values = [t.value for t in LocalizationType]
-
-		try:
-			return LocalizationType(type_str)
-		except ValueError as e:
-			raise InvalidLocalizationTypeException(
-				invalid_value=type_str,
-				valid_values=valid_values,
-				original_exception=e
-			)
+		return f"kb_id={entity.kb_id}"
 
 	def create(self, localization: Localization) -> Localization:
 		"""
@@ -128,82 +100,34 @@ class LocalizationRepository(
 			).first()
 			return self._mapper_to_entity(mapper) if mapper else None
 
-	def get_by_kb_id_and_type(
-		self,
-		kb_id: str,
-		type: LocalizationType
-	) -> Localization | None:
+	def get_by_kb_id(self, kb_id: str) -> Localization | None:
 		"""
-		Get localization by composite unique key
+		Get localization by game identifier (unique key)
 
 		:param kb_id:
 			Game identifier
-		:param type:
-			Localization type
 		:return:
 			Localization or None if not found
 		"""
 		with self._session_factory() as session:
 			mapper = session.query(LocalizationMapper).filter(
-				LocalizationMapper.kb_id == kb_id,
-				LocalizationMapper.type == type.value
+				LocalizationMapper.kb_id == kb_id
 			).first()
 			return self._mapper_to_entity(mapper) if mapper else None
 
-	def list_by_type(self, type: LocalizationType) -> list[Localization]:
+	def search_by_text(self, query: str) -> list[Localization]:
 		"""
-		Get all localizations of a specific type
-
-		:param type:
-			Localization type
-		:return:
-			List of localizations of the specified type
-		"""
-		with self._session_factory() as session:
-			mappers = session.query(LocalizationMapper).filter(
-				LocalizationMapper.type == type.value
-			).all()
-			return [self._mapper_to_entity(m) for m in mappers]
-
-	def list_by_kb_id(self, kb_id: str) -> list[Localization]:
-		"""
-		Get all localizations for a specific kb_id
-
-		:param kb_id:
-			Game identifier
-		:return:
-			List of localizations with the specified kb_id
-		"""
-		with self._session_factory() as session:
-			mappers = session.query(LocalizationMapper).filter(
-				LocalizationMapper.kb_id == kb_id
-			).all()
-			return [self._mapper_to_entity(m) for m in mappers]
-
-	def search_by_text(
-		self,
-		query: str,
-		type: LocalizationType | None = None
-	) -> list[Localization]:
-		"""
-		Search localization text with optional type filter
+		Search localization text (case-insensitive)
 
 		:param query:
-			Search query (case-insensitive)
-		:param type:
-			Optional localization type filter
+			Search query
 		:return:
 			List of matching localizations
 		"""
 		with self._session_factory() as session:
-			q = session.query(LocalizationMapper).filter(
+			mappers = session.query(LocalizationMapper).filter(
 				LocalizationMapper.text.ilike(f"%{query}%")
-			)
-
-			if type is not None:
-				q = q.filter(LocalizationMapper.type == type.value)
-
-			mappers = q.all()
+			).all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
 	def list_all(self) -> list[Localization]:
