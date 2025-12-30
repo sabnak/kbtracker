@@ -5,6 +5,7 @@ from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.IGameService import IGameService
 from src.domain.game.IItemRepository import IItemRepository
 from src.domain.game.IItemSetRepository import IItemSetRepository
+from src.domain.game.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.ILocationRepository import ILocationRepository
 from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
 from src.domain.game.IShopRepository import IShopRepository
@@ -25,6 +26,7 @@ class Container(containers.DeclarativeContainer):
 	game_repository = providers.AbstractSingleton(IGameRepository)
 	item_repository = providers.AbstractSingleton(IItemRepository)
 	item_set_repository = providers.AbstractSingleton(IItemSetRepository)
+	localization_repository = providers.AbstractSingleton(ILocalizationRepository)
 	location_repository = providers.AbstractSingleton(ILocationRepository)
 	shop_repository = providers.AbstractSingleton(IShopRepository)
 	shop_has_item_repository = providers.AbstractSingleton(IShopHasItemRepository)

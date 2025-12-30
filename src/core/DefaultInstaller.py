@@ -8,6 +8,7 @@ from src.domain.filesystem.services.GamePathService import GamePathService
 from src.domain.game.repositories.GameRepository import GameRepository
 from src.domain.game.repositories.ItemRepository import ItemRepository
 from src.domain.game.repositories.ItemSetRepository import ItemSetRepository
+from src.domain.game.repositories.LocalizationRepository import LocalizationRepository
 from src.domain.game.repositories.LocationRepository import LocationRepository
 from src.domain.game.repositories.ShopHasItemRepository import ShopHasItemRepository
 from src.domain.game.repositories.ShopRepository import ShopRepository
@@ -93,6 +94,10 @@ class DefaultInstaller:
 
 		self._container.item_set_repository.override(
 			providers.Singleton(ItemSetRepository)
+		)
+
+		self._container.localization_repository.override(
+			providers.Singleton(LocalizationRepository)
 		)
 
 		self._container.location_repository.override(
