@@ -16,7 +16,6 @@ class ShopRepository(CrudRepository[Shop, ShopMapper], IShopRepository):
 			ShopMapper instance
 		"""
 		return ShopMapper(
-			game_id=entity.game_id,
 			kb_id=entity.kb_id,
 			location_id=entity.location_id,
 			name=entity.name,
@@ -42,7 +41,7 @@ class ShopRepository(CrudRepository[Shop, ShopMapper], IShopRepository):
 		:return:
 			Identifier string
 		"""
-		return f"game_id={entity.game_id}, kb_id={entity.kb_id}"
+		return f"kb_id={entity.kb_id}"
 
 	def create(self, shop: Shop) -> Shop:
 		"""
@@ -56,43 +55,28 @@ class ShopRepository(CrudRepository[Shop, ShopMapper], IShopRepository):
 		return self._create_single(shop)
 
 	def get_by_id(self, shop_id: int) -> Shop | None:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mapper = session.query(ShopMapper).filter(
 				ShopMapper.id == shop_id
 			).first()
 			return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_kb_id(self, kb_id: int) -> Shop | None:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mapper = session.query(ShopMapper).filter(
 				ShopMapper.kb_id == kb_id
 			).first()
 			return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_location_id(self, location_id: int) -> list[Shop]:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mappers = session.query(ShopMapper).filter(
 				ShopMapper.location_id == location_id
 			).all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
-	def list_by_game_id(self, game_id: int) -> list[Shop]:
-		"""
-		Get all shops for a specific game
-
-		:param game_id:
-			Game ID
-		:return:
-			List of shops for the game
-		"""
-		with self._session_factory() as session:
-			mappers = session.query(ShopMapper).filter(
-				ShopMapper.game_id == game_id
-			).all()
-			return [self._mapper_to_entity(m) for m in mappers]
-
 	def list_all(self) -> list[Shop]:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mappers = session.query(ShopMapper).all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
@@ -110,7 +94,6 @@ class ShopRepository(CrudRepository[Shop, ShopMapper], IShopRepository):
 	def _mapper_to_entity(self, mapper: ShopMapper) -> Shop:
 		return Shop(
 			id=mapper.id,
-			game_id=mapper.game_id,
 			kb_id=mapper.kb_id,
 			location_id=mapper.location_id,
 			name=mapper.name,

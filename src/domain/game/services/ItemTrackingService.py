@@ -28,24 +28,21 @@ class ItemTrackingService:
 		self._shop_has_item_repository = shop_has_item_repository
 		self._item_set_repository = item_set_repository
 
-	def search_items(self, game_id: int, query: str) -> list[Item]:
+	def search_items(self, query: str) -> list[Item]:
 		"""
-		Search items by name for a specific game
+		Search items by name
 
-		:param game_id:
-			Game ID
 		:param query:
 			Search query
 		:return:
 			List of matching items
 		"""
 		if not query or query.strip() == "":
-			return self._item_repository.list_by_game_id(game_id)
-		return self._item_repository.search_by_name_and_game(query, game_id)
+			return self._item_repository.list_all()
+		return self._item_repository.search_by_name(query)
 
 	def get_items_with_sets(
 		self,
-		game_id: int,
 		name_query: str | None = None,
 		level: int | None = None,
 		hint_regex: str | None = None,
@@ -57,8 +54,6 @@ class ItemTrackingService:
 		"""
 		Get items with their set information using multiple filters
 
-		:param game_id:
-			Game ID
 		:param name_query:
 			Optional name search query
 		:param level:
@@ -89,7 +84,6 @@ class ItemTrackingService:
 		try:
 			if has_filters:
 				items = self._item_repository.search_with_filters(
-					game_id=game_id,
 					name_query=name_query,
 					level=level,
 					hint_regex=hint_regex,
@@ -99,8 +93,7 @@ class ItemTrackingService:
 					sort_order=sort_order
 				)
 			else:
-				items = self._item_repository.list_by_game_id(
-					game_id=game_id,
+				items = self._item_repository.list_all(
 					sort_by=sort_by,
 					sort_order=sort_order
 				)
@@ -141,16 +134,14 @@ class ItemTrackingService:
 
 		return result
 
-	def get_locations(self, game_id: int) -> list[Location]:
+	def get_locations(self) -> list[Location]:
 		"""
-		Get all locations for a specific game
+		Get all locations
 
-		:param game_id:
-			Game ID
 		:return:
 			List of all locations
 		"""
-		return self._location_repository.list_by_game_id(game_id)
+		return self._location_repository.list_all()
 
 	def get_shops_by_location(self, location_id: int) -> list[Shop]:
 		"""
@@ -217,22 +208,16 @@ class ItemTrackingService:
 
 		return result
 
-	def get_all_items_with_tracked_shops(
-		self,
-		profile_id: int,
-		game_id: int
-	) -> list[dict]:
+	def get_all_items_with_tracked_shops(self, profile_id: int) -> list[dict]:
 		"""
-		Get all items for a game with their tracked shops
+		Get all items with their tracked shops
 
 		:param profile_id:
 			Profile ID
-		:param game_id:
-			Game ID
 		:return:
 			List of items with tracked shop information
 		"""
-		all_items = self._item_repository.list_by_game_id(game_id)
+		all_items = self._item_repository.list_all()
 		tracked_links = self._shop_has_item_repository.get_by_profile(profile_id)
 
 		tracked_by_item = {}
@@ -261,16 +246,14 @@ class ItemTrackingService:
 
 		return result
 
-	def get_shops_grouped_by_location(self, game_id: int) -> list[dict]:
+	def get_shops_grouped_by_location(self) -> list[dict]:
 		"""
-		Get shops grouped by location for a specific game
+		Get shops grouped by location
 
-		:param game_id:
-			Game ID
 		:return:
 			List of locations with their shops
 		"""
-		locations = self._location_repository.list_by_game_id(game_id)
+		locations = self._location_repository.list_all()
 
 		result = []
 		for location in locations:
@@ -332,16 +315,14 @@ class ItemTrackingService:
 			profile_id=profile_id
 		)
 
-	def get_available_levels(self, game_id: int) -> list[int]:
+	def get_available_levels(self) -> list[int]:
 		"""
-		Get all distinct item levels for a game
+		Get all distinct item levels
 
-		:param game_id:
-			Game ID
 		:return:
 			Sorted list of levels
 		"""
-		return self._item_repository.get_distinct_levels(game_id)
+		return self._item_repository.get_distinct_levels()
 
 	def get_available_propbits(self) -> list[str]:
 		"""
@@ -352,13 +333,11 @@ class ItemTrackingService:
 		"""
 		return [propbit.value for propbit in Propbit]
 
-	def get_available_item_sets(self, game_id: int) -> list[ItemSet]:
+	def get_available_item_sets(self) -> list[ItemSet]:
 		"""
-		Get all item sets for a game
+		Get all item sets
 
-		:param game_id:
-			Game ID
 		:return:
 			List of item sets
 		"""
-		return self._item_set_repository.list_by_game_id(game_id)
+		return self._item_set_repository.list_all()

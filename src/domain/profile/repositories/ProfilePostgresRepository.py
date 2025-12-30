@@ -17,7 +17,6 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 		"""
 		return ProfileMapper(
 			name=entity.name,
-			game_id=entity.game_id,
 			created_at=entity.created_at
 		)
 
@@ -39,7 +38,7 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 		:return:
 			Identifier string
 		"""
-		return f"name={entity.name}, game_id={entity.game_id}"
+		return f"name={entity.name}"
 
 	def create(self, profile: ProfileEntity) -> ProfileEntity:
 		"""
@@ -53,14 +52,14 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 		return self._create_single(profile)
 
 	def get_by_id(self, profile_id: int) -> ProfileEntity | None:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			model = session.query(ProfileMapper).filter(
 				ProfileMapper.id == profile_id
 			).first()
 			return self._mapper_to_entity(model) if model else None
 
 	def list_all(self) -> list[ProfileEntity]:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			models = session.query(ProfileMapper).order_by(
 				ProfileMapper.created_at.desc()
 			).all()
@@ -74,7 +73,7 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 			Profile ID to delete
 		:return:
 		"""
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			session.query(ProfileMapper).filter(
 				ProfileMapper.id == profile_id
 			).delete()
@@ -84,6 +83,5 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 		return ProfileEntity(**{
 			"id": mapper.id,
 			"name": mapper.name,
-			"game_id": mapper.game_id,
 			"created_at": mapper.created_at
 		})

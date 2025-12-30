@@ -11,8 +11,6 @@ class ProfileMapper(Base):
 
 	id = Column(Integer, primary_key=True, autoincrement=True)
 	name = Column(String, nullable=False)
-	game_id = Column(Integer, ForeignKey("game.id"), nullable=False)
 	created_at = Column(DateTime, nullable=False, default=datetime.now())
 
-	game = relationship("GameMapper", back_populates="profiles")
 	shop_items = relationship("ShopHasItemMapper", back_populates="profile")

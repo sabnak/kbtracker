@@ -22,7 +22,6 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			propbits_str = self._convert_propbits_to_strings(entity.propbits)
 
 		return ItemMapper(
-			game_id=entity.game_id,
 			item_set_id=entity.item_set_id,
 			kb_id=entity.kb_id,
 			name=entity.name,
@@ -50,7 +49,7 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		:return:
 			Identifier string
 		"""
-		return f"game_id={entity.game_id}, kb_id={entity.kb_id}"
+		return f"kb_id={entity.kb_id}"
 
 	def create(self, item: Item) -> Item:
 		"""
@@ -64,26 +63,28 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		return self._create_single(item)
 
 	def get_by_id(self, item_id: int) -> Item | None:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mapper = session.query(ItemMapper).filter(
 				ItemMapper.id == item_id
 			).first()
 			return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_kb_id(self, kb_id: str) -> Item | None:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mapper = session.query(ItemMapper).filter(
 				ItemMapper.kb_id == kb_id
 			).first()
 			return self._mapper_to_entity(mapper) if mapper else None
 
-	def list_all(self) -> list[Item]:
-		with self._session_factory() as session:
-			mappers = session.query(ItemMapper).all()
+	def list_all(self, sort_by: str = "name", sort_order: str = "asc") -> list[Item]:
+		with self._get_session() as session:
+			query = session.query(ItemMapper)
+			query = self._apply_sorting(query, sort_by, sort_order)
+			mappers = query.all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
 	def search_by_name(self, query: str) -> list[Item]:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mappers = session.query(ItemMapper).filter(
 				ItemMapper.name.ilike(f"%{query}%")
 			).all()
@@ -100,29 +101,6 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		"""
 		return self._create_batch(items)
 
-	def list_by_game_id(
-		self,
-		game_id: int,
-		sort_by: str = "name",
-		sort_order: str = "asc"
-	) -> list[Item]:
-		with self._session_factory() as session:
-			query = session.query(ItemMapper).filter(
-				ItemMapper.game_id == game_id
-			)
-
-			query = self._apply_sorting(query, sort_by, sort_order)
-
-			mappers = query.all()
-			return [self._mapper_to_entity(m) for m in mappers]
-
-	def search_by_name_and_game(self, query: str, game_id: int) -> list[Item]:
-		with self._session_factory() as session:
-			mappers = session.query(ItemMapper).filter(
-				ItemMapper.name.ilike(f"%{query}%"),
-				ItemMapper.game_id == game_id
-			).all()
-			return [self._mapper_to_entity(m) for m in mappers]
 
 	def list_by_item_set_id(self, item_set_id: int) -> list[Item]:
 		"""
@@ -133,7 +111,7 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		:return:
 			List of items in the set
 		"""
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mappers = session.query(ItemMapper).filter(
 				ItemMapper.item_set_id == item_set_id
 			).all()
@@ -141,7 +119,6 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 
 	def search_with_filters(
 		self,
-		game_id: int,
 		name_query: str | None = None,
 		level: int | None = None,
 		hint_regex: str | None = None,
@@ -153,8 +130,6 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		"""
 		Search items with multiple filter criteria using AND logic
 
-		:param game_id:
-			Game ID to filter by
 		:param name_query:
 			Optional name search (case-insensitive LIKE)
 		:param level:
@@ -172,8 +147,8 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		:return:
 			List of items matching all provided criteria
 		"""
-		with self._session_factory() as session:
-			query = session.query(ItemMapper).filter(ItemMapper.game_id == game_id)
+		with self._get_session() as session:
+			query = session.query(ItemMapper)
 
 			if name_query:
 				query = query.filter(ItemMapper.name.ilike(f"%{name_query}%"))
@@ -219,19 +194,15 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		else:
 			return query.order_by(sort_column.asc())
 
-	def get_distinct_levels(self, game_id: int) -> list[int]:
+	def get_distinct_levels(self) -> list[int]:
 		"""
-		Get list of distinct level values for a game
+		Get list of distinct level values
 
-		:param game_id:
-			Game ID
 		:return:
 			Sorted list of distinct levels
 		"""
-		with self._session_factory() as session:
-			levels = session.query(ItemMapper.level).filter(
-				ItemMapper.game_id == game_id
-			).distinct().order_by(ItemMapper.level).all()
+		with self._get_session() as session:
+			levels = session.query(ItemMapper.level).distinct().order_by(ItemMapper.level).all()
 			return [level[0] for level in levels]
 
 	def _convert_propbits_to_enum(self, propbits: list[str]) -> list[Propbit]:
@@ -288,7 +259,6 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 
 		return Item(
 			id=mapper.id,
-			game_id=mapper.game_id,
 			item_set_id=mapper.item_set_id,
 			kb_id=mapper.kb_id,
 			name=mapper.name,

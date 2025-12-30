@@ -7,6 +7,7 @@ from src.domain.game.IItemRepository import IItemRepository
 from src.domain.game.IItemSetRepository import IItemSetRepository
 from src.domain.game.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.ILocationRepository import ILocationRepository
+from src.domain.game.ISchemaManagementService import ISchemaManagementService
 from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
 from src.domain.game.IShopRepository import IShopRepository
 from src.domain.profile.IProfileRepository import IProfileRepository
@@ -38,3 +39,4 @@ class Container(containers.DeclarativeContainer):
 	scanner_service = providers.AbstractFactory()
 	item_tracking_service = providers.AbstractFactory()
 	localization_scanner_service = providers.AbstractFactory()
+	schema_management_service = providers.AbstractFactory(ISchemaManagementService)

@@ -6,7 +6,6 @@ from src.domain.game.entities.Propbit import Propbit
 class Item:
 
 	id: int
-	game_id: int
 	item_set_id: int | None
 	kb_id: str
 	name: str

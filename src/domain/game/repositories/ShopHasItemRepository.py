@@ -54,7 +54,7 @@ class ShopHasItemRepository(CrudRepository[ShopHasItem, ShopHasItemMapper], ISho
 		return self._create_single(link)
 
 	def get_by_profile(self, profile_id: int) -> list[ShopHasItem]:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mappers = session.query(ShopHasItemMapper).filter(
 				ShopHasItemMapper.profile_id == profile_id
 			).all()
@@ -65,7 +65,7 @@ class ShopHasItemRepository(CrudRepository[ShopHasItem, ShopHasItemMapper], ISho
 		item_id: int,
 		profile_id: int
 	) -> list[ShopHasItem]:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mappers = session.query(ShopHasItemMapper).filter(
 				ShopHasItemMapper.item_id == item_id,
 				ShopHasItemMapper.profile_id == profile_id
@@ -89,7 +89,7 @@ class ShopHasItemRepository(CrudRepository[ShopHasItem, ShopHasItemMapper], ISho
 			Profile ID
 		:return:
 		"""
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			session.query(ShopHasItemMapper).filter(
 				ShopHasItemMapper.item_id == item_id,
 				ShopHasItemMapper.shop_id == shop_id,
@@ -118,7 +118,7 @@ class ShopHasItemRepository(CrudRepository[ShopHasItem, ShopHasItemMapper], ISho
 		:return:
 			Updated link
 		"""
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mapper = session.query(ShopHasItemMapper).filter(
 				ShopHasItemMapper.item_id == item_id,
 				ShopHasItemMapper.shop_id == shop_id,

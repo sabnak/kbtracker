@@ -3,13 +3,19 @@ from dependency_injector.wiring import Provide
 from src.core.Container import Container
 from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.IGameService import IGameService
+from src.domain.game.ISchemaManagementService import ISchemaManagementService
 from src.domain.game.entities.Game import Game
 
 
 class GameService(IGameService):
 
-	def __init__(self, game_repository: IGameRepository = Provide[Container.game_repository]):
+	def __init__(
+		self,
+		game_repository: IGameRepository = Provide[Container.game_repository],
+		schema_mgmt: ISchemaManagementService = Provide[Container.schema_management_service]
+	):
 		self._game_repository = game_repository
+		self._schema_mgmt = schema_mgmt
 
 	def create_game(self, name: str, path: str) -> Game:
 		"""
@@ -23,7 +29,12 @@ class GameService(IGameService):
 			Created game
 		"""
 		game = Game(id=0, name=name, path=path)
-		return self._game_repository.create(game)
+		game = self._game_repository.create(game)
+
+		# Create schema for new game
+		self._schema_mgmt.create_game_schema(game.id)
+
+		return game
 
 	def list_games(self) -> list[Game]:
 		"""
@@ -47,10 +58,14 @@ class GameService(IGameService):
 
 	def delete_game(self, game_id: int) -> None:
 		"""
-		Delete game (cascades to profiles and game data)
+		Delete game (drops schema with all tables and data)
 
 		:param game_id:
 			Game ID
 		:return:
 		"""
+		# Drop schema (removes all tables and data)
+		self._schema_mgmt.delete_game_schema(game_id)
+
+		# Delete game record from public.game table
 		self._game_repository.delete(game_id)

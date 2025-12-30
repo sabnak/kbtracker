@@ -61,7 +61,7 @@ class ScannerService:
 
 		localizations_string = len(self._localization_scanner.scan(game_id, language))
 
-		parse_results = self._parse_items_and_sets(sessions_path, language, game_id)
+		parse_results = self._parse_items_and_sets(sessions_path, language)
 
 		total_items = 0
 		total_sets = 0
@@ -74,7 +74,6 @@ class ScannerService:
 			else:
 				item_set = ItemSet(
 					id=0,
-					game_id=game_id,
 					kb_id=set_kb_id,
 					name=set_data["name"],
 					hint=set_data["hint"]
@@ -88,7 +87,7 @@ class ScannerService:
 				self._item_repository.create_batch(items)
 				total_items += len(items)
 
-		locations, shops = self._parse_locations_and_shops(sessions_path, language, game_id)
+		locations, shops = self._parse_locations_and_shops(sessions_path, language)
 
 		return ScanResults(
 			items=total_items,
@@ -101,8 +100,7 @@ class ScannerService:
 	def _parse_items_and_sets(
 		self,
 		session_path: str,
-		language: str,
-		game_id: int
+		language: str
 	) -> dict[str, dict[str, any]]:
 		"""
 		Parse items and sets from game files
@@ -111,19 +109,16 @@ class ScannerService:
 			Path to sessions directory
 		:param language:
 			Language code
-		:param game_id:
-			Game ID
 		:return:
 			Dictionary with sets and items grouped by set membership
 		"""
-		parser = KFSItemsParser(session_path, language, game_id)
+		parser = KFSItemsParser(session_path, language)
 		return parser.parse()
 
 	def _parse_locations_and_shops(
 		self,
 		session_path: str,
-		language: str,
-		game_id: int
+		language: str
 	) -> tuple[list[Location], list[Shop]]:
 		"""
 		Parse locations and shops from game files
@@ -135,12 +130,10 @@ class ScannerService:
 			Path to sessions directory
 		:param language:
 			Language code
-		:param game_id:
-			Game ID
 		:return:
 			Tuple of (saved_locations, saved_shops)
 		"""
-		parser = KFSLocationsAndShopsParser(session_path, language, game_id)
+		parser = KFSLocationsAndShopsParser(session_path, language)
 		results = parser.parse()
 
 		saved_locations = []

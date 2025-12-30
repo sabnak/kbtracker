@@ -17,6 +17,7 @@ from src.domain.game.services.GameService import GameService
 from src.domain.game.services.ItemTrackingService import ItemTrackingService
 from src.domain.game.services.LocalizationScannerService import LocalizationScannerService
 from src.domain.game.services.ScannerService import ScannerService
+from src.domain.game.services.SchemaManagementService import SchemaManagementService
 from src.domain.profile.repositories.ProfilePostgresRepository import ProfilePostgresRepository
 from src.domain.profile.services.ProfileService import ProfileService
 from src.utils.db import create_db_engine
@@ -91,6 +92,13 @@ class DefaultInstaller:
 				LocalizationScannerService,
 				repository=self._container.localization_repository,
 				config=self._container.config
+			)
+		)
+
+		self._container.schema_management_service.override(
+			providers.Factory(
+				SchemaManagementService,
+				session_factory=self._container.db_session_factory
 			)
 		)
 

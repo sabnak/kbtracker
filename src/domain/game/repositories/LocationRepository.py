@@ -16,7 +16,6 @@ class LocationRepository(CrudRepository[Location, LocationMapper], ILocationRepo
 			LocationMapper instance
 		"""
 		return LocationMapper(
-			game_id=entity.game_id,
 			kb_id=entity.kb_id,
 			name=entity.name
 		)
@@ -39,7 +38,7 @@ class LocationRepository(CrudRepository[Location, LocationMapper], ILocationRepo
 		:return:
 			Identifier string
 		"""
-		return f"game_id={entity.game_id}, kb_id={entity.kb_id}"
+		return f"kb_id={entity.kb_id}"
 
 	def create(self, location: Location) -> Location:
 		"""
@@ -53,21 +52,21 @@ class LocationRepository(CrudRepository[Location, LocationMapper], ILocationRepo
 		return self._create_single(location)
 
 	def get_by_id(self, location_id: int) -> Location | None:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mapper = session.query(LocationMapper).filter(
 				LocationMapper.id == location_id
 			).first()
 			return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_kb_id(self, kb_id: str) -> Location | None:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mapper = session.query(LocationMapper).filter(
 				LocationMapper.kb_id == kb_id
 			).first()
 			return self._mapper_to_entity(mapper) if mapper else None
 
 	def list_all(self) -> list[Location]:
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			mappers = session.query(LocationMapper).all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
@@ -82,17 +81,9 @@ class LocationRepository(CrudRepository[Location, LocationMapper], ILocationRepo
 		"""
 		return self._create_batch(locations)
 
-	def list_by_game_id(self, game_id: int) -> list[Location]:
-		with self._session_factory() as session:
-			mappers = session.query(LocationMapper).filter(
-				LocationMapper.game_id == game_id
-			).all()
-			return [self._mapper_to_entity(m) for m in mappers]
-
 	def _mapper_to_entity(self, mapper: LocationMapper) -> Location:
 		return Location(
 			id=mapper.id,
-			game_id=mapper.game_id,
 			kb_id=mapper.kb_id,
 			name=mapper.name
 		)

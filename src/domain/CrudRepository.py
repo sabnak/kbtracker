@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic
+from contextvars import ContextVar
+from typing import TypeVar, Generic, Optional
 from dependency_injector.wiring import Provide, inject
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -9,10 +10,14 @@ from src.domain.exceptions import (
 	DuplicateEntityException,
 	DatabaseOperationException
 )
+from src.utils.db import create_schema_session
 
 
 TEntity = TypeVar("TEntity")
 TMapper = TypeVar("TMapper")
+
+# Module-level context variable for game context
+_game_context: ContextVar[Optional['GameContext']] = ContextVar('game_context', default=None)
 
 
 class CrudRepository(ABC, Generic[TEntity, TMapper]):
@@ -23,6 +28,18 @@ class CrudRepository(ABC, Generic[TEntity, TMapper]):
 	@inject
 	def __init__(self, session_factory: sessionmaker[Session] = Provide[Container.db_session_factory]):
 		self._session_factory = session_factory
+
+	def _get_session(self):
+		"""
+		Get session with schema context if available
+
+		:return:
+			Session or SchemaContextSession
+		"""
+		context = _game_context.get()
+		if context:
+			return create_schema_session(self._session_factory, context.schema_name)
+		return self._session_factory()
 
 	@abstractmethod
 	def _entity_to_mapper(self, entity: TEntity) -> TMapper:
@@ -85,7 +102,7 @@ class CrudRepository(ABC, Generic[TEntity, TMapper]):
 		"""
 		mapper = self._entity_to_mapper(entity)
 
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			try:
 				session.add(mapper)
 				session.commit()
@@ -128,7 +145,7 @@ class CrudRepository(ABC, Generic[TEntity, TMapper]):
 		"""
 		mappers = [self._entity_to_mapper(entity) for entity in entities]
 
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			try:
 				session.add_all(mappers)
 				session.commit()
@@ -167,7 +184,7 @@ class CrudRepository(ABC, Generic[TEntity, TMapper]):
 		:raises DatabaseOperationException:
 			When database operation fails
 		"""
-		with self._session_factory() as session:
+		with self._get_session() as session:
 			try:
 				query.delete()
 				session.commit()
