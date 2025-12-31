@@ -196,6 +196,19 @@
 							</div>
 							{% endif %}
 
+							{% if item.tiers and item.tiers|length > 1 %}
+							<br />
+							<div class="tier-info">
+								<ul class="tier-items">
+									{% for tier_item in item_data.tier_items %}
+									<li>
+										{% if tier_item.id == item.id %}<strong>{{ tier_item.name }}</strong>{% else %}{{ tier_item.name }}{% endif %}
+									</li>
+									{% endfor %}
+								</ul>
+							</div>
+							{% endif %}
+
 							<br /><br />
 							<small class="text-muted text-xxs">id: {{ item.id }} kb_id: {{ item.kb_id }}</small>
 						</td>

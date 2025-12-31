@@ -12,4 +12,5 @@ class Item:
 	price: int
 	hint: str | None
 	propbits: list[Propbit] | None
+	tiers: list[str] | None
 	level: int = 1

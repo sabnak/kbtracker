@@ -120,18 +120,38 @@ class ItemTrackingService:
 		for set_id in set_ids:
 			set_items_map[set_id] = self._item_repository.list_by_item_set_id(set_id)
 
+		# Collect all tier kb_ids
+		all_tier_kb_ids = set()
+		for item in items:
+			if item.tiers:
+				all_tier_kb_ids.update(item.tiers)
+
+		# Batch fetch all tier items
+		tier_items_by_kb_id = {}
+		if all_tier_kb_ids:
+			tier_items_by_kb_id = self._item_repository.get_by_kb_ids(list(all_tier_kb_ids))
+
 		# Build enriched result
 		result = []
 		for item in items:
 			item_data = {
 				"item": item,
 				"item_set": None,
-				"set_items": []
+				"set_items": [],
+				"tier_items": []
 			}
 
 			if item.item_set_id and item.item_set_id in sets_map:
 				item_data["item_set"] = sets_map[item.item_set_id]
 				item_data["set_items"] = set_items_map.get(item.item_set_id, [])
+
+			# Build ordered tier items list
+			if item.tiers and len(item.tiers) > 1:
+				tier_items = []
+				for tier_kb_id in item.tiers:
+					if tier_kb_id in tier_items_by_kb_id:
+						tier_items.append(tier_items_by_kb_id[tier_kb_id])
+				item_data["tier_items"] = tier_items
 
 			result.append(item_data)
 

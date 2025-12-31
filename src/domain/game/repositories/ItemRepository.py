@@ -30,6 +30,7 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			kb_id=entity.kb_id,
 			price=entity.price,
 			propbits=propbits_str,
+			tiers=entity.tiers,
 			level=entity.level
 		)
 
@@ -111,6 +112,7 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			price=mapper.price,
 			hint=hint,
 			propbits=propbits_enum,
+			tiers=mapper.tiers,
 			level=mapper.level
 		)
 
@@ -162,6 +164,27 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			List of created items with database IDs
 		"""
 		return self._create_batch(items)
+
+
+	def get_by_kb_ids(self, kb_ids: list[str]) -> dict[str, Item]:
+		"""
+		Get multiple items by their kb_ids
+
+		:param kb_ids:
+			List of kb_id strings
+		:return:
+			Dictionary mapping kb_id to Item entity
+		"""
+		with self._get_session() as session:
+			query, *_ = self._build_query_with_localization(session)
+			rows = query.filter(ItemMapper.kb_id.in_(kb_ids)).all()
+
+			result = {}
+			for row in rows:
+				item = self._row_to_entity(row)
+				result[item.kb_id] = item
+
+			return result
 
 
 	def list_by_item_set_id(self, item_set_id: int) -> list[Item]:

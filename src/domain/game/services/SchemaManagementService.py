@@ -63,6 +63,7 @@ class SchemaManagementService(ISchemaManagementService):
 					kb_id VARCHAR(255) NOT NULL UNIQUE,
 					price INTEGER DEFAULT 0,
 					propbits VARCHAR(255)[],
+					tiers VARCHAR(255)[],
 					item_set_id INTEGER REFERENCES {schema_name}.item_set(id),
 					level INTEGER DEFAULT 1
 				)

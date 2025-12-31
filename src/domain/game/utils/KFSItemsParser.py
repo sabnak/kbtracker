@@ -166,13 +166,25 @@ class KFSItemsParser(IKFSItemsParser):
 		item_data = {'kb_id': kb_id}
 		brace_level = 1
 		i = start_idx + 1
+		in_params_block = False
+		params_brace_level = 0
 
 		while i < len(lines) and brace_level > 0:
 			line = lines[i].strip()
 
+			# Track params block entry
+			if line.startswith('params') and '{' in line:
+				in_params_block = True
+				params_brace_level = brace_level + 1
+
 			brace_level += line.count('{')
 			brace_level -= line.count('}')
 
+			# Check if we exited params block
+			if in_params_block and brace_level < params_brace_level:
+				in_params_block = False
+
+			# Parse top-level properties (brace_level == 1)
 			if brace_level == 1 and '=' in line and not line.startswith('//'):
 				key, value = line.split('=', 1)
 				key = key.strip()
@@ -180,6 +192,15 @@ class KFSItemsParser(IKFSItemsParser):
 
 				if key in ['price', 'label', 'hint', 'propbits', 'setref', 'level']:
 					item_data[key] = value
+
+			# Parse params.upgrade (inside params block)
+			if in_params_block and '=' in line and not line.startswith('//'):
+				key, value = line.split('=', 1)
+				key = key.strip()
+				value = value.strip()
+
+				if key == 'upgrade':
+					item_data['params_upgrade'] = value
 
 			i += 1
 
@@ -248,6 +269,13 @@ class KFSItemsParser(IKFSItemsParser):
 		if propbits_str:
 			propbits = self._parse_propbits(propbits_str)
 
+		# Parse tiers from params.upgrade
+		tiers = None
+		params_upgrade = item_data.get('params_upgrade', None)
+		if params_upgrade:
+			# Split comma-separated kb_ids and strip whitespace
+			tiers = [kb.strip() for kb in params_upgrade.split(',')]
+
 		# Name and hint are empty - will be populated from localization table
 		return Item(
 			id=0,
@@ -257,6 +285,7 @@ class KFSItemsParser(IKFSItemsParser):
 			price=price,
 			hint=None,
 			propbits=propbits,
+			tiers=tiers,
 			level=level
 		)
 

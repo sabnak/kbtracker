@@ -60,6 +60,7 @@ CREATE TABLE item (
 	price INTEGER NOT NULL,
 	hint TEXT,
 	propbits VARCHAR(255)[],
+	tiers VARCHAR(255)[],
 	item_set_id INTEGER,
 	CONSTRAINT fk_item_game FOREIGN KEY (game_id) REFERENCES game(id) ON DELETE CASCADE,
 	CONSTRAINT fk_item_item_set FOREIGN KEY (item_set_id) REFERENCES item_set(id) ON DELETE SET NULL,

@@ -75,6 +75,18 @@ class IItemRepository(ABC):
 		pass
 
 	@abstractmethod
+	def get_by_kb_ids(self, kb_ids: list[str]) -> dict[str, Item]:
+		"""
+		Get multiple items by their kb_ids
+
+		:param kb_ids:
+			List of kb_id strings
+		:return:
+			Dictionary mapping kb_id to Item entity
+		"""
+		pass
+
+	@abstractmethod
 	def list_by_item_set_id(self, item_set_id: int) -> list[Item]:
 		"""
 		Get all items belonging to a specific item set

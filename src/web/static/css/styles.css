@@ -82,6 +82,37 @@ footer {
 }
 
 
+/* Tier Information Display */
+.tier-info {
+	margin-top: 0.5rem;
+}
+
+.tier-items {
+	font-size: 0.85rem;
+	color: #6c757d;
+	margin: 0;
+	padding-left: 1.25rem;
+	list-style: none;
+}
+
+.tier-items li {
+	margin-bottom: 0.125rem;
+	padding-left: 1rem;
+	position: relative;
+}
+
+.tier-items li::before {
+	content: "→";
+	position: absolute;
+	left: 0;
+	color: #6c757d;
+}
+
+.tier-items strong {
+	color: #0d6efd;
+}
+
+
 /* Item List Table Column Widths */
 .table td:nth-child(1) {
 	max-width: 500px;  /* Limit name column width */
