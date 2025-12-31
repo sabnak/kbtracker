@@ -42,12 +42,25 @@ Detailed guide for item and item set resources. Covers:
 
 **Use this when**: You need to extract or work with game items, equipment, artifacts, or item collections.
 
+### [save-extractor/](save-extractor/)
+Save file extractor tool documentation. Contains complete guide for extracting shop inventory data from King's Bounty save files:
+- **README.md**: Complete documentation with usage, technical details, troubleshooting
+- **QUICKSTART.md**: 5-minute quick start guide
+- **LIMITATIONS.md**: Magic constants explained with FAQ section
+- **PRODUCTION_READY.md**: Production readiness checklist and validation results
+- **example_usage.py**: Programmatic usage examples
+
+**Tool location**: `/src/tools/kb_shop_extractor.py`
+
+**Use this when**: You need to extract shop inventories (items, units, spells, garrison) from save files for analysis or integration.
+
 ## Quick Reference
 
 | Resource Type | Archive Pattern | Database Table | Documentation |
 |--------------|----------------|----------------|---------------|
 | Localization | `loc_*.kfs` | `localization` | [localization.md](localization.md) |
 | Items | `ses.kfs` | `item`, `item_set` | [items.md](items.md) |
+| Save Shops | Save file `data` | - | [save-extractor/](save-extractor/) |
 
 ## Key Concepts
 
