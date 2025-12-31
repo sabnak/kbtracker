@@ -295,6 +295,7 @@ async def list_items(
 	hint_regex: str = Query(default=""),
 	propbit: str = Query(default=""),
 	item_set_id_str: str = Query(default="", alias="item_set_id"),
+	id_str: str = Query(default="", alias="id"),
 	sort_by: str = Query(default="name"),
 	sort_order: str = Query(default="asc"),
 	game_context: GameContext = Depends(get_game_context),
@@ -313,6 +314,7 @@ async def list_items(
 	# Convert string parameters to proper types
 	level = int(level_str) if level_str else None
 	item_set_id = int(item_set_id_str) if item_set_id_str else None
+	item_id = int(id_str) if id_str.strip() else None
 
 	# Normalize empty strings to None for optional filters
 	name_query = query.strip() if query.strip() else None
@@ -340,6 +342,7 @@ async def list_items(
 			hint_regex=hint_query,
 			propbit=propbit_query,
 			item_set_id=item_set_id,
+			item_id=item_id,
 			sort_by=sort_field,
 			sort_order=sort_direction
 		)
@@ -359,6 +362,7 @@ async def list_items(
 			"hint_regex": hint_regex,
 			"selected_propbit": propbit,
 			"selected_set_id": item_set_id,
+			"selected_id": id_str,
 			# Sort state
 			"sort_by": sort_field,
 			"sort_order": sort_direction,

@@ -113,6 +113,23 @@ footer {
 }
 
 
+/* Related Item Links */
+.related-item-link {
+	text-decoration: underline;
+	color: inherit;  /* Inherit color from parent (.set-items or .tier-items) */
+}
+
+.related-item-link:hover {
+	text-decoration: underline;
+	opacity: 0.8;  /* Slight transparency on hover */
+}
+
+/* Tier item links should be blue like the current tier item */
+.tier-items .related-item-link {
+	color: #0d6efd;  /* Blue color for tier links */
+}
+
+
 /* Item List Table Column Widths */
 .table td:nth-child(1) {
 	max-width: 500px;  /* Limit name column width */

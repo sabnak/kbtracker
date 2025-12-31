@@ -30,6 +30,7 @@
 		<div class="card mb-4">
 			<div class="card-body">
 				<form method="GET" action="/games/{{ game.id }}/items">
+					<input type="hidden" name="id" value="{{ selected_id or '' }}">
 					<div class="row g-3">
 						<!-- Name Search -->
 						<div class="col-md-6">
@@ -188,7 +189,11 @@
 								<ul class="set-items">
 									{% for set_item in item_data.set_items %}
 									<li class="{% if set_item.id == item.id %}current-item{% endif %}">
-										{{ set_item.name }}
+										{% if set_item.id == item.id %}
+											{{ set_item.name }}
+										{% else %}
+											<a href="/games/{{ game.id }}/items?id={{ set_item.id }}" class="related-item-link">{{ set_item.name }}</a>
+										{% endif %}
 									</li>
 									{% endfor %}
 								</ul>
@@ -202,7 +207,11 @@
 								<ul class="tier-items">
 									{% for tier_item in item_data.tier_items %}
 									<li>
-										{% if tier_item.id == item.id %}<strong>{{ tier_item.name }}</strong>{% else %}{{ tier_item.name }}{% endif %}
+										{% if tier_item.id == item.id %}
+											<strong>{{ tier_item.name }}</strong>
+										{% else %}
+											<a href="/games/{{ game.id }}/items?id={{ tier_item.id }}" class="related-item-link">{{ tier_item.name }}</a>
+										{% endif %}
 									</li>
 									{% endfor %}
 								</ul>
