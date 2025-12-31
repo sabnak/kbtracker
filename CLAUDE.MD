@@ -5,6 +5,16 @@
 Application that allows users to track artifacts and scrolls in the King's Bounty.
 
 
+## Game Resources Documentation
+
+The `/docs` folder contains comprehensive guides for extracting and working with King's Bounty game resources.
+
+- **Documentation Index**: `__META__.md` is the main index listing all available documentation
+- **Contents**: Resource file formats (KFS archives), database structures, extraction patterns, localization guides, item data formats
+- **Target Audience**: AI agents and developers working with King's Bounty game data
+- **Key Topics**: game resources overview, localization extraction, item/item set resources, kb_id concept
+- **Access**: Always check `__META__.md` first to find the relevant documentation file for your task
+
 ## Schema-Based Multi-Tenancy
 
 Each game has its own PostgreSQL schema (game_1, game_2, etc.). The `game` table lives in the `public` schema.
