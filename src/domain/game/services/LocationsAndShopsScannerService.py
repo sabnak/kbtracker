@@ -10,22 +10,24 @@ from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.IShopsAndLocationsScannerService import IShopsAndLocationsScannerService
 from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
+from src.domain.game.utils.IKFSLocationsAndShopsParser import IKFSLocationsAndShopsParser
 from src.domain.game.utils.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
 
 
-class ShopsAndLocationsScannerService(IShopsAndLocationsScannerService):
+class LocationsAndShopsScannerService(IShopsAndLocationsScannerService):
 
-	@inject
 	def __init__(
 		self,
 		location_repository: ILocationRepository = Provide[Container.location_repository],
 		shop_repository: IShopRepository = Provide[Container.shop_repository],
 		game_repository: IGameRepository = Provide[Container.game_repository],
+		parser: IKFSLocationsAndShopsParser = Provide[Container.kfs_locations_and_shops_parser],
 		config: Config = Provide[Container.config]
 	):
 		self._location_repository = location_repository
 		self._shop_repository = shop_repository
 		self._game_repository = game_repository
+		self._parser = parser
 		self._config = config
 
 	def scan(self, game_id: int, language: str) -> tuple[list[Location], list[Shop]]:
@@ -34,7 +36,7 @@ class ShopsAndLocationsScannerService(IShopsAndLocationsScannerService):
 			raise ValueError(f"Game with ID {game_id} not found")
 
 		sessions_path = os.path.join(self._config.game_data_path, game.path, "sessions")
-		results = self._parse_locations_and_shops(sessions_path, language)
+		results = self._parser.parse(sessions_path, language)
 
 		saved_locations = []
 		saved_shops = []
@@ -53,11 +55,3 @@ class ShopsAndLocationsScannerService(IShopsAndLocationsScannerService):
 			saved_shops.extend(created_shops)
 
 		return saved_locations, saved_shops
-
-	def _parse_locations_and_shops(
-		self,
-		session_path: str,
-		language: str
-	) -> list[dict[str, Location | list[Shop]]]:
-		parser = KFSLocationsAndShopsParser(session_path, language)
-		return parser.parse()

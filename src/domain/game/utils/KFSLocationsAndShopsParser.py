@@ -1,23 +1,22 @@
+from dependency_injector.wiring import Provide
+
+from src.core.Container import Container
 from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
+from src.domain.game.utils.IKFSLocationsAndShopsParser import IKFSLocationsAndShopsParser
 from src.domain.game.utils.KFSExtractor import KFSExtractor
 
 
-class KFSLocationsAndShopsParser:
+class KFSLocationsAndShopsParser(IKFSLocationsAndShopsParser):
 
-	def __init__(self, sessions_path: str, lang: str = 'rus'):
+	def __init__(self, extractor: KFSExtractor = Provide[Container.kfs_extractor]):
 		"""
 		Initialize KFS locations and shops parser
 
-		:param sessions_path:
-			Absolute path to sessions directory containing .kfs archives
-		:param lang:
-			Language code
 		"""
-		self._sessions_path = sessions_path
-		self._lang = lang
+		self._extractor = extractor
 
-	def parse(self) -> list[dict[str, Location | list[Shop]]]:
+	def parse(self, sessions_path: str, lang: str = 'rus') -> list[dict[str, Location | list[Shop]]]:
 		"""
 		Extract and parse location and shop data from game files
 
@@ -29,11 +28,11 @@ class KFSLocationsAndShopsParser:
 			List of dictionaries with format:
 			[{"location": Location(...), "shops": [Shop(...), ...]}, ...]
 		"""
-		localization_content = self._extract_files()
+		localization_content = self._extract_files(lang, sessions_path)
 		shop_data = self._parse_localization(localization_content)
 		return self._build_entities(shop_data)
 
-	def _extract_files(self) -> str:
+	def _extract_files(self, lang: str, sessions_path: str) -> str:
 		"""
 		Use KFSExtractor to get atoms_info.lng
 
@@ -41,11 +40,10 @@ class KFSLocationsAndShopsParser:
 			Localization file content
 		"""
 		tables = [
-			f"loc_ses{'_' + self._lang if self._lang != 'rus' else ''}.kfs/{self._lang}_atoms_info.lng"
+			f"loc_ses{'_' + lang if lang != 'rus' else ''}.kfs/{lang}_atoms_info.lng"
 		]
 
-		extractor = KFSExtractor(self._sessions_path, tables)
-		results = extractor.extract()
+		results = self._extractor.extract(sessions_path, tables)
 		return results[0]
 
 	def _parse_localization(self, content: str) -> dict[str, dict[str, str]]:
@@ -157,7 +155,8 @@ class KFSLocationsAndShopsParser:
 
 		return list(locations_map.values())
 
-	def _parse_shop_key(self, key: str) -> tuple[str, int, str] | None:
+	@staticmethod
+	def _parse_shop_key(key: str) -> tuple[str, int, str] | None:
 		"""
 		Parse shop key into components
 
@@ -200,9 +199,10 @@ class KFSLocationsAndShopsParser:
 		if not location_kb_id:
 			return None
 
-		return (location_kb_id, shop_kb_id, field)
+		return location_kb_id, shop_kb_id, field
 
-	def _strip_prefix(self, value: str) -> str:
+	@staticmethod
+	def _strip_prefix(value: str) -> str:
 		"""
 		Strip ^?^ prefix from localization values
 

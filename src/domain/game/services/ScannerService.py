@@ -16,13 +16,12 @@ from src.domain.game.dto.ScanResults import ScanResults
 
 class ScannerService:
 
-	@inject
 	def __init__(
 		self,
 		game_repository: IGameRepository = Provide[Container.game_repository],
 		localization_scanner_service: ILocalizationScannerService = Provide[Container.localization_scanner_service],
 		items_and_sets_scanner_service: IItemsAndSetsScannerService = Provide[Container.items_and_sets_scanner_service],
-		shops_and_locations_scanner_service: IShopsAndLocationsScannerService = Provide[Container.shops_and_locations_scanner_service],
+		shops_and_locations_scanner_service: IShopsAndLocationsScannerService = Provide[Container.locations_and_shops_scanner_service],
 		config: Config = Provide[Container.config]
 	):
 		self._game_repository = game_repository

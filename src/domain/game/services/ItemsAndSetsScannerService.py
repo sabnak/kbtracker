@@ -10,22 +10,24 @@ from src.domain.game.IItemSetRepository import IItemSetRepository
 from src.domain.game.IItemsAndSetsScannerService import IItemsAndSetsScannerService
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.ItemSet import ItemSet
+from src.domain.game.utils.IKFSItemsParser import IKFSItemsParser
 from src.domain.game.utils.KFSItemsParser import KFSItemsParser
 
 
 class ItemsAndSetsScannerService(IItemsAndSetsScannerService):
 
-	@inject
 	def __init__(
 		self,
 		item_repository: IItemRepository = Provide[Container.item_repository],
 		item_set_repository: IItemSetRepository = Provide[Container.item_set_repository],
 		game_repository: IGameRepository = Provide[Container.game_repository],
+		parser: IKFSItemsParser = Provide[Container.kfs_items_parser],
 		config: Config = Provide[Container.config]
 	):
 		self._item_repository = item_repository
 		self._item_set_repository = item_set_repository
 		self._game_repository = game_repository
+		self._parser = parser
 		self._config = config
 
 	def scan(self, game_id: int) -> tuple[list[Item], list[ItemSet]]:
@@ -34,7 +36,7 @@ class ItemsAndSetsScannerService(IItemsAndSetsScannerService):
 			raise ValueError(f"Game with ID {game_id} not found")
 
 		sessions_path = os.path.join(self._config.game_data_path, game.path, "sessions")
-		parse_results = self._parse_items_and_sets(sessions_path)
+		parse_results = self._parser.parse(sessions_path)
 
 		all_items = []
 		all_sets = []
@@ -56,7 +58,3 @@ class ItemsAndSetsScannerService(IItemsAndSetsScannerService):
 				all_items.extend(created_items)
 
 		return all_items, all_sets
-
-	def _parse_items_and_sets(self, session_path: str) -> dict[str, dict[str, any]]:
-		parser = KFSItemsParser(session_path)
-		return parser.parse()

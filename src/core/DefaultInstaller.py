@@ -19,7 +19,11 @@ from src.domain.game.services.ItemTrackingService import ItemTrackingService
 from src.domain.game.services.LocalizationScannerService import LocalizationScannerService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services.SchemaManagementService import SchemaManagementService
-from src.domain.game.services.ShopsAndLocationsScannerService import ShopsAndLocationsScannerService
+from src.domain.game.services.LocationsAndShopsScannerService import LocationsAndShopsScannerService
+from src.domain.game.utils.KFSExtractor import KFSExtractor
+from src.domain.game.utils.KFSItemsParser import KFSItemsParser
+from src.domain.game.utils.KFSLocalizationParser import KFSLocalizationParser
+from src.domain.game.utils.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
 from src.domain.profile.repositories.ProfilePostgresRepository import ProfilePostgresRepository
 from src.domain.profile.services.ProfileService import ProfileService
 from src.utils.db import create_db_engine
@@ -34,6 +38,7 @@ class DefaultInstaller:
 		self._container.config.override(providers.Singleton(Config))
 		self._install_db()
 		self._install_repositories()
+		self._install_game_resource_processors()
 		self._install_services()
 
 	def _install_db(self) -> None:
@@ -77,15 +82,26 @@ class DefaultInstaller:
 			providers.Factory(ItemsAndSetsScannerService)
 		)
 
-		self._container.shops_and_locations_scanner_service.override(
-			providers.Factory(ShopsAndLocationsScannerService)
+		self._container.locations_and_shops_scanner_service.override(
+			providers.Factory(LocationsAndShopsScannerService)
 		)
 
 		self._container.schema_management_service.override(
-			providers.Factory(
-				SchemaManagementService,
-				session_factory=self._container.db_session_factory
-			)
+			providers.Factory(SchemaManagementService)
+		)
+
+	def _install_game_resource_processors(self):
+		self._container.kfs_extractor.override(
+			providers.Singleton(KFSExtractor)
+		)
+		self._container.kfs_localization_parser.override(
+			providers.Singleton(KFSLocalizationParser)
+		)
+		self._container.kfs_items_parser.override(
+			providers.Singleton(KFSItemsParser)
+		)
+		self._container.kfs_locations_and_shops_parser.override(
+			providers.Singleton(KFSLocationsAndShopsParser)
 		)
 
 	def _install_repositories(self):

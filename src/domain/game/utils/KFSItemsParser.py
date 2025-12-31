@@ -1,24 +1,26 @@
 import os
 import zipfile
 
+from dependency_injector.wiring import Provide
+
+from src.core.Container import Container
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Propbit import Propbit
+from src.domain.game.utils.IKFSItemsParser import IKFSItemsParser
 from src.domain.game.utils.KFSExtractor import KFSExtractor
 from src.domain.exceptions import InvalidPropbitException
 
 
-class KFSItemsParser:
+class KFSItemsParser(IKFSItemsParser):
 
-	def __init__(self, sessions_path: str):
+	def __init__(self, extractor: KFSExtractor = Provide[Container.kfs_extractor]):
 		"""
 		Initialize KFS items parser
-
-		:param sessions_path:
-			Absolute path to sessions directory containing .kfs archives
 		"""
-		self._sessions_path = sessions_path
 
-	def parse(self) -> dict[str, dict[str, any]]:
+		self._extractor = extractor
+
+	def parse(self, sessions_path: str) -> dict[str, dict[str, any]]:
 		"""
 		Extract and parse item data and set data from game files
 
@@ -31,7 +33,7 @@ class KFSItemsParser:
 			Dictionary with sets as keys, each containing items list
 			Also includes 'setless' key for items without sets
 		"""
-		items_contents = self._extract_files()
+		items_contents = self._extract_files(sessions_path)
 
 		# First pass: parse all set definitions (kb_id only)
 		set_definitions = {}
@@ -56,21 +58,20 @@ class KFSItemsParser:
 
 		return results
 
-	def _extract_files(self) -> list[str]:
+	def _extract_files(self, sessions_path: str) -> list[str]:
 		"""
 		Use KFSExtractor to get all items*.txt files
 
 		:return:
 			List of items file contents
 		"""
-		items_files = self._discover_items_files()
+		items_files = self._discover_items_files(sessions_path)
 
-		extractor = KFSExtractor(self._sessions_path, items_files)
-		results = extractor.extract()
+		results = self._extractor.extract(sessions_path, items_files)
 
 		return results
 
-	def _discover_items_files(self) -> list[str]:
+	def _discover_items_files(self, sessions_path: str) -> list[str]:
 		"""
 		Discover all items*.txt files in ses.kfs archive
 
@@ -79,7 +80,7 @@ class KFSItemsParser:
 		:raises FileNotFoundError:
 			If ses.kfs archive not found
 		"""
-		ses_archive_path = self._find_ses_archive()
+		ses_archive_path = self._find_ses_archive(sessions_path)
 		items_files = []
 
 		with zipfile.ZipFile(ses_archive_path, 'r') as archive:
@@ -89,7 +90,8 @@ class KFSItemsParser:
 
 		return sorted(items_files)
 
-	def _find_ses_archive(self) -> str:
+	@staticmethod
+	def _find_ses_archive(sessions_path: str) -> str:
 		"""
 		Find ses.kfs archive in sessions directory
 
@@ -98,20 +100,20 @@ class KFSItemsParser:
 		:raises FileNotFoundError:
 			If sessions directory or ses.kfs archive not found
 		"""
-		if not os.path.exists(self._sessions_path):
+		if not os.path.exists(sessions_path):
 			raise FileNotFoundError(
-				f"Sessions directory not found: {self._sessions_path}"
+				f"Sessions directory not found: {sessions_path}"
 			)
 
-		for entry in os.listdir(self._sessions_path):
-			entry_path = os.path.join(self._sessions_path, entry)
+		for entry in os.listdir(sessions_path):
+			entry_path = os.path.join(sessions_path, entry)
 			if os.path.isdir(entry_path):
 				ses_archive = os.path.join(entry_path, "ses.kfs")
 				if os.path.exists(ses_archive):
 					return ses_archive
 
 		raise FileNotFoundError(
-			f"Archive 'ses.kfs' not found in {self._sessions_path}"
+			f"Archive 'ses.kfs' not found in {sessions_path}"
 		)
 
 	def _parse_items_file(self, content: str) -> list[dict[str, any]]:
@@ -145,11 +147,8 @@ class KFSItemsParser:
 
 		return items
 
-	def _parse_item_block(
-		self,
-		lines: list[str],
-		start_idx: int
-	) -> tuple[dict[str, any] | None, int]:
+	@staticmethod
+	def _parse_item_block(lines: list[str], start_idx: int) -> tuple[dict[str, any] | None, int]:
 		"""
 		Parse single item block from lines
 
@@ -186,7 +185,8 @@ class KFSItemsParser:
 
 		return item_data, i
 
-	def _parse_propbits(self, propbits_str: str) -> list[Propbit]:
+	@staticmethod
+	def _parse_propbits(propbits_str: str) -> list[Propbit]:
 		"""
 		Parse comma-separated propbits string into Propbit enum list
 
@@ -260,7 +260,8 @@ class KFSItemsParser:
 			level=level
 		)
 
-	def _parse_set_definitions(self, content: str) -> dict[str, dict]:
+	@staticmethod
+	def _parse_set_definitions(content: str) -> dict[str, dict]:
 		"""
 		Parse set definitions from items.txt content
 
@@ -295,11 +296,8 @@ class KFSItemsParser:
 
 		return sets
 
-	def _parse_set_block(
-		self,
-		lines: list[str],
-		start_idx: int
-	) -> tuple[dict[str, str] | None, int]:
+	@staticmethod
+	def _parse_set_block(lines: list[str], start_idx: int) -> tuple[dict[str, str] | None, int]:
 		"""
 		Parse single set block from lines
 

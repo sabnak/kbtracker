@@ -40,5 +40,11 @@ class Container(containers.DeclarativeContainer):
 	item_tracking_service = providers.AbstractFactory()
 	localization_scanner_service = providers.AbstractFactory()
 	items_and_sets_scanner_service = providers.AbstractFactory()
-	shops_and_locations_scanner_service = providers.AbstractFactory()
+	locations_and_shops_scanner_service = providers.AbstractFactory()
 	schema_management_service = providers.AbstractFactory(ISchemaManagementService)
+
+	# Data extractors and parsers
+	kfs_extractor = providers.AbstractSingleton()
+	kfs_items_parser = providers.AbstractSingleton()
+	kfs_localization_parser = providers.AbstractSingleton()
+	kfs_locations_and_shops_parser = providers.AbstractSingleton()

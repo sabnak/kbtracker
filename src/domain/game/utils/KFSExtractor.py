@@ -1,24 +1,12 @@
 import os
 import zipfile
-from pathlib import Path
+
+from src.domain.game.utils.IKFSExtractor import IKFSExtractor
 
 
-class KFSExtractor:
+class KFSExtractor(IKFSExtractor):
 
-	def __init__(self, sessions_path: str, tables: list[str]):
-		"""
-		Initialize KFS archive extractor
-
-		:param sessions_path:
-			Absolute path to sessions directory containing subdirectories with .kfs archives
-		:param tables:
-			List of file paths to extract in format 'archive.kfs/file_path'
-			Example: ["ses.kfs/items.txt", "loc_ses.kfs/rus_items.lng"]
-		"""
-		self._sessions_path = sessions_path
-		self._tables = tables
-
-	def extract(self) -> list[str]:
+	def extract(self, sessions_path: str, tables: list[str]) -> list[str]:
 		"""
 		Extract specified files from KFS archives
 
@@ -35,12 +23,12 @@ class KFSExtractor:
 		:raises UnicodeDecodeError:
 			If file content cannot be decoded
 		"""
-		archive_files_map = self._parse_tables()
+		archive_files_map = self._parse_tables(tables)
 		archive_names = list(archive_files_map.keys())
-		archive_paths = self._find_archives(archive_names)
+		archive_paths = self._find_archives(sessions_path, archive_names)
 
 		results = []
-		for table in self._tables:
+		for table in tables:
 			archive_name, file_path = table.split('/', 1)
 			archive_path = archive_paths[archive_name]
 			content = self._extract_from_archive(archive_path, file_path)
@@ -48,7 +36,7 @@ class KFSExtractor:
 
 		return results
 
-	def _parse_tables(self) -> dict[str, list[str]]:
+	def _parse_tables(self, tables: list[str]) -> dict[str, list[str]]:
 		"""
 		Parse tables parameter into archive to files mapping
 
@@ -56,14 +44,14 @@ class KFSExtractor:
 			Dictionary mapping archive names to lists of files to extract
 		"""
 		archive_files_map: dict[str, list[str]] = {}
-		for table in self._tables:
+		for table in tables:
 			archive_name, file_path = table.split('/', 1)
 			if archive_name not in archive_files_map:
 				archive_files_map[archive_name] = []
 			archive_files_map[archive_name].append(file_path)
 		return archive_files_map
 
-	def _find_archives(self, archive_names: list[str]) -> dict[str, str]:
+	def _find_archives(self, sessions_path: str, archive_names: list[str]) -> dict[str, str]:
 		"""
 		Scan sessions directory subdirectories for .kfs archives
 
@@ -76,13 +64,13 @@ class KFSExtractor:
 		"""
 		found_archives: dict[str, str] = {}
 
-		if not os.path.exists(self._sessions_path):
+		if not os.path.exists(sessions_path):
 			raise FileNotFoundError(
-				f"Sessions directory not found: {self._sessions_path}"
+				f"Sessions directory not found: {sessions_path}"
 			)
 
-		for entry in os.listdir(self._sessions_path):
-			entry_path = os.path.join(self._sessions_path, entry)
+		for entry in os.listdir(sessions_path):
+			entry_path = os.path.join(sessions_path, entry)
 			if os.path.isdir(entry_path):
 				for archive_name in archive_names:
 					archive_path = os.path.join(entry_path, archive_name)
@@ -92,7 +80,7 @@ class KFSExtractor:
 		for archive_name in archive_names:
 			if archive_name not in found_archives:
 				raise FileNotFoundError(
-					f"Archive '{archive_name}' not found in {self._sessions_path}"
+					f"Archive '{archive_name}' not found in {sessions_path}"
 				)
 
 		return found_archives

@@ -1,24 +1,28 @@
 import re
 
+from dependency_injector.wiring import Provide
+
+from src.core.Container import Container
 from src.domain.exceptions import (
 	InvalidKbIdException,
 	InvalidRegexPatternException,
 	NoLocalizationMatchesException
 )
 from src.domain.game.entities.Localization import Localization
+from src.domain.game.utils.IKFSLocalizationParser import IKFSLocalizationParser
 from src.domain.game.utils.KFSExtractor import KFSExtractor
 
 
-class KFSLocalizationParser:
+class KFSLocalizationParser(IKFSLocalizationParser):
 
-	def __init__(self):
+	def __init__(self, extractor: KFSExtractor = Provide[Container.kfs_extractor]):
 		"""
 		Initialize KFS localization parser
 
 		Parser is stateless utility class for extracting localization strings
 		from King's Bounty game files
 		"""
-		pass
+		self._extractor = extractor
 
 	def parse(
 		self,
@@ -57,15 +61,15 @@ class KFSLocalizationParser:
 			self._validate_pattern_has_kb_id_group(kb_id_pattern)
 
 		archive_path = self._build_archive_path(lang, file_name)
-		extractor = KFSExtractor(sessions_path, [archive_path])
-		content = extractor.extract()[0]
+		content = self._extractor.extract(sessions_path, [archive_path])[0]
 
 		final_pattern = self._build_final_pattern(kb_id_pattern)
 		localizations = self._parse_content(content, final_pattern, file_name, lang, tag)
 
 		return localizations
 
-	def _validate_pattern_has_kb_id_group(self, pattern: re.Pattern) -> None:
+	@staticmethod
+	def _validate_pattern_has_kb_id_group(pattern: re.Pattern) -> None:
 		"""
 		Validate that pattern contains required 'kb_id' named group
 
@@ -80,7 +84,8 @@ class KFSLocalizationParser:
 				missing_group='kb_id'
 			)
 
-	def _build_archive_path(self, lang: str, file_name: str) -> str:
+	@staticmethod
+	def _build_archive_path(lang: str, file_name: str) -> str:
 		"""
 		Construct archive path based on language
 
@@ -96,7 +101,8 @@ class KFSLocalizationParser:
 		else:
 			return f"loc_ses_{lang}.kfs/{lang}_{file_name}.lng"
 
-	def _build_final_pattern(self, kb_id_pattern: re.Pattern) -> re.Pattern:
+	@staticmethod
+	def _build_final_pattern(kb_id_pattern: re.Pattern) -> re.Pattern:
 		"""
 		Extend kb_id pattern with text capture group
 
@@ -164,7 +170,8 @@ class KFSLocalizationParser:
 
 		return localizations
 
-	def _validate_kb_id(self, kb_id: str, source: str) -> None:
+	@staticmethod
+	def _validate_kb_id(kb_id: str, source: str) -> None:
 		"""
 		Validate kb_id against strict format pattern
 

@@ -13,14 +13,14 @@ from src.domain.game.utils.KFSLocalizationParser import KFSLocalizationParser
 
 class LocalizationScannerService(ILocalizationScannerService):
 
-	@inject
 	def __init__(
 		self,
 		repository: ILocalizationRepository = Provide[Container.localization_repository],
 		game_repository: IGameRepository = Provide[Container.game_repository],
+		parser: KFSLocalizationParser = Provide[Container.kfs_localization_parser],
 		config: Config = Provide[Container.config]
 	):
-		self._parser = KFSLocalizationParser()
+		self._parser = parser
 		self._repository = repository
 		self._game_repository = game_repository
 		self._config = config
