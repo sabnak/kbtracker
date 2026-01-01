@@ -101,7 +101,7 @@ def search_strings(data: bytes, min_length: int = 10):
 
 
 if __name__ == '__main__':
-	save_file = r'F:\var\kbtracker\tests\game_files\saves\1707078232\data'
+	save_file = r'/tests/game_files/saves/1707078232/data'
 
 	# Analyze header
 	zlib_offset = analyze_header(save_file)

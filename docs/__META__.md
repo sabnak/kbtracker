@@ -54,6 +54,18 @@ Save file extractor tool documentation. Contains complete guide for extracting s
 
 **Use this when**: You need to extract shop inventories (items, units, spells, garrison) from save files for analysis or integration.
 
+### [campaign-identifier.md](campaign-identifier.md)
+Campaign identification from save files. Covers:
+- How to extract campaign ID from hero character names
+- Programmatic usage and CLI interface
+- Matching saves to campaigns
+- Grouping saves by campaign
+- Technical details and validation results
+
+**Tool location**: `/src/tools/kb_campaign_identifier.py`
+
+**Use this when**: You need to identify which campaign a save belongs to, or group saves by campaign since the game doesn't store explicit campaign IDs.
+
 ## Quick Reference
 
 | Resource Type | Archive Pattern | Database Table | Documentation |
@@ -61,6 +73,7 @@ Save file extractor tool documentation. Contains complete guide for extracting s
 | Localization | `loc_*.kfs` | `localization` | [localization.md](localization.md) |
 | Items | `ses.kfs` | `item`, `item_set` | [items.md](items.md) |
 | Save Shops | Save file `data` | - | [save-extractor/](save-extractor/) |
+| Campaign ID | Save file `data` | - | [campaign-identifier.md](campaign-identifier.md) |
 
 ## Key Concepts
 

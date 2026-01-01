@@ -37,9 +37,9 @@ def decompress_save(input_file: str, output_file: str) -> None:
 
 
 if __name__ == '__main__':
-	saves_dir = r'F:\var\kbtracker\tests\game_files\saves\1767209722'
+	saves_dir = r'/tests/game_files/saves/1767209722'
 	input_file = os.path.join(saves_dir, 'data')
-	output_file = r'F:\var\kbtracker\tests\research\save_decompiler\tmp\decompressed_new.bin'
+	output_file = r'/tests/research/save_decompiler/kb_shop_extractor/tmp\decompressed_new.bin'
 
 	print("="*78)
 	print("DECOMPRESSING NEW SAVE FILE (1767209722)")
