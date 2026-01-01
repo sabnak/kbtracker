@@ -7,6 +7,7 @@ from src.core.Container import Container
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Propbit import Propbit
 from src.domain.exceptions import InvalidPropbitException
+from src.utils.parsers import atom
 from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
 from src.utils.parsers.game_data.IKFSItemsParser import IKFSItemsParser
 
@@ -118,93 +119,41 @@ class KFSItemsParser(IKFSItemsParser):
 
 	def _parse_items_file(self, content: str) -> list[dict[str, any]]:
 		"""
-		Parse items.txt into list of item dictionaries
+		Parse items.txt into list of item dictionaries using AtomParser
 
 		:param content:
 			Raw items.txt file content
 		:return:
 			List of dictionaries containing item data
 		"""
+		config_blocks = {
+			'params', 'actions', 'mods', 'atoms', 'use', 'fight',
+			'filter', 'troops', 'setbonus', 'army', 'trap', 'shield'
+		}
+
+		parsed = atom.loads(content)
 		items = []
-		lines = content.split('\n')
-		i = 0
 
-		while i < len(lines):
-			line = lines[i].strip()
+		for kb_id, block_data in parsed.items():
+			if kb_id in config_blocks:
+				continue
 
-			if '{' in line and not line.startswith('//'):
-				parts = line.split('{', 1)
-				potential_kb_id = parts[0].strip()
+			if not isinstance(block_data, dict):
+				continue
 
-				if potential_kb_id and not any(c in potential_kb_id for c in ['=', ' ']):
-					item_data, end_idx = self._parse_item_block(lines, i)
-					if item_data:
-						items.append(item_data)
-					i = end_idx
-					continue
+			item_data = {'kb_id': kb_id}
 
-			i += 1
+			for key in ['price', 'label', 'hint', 'propbits', 'setref', 'level']:
+				if key in block_data:
+					item_data[key] = block_data[key]
+
+			if 'params' in block_data and isinstance(block_data['params'], dict):
+				if 'upgrade' in block_data['params']:
+					item_data['params_upgrade'] = block_data['params']['upgrade']
+
+			items.append(item_data)
 
 		return items
-
-	@staticmethod
-	def _parse_item_block(lines: list[str], start_idx: int) -> tuple[dict[str, any] | None, int]:
-		"""
-		Parse single item block from lines
-
-		:param lines:
-			All lines from items.txt
-		:param start_idx:
-			Index of line containing item identifier
-		:return:
-			Tuple of (item_data dict or None, end_index)
-		"""
-		line = lines[start_idx].strip()
-		parts = line.split('{', 1)
-		kb_id = parts[0].strip()
-
-		item_data = {'kb_id': kb_id}
-		brace_level = 1
-		i = start_idx + 1
-		in_params_block = False
-		params_brace_level = 0
-
-		while i < len(lines) and brace_level > 0:
-			line = lines[i].strip()
-
-			# Track params block entry
-			if line.startswith('params') and '{' in line:
-				in_params_block = True
-				params_brace_level = brace_level + 1
-
-			brace_level += line.count('{')
-			brace_level -= line.count('}')
-
-			# Check if we exited params block
-			if in_params_block and brace_level < params_brace_level:
-				in_params_block = False
-
-			# Parse top-level properties (brace_level == 1)
-			if brace_level == 1 and '=' in line and not line.startswith('//'):
-				key, value = line.split('=', 1)
-				key = key.strip()
-				value = value.strip()
-
-				if key in ['price', 'label', 'hint', 'propbits', 'setref', 'level']:
-					item_data[key] = value
-
-			# Parse params.upgrade (inside params block)
-			if in_params_block and '=' in line and not line.startswith('//'):
-				key, value = line.split('=', 1)
-				key = key.strip()
-				value = value.strip()
-
-				if key == 'upgrade':
-					item_data['params_upgrade'] = value
-
-			i += 1
-
-		return item_data, i
 
 	@staticmethod
 	def _parse_propbits(propbits_str: str) -> list[Propbit]:

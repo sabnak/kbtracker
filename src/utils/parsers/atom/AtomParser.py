@@ -92,7 +92,7 @@ class AtomParser:
 				after_equals = (char == '=')
 				current = ''
 
-			elif char in ' \t\n':
+			elif char in ' \t\n\r':
 				if current.strip():
 					tokens.append(current.strip())
 					after_equals = False
@@ -127,12 +127,12 @@ class AtomParser:
 			return self._tokens[pos]
 		return None
 
-	def _parse_block(self) -> dict:
+	def _parse_block(self) -> dict | list:
 		"""
 		Parse block content between braces
 
 		:return:
-			Parsed block as dict
+			Parsed block as dict or list (if contains only unnamed blocks)
 		"""
 		if self._tokens[self._pos] != '{':
 			context = self._get_error_context()
@@ -143,12 +143,14 @@ class AtomParser:
 
 		self._pos += 1
 		block_data = {}
+		unnamed_blocks = []
 
 		while self._pos < len(self._tokens) and self._tokens[self._pos] != '}':
 			token = self._tokens[self._pos]
 
 			if token == '{':
-				self._pos += 1
+				unnamed_block = self._parse_block()
+				unnamed_blocks.append(unnamed_block)
 				continue
 
 			next_token = self._peek()
@@ -186,6 +188,13 @@ class AtomParser:
 			)
 
 		self._pos += 1
+
+		if unnamed_blocks and not block_data:
+			return unnamed_blocks
+		elif unnamed_blocks:
+			for idx, unnamed_block in enumerate(unnamed_blocks):
+				self._add_to_dict(block_data, str(idx + 1), unnamed_block)
+
 		return self._detect_list_structure(block_data)
 
 	def _add_to_dict(

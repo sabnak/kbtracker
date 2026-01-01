@@ -409,3 +409,68 @@ class TestEmptyValues:
 				"e": 5
 			}
 		}
+
+
+class TestUnnamedBlocks:
+	"""
+	Tests for unnamed/anonymous blocks
+	"""
+
+	def test_unnamed_block_with_properties(self):
+		"""
+		Test unnamed block containing properties
+		"""
+		content = """
+		fight {
+			{
+				filter=ally
+				pbonus=10
+			}
+		}
+		"""
+		result = atom.loads(content)
+		assert "fight" in result
+		assert isinstance(result["fight"], list)
+		assert len(result["fight"]) == 1
+		assert result["fight"][0]["filter"] == "ally"
+		assert result["fight"][0]["pbonus"] == 10
+
+	def test_fields_after_unnamed_block(self):
+		"""
+		Test that fields after unnamed blocks are parsed correctly
+		"""
+		content = """
+		item {
+			price=100
+			fight {
+				{
+					filter=ally
+				}
+			}
+			propbits=belt
+		}
+		"""
+		result = atom.loads(content)
+		assert result["item"]["price"] == 100
+		assert result["item"]["propbits"] == "belt"
+		assert isinstance(result["item"]["fight"], list)
+
+	def test_nested_blocks_in_unnamed_block(self):
+		"""
+		Test nested named blocks inside unnamed block
+		"""
+		content = """
+		block {
+			{
+				filter {
+					type=ally
+				}
+				bonus=10
+			}
+		}
+		"""
+		result = atom.loads(content)
+		assert isinstance(result["block"], list)
+		assert "filter" in result["block"][0]
+		assert result["block"][0]["filter"]["type"] == "ally"
+		assert result["block"][0]["bonus"] == 10
