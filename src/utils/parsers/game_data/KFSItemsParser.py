@@ -28,8 +28,6 @@ class KFSItemsParser(IKFSItemsParser):
 		Extracts all items*.txt files from KFS archives,
 		parses sets and items, groups items by their set membership.
 
-		Note: name and hint fields are NOT populated - they come from localization table
-
 		:return:
 			Dictionary with sets as keys, each containing items list
 			Also includes 'setless' key for items without sets
@@ -183,12 +181,8 @@ class KFSItemsParser(IKFSItemsParser):
 
 		return result
 
-	def _build_item_without_localization(self, item_data: dict[str, any]) -> Item | None:
+	def _build_item(self, item_data: dict[str, any]) -> Item | None:
 		"""
-		Build Item entity from parsed data WITHOUT localization
-
-		Name and hint will be populated from database via localization JOINs
-
 		:param item_data:
 			Dictionary containing parsed item data
 		:return:
@@ -220,12 +214,11 @@ class KFSItemsParser(IKFSItemsParser):
 
 		# Parse tiers from params.upgrade
 		tiers = None
-		params_upgrade = item_data.get('params_upgrade', None)
+		params_upgrade = item_data.get('params_upgrade', "")
 		if params_upgrade:
 			# Split comma-separated kb_ids and strip whitespace
 			tiers = [kb.strip() for kb in params_upgrade.split(',')]
 
-		# Name and hint are empty - will be populated from localization table
 		return Item(
 			id=0,
 			item_set_id=None,
@@ -312,8 +305,6 @@ class KFSItemsParser(IKFSItemsParser):
 		"""
 		Parse items from content and group by setref
 
-		Note: name and hint are NOT populated - they come from localization
-
 		:param content:
 			Raw items.txt file content
 		:return:
@@ -328,7 +319,7 @@ class KFSItemsParser(IKFSItemsParser):
 			if kb_id.startswith('set_'):
 				continue
 
-			item = self._build_item_without_localization(item_data)
+			item = self._build_item(item_data)
 			if item is not None:
 				setref = item_data.get('setref', '')
 				set_key = setref if setref else 'setless'
