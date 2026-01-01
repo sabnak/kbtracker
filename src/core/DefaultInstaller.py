@@ -15,7 +15,7 @@ from src.domain.game.repositories.ShopHasItemRepository import ShopHasItemReposi
 from src.domain.game.repositories.ShopRepository import ShopRepository
 from src.domain.game.services.GameService import GameService
 from src.domain.game.services.ItemsAndSetsScannerService import ItemsAndSetsScannerService
-from src.domain.game.services.ItemTrackingService import ItemTrackingService
+from src.domain.game.services.ItemService import ItemService
 from src.domain.game.services.LocalizationScannerService import LocalizationScannerService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services.SchemaManagementService import SchemaManagementService
@@ -71,7 +71,7 @@ class DefaultInstaller:
 		)
 
 		self._container.item_tracking_service.override(
-			providers.Factory(ItemTrackingService)
+			providers.Factory(ItemService)
 		)
 
 		self._container.localization_scanner_service.override(

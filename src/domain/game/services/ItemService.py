@@ -15,7 +15,7 @@ from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
 from src.domain.exceptions import InvalidRegexException
 
 
-class ItemTrackingService:
+class ItemService:
 
 	def __init__(
 		self,

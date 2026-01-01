@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from dependency_injector.wiring import inject, Provide
 from src.web.api.models import AddShopToItemRequest, UpdateShopCountRequest
-from src.domain.game.services.ItemTrackingService import ItemTrackingService
+from src.domain.game.services.ItemService import ItemService
 from src.domain.profile.IProfileService import IProfileService
 from src.domain.exceptions import EntityNotFoundException, DuplicateEntityException
 from src.web.dependencies.game_context import get_game_context, GameContext
@@ -17,7 +17,7 @@ async def get_tracked_items(
 	game_id: int,
 	profile_id: int,
 	game_context: GameContext = Depends(get_game_context),
-	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
+	item_tracking_service: ItemService = Depends(Provide["item_tracking_service"]),
 	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
 	"""
@@ -80,7 +80,7 @@ async def add_shop_to_item(
 	item_id: int,
 	request_data: AddShopToItemRequest,
 	game_context: GameContext = Depends(get_game_context),
-	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
+	item_tracking_service: ItemService = Depends(Provide["item_tracking_service"]),
 	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
 	"""
@@ -132,7 +132,7 @@ async def update_shop_count(
 	shop_id: int,
 	request_data: UpdateShopCountRequest,
 	game_context: GameContext = Depends(get_game_context),
-	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
+	item_tracking_service: ItemService = Depends(Provide["item_tracking_service"]),
 	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
 	"""
@@ -185,7 +185,7 @@ async def remove_shop_from_item(
 	item_id: int,
 	shop_id: int,
 	game_context: GameContext = Depends(get_game_context),
-	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
+	item_tracking_service: ItemService = Depends(Provide["item_tracking_service"]),
 	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
 	"""
@@ -230,7 +230,7 @@ async def remove_shop_from_item(
 async def get_shops_grouped_by_location(
 	game_id: int,
 	game_context: GameContext = Depends(get_game_context),
-	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"])
+	item_tracking_service: ItemService = Depends(Provide["item_tracking_service"])
 ):
 	"""
 	Get shops grouped by location for dropdown

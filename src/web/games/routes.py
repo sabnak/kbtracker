@@ -11,7 +11,7 @@ from src.web.template_filters import register_filters
 from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameService import IGameService
 from src.domain.game.services.ScannerService import ScannerService
-from src.domain.game.services import ItemTrackingService
+from src.domain.game.services import ItemService
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
 from src.domain.profile.IProfileService import IProfileService
