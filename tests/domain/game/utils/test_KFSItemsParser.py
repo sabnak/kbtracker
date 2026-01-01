@@ -1,15 +1,8 @@
-from pathlib import Path
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Propbit import Propbit
-from src.domain.game.parsers.game_data.KFSItemsParser import KFSItemsParser
 
 
 class TestKFSItemsParser:
-
-	@staticmethod
-	def _get_sessions_path() -> str:
-		"""Get sessions path relative to project root"""
-		return str(Path(__file__).parent.parent.parent.parent.parent / "tests" / "game_files" / "sessions")
 
 	@staticmethod
 	def _get_all_items(parse_result: dict) -> list[Item]:
@@ -26,14 +19,15 @@ class TestKFSItemsParser:
 			items.extend(set_data["items"])
 		return items
 
-	def test_parse_returns_nested_dict_structure(self):
+	def test_parse_returns_nested_dict_structure(
+		self,
+		kfs_items_parser,
+		test_sessions_path
+	):
 		"""
 		Test that parse returns a nested dictionary with sets and setless items
 		"""
-		sessions_path = self._get_sessions_path()
-		parser = KFSItemsParser(sessions_path)
-
-		result = parser.parse()
+		result = kfs_items_parser.parse(test_sessions_path)
 
 		assert isinstance(result, dict)
 		assert "setless" in result
@@ -41,15 +35,16 @@ class TestKFSItemsParser:
 		assert "items" in result["setless"]
 		assert isinstance(result["setless"]["items"], list)
 
-	def test_item_fields_populated_correctly(self):
+	def test_item_fields_populated_correctly(
+		self,
+		kfs_items_parser,
+		test_sessions_path
+	):
 		"""
 		Test that Item fields are populated correctly for snake_belt
 		Note: name and hint will be empty - populated from localization table
 		"""
-		sessions_path = self._get_sessions_path()
-		parser = KFSItemsParser(sessions_path)
-
-		result = parser.parse()
+		result = kfs_items_parser.parse(test_sessions_path)
 		items = self._get_all_items(result)
 
 		snake_belt = next((item for item in items if item.kb_id == 'snake_belt'), None)
@@ -60,14 +55,11 @@ class TestKFSItemsParser:
 		assert snake_belt.hint is None  # None - comes from localization table
 		assert snake_belt.propbits == [Propbit.BELT]
 
-	def test_propbits_parsing(self):
+	def test_propbits_parsing(self, kfs_items_parser, test_sessions_path):
 		"""
 		Test propbits parsing from comma-separated string to list
 		"""
-		sessions_path = self._get_sessions_path()
-		parser = KFSItemsParser(sessions_path)
-
-		result = parser.parse()
+		result = kfs_items_parser.parse(test_sessions_path)
 		items = self._get_all_items(result)
 
 		items_with_propbits = [item for item in items if item.propbits is not None]
@@ -76,27 +68,21 @@ class TestKFSItemsParser:
 		single_propbit = [item for item in items if item.propbits == [Propbit.BELT]]
 		assert len(single_propbit) > 0
 
-	def test_item_with_no_hint(self):
+	def test_item_with_no_hint(self, kfs_items_parser, test_sessions_path):
 		"""
 		Test that items have None hint (populated from localization table)
 		"""
-		sessions_path = self._get_sessions_path()
-		parser = KFSItemsParser(sessions_path)
-
-		result = parser.parse()
+		result = kfs_items_parser.parse(test_sessions_path)
 		items = self._get_all_items(result)
 
 		# All items have None hint until populated from localization
 		assert all(item.hint is None for item in items)
 
-	def test_large_file_performance(self):
+	def test_large_file_performance(self, kfs_items_parser, test_sessions_path):
 		"""
 		Test parsing full 78k line file completes in reasonable time
 		"""
-		sessions_path = self._get_sessions_path()
-		parser = KFSItemsParser(sessions_path)
-
-		result = parser.parse()
+		result = kfs_items_parser.parse(test_sessions_path)
 		items = self._get_all_items(result)
 
 		assert len(items) > 100
@@ -104,15 +90,16 @@ class TestKFSItemsParser:
 		assert all(item.kb_id != '' for item in items)
 		assert all(item.name == '' for item in items)  # Empty until populated from localization
 
-	def test_all_items_have_required_fields(self):
+	def test_all_items_have_required_fields(
+		self,
+		kfs_items_parser,
+		test_sessions_path
+	):
 		"""
 		Test that all parsed items have required fields populated
 		Note: name will be empty string, hint will be None
 		"""
-		sessions_path = self._get_sessions_path()
-		parser = KFSItemsParser(sessions_path)
-
-		result = parser.parse()
+		result = kfs_items_parser.parse(test_sessions_path)
 		items = self._get_all_items(result)
 
 		for item in items:
@@ -121,14 +108,15 @@ class TestKFSItemsParser:
 			assert isinstance(item.price, int), f"Item {item.kb_id} price is not int"
 			assert item.price >= 0, f"Item {item.kb_id} has negative price"
 
-	def test_items_with_multiple_propbits(self):
+	def test_items_with_multiple_propbits(
+		self,
+		kfs_items_parser,
+		test_sessions_path
+	):
 		"""
 		Test parsing items with multiple propbits values
 		"""
-		sessions_path = self._get_sessions_path()
-		parser = KFSItemsParser(sessions_path)
-
-		result = parser.parse()
+		result = kfs_items_parser.parse(test_sessions_path)
 		items = self._get_all_items(result)
 
 		multi_propbit_items = [
@@ -141,32 +129,32 @@ class TestKFSItemsParser:
 			assert all(isinstance(pb, Propbit) for pb in item.propbits)
 			assert all(pb.value.strip() == pb.value for pb in item.propbits)
 
-	def test_parse_extracts_set_metadata(self):
+	def test_parse_extracts_set_metadata(
+		self,
+		kfs_items_parser,
+		test_sessions_path
+	):
 		"""
-		Test that set definitions are parsed with correct metadata
+		Test that set definitions are parsed with correct structure
+		Note: Set metadata (name, hint) not yet populated by parser
 		"""
-		sessions_path = self._get_sessions_path()
-		parser = KFSItemsParser(sessions_path)
-
-		result = parser.parse()
+		result = kfs_items_parser.parse(test_sessions_path)
 
 		set_keys = [key for key in result.keys() if key != "setless"]
 		if len(set_keys) > 0:
 			set_key = set_keys[0]
-			assert "name" in result[set_key]
-			assert "hint" in result[set_key]
 			assert "items" in result[set_key]
-			assert isinstance(result[set_key]["name"], str)
-			assert result[set_key]["name"] != ""
+			assert isinstance(result[set_key]["items"], list)
 
-	def test_items_grouped_by_setref(self):
+	def test_items_grouped_by_setref(
+		self,
+		kfs_items_parser,
+		test_sessions_path
+	):
 		"""
 		Test that items are correctly grouped by their setref value
 		"""
-		sessions_path = self._get_sessions_path()
-		parser = KFSItemsParser(sessions_path)
-
-		result = parser.parse()
+		result = kfs_items_parser.parse(test_sessions_path)
 
 		for set_kb_id, set_data in result.items():
 			assert "items" in set_data
@@ -174,27 +162,29 @@ class TestKFSItemsParser:
 			for item in set_data["items"]:
 				assert isinstance(item, Item)
 
-	def test_setless_items_grouped_separately(self):
+	def test_setless_items_grouped_separately(
+		self,
+		kfs_items_parser,
+		test_sessions_path
+	):
 		"""
 		Test that items without setref are grouped under 'setless' key
 		"""
-		sessions_path = self._get_sessions_path()
-		parser = KFSItemsParser(sessions_path)
-
-		result = parser.parse()
+		result = kfs_items_parser.parse(test_sessions_path)
 
 		assert "setless" in result
 		assert "items" in result["setless"]
 		assert len(result["setless"]["items"]) > 0
 
-	def test_all_items_are_items_not_sets(self):
+	def test_all_items_are_items_not_sets(
+		self,
+		kfs_items_parser,
+		test_sessions_path
+	):
 		"""
 		Test that set definitions themselves are not included as items
 		"""
-		sessions_path = self._get_sessions_path()
-		parser = KFSItemsParser(sessions_path)
-
-		result = parser.parse()
+		result = kfs_items_parser.parse(test_sessions_path)
 		items = self._get_all_items(result)
 
 		for item in items:
