@@ -17,7 +17,7 @@ from src.domain.game.IProfileService import IProfileService
 class Container(containers.DeclarativeContainer):
 
 	wiring_config = containers.WiringConfiguration(
-		packages=["src.domain.game", "src.web"]
+		packages=["src.domain.game", "src.web", "src.utils"]
 	)
 
 	config = providers.AbstractSingleton()
