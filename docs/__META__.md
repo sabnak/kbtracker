@@ -66,12 +66,27 @@ Campaign identification from save files. Covers:
 
 **Use this when**: You need to identify which campaign a save belongs to, or group saves by campaign since the game doesn't store explicit campaign IDs.
 
+### [atom-parser.md](atom-parser.md)
+Universal parser for King's Bounty `.atom` file format. Covers:
+- API usage (`loads()`, `load()`, `load_file()`)
+- Automatic type conversion (bool, int, float, string)
+- Comment handling (line and inline comments)
+- Indexed list detection and conversion
+- File encoding detection (UTF-16 LE / UTF-8)
+- Atom format syntax and structure
+- Error handling and validation
+
+**Module location**: `/src/utils/atom/`
+
+**Use this when**: You need to parse `.atom` files or `.txt` files containing atom-formatted data (items, spells, effects, medals, units, etc.) into Python dictionaries and lists.
+
 ## Quick Reference
 
 | Resource Type | Archive Pattern | Database Table | Documentation |
 |--------------|----------------|----------------|---------------|
 | Localization | `loc_*.kfs` | `localization` | [localization.md](localization.md) |
 | Items | `ses.kfs` | `item`, `item_set` | [items.md](items.md) |
+| Atom Format Parser | `.atom`, `.txt` (atom format) | - | [atom-parser.md](atom-parser.md) |
 | Save Shops | Save file `data` | - | [save-extractor/](save-extractor/) |
 | Campaign ID | Save file `data` | - | [campaign-identifier.md](campaign-identifier.md) |
 
