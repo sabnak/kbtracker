@@ -65,7 +65,7 @@ class TestShopInventoryParser:
 		"""
 		result = shop_inventory_parser.parse(test_save_1707047253_path)
 
-		shop_id = "itext_m_zcom_1422"
+		shop_id = "zcom_1422"
 		assert shop_id in result, f"Shop {shop_id} not found in parsed results"
 
 		inventory = result[shop_id]

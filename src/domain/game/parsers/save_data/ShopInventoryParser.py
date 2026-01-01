@@ -86,8 +86,9 @@ class ShopInventoryParser(IShopInventoryParser):
 				matches = re.finditer(r'itext_m_\w+_\d+', text)
 
 				for match in matches:
-					shop_id = match.group(0)
-					shop_bytes = shop_id.encode('utf-16-le')
+					shop_id_full = match.group(0)
+					shop_id = shop_id_full[8:]
+					shop_bytes = shop_id_full.encode('utf-16-le')
 					actual_pos = data.find(shop_bytes, pos, pos+chunk_size)
 					if actual_pos != -1 and shop_id not in [s[0] for s in shops]:
 						shops.append((shop_id, actual_pos))
