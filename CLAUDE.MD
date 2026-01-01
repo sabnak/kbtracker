@@ -5,6 +5,13 @@
 Application that allows users to track artifacts and scrolls in the King's Bounty.
 
 
+## Project Tech Stack
+
+@~/.ai_context/playbooks_create_instructions/inst-pps,pytest,di,fastapi,docker.md
+
+@~/.ai_context/python.md
+
+
 ## Game Resources Documentation
 
 The `/docs` folder contains comprehensive guides for extracting and working with King's Bounty game resources.
@@ -43,9 +50,3 @@ Example: `/games/1/items` automatically queries `game_1.item` table.
 - **Tool**: `mcp__toolbox__execute_postgresq_local-tool`
 - **Do NOT use**: `docker exec` with psql or other direct database commands
 - **Always use the MCP tool** for any SQL operations
-
-## Project Tech Stack
-
-@~/.ai_context/playbooks_create_instructions/inst-pps,pytest,di,fastapi,docker.md
-
-@~/.ai_context/python.md
