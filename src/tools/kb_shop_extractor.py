@@ -15,7 +15,7 @@ from pathlib import Path
 
 from src.core.Container import Container
 from src.core.DefaultInstaller import DefaultInstaller
-from src.domain.game.parsers.save_data.IShopInventoryParser import IShopInventoryParser
+from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
 
 
 def print_statistics(shops: dict) -> None:

@@ -1,12 +1,12 @@
 import pytest
 from pathlib import Path
-from dependency_injector import containers, providers
+from dependency_injector import providers
 
 from src.core.Container import Container
-from src.domain.game.parsers.game_data.KFSExtractor import KFSExtractor
-from src.domain.game.parsers.game_data.KFSItemsParser import KFSItemsParser
-from src.domain.game.parsers.game_data.KFSLocalizationParser import KFSLocalizationParser
-from src.domain.game.parsers.game_data.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
+from src.utils.parsers.game_data import KFSExtractor
+from src.utils.parsers.game_data.KFSItemsParser import KFSItemsParser
+from src.utils.parsers.game_data.KFSLocalizationParser import KFSLocalizationParser
+from src.utils.parsers.game_data import KFSLocationsAndShopsParser
 
 
 @pytest.fixture(scope="session")

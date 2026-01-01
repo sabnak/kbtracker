@@ -3,8 +3,8 @@ from dependency_injector.wiring import Provide
 from src.core.Container import Container
 from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
-from src.domain.game.parsers.game_data.IKFSExtractor import IKFSExtractor
-from src.domain.game.parsers.game_data.IKFSLocationsAndShopsParser import IKFSLocationsAndShopsParser
+from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.utils.parsers.game_data.IKFSLocationsAndShopsParser import IKFSLocationsAndShopsParser
 
 
 class KFSLocationsAndShopsParser(IKFSLocationsAndShopsParser):

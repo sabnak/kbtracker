@@ -3,8 +3,8 @@ from pathlib import Path
 from dependency_injector import providers
 
 from src.core.Container import Container
-from src.domain.game.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
-from src.domain.game.parsers.save_data.ShopInventoryParser import ShopInventoryParser
+from src.utils.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
+from src.utils.parsers.save_data.ShopInventoryParser import ShopInventoryParser
 
 
 @pytest.fixture(scope="session")

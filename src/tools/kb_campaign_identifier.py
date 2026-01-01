@@ -14,7 +14,7 @@ from pathlib import Path
 
 from src.core.Container import Container
 from src.core.DefaultInstaller import DefaultInstaller
-from src.domain.game.parsers.save_data.ICampaignIdentifierParser import ICampaignIdentifierParser
+from src.utils.parsers.save_data.ICampaignIdentifierParser import ICampaignIdentifierParser
 
 
 def main():

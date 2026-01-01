@@ -1,7 +1,7 @@
 from typing import TextIO
 
-from src.utils.atom.AtomParser import AtomParser
-from src.utils.atom.exceptions import AtomParseError, AtomSyntaxError, AtomEncodingError
+from src.utils.parsers.atom.AtomParser import AtomParser
+from src.utils.parsers.atom.exceptions import AtomParseError, AtomSyntaxError, AtomEncodingError
 
 
 def loads(s: str, convert_types: bool = True) -> dict | list:

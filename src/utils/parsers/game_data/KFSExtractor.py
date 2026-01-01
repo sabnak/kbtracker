@@ -1,7 +1,7 @@
 import os
 import zipfile
 
-from src.domain.game.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
 
 
 class KFSExtractor(IKFSExtractor):

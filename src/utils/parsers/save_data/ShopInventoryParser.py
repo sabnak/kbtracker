@@ -6,8 +6,8 @@ from typing import Any, Optional
 from dependency_injector.wiring import inject, Provide
 
 from src.core.Container import Container
-from src.domain.game.parsers.save_data.IShopInventoryParser import IShopInventoryParser
-from src.domain.game.parsers.save_data.ISaveFileDecompressor import ISaveFileDecompressor
+from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
+from src.utils.parsers.save_data.ISaveFileDecompressor import ISaveFileDecompressor
 
 
 class ShopInventoryParser(IShopInventoryParser):

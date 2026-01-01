@@ -10,7 +10,7 @@ from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.IShopsAndLocationsScannerService import IShopsAndLocationsScannerService
 from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
-from src.domain.game.parsers.game_data.IKFSLocationsAndShopsParser import IKFSLocationsAndShopsParser
+from src.utils.parsers.game_data.IKFSLocationsAndShopsParser import IKFSLocationsAndShopsParser
 
 
 class LocationsAndShopsScannerService(IShopsAndLocationsScannerService):

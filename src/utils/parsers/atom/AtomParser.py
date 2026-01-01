@@ -1,5 +1,5 @@
-from src.utils.atom.exceptions import AtomSyntaxError
-from src.utils.atom.AtomTypeConverter import AtomTypeConverter
+from src.utils.parsers.atom.exceptions import AtomSyntaxError
+from src.utils.parsers.atom.AtomTypeConverter import AtomTypeConverter
 
 
 class AtomParser:

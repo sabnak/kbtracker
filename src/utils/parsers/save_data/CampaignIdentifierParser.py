@@ -4,8 +4,8 @@ import hashlib
 from dependency_injector.wiring import inject, Provide
 
 from src.core.Container import Container
-from src.domain.game.parsers.save_data.ICampaignIdentifierParser import ICampaignIdentifierParser
-from src.domain.game.parsers.save_data.ISaveFileDecompressor import ISaveFileDecompressor
+from src.utils.parsers.save_data.ICampaignIdentifierParser import ICampaignIdentifierParser
+from src.utils.parsers.save_data.ISaveFileDecompressor import ISaveFileDecompressor
 
 
 class CampaignIdentifierParser(ICampaignIdentifierParser):

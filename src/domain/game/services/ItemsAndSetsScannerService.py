@@ -10,7 +10,7 @@ from src.domain.game.IItemSetRepository import IItemSetRepository
 from src.domain.game.IItemsAndSetsScannerService import IItemsAndSetsScannerService
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.ItemSet import ItemSet
-from src.domain.game.parsers.game_data.IKFSItemsParser import IKFSItemsParser
+from src.utils.parsers.game_data import IKFSItemsParser
 
 
 class ItemsAndSetsScannerService(IItemsAndSetsScannerService):

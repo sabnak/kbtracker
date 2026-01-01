@@ -1,6 +1,6 @@
 import pytest
-from src.utils import atom
-from src.utils.atom.exceptions import AtomSyntaxError
+from src.utils.parsers import atom
+from src.utils.parsers.atom.exceptions import AtomSyntaxError
 
 
 class TestAtomLoads:

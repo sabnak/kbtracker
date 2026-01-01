@@ -6,10 +6,10 @@ from sqlalchemy.orm import sessionmaker
 from src.core.Config import Config
 from src.core.Container import Container
 from src.domain.filesystem.services.GamePathService import GamePathService
-from src.domain.game.parsers.game_data.KFSExtractor import KFSExtractor
-from src.domain.game.parsers.game_data.KFSItemsParser import KFSItemsParser
-from src.domain.game.parsers.game_data.KFSLocalizationParser import KFSLocalizationParser
-from src.domain.game.parsers.game_data.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
+from src.utils.parsers.game_data.KFSExtractor import KFSExtractor
+from src.utils.parsers.game_data.KFSItemsParser import KFSItemsParser
+from src.utils.parsers.game_data.KFSLocalizationParser import KFSLocalizationParser
+from src.utils.parsers.game_data.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
 from src.domain.game.repositories.GameRepository import GameRepository
 from src.domain.game.repositories.ItemRepository import ItemRepository
 from src.domain.game.repositories.ItemSetRepository import ItemSetRepository
@@ -27,9 +27,9 @@ from src.domain.game.services.LocationsAndShopsScannerService import LocationsAn
 from src.domain.game.repositories.ProfilePostgresRepository import ProfilePostgresRepository
 from src.domain.game.services.ProfileService import ProfileService
 from src.utils.db import create_db_engine
-from src.domain.game.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
-from src.domain.game.parsers.save_data.ShopInventoryParser import ShopInventoryParser
-from src.domain.game.parsers.save_data.CampaignIdentifierParser import CampaignIdentifierParser
+from src.utils.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
+from src.utils.parsers.save_data.ShopInventoryParser import ShopInventoryParser
+from src.utils.parsers.save_data.CampaignIdentifierParser import CampaignIdentifierParser
 
 
 class DefaultInstaller:

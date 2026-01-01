@@ -2,7 +2,7 @@ from pathlib import Path
 import struct
 import zlib
 
-from src.domain.game.parsers.save_data.ISaveFileDecompressor import ISaveFileDecompressor
+from src.utils.parsers.save_data.ISaveFileDecompressor import ISaveFileDecompressor
 
 
 class SaveFileDecompressor(ISaveFileDecompressor):

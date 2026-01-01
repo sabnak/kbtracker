@@ -4,12 +4,13 @@ Universal parser for King's Bounty `.atom` file format, similar to Python's `jso
 
 ## Overview
 
-The atom parser (`src.utils.atom`) provides a simple API for parsing King's Bounty's proprietary `.atom` format files into Python dictionaries and lists. It handles automatic type conversion, comment removal, and encoding detection.
+The atom parser (`src.utils.parsers.atom`) provides a simple API for parsing King's Bounty's proprietary `.atom` format files into Python dictionaries and lists. It handles automatic type conversion, comment removal, and encoding detection.
 
 ## Usage
 
 ```python
-from src.utils import atom
+
+from src.utils.parsers import atom
 
 # Parse atom string
 result = atom.loads("main { class=box model=test.bms }")
@@ -17,7 +18,7 @@ result = atom.loads("main { class=box model=test.bms }")
 
 # Parse from file object
 with open('file.atom', 'r') as f:
-    result = atom.load(f)
+	result = atom.load(f)
 
 # Parse file with automatic encoding detection (UTF-16 LE / UTF-8)
 result = atom.load_file('tests/game_files/_atom_examples/absorbent_magic.atom')
@@ -108,12 +109,12 @@ result = atom.load_file('items.txt')  # Handles both encodings automatically
 ## Error Handling
 
 ```python
-from src.utils.atom import AtomSyntaxError, AtomParseError
+from src.utils.parsers.atom import AtomSyntaxError, AtomParseError
 
 try:
-    result = atom.loads("block { invalid")
+	result = atom.loads("block { invalid")
 except AtomSyntaxError as e:
-    print(f"Syntax error: {e}")
+	print(f"Syntax error: {e}")
 ```
 
 ## Atom File Format

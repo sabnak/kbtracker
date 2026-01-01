@@ -7,8 +7,8 @@ from src.core.Container import Container
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Propbit import Propbit
 from src.domain.exceptions import InvalidPropbitException
-from src.domain.game.parsers.game_data.IKFSExtractor import IKFSExtractor
-from src.domain.game.parsers.game_data.IKFSItemsParser import IKFSItemsParser
+from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.utils.parsers.game_data.IKFSItemsParser import IKFSItemsParser
 
 
 class KFSItemsParser(IKFSItemsParser):

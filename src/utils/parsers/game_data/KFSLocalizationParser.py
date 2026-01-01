@@ -9,8 +9,8 @@ from src.domain.exceptions import (
 	NoLocalizationMatchesException
 )
 from src.domain.game.entities.Localization import Localization
-from src.domain.game.parsers.game_data.IKFSExtractor import IKFSExtractor
-from src.domain.game.parsers.game_data.IKFSLocalizationParser import IKFSLocalizationParser
+from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.utils.parsers.game_data.IKFSLocalizationParser import IKFSLocalizationParser
 
 
 class KFSLocalizationParser(IKFSLocalizationParser):
