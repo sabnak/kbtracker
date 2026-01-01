@@ -3,11 +3,10 @@ import pytest
 import re
 
 from src.domain.exceptions import (
-	InvalidKbIdException,
 	InvalidRegexPatternException,
 	NoLocalizationMatchesException
 )
-from src.domain.game.utils.KFSLocalizationParser import KFSLocalizationParser
+from src.domain.game.parsers.game_data.KFSLocalizationParser import KFSLocalizationParser
 
 
 class TestKFSLocalizationParser:

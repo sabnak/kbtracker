@@ -1,4 +1,4 @@
-from src.domain.CrudRepository import CrudRepository
+from src.domain.game.repositories.CrudRepository import CrudRepository
 from src.domain.game.entities.Shop import Shop
 from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.repositories.mappers.ShopMapper import ShopMapper

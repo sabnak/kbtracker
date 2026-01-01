@@ -1,8 +1,7 @@
-import pytest
 from pathlib import Path
-from src.domain.game.utils.KFSItemsParser import KFSItemsParser
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Propbit import Propbit
+from src.domain.game.parsers.game_data.KFSItemsParser import KFSItemsParser
 
 
 class TestKFSItemsParser:

@@ -1,7 +1,7 @@
-from src.domain.CrudRepository import CrudRepository
-from src.domain.profile.IProfileRepository import IProfileRepository
-from src.domain.profile.entities.ProfileEntity import ProfileEntity
-from src.domain.profile.repositories.mappers.ProfileMapper import ProfileMapper
+from src.domain.game.repositories.CrudRepository import CrudRepository
+from src.domain.game.IProfileRepository import IProfileRepository
+from src.domain.game.entities.ProfileEntity import ProfileEntity
+from src.domain.game.repositories.mappers.ProfileMapper import ProfileMapper
 
 
 class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IProfileRepository):

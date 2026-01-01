@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.domain.profile.entities.ProfileEntity import ProfileEntity
+from src.domain.game.entities.ProfileEntity import ProfileEntity
 
 
 class IProfileRepository(ABC):

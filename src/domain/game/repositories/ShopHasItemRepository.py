@@ -1,4 +1,4 @@
-from src.domain.CrudRepository import CrudRepository
+from src.domain.game.repositories.CrudRepository import CrudRepository
 from src.domain.game.entities.ShopHasItem import ShopHasItem
 from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
 from src.domain.game.repositories.mappers.ShopHasItemMapper import ShopHasItemMapper

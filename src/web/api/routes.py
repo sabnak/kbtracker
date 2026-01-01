@@ -2,10 +2,10 @@ from fastapi import APIRouter, HTTPException, Depends
 from dependency_injector.wiring import inject, Provide
 from src.web.api.models import AddShopToItemRequest, UpdateShopCountRequest
 from src.domain.game.services.ItemService import ItemService
-from src.domain.profile.IProfileService import IProfileService
+from src.domain.game.IProfileService import IProfileService
 from src.domain.exceptions import EntityNotFoundException, DuplicateEntityException
 from src.web.dependencies.game_context import get_game_context, GameContext
-from src.domain.CrudRepository import _game_context
+from src.domain.game.repositories.CrudRepository import _game_context
 
 
 router = APIRouter(prefix="/api", tags=["api"])

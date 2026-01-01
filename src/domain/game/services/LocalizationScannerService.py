@@ -1,6 +1,6 @@
 import os
 
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
@@ -8,7 +8,7 @@ from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.ILocalizationScannerService import ILocalizationScannerService
 from src.domain.game.entities.Localization import Localization
-from src.domain.game.utils.KFSLocalizationParser import KFSLocalizationParser
+from src.domain.game.parsers.game_data.KFSLocalizationParser import KFSLocalizationParser
 
 
 class LocalizationScannerService(ILocalizationScannerService):

@@ -3,9 +3,9 @@ from datetime import datetime
 from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
-from src.domain.profile.IProfileRepository import IProfileRepository
-from src.domain.profile.IProfileService import IProfileService
-from src.domain.profile.entities.ProfileEntity import ProfileEntity
+from src.domain.game.IProfileRepository import IProfileRepository
+from src.domain.game.IProfileService import IProfileService
+from src.domain.game.entities.ProfileEntity import ProfileEntity
 
 
 class ProfileService(IProfileService):
@@ -25,7 +25,7 @@ class ProfileService(IProfileService):
 		profile = ProfileEntity(
 			id=0,
 			name=name,
-			created_at=datetime.utcnow()
+			created_at=datetime.now()
 		)
 		return self._profile_repository.create(profile)
 

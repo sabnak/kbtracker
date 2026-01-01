@@ -1,7 +1,7 @@
 from sqlalchemy import func
 from sqlalchemy.orm import aliased
 
-from src.domain.CrudRepository import CrudRepository
+from src.domain.game.repositories.CrudRepository import CrudRepository
 from src.domain.exceptions import InvalidPropbitException, LocalizationNotFoundException
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Propbit import Propbit

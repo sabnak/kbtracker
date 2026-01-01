@@ -1,8 +1,7 @@
-import pytest
 from pathlib import Path
-from src.domain.game.utils.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
 from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
+from src.domain.game.parsers.game_data.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
 
 
 class TestKFSLocationsAndShopsParser:

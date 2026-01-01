@@ -9,13 +9,13 @@ from src.domain.exceptions import (
 	NoLocalizationMatchesException
 )
 from src.domain.game.entities.Localization import Localization
-from src.domain.game.utils.IKFSLocalizationParser import IKFSLocalizationParser
-from src.domain.game.utils.KFSExtractor import KFSExtractor
+from src.domain.game.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.domain.game.parsers.game_data.IKFSLocalizationParser import IKFSLocalizationParser
 
 
 class KFSLocalizationParser(IKFSLocalizationParser):
 
-	def __init__(self, extractor: KFSExtractor = Provide[Container.kfs_extractor]):
+	def __init__(self, extractor: IKFSExtractor = Provide[Container.kfs_extractor]):
 		"""
 		Initialize KFS localization parser
 

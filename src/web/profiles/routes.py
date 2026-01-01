@@ -4,9 +4,9 @@ from fastapi.templating import Jinja2Templates
 from dependency_injector.wiring import inject, Provide
 from src.web.profiles.forms import ProfileCreateForm
 from src.domain.game.IGameService import IGameService
-from src.domain.profile.IProfileService import IProfileService
+from src.domain.game.IProfileService import IProfileService
 from src.web.dependencies.game_context import get_game_context, GameContext
-from src.domain.CrudRepository import _game_context
+from src.domain.game.repositories.CrudRepository import _game_context
 
 
 router = APIRouter(tags=["profiles"])

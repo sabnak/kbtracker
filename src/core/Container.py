@@ -10,14 +10,14 @@ from src.domain.game.ILocationRepository import ILocationRepository
 from src.domain.game.ISchemaManagementService import ISchemaManagementService
 from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
 from src.domain.game.IShopRepository import IShopRepository
-from src.domain.profile.IProfileRepository import IProfileRepository
-from src.domain.profile.IProfileService import IProfileService
+from src.domain.game.IProfileRepository import IProfileRepository
+from src.domain.game.IProfileService import IProfileService
 
 
 class Container(containers.DeclarativeContainer):
 
 	wiring_config = containers.WiringConfiguration(
-		packages=["src.domain.profile", "src.domain.game", "src.web", "src.utils.parsers"]
+		packages=["src.domain.game", "src.web"]
 	)
 
 	config = providers.AbstractSingleton()
@@ -37,7 +37,7 @@ class Container(containers.DeclarativeContainer):
 	game_service = providers.AbstractFactory(IGameService)
 	profile_service = providers.AbstractFactory(IProfileService)
 	scanner_service = providers.AbstractFactory()
-	item_tracking_service = providers.AbstractFactory()
+	item_service = providers.AbstractFactory()
 	localization_scanner_service = providers.AbstractFactory()
 	items_and_sets_scanner_service = providers.AbstractFactory()
 	locations_and_shops_scanner_service = providers.AbstractFactory()

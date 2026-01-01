@@ -1,24 +1,23 @@
 import json
 from collections.abc import Generator
 
+from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, Request, Form, Query, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
-from dependency_injector.wiring import inject, Provide
 
-from src.web.games.forms import GameCreateForm, ScanForm
-from src.web.template_filters import register_filters
+from src.domain.exceptions import DuplicateEntityException, DatabaseOperationException, InvalidRegexException
 from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameService import IGameService
-from src.domain.game.services.ScannerService import ScannerService
-from src.domain.game.services import ItemService
+from src.domain.game.IProfileService import IProfileService
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
-from src.domain.profile.IProfileService import IProfileService
-from src.domain.exceptions import DuplicateEntityException, DatabaseOperationException, InvalidRegexException
+from src.domain.game.repositories.CrudRepository import _game_context
+from src.domain.game.services.ItemService import ItemService
+from src.domain.game.services.ScannerService import ScannerService
 from src.web.dependencies.game_context import get_game_context, GameContext
-from src.domain.CrudRepository import _game_context
-
+from src.web.games.forms import GameCreateForm, ScanForm
+from src.web.template_filters import register_filters
 
 router = APIRouter(tags=["games"])
 templates = Jinja2Templates(directory="src/web/templates")
@@ -299,7 +298,7 @@ async def list_items(
 	sort_by: str = Query(default="name"),
 	sort_order: str = Query(default="asc"),
 	game_context: GameContext = Depends(get_game_context),
-	item_tracking_service: ItemTrackingService = Depends(Provide["item_tracking_service"]),
+	item_tracking_service: ItemService = Depends(Provide["item_service"]),
 	game_service: IGameService = Depends(Provide["game_service"])
 ):
 	"""

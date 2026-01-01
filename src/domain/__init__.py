@@ -1,1 +1,1 @@
-from src.domain.profile.entities.ProfileEntity import ProfileEntity
+from src.domain.game.entities.ProfileEntity import ProfileEntity

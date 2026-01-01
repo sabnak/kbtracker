@@ -1,4 +1,4 @@
-from src.domain.CrudRepository import CrudRepository
+from src.domain.game.repositories.CrudRepository import CrudRepository
 from src.domain.game.entities.Location import Location
 from src.domain.game.ILocationRepository import ILocationRepository
 from src.domain.game.repositories.mappers.LocationMapper import LocationMapper

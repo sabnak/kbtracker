@@ -1,6 +1,6 @@
 from collections.abc import Generator
 
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
@@ -8,10 +8,10 @@ from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.IItemsAndSetsScannerService import IItemsAndSetsScannerService
 from src.domain.game.ILocalizationScannerService import ILocalizationScannerService
 from src.domain.game.IShopsAndLocationsScannerService import IShopsAndLocationsScannerService
+from src.domain.game.dto.ScanResults import ScanResults
 from src.domain.game.events.ResourceType import ResourceType
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
-from src.domain.game.dto.ScanResults import ScanResults
 
 
 class ScannerService:

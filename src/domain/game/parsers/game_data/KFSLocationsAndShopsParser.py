@@ -3,13 +3,13 @@ from dependency_injector.wiring import Provide
 from src.core.Container import Container
 from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
-from src.domain.game.utils.IKFSLocationsAndShopsParser import IKFSLocationsAndShopsParser
-from src.domain.game.utils.KFSExtractor import KFSExtractor
+from src.domain.game.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.domain.game.parsers.game_data.IKFSLocationsAndShopsParser import IKFSLocationsAndShopsParser
 
 
 class KFSLocationsAndShopsParser(IKFSLocationsAndShopsParser):
 
-	def __init__(self, extractor: KFSExtractor = Provide[Container.kfs_extractor]):
+	def __init__(self, extractor: IKFSExtractor = Provide[Container.kfs_extractor]):
 		"""
 		Initialize KFS locations and shops parser
 

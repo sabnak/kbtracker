@@ -1,6 +1,6 @@
 import os
 
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
@@ -10,8 +10,7 @@ from src.domain.game.IItemSetRepository import IItemSetRepository
 from src.domain.game.IItemsAndSetsScannerService import IItemsAndSetsScannerService
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.ItemSet import ItemSet
-from src.domain.game.utils.IKFSItemsParser import IKFSItemsParser
-from src.domain.game.utils.KFSItemsParser import KFSItemsParser
+from src.domain.game.parsers.game_data.IKFSItemsParser import IKFSItemsParser
 
 
 class ItemsAndSetsScannerService(IItemsAndSetsScannerService):

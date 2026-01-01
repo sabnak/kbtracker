@@ -1,6 +1,6 @@
 import os
 
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
@@ -10,8 +10,7 @@ from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.IShopsAndLocationsScannerService import IShopsAndLocationsScannerService
 from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
-from src.domain.game.utils.IKFSLocationsAndShopsParser import IKFSLocationsAndShopsParser
-from src.domain.game.utils.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
+from src.domain.game.parsers.game_data.IKFSLocationsAndShopsParser import IKFSLocationsAndShopsParser
 
 
 class LocationsAndShopsScannerService(IShopsAndLocationsScannerService):

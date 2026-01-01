@@ -1,7 +1,7 @@
 import pytest
-import os
 from pathlib import Path
-from src.domain.game.utils.KFSExtractor import KFSExtractor
+
+from src.domain.game.parsers.game_data.KFSExtractor import KFSExtractor
 
 
 class TestKFSExtractor:

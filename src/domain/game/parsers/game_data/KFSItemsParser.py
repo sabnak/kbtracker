@@ -6,14 +6,14 @@ from dependency_injector.wiring import Provide
 from src.core.Container import Container
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Propbit import Propbit
-from src.domain.game.utils.IKFSItemsParser import IKFSItemsParser
-from src.domain.game.utils.KFSExtractor import KFSExtractor
 from src.domain.exceptions import InvalidPropbitException
+from src.domain.game.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.domain.game.parsers.game_data.IKFSItemsParser import IKFSItemsParser
 
 
 class KFSItemsParser(IKFSItemsParser):
 
-	def __init__(self, extractor: KFSExtractor = Provide[Container.kfs_extractor]):
+	def __init__(self, extractor: IKFSExtractor = Provide[Container.kfs_extractor]):
 		"""
 		Initialize KFS items parser
 		"""
