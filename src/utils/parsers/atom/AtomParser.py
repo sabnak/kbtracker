@@ -78,21 +78,38 @@ class AtomParser:
 		"""
 		tokens = []
 		current = ''
+		after_equals = False
+
 		for char in content:
 			if char in '{}=':
 				if current.strip():
 					tokens.append(current.strip())
+					current = ''
+				elif after_equals and char != '=':
+					tokens.append('')
+
 				tokens.append(char)
+				after_equals = (char == '=')
 				current = ''
+
 			elif char in ' \t\n':
 				if current.strip():
 					tokens.append(current.strip())
+					after_equals = False
+					current = ''
+				elif after_equals:
+					tokens.append('')
+					after_equals = False
 				current = ''
+
 			else:
 				current += char
+				after_equals = False
 
 		if current.strip():
 			tokens.append(current.strip())
+		elif after_equals:
+			tokens.append('')
 
 		return tokens
 
@@ -118,7 +135,11 @@ class AtomParser:
 			Parsed block as dict
 		"""
 		if self._tokens[self._pos] != '{':
-			raise AtomSyntaxError(f"Expected {{, got {self._tokens[self._pos]}")
+			context = self._get_error_context()
+			raise AtomSyntaxError(
+				f"Expected {{, got {self._tokens[self._pos]}\n"
+				f"Context: {context}"
+			)
 
 		self._pos += 1
 		block_data = {}
@@ -135,12 +156,15 @@ class AtomParser:
 			if next_token == '=':
 				key = token
 				self._pos += 2
-				if self._pos < len(self._tokens) and self._tokens[self._pos] == '{':
+
+				if self._pos >= len(self._tokens):
+					block_data[key] = ''
+				elif self._tokens[self._pos] == '{':
 					nested_data = self._parse_block()
 					self._add_to_dict(block_data, key, nested_data)
 				else:
 					value = self._tokens[self._pos]
-					if self._convert_types:
+					if self._convert_types and value != '':
 						value = AtomTypeConverter.convert(value)
 					block_data[key] = value
 					self._pos += 1
@@ -155,7 +179,11 @@ class AtomParser:
 				self._pos += 1
 
 		if self._pos >= len(self._tokens):
-			raise AtomSyntaxError("Unexpected end of file, expected }")
+			context = self._get_error_context()
+			raise AtomSyntaxError(
+				f"Unexpected end of file, expected }}\n"
+				f"Context: {context}"
+			)
 
 		self._pos += 1
 		return self._detect_list_structure(block_data)
@@ -206,3 +234,19 @@ class AtomParser:
 			return [block_data[str(i)] for i in indices]
 
 		return block_data
+
+	def _get_error_context(self) -> str:
+		"""
+		Get surrounding tokens for error messages
+
+		:return:
+			Context string with visual pointer
+		"""
+		start = max(0, self._pos - 5)
+		end = min(len(self._tokens), self._pos + 5)
+		context_tokens = self._tokens[start:end]
+		pointer_pos = min(self._pos - start, len(context_tokens))
+
+		tokens_str = ' '.join(context_tokens)
+		pointer = ' ' * sum(len(t) + 1 for t in context_tokens[:pointer_pos]) + '^'
+		return f"{tokens_str}\n{pointer}"

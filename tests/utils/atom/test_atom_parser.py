@@ -308,3 +308,104 @@ class TestAtomLoadFile:
 		result = atom.load_file("tests/game_files/_atom_examples/absorbent_magic.atom")
 		assert isinstance(result, dict)
 		assert len(result) > 0
+
+
+class TestEmptyValues:
+	"""
+	Tests for empty value handling
+	"""
+
+	def test_empty_value_simple(self):
+		"""
+		Test simple empty value: key=
+		"""
+		result = atom.loads("block { key= }")
+		assert result == {"block": {"key": ""}}
+
+	def test_empty_value_with_newline(self):
+		"""
+		Test empty value followed by newline
+		"""
+		result = atom.loads("block {\n  key=\n}")
+		assert result == {"block": {"key": ""}}
+
+	def test_empty_value_before_block(self):
+		"""
+		Test empty value followed by nested block
+		"""
+		content = """
+		item {
+		  propbits=
+		  params {
+		    upgrade=5
+		  }
+		}
+		"""
+		result = atom.loads(content)
+		assert result["item"]["propbits"] == ""
+		assert result["item"]["params"]["upgrade"] == 5
+
+	def test_multiple_empty_values(self):
+		"""
+		Test multiple consecutive empty values
+		"""
+		content = "block { a= b= c=value }"
+		result = atom.loads(content)
+		assert result == {"block": {"a": "", "b": "", "c": "value"}}
+
+	def test_empty_value_at_end_of_block(self):
+		"""
+		Test empty value as last item in block
+		"""
+		result = atom.loads("block { key1=value key2= }")
+		assert result == {"block": {"key1": "value", "key2": ""}}
+
+	def test_empty_value_no_type_conversion(self):
+		"""
+		Test that empty strings are not type converted
+		"""
+		result = atom.loads("block { value= }")
+		assert result["block"]["value"] == ""
+		assert isinstance(result["block"]["value"], str)
+
+	def test_empty_value_multiline(self):
+		"""
+		Test empty values with whitespace variations
+		"""
+		content = """
+		block {
+		  a=
+		  b=
+		  c=
+		  d=value
+		}
+		"""
+		result = atom.loads(content)
+		assert result["block"]["a"] == ""
+		assert result["block"]["b"] == ""
+		assert result["block"]["c"] == ""
+		assert result["block"]["d"] == "value"
+
+	def test_empty_value_in_nested_block(self):
+		"""
+		Test empty values in nested structures
+		"""
+		content = "outer { inner { key= } }"
+		result = atom.loads(content)
+		assert result["outer"]["inner"]["key"] == ""
+
+	def test_mixed_empty_and_normal_values(self):
+		"""
+		Test blocks with mix of empty and normal values
+		"""
+		content = "block { a=1 b= c=3 d= e=5 }"
+		result = atom.loads(content)
+		assert result == {
+			"block": {
+				"a": 1,
+				"b": "",
+				"c": 3,
+				"d": "",
+				"e": 5
+			}
+		}

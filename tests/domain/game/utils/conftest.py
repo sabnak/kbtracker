@@ -3,10 +3,10 @@ from pathlib import Path
 from dependency_injector import providers
 
 from src.core.Container import Container
-from src.utils.parsers.game_data import KFSExtractor
+from src.utils.parsers.game_data.KFSExtractor import KFSExtractor
 from src.utils.parsers.game_data.KFSItemsParser import KFSItemsParser
 from src.utils.parsers.game_data.KFSLocalizationParser import KFSLocalizationParser
-from src.utils.parsers.game_data import KFSLocationsAndShopsParser
+from src.utils.parsers.game_data.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
 
 
 @pytest.fixture(scope="session")
