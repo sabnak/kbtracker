@@ -17,7 +17,7 @@ from src.domain.profile.IProfileService import IProfileService
 class Container(containers.DeclarativeContainer):
 
 	wiring_config = containers.WiringConfiguration(
-		packages=["src.domain.profile", "src.domain.game", "src.web"]
+		packages=["src.domain.profile", "src.domain.game", "src.web", "src.utils.parsers"]
 	)
 
 	config = providers.AbstractSingleton()
@@ -48,3 +48,8 @@ class Container(containers.DeclarativeContainer):
 	kfs_items_parser = providers.AbstractSingleton()
 	kfs_localization_parser = providers.AbstractSingleton()
 	kfs_locations_and_shops_parser = providers.AbstractSingleton()
+
+	# Save file parsers
+	save_file_decompressor = providers.AbstractSingleton()
+	shop_inventory_parser = providers.AbstractSingleton()
+	campaign_identifier_parser = providers.AbstractSingleton()

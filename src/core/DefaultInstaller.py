@@ -27,6 +27,9 @@ from src.domain.game.utils.KFSLocationsAndShopsParser import KFSLocationsAndShop
 from src.domain.profile.repositories.ProfilePostgresRepository import ProfilePostgresRepository
 from src.domain.profile.services.ProfileService import ProfileService
 from src.utils.db import create_db_engine
+from src.utils.parsers.SaveFileDecompressor import SaveFileDecompressor
+from src.utils.parsers.ShopInventoryParser import ShopInventoryParser
+from src.utils.parsers.CampaignIdentifierParser import CampaignIdentifierParser
 
 
 class DefaultInstaller:
@@ -39,6 +42,7 @@ class DefaultInstaller:
 		self._install_db()
 		self._install_repositories()
 		self._install_game_resource_processors()
+		self._install_save_file_parsers()
 		self._install_services()
 
 	def _install_db(self) -> None:
@@ -102,6 +106,17 @@ class DefaultInstaller:
 		)
 		self._container.kfs_locations_and_shops_parser.override(
 			providers.Singleton(KFSLocationsAndShopsParser)
+		)
+
+	def _install_save_file_parsers(self):
+		self._container.save_file_decompressor.override(
+			providers.Singleton(SaveFileDecompressor)
+		)
+		self._container.shop_inventory_parser.override(
+			providers.Singleton(ShopInventoryParser)
+		)
+		self._container.campaign_identifier_parser.override(
+			providers.Singleton(CampaignIdentifierParser)
 		)
 
 	def _install_repositories(self):
