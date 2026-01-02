@@ -28,5 +28,6 @@ class Config(BaseSettings):
 		LocalizationConfig(file="units", tag="units"),
 		LocalizationConfig(file="units_features", tag="units_features"),
 		LocalizationConfig(file="units_specials", tag="units_specials"),
+		LocalizationConfig(file="spells", tag="spells"),
 	]
 
