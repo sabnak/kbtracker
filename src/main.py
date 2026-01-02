@@ -1,23 +1,25 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from fastapi.exceptions import HTTPException, RequestValidationError
 
 from src.core.Config import Config
 from src.core.Container import Container
 from src.core.DefaultInstaller import DefaultInstaller
+from src.core.logging_config import setup_logging
 
+from src.web.middleware.request_context import RequestContextMiddleware
 from src.web.exception_handlers import (
-	duplicate_entity_exception_handler,
-	entity_not_found_exception_handler,
-	database_operation_exception_handler
+	kbtracker_exception_handler,
+	http_exception_handler,
+	validation_error_handler,
+	generic_exception_handler
 )
-from src.domain.exceptions import (
-	DuplicateEntityException,
-	EntityNotFoundException,
-	DatabaseOperationException
-)
+from src.domain.exceptions import KBTrackerException
 
 
 def create_app() -> FastAPI:
+	# Setup logging FIRST (before any other initialization)
+	setup_logging()
 
 	container = Container()
 
@@ -27,18 +29,14 @@ def create_app() -> FastAPI:
 	app = FastAPI(title="King's Bounty Tracker", version="1.0.0")
 	app.container = container
 
-	app.add_exception_handler(
-		DuplicateEntityException,
-		duplicate_entity_exception_handler
-	)
-	app.add_exception_handler(
-		EntityNotFoundException,
-		entity_not_found_exception_handler
-	)
-	app.add_exception_handler(
-		DatabaseOperationException,
-		database_operation_exception_handler
-	)
+	# Add request context middleware
+	app.add_middleware(RequestContextMiddleware)
+
+	# Register exception handlers
+	app.add_exception_handler(KBTrackerException, kbtracker_exception_handler)
+	app.add_exception_handler(HTTPException, http_exception_handler)
+	app.add_exception_handler(RequestValidationError, validation_error_handler)
+	app.add_exception_handler(Exception, generic_exception_handler)
 
 	app.mount("/static", StaticFiles(directory="src/web/static"), name="static")
 

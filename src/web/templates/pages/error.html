@@ -12,6 +12,13 @@
 			<hr>
 			<p class="mb-0">{{ error_details }}</p>
 			{% endif %}
+			{% if error_traceback %}
+			<hr>
+			<details>
+				<summary class="text-danger" style="cursor: pointer;">Technical Details (Traceback)</summary>
+				<pre class="bg-dark text-light p-3 mt-2" style="font-size: 0.85rem; max-height: 400px; overflow-y: auto; border-radius: 4px;">{{ error_traceback }}</pre>
+			</details>
+			{% endif %}
 		</div>
 
 		<div class="d-grid gap-2">
