@@ -130,7 +130,7 @@ class KFSUnitParser(IKFSUnitParser):
 			raise ValueError(f"Unit '{kb_id}': atom file missing 'main' section")
 
 		main_section = parsed['main']
-		if not isinstance(main_section, dict):
+		if not main_section:
 			raise ValueError(f"Unit '{kb_id}': 'main' section is not a dict")
 
 		unit_class_str = main_section.get('class', 'chesspiece')
@@ -157,7 +157,8 @@ class KFSUnitParser(IKFSUnitParser):
 			kb_id=kb_id,
 			name='',
 			unit_class=unit_class,
-			params=processed_params
+			params=processed_params,
+			main=dict(a=1)
 		)
 
 	def _process_arena_params(self, arena_params: dict) -> dict:

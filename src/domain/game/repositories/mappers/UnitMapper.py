@@ -11,3 +11,4 @@ class UnitMapper(Base):
 	kb_id = Column(String(255), nullable=False, unique=True)
 	unit_class = Column(String(50), nullable=False)
 	params = Column(JSONB, nullable=False)
+	main = Column(JSONB, nullable=False)

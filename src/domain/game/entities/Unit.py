@@ -10,4 +10,7 @@ class Unit:
 	kb_id: str
 	name: str
 	unit_class: UnitClass
+	main: dict[str, any]
 	params: dict[str, any]
+	features: dict[str, any] = None
+	actions: dict[str, any] = None

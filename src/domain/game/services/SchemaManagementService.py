@@ -107,6 +107,7 @@ class SchemaManagementService(ISchemaManagementService):
 					id SERIAL PRIMARY KEY,
 					kb_id VARCHAR(255) NOT NULL UNIQUE,
 					unit_class VARCHAR(50) NOT NULL,
+					main JSONB NOT NULL,
 					params JSONB NOT NULL
 				)
 			"""))

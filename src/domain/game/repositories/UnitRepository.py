@@ -24,7 +24,8 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 		return UnitMapper(
 			kb_id=entity.kb_id,
 			unit_class=entity.unit_class.value,
-			params=entity.params
+			params=entity.params,
+			main=entity.main
 		)
 
 	def _get_entity_type_name(self) -> str:
@@ -93,7 +94,8 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			kb_id=mapper.kb_id,
 			name=name,
 			unit_class=UnitClass(mapper.unit_class),
-			params=mapper.params
+			params=mapper.params,
+			main=mapper.main
 		)
 
 	def create(self, unit: Unit) -> Unit:
