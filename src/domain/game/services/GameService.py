@@ -28,7 +28,7 @@ class GameService(IGameService):
 		:return:
 			Created game
 		"""
-		game = Game(id=0, name=name, path=path)
+		game = Game(id=0, name=name, path=path, last_scan_time=None)
 		game = self._game_repository.create(game)
 
 		# Create schema for new game
@@ -69,3 +69,13 @@ class GameService(IGameService):
 
 		# Delete game record from public.game table
 		self._game_repository.delete(game_id)
+
+	def prepare_rescan(self, game_id: int) -> None:
+		"""
+		Prepare game for rescan by dropping all tables and recreating schema
+
+		:param game_id:
+			Game ID to prepare for rescan
+		:return:
+		"""
+		self._schema_mgmt.recreate_game_schema(game_id)

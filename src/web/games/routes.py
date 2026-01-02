@@ -244,6 +244,17 @@ async def scan_game_files_stream(
 			Generator yielding SSE formatted strings
 		"""
 		try:
+			# Check if this is a rescan and prepare if needed
+			if game.last_scan_time is not None:
+				prep_event = ScanProgressEvent(
+					event_type=ScanEventType.SCAN_STARTED,
+					message="Preparing for rescan: clearing existing data..."
+				)
+				yield f"data: {json.dumps(prep_event.to_dict())}\n\n"
+
+				game_service.prepare_rescan(game_id)
+
+			# Proceed with normal scan
 			for event in scanner_service.scan_game_files_stream(game_id, language):
 				# Format as SSE: "data: {json}\n\n"
 				event_data = json.dumps(event.to_dict())

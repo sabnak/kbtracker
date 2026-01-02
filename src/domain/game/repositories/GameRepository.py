@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from src.domain.game.repositories.CrudRepository import CrudRepository
 from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.entities.Game import Game
@@ -17,7 +19,8 @@ class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
 		"""
 		return GameMapper(
 			name=entity.name,
-			path=entity.path
+			path=entity.path,
+			last_scan_time=entity.last_scan_time
 		)
 
 	def _get_entity_type_name(self) -> str:
@@ -86,9 +89,30 @@ class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
 			).delete()
 			session.commit()
 
+	def update_last_scan_time(
+		self,
+		game_id: int,
+		scan_time: datetime
+	) -> None:
+		"""
+		Update last scan time for a game
+
+		:param game_id:
+			Game ID to update
+		:param scan_time:
+			Timestamp of the scan
+		:return:
+		"""
+		with self._session_factory() as session:
+			session.query(GameMapper).filter(
+				GameMapper.id == game_id
+			).update({"last_scan_time": scan_time})
+			session.commit()
+
 	def _mapper_to_entity(self, mapper: GameMapper) -> Game:
 		return Game(
 			id=mapper.id,
 			name=mapper.name,
-			path=mapper.path
+			path=mapper.path,
+			last_scan_time=mapper.last_scan_time
 		)

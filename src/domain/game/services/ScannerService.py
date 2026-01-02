@@ -48,9 +48,14 @@ class ScannerService:
 		:return:
 			ScanResults with counts of scanned items, locations, shops, and sets
 		"""
+		from datetime import datetime
+
 		game = self._game_repository.get_by_id(game_id)
 		if not game:
 			raise ValueError(f"Game with ID {game_id} not found")
+
+		# Update last_scan_time at start of scan
+		self._game_repository.update_last_scan_time(game_id, datetime.now())
 
 		self._kfs_extractor.extract_archives(game.path)
 
@@ -85,6 +90,8 @@ class ScannerService:
 		:return:
 			Generator yielding ScanProgressEvent instances, returns ScanResults
 		"""
+		from datetime import datetime
+
 		try:
 			# Emit scan started event
 			yield ScanProgressEvent(
@@ -96,6 +103,9 @@ class ScannerService:
 			game = self._game_repository.get_by_id(game_id)
 			if not game:
 				raise ValueError(f"Game with ID {game_id} not found")
+
+			# Update last_scan_time at start of scan
+			self._game_repository.update_last_scan_time(game_id, datetime.now())
 
 			# Extract archives ONCE
 			yield ScanProgressEvent(

@@ -36,3 +36,14 @@ class ISchemaManagementService(ABC):
 			Schema name (e.g., game_1)
 		"""
 		pass
+
+	@abstractmethod
+	def recreate_game_schema(self, game_id: int) -> None:
+		"""
+		Recreate game schema by dropping all tables and recreating them
+
+		:param game_id:
+			Game ID to recreate schema for
+		:return:
+		"""
+		pass

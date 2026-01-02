@@ -20,8 +20,19 @@
 						<p class="card-text">
 							<strong>Path:</strong> {{ game.path }}
 						</p>
+						{% if game.last_scan_time %}
+						<p class="card-text">
+							<small class="text-muted">
+								Last scanned: {{ game.last_scan_time.strftime('%Y-%m-%d %H:%M') }}
+							</small>
+						</p>
+						{% endif %}
 						<div class="btn-group w-100 mb-2" role="group">
+							{% if game.last_scan_time is none %}
 							<a href="/games/{{ game.id }}/scan" class="btn btn-sm btn-outline-primary">Scan</a>
+							{% else %}
+							<a href="/games/{{ game.id }}/scan" class="btn btn-sm btn-outline-warning">Rescan</a>
+							{% endif %}
 							<a href="/games/{{ game.id }}/items" class="btn btn-sm btn-outline-secondary">Items</a>
 							<a href="/games/{{ game.id }}/profiles" class="btn btn-sm btn-outline-info">Profiles</a>
 						</div>

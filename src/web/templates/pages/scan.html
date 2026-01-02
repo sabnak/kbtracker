@@ -1,16 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %}Scan Game Files - King's Bounty Tracker{% endblock %}
+{% block title %}{% if game.last_scan_time %}Rescan{% else %}Scan{% endif %} Game Files - King's Bounty Tracker{% endblock %}
 
 {% block content %}
+<script>
+	document.body.dataset.lastScanTime = '{{ game.last_scan_time if game.last_scan_time else "" }}';
+</script>
+
 <div class="row justify-content-center">
 	<div class="col-md-8">
-		<h1 class="mb-4">Scan Game Files</h1>
+		<h1 class="mb-4">
+			{% if game.last_scan_time %}Rescan{% else %}Scan{% endif %} Game Files
+		</h1>
 
 		<div class="alert alert-info">
 			<strong>Game:</strong> {{ game.name }}<br>
 			<strong>Path:</strong> {{ game.path }}
 		</div>
+
+		{% if game.last_scan_time %}
+		<div class="alert alert-danger">
+			<strong>⚠️ WARNING:</strong> This game was previously scanned on
+			{{ game.last_scan_time.strftime('%Y-%m-%d %H:%M') }}.
+			Rescanning will <strong>permanently delete all existing data</strong> including items, locations, shops, and profiles!
+		</div>
+		{% endif %}
 
 		<!-- Scan Form (hidden during scan) -->
 		<div id="scan-form-container" class="card">

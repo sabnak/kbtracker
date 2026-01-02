@@ -127,3 +127,46 @@ class SchemaManagementService(ISchemaManagementService):
 		with self._session_factory() as session:
 			session.execute(text(f"DROP SCHEMA IF EXISTS {schema_name} CASCADE"))
 			session.commit()
+
+	def recreate_game_schema(self, game_id: int) -> None:
+		"""
+		Recreate game schema by dropping all tables and recreating them
+
+		:param game_id:
+			Game ID to recreate schema for
+		:return:
+		"""
+		schema_name = self.get_schema_name(game_id)
+
+		# Drop all tables in the schema
+		self._drop_all_tables_in_schema(schema_name)
+
+		# Recreate all tables (create_game_schema uses IF NOT EXISTS for schema)
+		self.create_game_schema(game_id)
+
+	def _drop_all_tables_in_schema(self, schema_name: str) -> None:
+		"""
+		Drop all tables in a schema
+
+		:param schema_name:
+			Schema name to drop tables from
+		:return:
+		"""
+		with self._session_factory() as session:
+			# Get all table names in the schema
+			result = session.execute(text("""
+				SELECT tablename
+				FROM pg_tables
+				WHERE schemaname = :schema_name
+			"""), {"schema_name": schema_name})
+
+			table_names = [row[0] for row in result]
+
+			# Drop all tables with CASCADE
+			# CASCADE handles foreign key dependencies automatically
+			for table_name in table_names:
+				session.execute(text(
+					f"DROP TABLE IF EXISTS {schema_name}.{table_name} CASCADE"
+				))
+
+			session.commit()
