@@ -42,6 +42,19 @@ Detailed guide for item and item set resources. Covers:
 
 **Use this when**: You need to extract or work with game items, equipment, artifacts, or item collections.
 
+### [units.md](units.md)
+Detailed guide for unit (creature) resources. Covers:
+- Database structure (`unit` table)
+- Unit classification (pawn vs chesspiece)
+- Archive locations and atom file format
+- Unit parameters (health, attack, defense, features, attacks)
+- JSONB storage for flexible parameters
+- Localization integration (cpn_* pattern)
+- Filtering rules (hints, spawners, spirits)
+- SQL query examples with JSONB operators
+
+**Use this when**: You need to extract or work with game units, creatures, combat statistics, or unit abilities.
+
 ### [save-extractor/](save-extractor/)
 Save file extractor tool documentation. Contains complete guide for extracting shop inventory data from King's Bounty save files:
 - **README.md**: Complete documentation with usage, technical details, troubleshooting
@@ -86,6 +99,7 @@ Universal parser for King's Bounty `.atom` file format. Covers:
 |--------------|----------------|----------------|---------------|
 | Localization | `loc_*.kfs` | `localization` | [localization.md](localization.md) |
 | Items | `ses.kfs` | `item`, `item_set` | [items.md](items.md) |
+| Units | `data.kfs` | `unit` | [units.md](units.md) |
 | Atom Format Parser | `.atom`, `.txt` (atom format) | - | [atom-parser.md](atom-parser.md) |
 | Save Shops | Save file `data` | - | [save-extractor/](save-extractor/) |
 | Campaign ID | Save file `data` | - | [campaign-identifier.md](campaign-identifier.md) |
