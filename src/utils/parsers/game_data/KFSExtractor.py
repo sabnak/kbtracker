@@ -1,8 +1,7 @@
-import os
 import glob
+import os
 import shutil
 import zipfile
-from collections import defaultdict
 
 from dependency_injector.wiring import Provide
 
@@ -14,9 +13,7 @@ from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
 class KFSExtractor(IKFSExtractor):
 
 	def __init__(self, config: Config = Provide[Container.config]):
-		self._game_data_path = config.game_data_path
-		self._data_archive_patterns = config.data_archive_patterns
-		self._loc_archive_patterns = config.loc_archive_patterns
+		self._config = config
 
 	def extract_archives(self, game_name: str) -> str:
 		"""
@@ -30,25 +27,26 @@ class KFSExtractor(IKFSExtractor):
 		:return:
 			Path to extraction root (/tmp/<game_name>/)
 		"""
-		extraction_root = f'/tmp/{game_name}'
+		extraction_root = os.path.join(self._config.tmp_dir, game_name)
 
 		self._cleanup_previous_extraction(game_name)
 
-		game_path = os.path.join(self._game_data_path, game_name)
+		game_path = os.path.join(self._config.game_data_path, game_name)
 
 		# Extract data archives
-		data_patterns = self._build_archive_patterns(game_path, self._data_archive_patterns)
+		data_patterns = self._build_archive_patterns(game_path, self._config.data_archive_patterns)
 		data_paths = self._resolve_archive_patterns(data_patterns)
 		self._extract_archives_to_subdir(data_paths, extraction_root, 'data')
 
 		# Extract localization archives
-		loc_patterns = self._build_archive_patterns(game_path, self._loc_archive_patterns)
+		loc_patterns = self._build_archive_patterns(game_path, self._config.loc_archive_patterns)
 		loc_paths = self._resolve_archive_patterns(loc_patterns)
 		self._extract_archives_to_subdir(loc_paths, extraction_root, 'loc')
 
 		return extraction_root
 
-	def _cleanup_previous_extraction(self, game_name: str) -> None:
+	@staticmethod
+	def _cleanup_previous_extraction(game_name: str) -> None:
 		"""
 		Delete /tmp/<game_name>/ directory if exists
 
@@ -59,11 +57,8 @@ class KFSExtractor(IKFSExtractor):
 		if os.path.exists(extraction_root):
 			shutil.rmtree(extraction_root)
 
-	def _build_archive_patterns(
-		self,
-		game_path: str,
-		patterns: list[str]
-	) -> list[str]:
+	@staticmethod
+	def _build_archive_patterns(game_path: str, patterns: list[str]) -> list[str]:
 		"""
 		Build archive patterns for extraction
 
@@ -79,7 +74,8 @@ class KFSExtractor(IKFSExtractor):
 			for pattern in patterns
 		]
 
-	def _resolve_archive_patterns(self, patterns: list[str]) -> list[str]:
+	@staticmethod
+	def _resolve_archive_patterns(patterns: list[str]) -> list[str]:
 		"""
 		Convert glob patterns to actual archive paths
 
@@ -129,8 +125,8 @@ class KFSExtractor(IKFSExtractor):
 		for archive_path in sorted(archive_paths):
 			self._extract_archive_to_dir(archive_path, target_dir, target_subdir)
 
+	@staticmethod
 	def _extract_archive_to_dir(
-		self,
 		archive_path: str,
 		target_dir: str,
 		target_subdir: str = ''

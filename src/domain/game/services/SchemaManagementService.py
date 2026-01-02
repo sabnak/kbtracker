@@ -101,6 +101,16 @@ class SchemaManagementService(ISchemaManagementService):
 				)
 			"""))
 
+			# Create unit table
+			session.execute(text(f"""
+				CREATE TABLE {schema_name}.unit (
+					id SERIAL PRIMARY KEY,
+					kb_id VARCHAR(255) NOT NULL UNIQUE,
+					unit_class VARCHAR(50) NOT NULL,
+					params JSONB NOT NULL
+				)
+			"""))
+
 			# Create shops_has_items table
 			session.execute(text(f"""
 				CREATE TABLE {schema_name}.shops_has_items (

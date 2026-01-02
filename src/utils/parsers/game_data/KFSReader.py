@@ -1,16 +1,24 @@
 import os
 import glob
+import chardet
 
+from dependency_injector.wiring import Provide
+
+from src.core.Config import Config
+from src.core.Container import Container
 from src.utils.parsers.game_data.IKFSReader import IKFSReader
 
 
 class KFSReader(IKFSReader):
 
+	def __init__(self, config: Config = Provide[Container.config]):
+		self._config = config
+
 	def read_data_files(
 		self,
 		game_name: str,
 		patterns: list[str],
-		encoding: str = 'utf-16-le'
+		encoding: str | None = None
 	) -> list[str]:
 		"""
 		Read data files from extracted data directory
@@ -22,13 +30,13 @@ class KFSReader(IKFSReader):
 		:param patterns:
 			List of filenames or glob patterns (e.g., ['items*.txt', 'spells.txt'])
 		:param encoding:
-			Text encoding (default: utf-16-le)
+			Text encoding (default: None for auto-detection)
 		:return:
 			List of file contents as strings
 		:raises FileNotFoundError:
 			If no files match pattern or directory not found
 		"""
-		data_dir = f'/tmp/{game_name}/data'
+		data_dir = os.path.join(self._config.tmp_dir, game_name, 'data')
 		return self._read_files_from_dir(data_dir, patterns, encoding)
 
 	def read_loc_files(
@@ -53,14 +61,14 @@ class KFSReader(IKFSReader):
 		:raises FileNotFoundError:
 			If no files match pattern or directory not found
 		"""
-		loc_dir = f'/tmp/{game_name}/loc'
+		loc_dir = os.path.join(self._config.tmp_dir, game_name, 'loc')
 		return self._read_files_from_dir(loc_dir, patterns, encoding)
 
 	def _read_files_from_dir(
 		self,
 		directory: str,
 		patterns: list[str],
-		encoding: str
+		encoding: str | None
 	) -> list[str]:
 		"""
 		Read files from specified directory
@@ -72,7 +80,7 @@ class KFSReader(IKFSReader):
 		:param patterns:
 			List of filenames or glob patterns
 		:param encoding:
-			Text encoding
+			Text encoding (None for auto-detection)
 		:return:
 			List of file contents
 		:raises FileNotFoundError:
@@ -100,7 +108,8 @@ class KFSReader(IKFSReader):
 
 		return results
 
-	def _expand_patterns(self, directory: str, patterns: list[str]) -> list[str]:
+	@staticmethod
+	def _expand_patterns(directory: str, patterns: list[str]) -> list[str]:
 		"""
 		Expand glob patterns to actual filenames
 
@@ -131,7 +140,7 @@ class KFSReader(IKFSReader):
 		self,
 		directory: str,
 		filename: str,
-		encoding: str
+		encoding: str | None
 	) -> str:
 		"""
 		Read single file from directory
@@ -141,7 +150,7 @@ class KFSReader(IKFSReader):
 		:param filename:
 			Filename relative to directory
 		:param encoding:
-			Text encoding
+			Text encoding (None for auto-detection)
 		:return:
 			File content as string
 		:raises FileNotFoundError:
@@ -157,33 +166,69 @@ class KFSReader(IKFSReader):
 		with open(full_path, 'rb') as file:
 			content_bytes = file.read()
 
-		return self._decode_content(content_bytes, encoding)
+		try:
+			return self._decode_content(content_bytes, encoding)
+		except UnicodeDecodeError as e:
+			raise UnicodeDecodeError(
+				e.encoding,
+				e.object,
+				e.start,
+				e.end,
+				f"Failed to decode file '{full_path}': {e.reason}"
+			) from e
 
-	def _decode_content(self, content: bytes, encoding: str) -> str:
+	@staticmethod
+	def _decode_content(content: bytes, encoding: str | None) -> str:
 		"""
-		Decode file content with proper encoding
+		Decode file content with automatic encoding detection
 
-		Tries specified encoding first, then falls back to UTF-8 if that fails.
+		Uses chardet to detect encoding when encoding is None, otherwise tries specified encoding first
 
 		:param content:
 			Raw file content as bytes
 		:param encoding:
-			Primary encoding to try
+			Primary encoding to try (None for auto-detection using chardet)
 		:return:
 			Decoded string
 		:raises UnicodeDecodeError:
-			If content cannot be decoded with either encoding
+			If content cannot be decoded
 		"""
-		try:
-			return content.decode(encoding)
-		except UnicodeDecodeError:
+		encodings_to_try = []
+
+		if encoding is None:
+			detected = chardet.detect(content)
+			detected_encoding = detected.get('encoding')
+			confidence = detected.get('confidence', 0)
+
+			if detected_encoding and confidence > 0.7:
+				encodings_to_try.append(detected_encoding.lower())
+
+			encodings_to_try.extend(['utf-16-le', 'utf-8', 'iso-8859-1'])
+		else:
+			encodings_to_try.append(encoding)
+			if 'utf-16-le' not in encodings_to_try:
+				encodings_to_try.append('utf-16-le')
+			if 'utf-8' not in encodings_to_try:
+				encodings_to_try.append('utf-8')
+			if 'iso-8859-1' not in encodings_to_try:
+				encodings_to_try.append('iso-8859-1')
+
+		last_error = None
+		for enc in encodings_to_try:
 			try:
-				return content.decode('utf-8')
-			except UnicodeDecodeError as e:
-				raise UnicodeDecodeError(
-					e.encoding,
-					e.object,
-					e.start,
-					e.end,
-					f"Failed to decode content with {encoding} or UTF-8"
-				) from e
+				decoded = content.decode(enc)
+				# Strip BOM (Byte Order Mark) if present
+				if decoded.startswith('\ufeff'):
+					decoded = decoded[1:]
+				return decoded
+			except (UnicodeDecodeError, LookupError) as e:
+				last_error = e
+				continue
+
+		raise UnicodeDecodeError(
+			last_error.encoding if isinstance(last_error, UnicodeDecodeError) else 'unknown',
+			content,
+			0,
+			len(content),
+			f"Failed to decode content with any of: {', '.join(encodings_to_try)}"
+		) from last_error

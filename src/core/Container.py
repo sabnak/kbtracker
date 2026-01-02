@@ -12,6 +12,7 @@ from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
 from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.IProfileRepository import IProfileRepository
 from src.domain.game.IProfileService import IProfileService
+from src.domain.game.IUnitRepository import IUnitRepository
 
 
 class Container(containers.DeclarativeContainer):
@@ -32,6 +33,7 @@ class Container(containers.DeclarativeContainer):
 	shop_repository = providers.AbstractSingleton(IShopRepository)
 	shop_has_item_repository = providers.AbstractSingleton(IShopHasItemRepository)
 	profile_repository = providers.AbstractSingleton(IProfileRepository)
+	unit_repository = providers.AbstractSingleton(IUnitRepository)
 
 	game_path_service = providers.AbstractFactory(IGamePathService)
 	game_service = providers.AbstractFactory(IGameService)
@@ -40,6 +42,7 @@ class Container(containers.DeclarativeContainer):
 	item_service = providers.AbstractFactory()
 	localization_scanner_service = providers.AbstractFactory()
 	items_and_sets_scanner_service = providers.AbstractFactory()
+	units_scanner_service = providers.AbstractFactory()
 	locations_and_shops_scanner_service = providers.AbstractFactory()
 	schema_management_service = providers.AbstractFactory(ISchemaManagementService)
 
@@ -48,6 +51,7 @@ class Container(containers.DeclarativeContainer):
 	kfs_reader = providers.AbstractSingleton()
 	kfs_items_parser = providers.AbstractSingleton()
 	kfs_localization_parser = providers.AbstractSingleton()
+	kfs_unit_parser = providers.AbstractSingleton()
 	kfs_locations_and_shops_parser = providers.AbstractSingleton()
 
 	# Save file parsers

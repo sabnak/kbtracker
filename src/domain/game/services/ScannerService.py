@@ -1,4 +1,5 @@
 from collections.abc import Generator
+import traceback
 
 from dependency_injector.wiring import Provide
 
@@ -8,6 +9,7 @@ from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.IItemsAndSetsScannerService import IItemsAndSetsScannerService
 from src.domain.game.ILocalizationScannerService import ILocalizationScannerService
 from src.domain.game.IShopsAndLocationsScannerService import IShopsAndLocationsScannerService
+from src.domain.game.IUnitsScannerService import IUnitsScannerService
 from src.domain.game.dto.ScanResults import ScanResults
 from src.domain.game.events.ResourceType import ResourceType
 from src.domain.game.events.ScanEventType import ScanEventType
@@ -22,6 +24,7 @@ class ScannerService:
 		game_repository: IGameRepository = Provide[Container.game_repository],
 		localization_scanner_service: ILocalizationScannerService = Provide[Container.localization_scanner_service],
 		items_and_sets_scanner_service: IItemsAndSetsScannerService = Provide[Container.items_and_sets_scanner_service],
+		units_scanner_service: IUnitsScannerService = Provide[Container.units_scanner_service],
 		shops_and_locations_scanner_service: IShopsAndLocationsScannerService = Provide[Container.locations_and_shops_scanner_service],
 		kfs_extractor: IKFSExtractor = Provide[Container.kfs_extractor],
 		config: Config = Provide[Container.config]
@@ -29,6 +32,7 @@ class ScannerService:
 		self._game_repository = game_repository
 		self._localization_scanner = localization_scanner_service
 		self._items_and_sets_scanner = items_and_sets_scanner_service
+		self._units_scanner = units_scanner_service
 		self._shops_and_locations_scanner = shops_and_locations_scanner_service
 		self._kfs_extractor = kfs_extractor
 		self._config = config
@@ -65,6 +69,9 @@ class ScannerService:
 		total_items = len(items)
 		total_sets = len(sets)
 
+		units = self._units_scanner.scan(game_id, game.path)
+		total_units = len(units)
+
 		locations, shops = self._shops_and_locations_scanner.scan(game_id, game.path, language)
 
 		return ScanResults(
@@ -72,7 +79,8 @@ class ScannerService:
 			locations=len(locations),
 			shops=len(shops),
 			sets=total_sets,
-			localizations=localizations_string
+			localizations=localizations_string,
+			units=total_units
 		)
 
 	def scan_game_files_stream(
@@ -162,7 +170,24 @@ class ScannerService:
 				message=f"Created {total_sets} item sets"
 			)
 
-			# Step 3: Parse and create locations/shops
+			# Step 3: Parse and create units
+			yield ScanProgressEvent(
+				event_type=ScanEventType.RESOURCE_STARTED,
+				resource_type=ResourceType.UNITS,
+				message="Parsing units"
+			)
+
+			units = self._units_scanner.scan(game_id, game.path)
+			total_units = len(units)
+
+			yield ScanProgressEvent(
+				event_type=ScanEventType.RESOURCE_COMPLETED,
+				resource_type=ResourceType.UNITS,
+				count=total_units,
+				message=f"Created {total_units} units"
+			)
+
+			# Step 4: Parse and create locations/shops
 			yield ScanProgressEvent(
 				event_type=ScanEventType.RESOURCE_STARTED,
 				resource_type=ResourceType.LOCATIONS,
@@ -191,7 +216,8 @@ class ScannerService:
 				locations=len(locations),
 				shops=len(shops),
 				sets=total_sets,
-				localizations=localizations_count
+				localizations=localizations_count,
+				units=total_units
 			)
 
 			yield ScanProgressEvent(
@@ -202,10 +228,11 @@ class ScannerService:
 			return results
 
 		except Exception as e:
-			# Emit error event
+			# Emit error event with full traceback
+			error_traceback = traceback.format_exc()
 			yield ScanProgressEvent(
 				event_type=ScanEventType.SCAN_ERROR,
-				error=str(e),
+				error=error_traceback,
 				message=f"Scan failed: {str(e)}"
 			)
 			raise

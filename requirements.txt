@@ -8,3 +8,4 @@ dependency-injector>=4.42.0
 pydantic>=2.10.1
 pydantic-settings>=2.6.1
 pytest>=8.0.0
+chardet>=5.0.0

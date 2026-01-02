@@ -66,11 +66,13 @@ class ILocalizationRepository(ABC):
 		pass
 
 	@abstractmethod
-	def list_all(self) -> list[Localization]:
+	def list_all(self, tag: str | None = None) -> list[Localization]:
 		"""
 		Get all localization entries
 
+		:param tag:
+			Optional tag filter
 		:return:
-			List of all localizations
+			List of all localizations (filtered by tag if provided)
 		"""
 		pass

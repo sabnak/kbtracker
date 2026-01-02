@@ -12,6 +12,7 @@ class LocalizationConfig(BaseSettings):
 class Config(BaseSettings):
 
 	game_data_path: str = "/data"
+	tmp_dir: str = "/tmp"
 
 	data_archive_patterns: list[str] = [
 		"{game_path}/data/data.kfs",

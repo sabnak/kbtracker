@@ -8,3 +8,4 @@ class ScanResults:
 	shops: int
 	sets: int
 	localizations: int
+	units: int

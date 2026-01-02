@@ -49,8 +49,16 @@ def load_file(path: str, convert_types: bool = True) -> dict | list:
 		with open(path, 'r', encoding='utf-16-le') as f:
 			content = f.read()
 	except (UnicodeError, UnicodeDecodeError):
-		with open(path, 'r', encoding='utf-8') as f:
-			content = f.read()
+		try:
+			with open(path, 'r', encoding='utf-8') as f:
+				content = f.read()
+		except UnicodeDecodeError:
+			with open(path, 'r', encoding='iso-8859-1') as f:
+				content = f.read()
+
+	# Strip BOM (Byte Order Mark) if present
+	if content.startswith('\ufeff'):
+		content = content[1:]
 
 	return loads(content, convert_types=convert_types)
 
