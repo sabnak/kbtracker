@@ -236,3 +236,33 @@ footer {
 #profile-select {
 	max-width: 300px;
 }
+
+
+/* Unit Attributes Display */
+.unit-common-params {
+	font-size: 0.9rem;
+	line-height: 1.6;
+}
+
+.resistance-list {
+	margin: 0.25rem 0;
+}
+
+.resistance-item {
+	font-size: 0.85rem;
+	color: #6c757d;
+}
+
+.unit-features,
+.unit-attacks {
+	font-size: 0.9rem;
+}
+
+.unit-features .badge,
+.unit-attacks .badge {
+	font-weight: normal;
+	cursor: help;
+	margin-right: 0.25rem;
+	margin-bottom: 0.25rem;
+}
+

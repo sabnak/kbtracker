@@ -1,3 +1,5 @@
+import re
+
 from fastapi.templating import Jinja2Templates
 
 
@@ -23,6 +25,10 @@ def format_text(text: str | None) -> str:
 	- Preserves [d] as placeholder for in-game digits
 	- Preserves <br> tags
 	- Removes special characters like ^?^
+	- Removes ^...^ pattern from beginning of text
+	- Removes "Features:" prefix
+	- Converts <color=R,G,B> tags to HTML span with inline style
+	- Removes <gen=...> placeholder tags
 
 	:param text:
 		Raw text from game
@@ -32,8 +38,21 @@ def format_text(text: str | None) -> str:
 	if not text:
 		return ""
 
+	# Remove ^...^ pattern from the beginning of the string
+	formatted = re.sub(r'^\^[^^]+\^', '', text)
+
+	# Remove "Features:" prefix (case-insensitive)
+	formatted = re.sub(r'^Features:\s*', '', formatted, flags=re.IGNORECASE)
+
 	# Remove special characters like ^?^
-	formatted = text.replace("^?^", "")
+	formatted = formatted.replace("^?^", "")
+
+	# Handle <color=...> tags - convert to span with inline style
+	formatted = re.sub(r'<color=(\d+),(\d+),(\d+)>', lambda m: f'<span style="color: rgb({m.group(1)}, {m.group(2)}, {m.group(3)});">', formatted)
+	formatted = formatted.replace('</color>', '</span>')
+
+	# Remove <gen=...> tags (placeholders for in-game generated values)
+	formatted = re.sub(r'<gen=[^>]+>', '', formatted)
 
 	# Count unclosed tags BEFORE replacement
 	# [u] tags

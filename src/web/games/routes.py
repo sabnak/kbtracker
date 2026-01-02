@@ -11,6 +11,8 @@ from src.domain.exceptions import DuplicateEntityException, DatabaseOperationExc
 from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameService import IGameService
 from src.domain.game.IProfileService import IProfileService
+from src.domain.game.IUnitRepository import IUnitRepository
+from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
 from src.domain.game.repositories.CrudRepository import _game_context
@@ -390,6 +392,52 @@ async def list_items(
 			"available_sets": available_sets,
 			# Error handling
 			"error": error_message
+		}
+	)
+
+
+@router.get("/games/{game_id}/units", response_class=HTMLResponse)
+@inject
+async def list_units(
+	request: Request,
+	game_id: int,
+	sort_by: str = Query(default="name"),
+	sort_order: str = Query(default="asc"),
+	game_context: GameContext = Depends(get_game_context),
+	unit_repository: IUnitRepository = Depends(Provide["unit_repository"]),
+	game_service: IGameService = Depends(Provide["game_service"])
+):
+	"""
+	List all chesspiece units for a game
+	"""
+	_game_context.set(game_context)
+
+	game = game_service.get_game(game_id)
+	if not game:
+		return RedirectResponse(url="/games", status_code=303)
+
+	# Validate sort parameters
+	allowed_sort_fields = ["name", "level", "race", "cost", "leadership", "attack", "defense", "speed", "initiative"]
+	sort_field = sort_by if sort_by in allowed_sort_fields else "name"
+
+	allowed_sort_orders = ["asc", "desc"]
+	sort_direction = sort_order.lower() if sort_order.lower() in allowed_sort_orders else "asc"
+
+	# Fetch chesspiece units only
+	units = unit_repository.list_all(
+		sort_by=sort_field,
+		sort_order=sort_direction,
+		unit_class=UnitClass.CHESSPIECE
+	)
+
+	return templates.TemplateResponse(
+		"pages/unit_list.html",
+		{
+			"request": request,
+			"game": game,
+			"units": units,
+			"sort_by": sort_field,
+			"sort_order": sort_direction
 		}
 	)
 

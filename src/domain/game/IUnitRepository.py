@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from src.domain.game.entities.Unit import Unit
+from src.domain.game.entities.UnitClass import UnitClass
 
 
 class IUnitRepository(ABC):
@@ -54,14 +55,21 @@ class IUnitRepository(ABC):
 		pass
 
 	@abstractmethod
-	def list_all(self, sort_by: str = "name", sort_order: str = "asc") -> list[Unit]:
+	def list_all(
+		self,
+		sort_by: str = "name",
+		sort_order: str = "asc",
+		unit_class: UnitClass | None = None
+	) -> list[Unit]:
 		"""
 		Get all units
 
 		:param sort_by:
-			Field to sort by (name, kb_id)
+			Field to sort by (name, kb_id, level, race, cost, leadership, attack, defense, speed, initiative)
 		:param sort_order:
 			Sort direction (asc, desc)
+		:param unit_class:
+			Optional filter by unit class (CHESSPIECE or PAWN)
 		:return:
 			List of all units
 		"""

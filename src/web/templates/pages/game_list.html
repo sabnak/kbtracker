@@ -28,12 +28,15 @@
 						</p>
 						{% endif %}
 						<div class="btn-group w-100 mb-2" role="group">
+							<a href="/games/{{ game.id }}/items" class="btn btn-sm btn-outline-secondary">Items</a>
+							<a href="/games/{{ game.id }}/units" class="btn btn-sm btn-outline-secondary">Units</a>
+						</div>
+						<div class="btn-group w-100 mb-2" role="group">
 							{% if game.last_scan_time is none %}
 							<a href="/games/{{ game.id }}/scan" class="btn btn-sm btn-outline-primary">Scan</a>
 							{% else %}
 							<a href="/games/{{ game.id }}/scan" class="btn btn-sm btn-outline-warning">Rescan</a>
 							{% endif %}
-							<a href="/games/{{ game.id }}/items" class="btn btn-sm btn-outline-secondary">Items</a>
 							<a href="/games/{{ game.id }}/profiles" class="btn btn-sm btn-outline-info">Profiles</a>
 						</div>
 						<form method="POST" action="/games/{{ game.id }}/delete" onsubmit="return confirm('Are you sure? This will delete all profiles and data for this game!');">

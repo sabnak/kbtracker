@@ -137,7 +137,12 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			mapper = session.query(UnitMapper).filter(UnitMapper.kb_id == kb_id).first()
 			return self._mapper_to_entity(mapper) if mapper else None
 
-	def list_all(self, sort_by: str = "name", sort_order: str = "asc") -> list[Unit]:
+	def list_all(
+		self,
+		sort_by: str = "name",
+		sort_order: str = "asc",
+		unit_class: UnitClass | None = None
+	) -> list[Unit]:
 		"""
 		Get all units
 
@@ -145,11 +150,17 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			Field to sort by
 		:param sort_order:
 			Sort direction
+		:param unit_class:
+			Optional filter by unit class
 		:return:
 			List of units
 		"""
 		with self._get_session() as session:
 			query = session.query(UnitMapper)
+
+			if unit_class:
+				query = query.filter(UnitMapper.unit_class == unit_class.value)
+
 			query = self._apply_sorting(query, sort_by, sort_order)
 			mappers = query.all()
 			return [self._mapper_to_entity(mapper) for mapper in mappers]
@@ -187,18 +198,26 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 		:param query:
 			SQLAlchemy query
 		:param sort_by:
-			Field to sort by (name, kb_id)
+			Field to sort by (name, kb_id, level, race, cost, leadership, attack, defense, speed, initiative)
 		:param sort_order:
 			Sort direction (asc, desc)
 		:return:
 			Query with ORDER BY applied
 		"""
-		if sort_by == "name":
-			sort_column = UnitMapper.name
-		elif sort_by == "kb_id":
-			sort_column = UnitMapper.kb_id
-		else:
-			sort_column = UnitMapper.name
+		sort_column_map = {
+			"name": UnitMapper.name,
+			"kb_id": UnitMapper.kb_id,
+			"level": UnitMapper.level,
+			"race": UnitMapper.race,
+			"cost": UnitMapper.cost,
+			"leadership": UnitMapper.leadership,
+			"attack": UnitMapper.attack,
+			"defense": UnitMapper.defense,
+			"speed": UnitMapper.speed,
+			"initiative": UnitMapper.initiative
+		}
+
+		sort_column = sort_column_map.get(sort_by, UnitMapper.name)
 
 		if sort_order.lower() == "desc":
 			return query.order_by(desc(sort_column))
