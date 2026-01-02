@@ -9,7 +9,7 @@ class IKFSLocalizationParser(abc.ABC):
 	@abc.abstractmethod
 	def parse(
 		self,
-		sessions_path: str,
+		game_name: str,
 		file_name: str,
 		kb_id_pattern: re.Pattern = None,
 		lang: str = 'rus',

@@ -6,5 +6,5 @@ from src.domain.game.entities.Shop import Shop
 
 class IKFSLocationsAndShopsParser(abc.ABC):
 
-	def parse(self, sessions_path: str, lang: str = 'rus') -> list[dict[str, Location | list[Shop]]]:
+	def parse(self, game_name: str, lang: str = 'rus') -> list[dict[str, Location | list[Shop]]]:
 		...

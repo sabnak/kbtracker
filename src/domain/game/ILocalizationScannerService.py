@@ -7,7 +7,7 @@ from src.domain.game.entities.Localization import Localization
 class ILocalizationScannerService(ABC):
 
 	@abstractmethod
-	def scan(self, game_id: int, lang: str = 'rus') -> list[Localization]:
+	def scan(self, game_id: int, game_name: str, lang: str = 'rus') -> list[Localization]:
 		"""
 		Scan and import localization entries from game files
 
@@ -16,6 +16,8 @@ class ILocalizationScannerService(ABC):
 
 		:param game_id:
 			Game ID to scan
+		:param game_name:
+			Game name (e.g., 'Darkside', 'Armored_Princess')
 		:param lang:
 			Language code (default: 'rus')
 		:return:

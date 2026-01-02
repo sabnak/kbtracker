@@ -1,18 +1,29 @@
+import pytest
 from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
 
 
 class TestKFSLocationsAndShopsParser:
 
+	@pytest.fixture(autouse=True)
+	def setup(self, extracted_game_files):
+		"""
+		Auto-use fixture that ensures archives are extracted before tests
+
+		:param extracted_game_files:
+			Extraction root path
+		"""
+		pass
+
 	def test_parse_returns_list_of_dicts(
 		self,
 		kfs_locations_and_shops_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that parse returns a list of dicts with location and shops keys
 		"""
-		result = kfs_locations_and_shops_parser.parse(test_sessions_path)
+		result = kfs_locations_and_shops_parser.parse(test_game_name)
 
 		assert isinstance(result, list)
 		assert len(result) > 0
@@ -27,12 +38,12 @@ class TestKFSLocationsAndShopsParser:
 	def test_shop_fields_populated_correctly(
 		self,
 		kfs_locations_and_shops_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that Shop fields are populated correctly for known entry
 		"""
-		result = kfs_locations_and_shops_parser.parse(test_sessions_path)
+		result = kfs_locations_and_shops_parser.parse(test_game_name)
 
 		# Find amasonia location with shop amasonia_1173
 		amasonia_entry = next(
@@ -57,12 +68,12 @@ class TestKFSLocationsAndShopsParser:
 	def test_locations_are_unique(
 		self,
 		kfs_locations_and_shops_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that each location appears only once
 		"""
-		result = kfs_locations_and_shops_parser.parse(test_sessions_path)
+		result = kfs_locations_and_shops_parser.parse(test_game_name)
 
 		location_kb_ids = [entry['location'].kb_id for entry in result]
 		assert len(location_kb_ids) == len(set(location_kb_ids)), "Duplicate location kb_ids found"
@@ -70,12 +81,12 @@ class TestKFSLocationsAndShopsParser:
 	def test_shops_grouped_by_location(
 		self,
 		kfs_locations_and_shops_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that all shops in each dict belong to that location
 		"""
-		result = kfs_locations_and_shops_parser.parse(test_sessions_path)
+		result = kfs_locations_and_shops_parser.parse(test_game_name)
 
 		# All shops within a location entry should be part of that location
 		# (we can't verify this directly without the raw data, but we can
@@ -86,12 +97,12 @@ class TestKFSLocationsAndShopsParser:
 	def test_prefix_stripped_from_values(
 		self,
 		kfs_locations_and_shops_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that ^?^ prefix is removed from values
 		"""
-		result = kfs_locations_and_shops_parser.parse(test_sessions_path)
+		result = kfs_locations_and_shops_parser.parse(test_game_name)
 
 		# Check no values start with ^?^
 		for entry in result:
@@ -108,12 +119,12 @@ class TestKFSLocationsAndShopsParser:
 	def test_empty_hint_and_msg_allowed(
 		self,
 		kfs_locations_and_shops_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that shops can have empty hint or msg (None values)
 		"""
-		result = kfs_locations_and_shops_parser.parse(test_sessions_path)
+		result = kfs_locations_and_shops_parser.parse(test_game_name)
 
 		# Collect all shops
 		all_shops = []
@@ -130,12 +141,12 @@ class TestKFSLocationsAndShopsParser:
 	def test_all_shops_have_required_fields(
 		self,
 		kfs_locations_and_shops_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that all parsed shops have required non-empty fields
 		"""
-		result = kfs_locations_and_shops_parser.parse(test_sessions_path)
+		result = kfs_locations_and_shops_parser.parse(test_game_name)
 
 		for entry in result:
 			location = entry['location']
@@ -150,12 +161,12 @@ class TestKFSLocationsAndShopsParser:
 	def test_location_and_shop_ids_are_zero(
 		self,
 		kfs_locations_and_shops_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that all Location.id, Shop.id, and Shop.location_id are 0
 		"""
-		result = kfs_locations_and_shops_parser.parse(test_sessions_path)
+		result = kfs_locations_and_shops_parser.parse(test_game_name)
 
 		for entry in result:
 			location = entry['location']
@@ -168,12 +179,12 @@ class TestKFSLocationsAndShopsParser:
 	def test_multiple_locations_parsed(
 		self,
 		kfs_locations_and_shops_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that multiple different locations are found
 		"""
-		result = kfs_locations_and_shops_parser.parse(test_sessions_path)
+		result = kfs_locations_and_shops_parser.parse(test_game_name)
 
 		# Should have multiple locations
 		assert len(result) > 1, "Only one location found"
@@ -185,12 +196,12 @@ class TestKFSLocationsAndShopsParser:
 	def test_each_location_has_shops(
 		self,
 		kfs_locations_and_shops_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that each location dict has at least one shop
 		"""
-		result = kfs_locations_and_shops_parser.parse(test_sessions_path)
+		result = kfs_locations_and_shops_parser.parse(test_game_name)
 
 		for entry in result:
 			assert len(entry['shops']) > 0, \

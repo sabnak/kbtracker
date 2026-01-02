@@ -12,6 +12,7 @@ from src.domain.game.dto.ScanResults import ScanResults
 from src.domain.game.events.ResourceType import ResourceType
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
+from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
 
 
 class ScannerService:
@@ -22,12 +23,14 @@ class ScannerService:
 		localization_scanner_service: ILocalizationScannerService = Provide[Container.localization_scanner_service],
 		items_and_sets_scanner_service: IItemsAndSetsScannerService = Provide[Container.items_and_sets_scanner_service],
 		shops_and_locations_scanner_service: IShopsAndLocationsScannerService = Provide[Container.locations_and_shops_scanner_service],
+		kfs_extractor: IKFSExtractor = Provide[Container.kfs_extractor],
 		config: Config = Provide[Container.config]
 	):
 		self._game_repository = game_repository
 		self._localization_scanner = localization_scanner_service
 		self._items_and_sets_scanner = items_and_sets_scanner_service
 		self._shops_and_locations_scanner = shops_and_locations_scanner_service
+		self._kfs_extractor = kfs_extractor
 		self._config = config
 
 	def scan_game_files(
@@ -45,13 +48,19 @@ class ScannerService:
 		:return:
 			ScanResults with counts of scanned items, locations, shops, and sets
 		"""
-		localizations_string = len(self._localization_scanner.scan(game_id, language))
+		game = self._game_repository.get_by_id(game_id)
+		if not game:
+			raise ValueError(f"Game with ID {game_id} not found")
 
-		items, sets = self._items_and_sets_scanner.scan(game_id)
+		self._kfs_extractor.extract_archives(game.path)
+
+		localizations_string = len(self._localization_scanner.scan(game_id, game.path, language))
+
+		items, sets = self._items_and_sets_scanner.scan(game_id, game.path)
 		total_items = len(items)
 		total_sets = len(sets)
 
-		locations, shops = self._shops_and_locations_scanner.scan(game_id, language)
+		locations, shops = self._shops_and_locations_scanner.scan(game_id, game.path, language)
 
 		return ScanResults(
 			items=total_items,
@@ -83,6 +92,24 @@ class ScannerService:
 				message=f"Starting scan for game {game_id} with language {language}"
 			)
 
+			# Get game info
+			game = self._game_repository.get_by_id(game_id)
+			if not game:
+				raise ValueError(f"Game with ID {game_id} not found")
+
+			# Extract archives ONCE
+			yield ScanProgressEvent(
+				event_type=ScanEventType.EXTRACTION_STARTED,
+				message="Extracting game archives..."
+			)
+
+			self._kfs_extractor.extract_archives(game.path)
+
+			yield ScanProgressEvent(
+				event_type=ScanEventType.EXTRACTION_COMPLETED,
+				message="Archive extraction complete"
+			)
+
 			# Step 1: Scan localizations
 			yield ScanProgressEvent(
 				event_type=ScanEventType.RESOURCE_STARTED,
@@ -90,7 +117,7 @@ class ScannerService:
 				message="Scanning localization files"
 			)
 
-			localizations = self._localization_scanner.scan(game_id, language)
+			localizations = self._localization_scanner.scan(game_id, game.path, language)
 			localizations_count = len(localizations)
 
 			yield ScanProgressEvent(
@@ -107,7 +134,7 @@ class ScannerService:
 				message="Parsing items and sets"
 			)
 
-			items, sets = self._items_and_sets_scanner.scan(game_id)
+			items, sets = self._items_and_sets_scanner.scan(game_id, game.path)
 			total_items = len(items)
 			total_sets = len(sets)
 
@@ -132,7 +159,7 @@ class ScannerService:
 				message="Parsing locations and shops"
 			)
 
-			locations, shops = self._shops_and_locations_scanner.scan(game_id, language)
+			locations, shops = self._shops_and_locations_scanner.scan(game_id, game.path, language)
 
 			yield ScanProgressEvent(
 				event_type=ScanEventType.RESOURCE_COMPLETED,

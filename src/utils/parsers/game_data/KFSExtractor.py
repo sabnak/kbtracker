@@ -1,142 +1,186 @@
 import os
+import glob
+import shutil
 import zipfile
+from collections import defaultdict
 
+from dependency_injector.wiring import Provide
+
+from src.core.Config import Config
+from src.core.Container import Container
 from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
 
 
 class KFSExtractor(IKFSExtractor):
 
-	def extract(self, sessions_path: str, tables: list[str]) -> list[str]:
+	def __init__(self, config: Config = Provide[Container.config]):
+		self._game_data_path = config.game_data_path
+		self._archive_patterns = config.archive_patterns
+
+	def extract_archives(self, game_name: str) -> str:
 		"""
-		Extract specified files from KFS archives
+		Extract all game archives to /tmp/<game_name>/
 
-		Scans sessions directory subdirectories for requested .kfs archives,
-		extracts specified files, and returns their contents as strings.
-
+		:param game_name:
+			Game name (e.g., 'Darkside', 'Armored_Princess')
 		:return:
-			List of file contents as UTF-16 LE decoded strings,
-			in the same order as tables parameter
-		:raises FileNotFoundError:
-			If any requested archive not found in sessions directory
-		:raises KeyError:
-			If requested file not found in archive
-		:raises UnicodeDecodeError:
-			If file content cannot be decoded
+			Path to extraction root (/tmp/<game_name>/)
 		"""
-		archive_files_map = self._parse_tables(tables)
-		archive_names = list(archive_files_map.keys())
-		archive_paths = self._find_archives(sessions_path, archive_names)
+		extraction_root = f'/tmp/{game_name}'
 
-		results = []
-		for table in tables:
-			archive_name, file_path = table.split('/', 1)
-			archive_path = archive_paths[archive_name]
-			content = self._extract_from_archive(archive_path, file_path)
-			results.append(content)
+		self._cleanup_previous_extraction(game_name)
 
-		return results
+		game_path = os.path.join(self._game_data_path, game_name)
+		archive_patterns = self._build_archive_patterns(game_path)
 
-	def _parse_tables(self, tables: list[str]) -> dict[str, list[str]]:
-		"""
-		Parse tables parameter into archive to files mapping
+		archive_paths = self._resolve_archive_patterns(archive_patterns)
 
-		:return:
-			Dictionary mapping archive names to lists of files to extract
-		"""
-		archive_files_map: dict[str, list[str]] = {}
-		for table in tables:
-			archive_name, file_path = table.split('/', 1)
-			if archive_name not in archive_files_map:
-				archive_files_map[archive_name] = []
-			archive_files_map[archive_name].append(file_path)
-		return archive_files_map
+		archive_groups = self._group_archives_by_basename(archive_paths)
 
-	def _find_archives(self, sessions_path: str, archive_names: list[str]) -> dict[str, str]:
-		"""
-		Scan sessions directory subdirectories for .kfs archives
-
-		:param archive_names:
-			List of archive names to find
-		:return:
-			Dictionary mapping archive names to their full paths
-		:raises FileNotFoundError:
-			If any requested archive not found
-		"""
-		found_archives: dict[str, str] = {}
-
-		if not os.path.exists(sessions_path):
-			raise FileNotFoundError(
-				f"Sessions directory not found: {sessions_path}"
+		for basename, paths in archive_groups.items():
+			self._extract_archive_group(
+				archive_paths=paths,
+				extraction_root=extraction_root,
+				basename=basename
 			)
 
-		for entry in os.listdir(sessions_path):
-			entry_path = os.path.join(sessions_path, entry)
-			if os.path.isdir(entry_path):
-				for archive_name in archive_names:
-					archive_path = os.path.join(entry_path, archive_name)
-					if os.path.exists(archive_path) and archive_name not in found_archives:
-						found_archives[archive_name] = archive_path
+		return extraction_root
 
-		for archive_name in archive_names:
-			if archive_name not in found_archives:
+	def _cleanup_previous_extraction(self, game_name: str) -> None:
+		"""
+		Delete /tmp/<game_name>/ directory if exists
+
+		:param game_name:
+			Game name
+		"""
+		extraction_root = f'/tmp/{game_name}'
+		if os.path.exists(extraction_root):
+			shutil.rmtree(extraction_root)
+
+	def _build_archive_patterns(self, game_path: str) -> list[str]:
+		"""
+		Build archive patterns for extraction
+
+		:param game_path:
+			Absolute path to game directory
+		:return:
+			List of glob patterns
+		"""
+		return [
+			pattern.format(game_path=game_path)
+			for pattern in self._archive_patterns
+		]
+
+	def _resolve_archive_patterns(self, patterns: list[str]) -> list[str]:
+		"""
+		Convert glob patterns to actual archive paths
+
+		:param patterns:
+			List of glob patterns
+		:return:
+			List of resolved archive paths
+		:raises FileNotFoundError:
+			If no archives found for any pattern
+		"""
+		all_paths = []
+
+		for pattern in patterns:
+			matched_paths = glob.glob(pattern)
+
+			if not matched_paths:
 				raise FileNotFoundError(
-					f"Archive '{archive_name}' not found in {sessions_path}"
+					f"No archives found matching pattern: {pattern}"
 				)
 
-		return found_archives
+			all_paths.extend(matched_paths)
 
-	def _extract_from_archive(self, archive_path: str, file_path: str) -> str:
+		return all_paths
+
+	def _get_archive_basename(self, archive_path: str) -> str:
 		"""
-		Extract file from ZIP archive and decode content
+		Extract archive basename without .kfs extension
 
 		:param archive_path:
-			Full path to .kfs (ZIP) archive
-		:param file_path:
-			Path to file within archive
+			Full path to archive
 		:return:
-			Decoded file content as string
-		:raises zipfile.BadZipFile:
-			If archive is not a valid ZIP file
-		:raises KeyError:
-			If file not found in archive
+			Archive basename (e.g., 'ses', 'loc_ses_eng')
+		"""
+		filename = os.path.basename(archive_path)
+		return filename[:-4] if filename.endswith('.kfs') else filename
+
+	def _group_archives_by_basename(
+		self,
+		archive_paths: list[str]
+	) -> dict[str, list[str]]:
+		"""
+		Group archives by basename for merging
+
+		:param archive_paths:
+			List of archive paths
+		:return:
+			Dictionary mapping basename to list of archive paths
+		"""
+		groups: dict[str, list[str]] = defaultdict(list)
+
+		for path in archive_paths:
+			basename = self._get_archive_basename(path)
+			groups[basename].append(path)
+
+		for basename in groups:
+			groups[basename] = sorted(groups[basename])
+
+		return dict(groups)
+
+	def _extract_archive_group(
+		self,
+		archive_paths: list[str],
+		extraction_root: str,
+		basename: str
+	) -> None:
+		"""
+		Extract archives with same basename to single directory
+
+		:param archive_paths:
+			List of archive paths with same basename
+		:param extraction_root:
+			Root extraction directory
+		:param basename:
+			Archive basename
+		"""
+		target_dir = os.path.join(extraction_root, basename)
+		os.makedirs(target_dir, exist_ok=True)
+
+		for archive_path in archive_paths:
+			self._extract_archive_to_dir(archive_path, target_dir)
+
+	def _extract_archive_to_dir(
+		self,
+		archive_path: str,
+		target_dir: str
+	) -> None:
+		"""
+		Extract archive contents to target directory
+
+		:param archive_path:
+			Path to archive file
+		:param target_dir:
+			Directory to extract files into
 		"""
 		try:
 			with zipfile.ZipFile(archive_path, 'r') as archive:
-				if file_path not in archive.namelist():
-					raise KeyError(
-						f"File '{file_path}' not found in archive '{archive_path}'"
-					)
-				content_bytes = archive.read(file_path)
-				return self._decode_content(content_bytes)
+				for file_info in archive.filelist:
+					file_path = file_info.filename
+					target_path = os.path.join(target_dir, file_path)
+
+					if os.path.exists(target_path):
+						print(
+							f"Warning: File '{file_path}' from '{archive_path}' "
+							f"overwrites existing file"
+						)
+
+					archive.extract(file_info, target_dir)
+
 		except zipfile.BadZipFile as e:
 			raise zipfile.BadZipFile(
 				f"Invalid ZIP archive: {archive_path}"
 			) from e
-
-	def _decode_content(self, content: bytes) -> str:
-		"""
-		Decode file content with proper encoding
-
-		Tries UTF-16 LE first (primary encoding for KFS files),
-		then falls back to UTF-8 if that fails.
-
-		:param content:
-			Raw file content as bytes
-		:return:
-			Decoded string
-		:raises UnicodeDecodeError:
-			If content cannot be decoded with either encoding
-		"""
-		try:
-			return content.decode('utf-16-le')
-		except UnicodeDecodeError:
-			try:
-				return content.decode('utf-8')
-			except UnicodeDecodeError as e:
-				raise UnicodeDecodeError(
-					e.encoding,
-					e.object,
-					e.start,
-					e.end,
-					f"Failed to decode content with UTF-16 LE or UTF-8"
-				) from e

@@ -47,13 +47,29 @@ class SchemaContextSession:
 	def __init__(self, session: Session, schema_name: str):
 		self._session = session
 		self._schema_name = schema_name
+		self._original_commit = session.commit
 
 	def __enter__(self):
-		self._session.execute(text(f"SET search_path TO {self._schema_name}"))
+		self._set_search_path()
+		self._session.commit = self._commit_with_schema_reset
 		return self._session
 
 	def __exit__(self, exc_type, exc_val, exc_tb):
+		self._session.commit = self._original_commit
 		self._session.close()
+
+	def _set_search_path(self):
+		"""
+		Set search_path to game schema
+		"""
+		self._session.execute(text(f"SET search_path TO {self._schema_name}"))
+
+	def _commit_with_schema_reset(self):
+		"""
+		Commit and re-set search_path (PostgreSQL resets it after commit)
+		"""
+		self._original_commit()
+		self._set_search_path()
 
 
 def create_schema_session(

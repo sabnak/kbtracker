@@ -9,24 +9,24 @@ from src.domain.exceptions import (
 	NoLocalizationMatchesException
 )
 from src.domain.game.entities.Localization import Localization
-from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.utils.parsers.game_data.IKFSReader import IKFSReader
 from src.utils.parsers.game_data.IKFSLocalizationParser import IKFSLocalizationParser
 
 
 class KFSLocalizationParser(IKFSLocalizationParser):
 
-	def __init__(self, extractor: IKFSExtractor = Provide[Container.kfs_extractor]):
+	def __init__(self, reader: IKFSReader = Provide[Container.kfs_reader]):
 		"""
 		Initialize KFS localization parser
 
 		Parser is stateless utility class for extracting localization strings
 		from King's Bounty game files
 		"""
-		self._extractor = extractor
+		self._reader = reader
 
 	def parse(
 		self,
-		sessions_path: str,
+		game_name: str,
 		file_name: str,
 		kb_id_pattern: re.Pattern = None,
 		lang: str = 'rus',
@@ -35,8 +35,8 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 		"""
 		Parse localization file and return Localization entities
 
-		:param sessions_path:
-			Absolute path to sessions directory containing .kfs archives
+		:param game_name:
+			Game name (e.g., 'Darkside', 'Armored_Princess')
 		:param file_name:
 			Base name of localization file (e.g., 'items' for rus_items.lng)
 		:param kb_id_pattern:
@@ -60,8 +60,9 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 		else:
 			self._validate_pattern_has_kb_id_group(kb_id_pattern)
 
-		archive_path = self._build_archive_path(lang, file_name)
-		content = self._extractor.extract(sessions_path, [archive_path])[0]
+		archive_basename = 'loc_ses' if lang == 'rus' else f'loc_ses_{lang}'
+		file_path = f"{archive_basename}/{lang}_{file_name}.lng"
+		content = self._reader.read_files(game_name, [file_path])[0]
 
 		final_pattern = self._build_final_pattern(kb_id_pattern)
 		localizations = self._parse_content(content, final_pattern, file_name, lang, tag)
@@ -83,23 +84,6 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 				pattern=pattern.pattern,
 				missing_group='kb_id'
 			)
-
-	@staticmethod
-	def _build_archive_path(lang: str, file_name: str) -> str:
-		"""
-		Construct archive path based on language
-
-		:param lang:
-			Language code
-		:param file_name:
-			Base name of localization file
-		:return:
-			Archive path in format for KFSExtractor
-		"""
-		if lang == 'rus':
-			return f"loc_ses.kfs/{lang}_{file_name}.lng"
-		else:
-			return f"loc_ses_{lang}.kfs/{lang}_{file_name}.lng"
 
 	@staticmethod
 	def _build_final_pattern(kb_id_pattern: re.Pattern) -> re.Pattern:

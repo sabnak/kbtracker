@@ -1,5 +1,3 @@
-import os
-
 from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
@@ -29,13 +27,8 @@ class LocationsAndShopsScannerService(IShopsAndLocationsScannerService):
 		self._parser = parser
 		self._config = config
 
-	def scan(self, game_id: int, language: str) -> tuple[list[Location], list[Shop]]:
-		game = self._game_repository.get_by_id(game_id)
-		if not game:
-			raise ValueError(f"Game with ID {game_id} not found")
-
-		sessions_path = os.path.join(self._config.game_data_path, game.path, "sessions")
-		results = self._parser.parse(sessions_path, language)
+	def scan(self, game_id: int, game_name: str, language: str) -> tuple[list[Location], list[Shop]]:
+		results = self._parser.parse(game_name, language)
 
 		saved_locations = []
 		saved_shops = []

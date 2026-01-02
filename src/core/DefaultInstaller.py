@@ -7,6 +7,7 @@ from src.core.Config import Config
 from src.core.Container import Container
 from src.domain.filesystem.services.GamePathService import GamePathService
 from src.utils.parsers.game_data.KFSExtractor import KFSExtractor
+from src.utils.parsers.game_data.KFSReader import KFSReader
 from src.utils.parsers.game_data.KFSItemsParser import KFSItemsParser
 from src.utils.parsers.game_data.KFSLocalizationParser import KFSLocalizationParser
 from src.utils.parsers.game_data.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
@@ -97,6 +98,9 @@ class DefaultInstaller:
 	def _install_game_resource_processors(self):
 		self._container.kfs_extractor.override(
 			providers.Singleton(KFSExtractor)
+		)
+		self._container.kfs_reader.override(
+			providers.Singleton(KFSReader)
 		)
 		self._container.kfs_localization_parser.override(
 			providers.Singleton(KFSLocalizationParser)

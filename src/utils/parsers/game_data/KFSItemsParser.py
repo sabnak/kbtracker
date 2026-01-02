@@ -1,5 +1,4 @@
 import os
-import zipfile
 
 from dependency_injector.wiring import Provide
 
@@ -8,31 +7,33 @@ from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Propbit import Propbit
 from src.domain.exceptions import InvalidPropbitException
 from src.utils.parsers import atom
-from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.utils.parsers.game_data.IKFSReader import IKFSReader
 from src.utils.parsers.game_data.IKFSItemsParser import IKFSItemsParser
 
 
 class KFSItemsParser(IKFSItemsParser):
 
-	def __init__(self, extractor: IKFSExtractor = Provide[Container.kfs_extractor]):
+	def __init__(self, reader: IKFSReader = Provide[Container.kfs_reader]):
 		"""
 		Initialize KFS items parser
 		"""
 
-		self._extractor = extractor
+		self._reader = reader
 
-	def parse(self, sessions_path: str) -> dict[str, dict[str, any]]:
+	def parse(self, game_name: str) -> dict[str, dict[str, any]]:
 		"""
 		Extract and parse item data and set data from game files
 
-		Extracts all items*.txt files from KFS archives,
+		Reads all items*.txt files from extracted directories,
 		parses sets and items, groups items by their set membership.
 
+		:param game_name:
+			Game name (e.g., 'Darkside', 'Armored_Princess')
 		:return:
 			Dictionary with sets as keys, each containing items list
 			Also includes 'setless' key for items without sets
 		"""
-		items_contents = self._extract_files(sessions_path)
+		items_contents = self._extract_files(game_name)
 
 		# First pass: parse all set definitions (kb_id only)
 		set_definitions = {}
@@ -57,63 +58,46 @@ class KFSItemsParser(IKFSItemsParser):
 
 		return results
 
-	def _extract_files(self, sessions_path: str) -> list[str]:
+	def _extract_files(self, game_name: str) -> list[str]:
 		"""
-		Use KFSExtractor to get all items*.txt files
+		Read all items*.txt files from extracted directory
 
+		:param game_name:
+			Game name
 		:return:
 			List of items file contents
 		"""
-		items_files = self._discover_items_files(sessions_path)
+		items_files = self._discover_items_files_from_extracted(game_name)
 
-		results = self._extractor.extract(sessions_path, items_files)
+		results = self._reader.read_files(game_name, items_files)
 
 		return results
 
-	def _discover_items_files(self, sessions_path: str) -> list[str]:
+	def _discover_items_files_from_extracted(self, game_name: str) -> list[str]:
 		"""
-		Discover all items*.txt files in ses.kfs archive
+		Discover all items*.txt files in extracted ses directory
 
+		:param game_name:
+			Game name
 		:return:
-			List of file paths in format 'ses.kfs/items*.txt'
+			List of file paths in format 'ses/items*.txt'
 		:raises FileNotFoundError:
-			If ses.kfs archive not found
+			If extracted ses directory not found
 		"""
-		ses_archive_path = self._find_ses_archive(sessions_path)
-		items_files = []
+		extraction_root = f'/tmp/{game_name}'
+		ses_dir = os.path.join(extraction_root, 'ses')
 
-		with zipfile.ZipFile(ses_archive_path, 'r') as archive:
-			for file_name in archive.namelist():
-				if file_name.startswith('items') and file_name.endswith('.txt'):
-					items_files.append(f"ses.kfs/{file_name}")
-
-		return sorted(items_files)
-
-	@staticmethod
-	def _find_ses_archive(sessions_path: str) -> str:
-		"""
-		Find ses.kfs archive in sessions directory
-
-		:return:
-			Full path to ses.kfs archive
-		:raises FileNotFoundError:
-			If sessions directory or ses.kfs archive not found
-		"""
-		if not os.path.exists(sessions_path):
+		if not os.path.exists(ses_dir):
 			raise FileNotFoundError(
-				f"Sessions directory not found: {sessions_path}"
+				f"Extracted ses directory not found: {ses_dir}"
 			)
 
-		for entry in os.listdir(sessions_path):
-			entry_path = os.path.join(sessions_path, entry)
-			if os.path.isdir(entry_path):
-				ses_archive = os.path.join(entry_path, "ses.kfs")
-				if os.path.exists(ses_archive):
-					return ses_archive
+		items_files = []
+		for file_name in os.listdir(ses_dir):
+			if file_name.startswith('items') and file_name.endswith('.txt'):
+				items_files.append(f"ses/{file_name}")
 
-		raise FileNotFoundError(
-			f"Archive 'ses.kfs' not found in {sessions_path}"
-		)
+		return sorted(items_files)
 
 	def _parse_items_file(self, content: str) -> list[dict[str, any]]:
 		"""

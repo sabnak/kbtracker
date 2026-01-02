@@ -3,47 +3,54 @@ from dependency_injector.wiring import Provide
 from src.core.Container import Container
 from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Shop import Shop
-from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.utils.parsers.game_data.IKFSReader import IKFSReader
 from src.utils.parsers.game_data.IKFSLocationsAndShopsParser import IKFSLocationsAndShopsParser
 
 
 class KFSLocationsAndShopsParser(IKFSLocationsAndShopsParser):
 
-	def __init__(self, extractor: IKFSExtractor = Provide[Container.kfs_extractor]):
+	def __init__(self, reader: IKFSReader = Provide[Container.kfs_reader]):
 		"""
 		Initialize KFS locations and shops parser
 
 		"""
-		self._extractor = extractor
+		self._reader = reader
 
-	def parse(self, sessions_path: str, lang: str = 'rus') -> list[dict[str, Location | list[Shop]]]:
+	def parse(self, game_name: str, lang: str = 'rus') -> list[dict[str, Location | list[Shop]]]:
 		"""
 		Extract and parse location and shop data from game files
 
-		Extracts atoms_info.lng from KFS archive, parses shop entries,
+		Reads atoms_info.lng from extracted directories, parses shop entries,
 		and returns list of dictionaries containing Location entities
 		and their associated Shop entities.
 
+		:param game_name:
+			Game name (e.g., 'Darkside', 'Armored_Princess')
+		:param lang:
+			Language code (default: 'rus')
 		:return:
 			List of dictionaries with format:
 			[{"location": Location(...), "shops": [Shop(...), ...]}, ...]
 		"""
-		localization_content = self._extract_files(lang, sessions_path)
+		localization_content = self._extract_files(game_name, lang)
 		shop_data = self._parse_localization(localization_content)
 		return self._build_entities(shop_data)
 
-	def _extract_files(self, lang: str, sessions_path: str) -> str:
+	def _extract_files(self, game_name: str, lang: str) -> str:
 		"""
-		Use KFSExtractor to get atoms_info.lng
+		Read atoms_info.lng from extracted directory
 
+		:param game_name:
+			Game name
+		:param lang:
+			Language code
 		:return:
 			Localization file content
 		"""
-		tables = [
-			f"loc_ses{'_' + lang if lang != 'rus' else ''}.kfs/{lang}_atoms_info.lng"
-		]
+		archive_basename = 'loc_ses' if lang == 'rus' else f'loc_ses_{lang}'
+		file_path = f"{archive_basename}/{lang}_atoms_info.lng"
 
-		results = self._extractor.extract(sessions_path, tables)
+		results = self._reader.read_files(game_name, [file_path])
 		return results[0]
 
 	def _parse_localization(self, content: str) -> dict[str, dict[str, str]]:

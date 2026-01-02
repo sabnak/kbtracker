@@ -1,8 +1,19 @@
+import pytest
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Propbit import Propbit
 
 
 class TestKFSItemsParser:
+
+	@pytest.fixture(autouse=True)
+	def setup(self, extracted_game_files):
+		"""
+		Auto-use fixture that ensures archives are extracted before tests
+
+		:param extracted_game_files:
+			Extraction root path
+		"""
+		pass
 
 	@staticmethod
 	def _get_all_items(parse_result: dict) -> list[Item]:
@@ -22,12 +33,12 @@ class TestKFSItemsParser:
 	def test_parse_returns_nested_dict_structure(
 		self,
 		kfs_items_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that parse returns a nested dictionary with sets and setless items
 		"""
-		result = kfs_items_parser.parse(test_sessions_path)
+		result = kfs_items_parser.parse(test_game_name)
 
 		assert isinstance(result, dict)
 		assert "setless" in result
@@ -38,13 +49,13 @@ class TestKFSItemsParser:
 	def test_item_fields_populated_correctly(
 		self,
 		kfs_items_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that Item fields are populated correctly for snake_belt
 		Note: name and hint will be empty - populated from localization table
 		"""
-		result = kfs_items_parser.parse(test_sessions_path)
+		result = kfs_items_parser.parse(test_game_name)
 		items = self._get_all_items(result)
 
 		snake_belt = next((item for item in items if item.kb_id == 'snake_belt'), None)
@@ -55,11 +66,11 @@ class TestKFSItemsParser:
 		assert snake_belt.hint is None  # None - comes from localization table
 		assert snake_belt.propbits == [Propbit.BELT]
 
-	def test_propbits_parsing(self, kfs_items_parser, test_sessions_path):
+	def test_propbits_parsing(self, kfs_items_parser, test_game_name):
 		"""
 		Test propbits parsing from comma-separated string to list
 		"""
-		result = kfs_items_parser.parse(test_sessions_path)
+		result = kfs_items_parser.parse(test_game_name)
 		items = self._get_all_items(result)
 
 		items_with_propbits = [item for item in items if item.propbits is not None]
@@ -68,21 +79,21 @@ class TestKFSItemsParser:
 		single_propbit = [item for item in items if item.propbits == [Propbit.BELT]]
 		assert len(single_propbit) > 0
 
-	def test_item_with_no_hint(self, kfs_items_parser, test_sessions_path):
+	def test_item_with_no_hint(self, kfs_items_parser, test_game_name):
 		"""
 		Test that items have None hint (populated from localization table)
 		"""
-		result = kfs_items_parser.parse(test_sessions_path)
+		result = kfs_items_parser.parse(test_game_name)
 		items = self._get_all_items(result)
 
 		# All items have None hint until populated from localization
 		assert all(item.hint is None for item in items)
 
-	def test_large_file_performance(self, kfs_items_parser, test_sessions_path):
+	def test_large_file_performance(self, kfs_items_parser, test_game_name):
 		"""
 		Test parsing full 78k line file completes in reasonable time
 		"""
-		result = kfs_items_parser.parse(test_sessions_path)
+		result = kfs_items_parser.parse(test_game_name)
 		items = self._get_all_items(result)
 
 		assert len(items) > 100
@@ -93,13 +104,13 @@ class TestKFSItemsParser:
 	def test_all_items_have_required_fields(
 		self,
 		kfs_items_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that all parsed items have required fields populated
 		Note: name will be empty string, hint will be None
 		"""
-		result = kfs_items_parser.parse(test_sessions_path)
+		result = kfs_items_parser.parse(test_game_name)
 		items = self._get_all_items(result)
 
 		for item in items:
@@ -111,12 +122,12 @@ class TestKFSItemsParser:
 	def test_items_with_multiple_propbits(
 		self,
 		kfs_items_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test parsing items with multiple propbits values
 		"""
-		result = kfs_items_parser.parse(test_sessions_path)
+		result = kfs_items_parser.parse(test_game_name)
 		items = self._get_all_items(result)
 
 		multi_propbit_items = [
@@ -132,13 +143,13 @@ class TestKFSItemsParser:
 	def test_parse_extracts_set_metadata(
 		self,
 		kfs_items_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that set definitions are parsed with correct structure
 		Note: Set metadata (name, hint) not yet populated by parser
 		"""
-		result = kfs_items_parser.parse(test_sessions_path)
+		result = kfs_items_parser.parse(test_game_name)
 
 		set_keys = [key for key in result.keys() if key != "setless"]
 		if len(set_keys) > 0:
@@ -149,12 +160,12 @@ class TestKFSItemsParser:
 	def test_items_grouped_by_setref(
 		self,
 		kfs_items_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that items are correctly grouped by their setref value
 		"""
-		result = kfs_items_parser.parse(test_sessions_path)
+		result = kfs_items_parser.parse(test_game_name)
 
 		for set_kb_id, set_data in result.items():
 			assert "items" in set_data
@@ -165,12 +176,12 @@ class TestKFSItemsParser:
 	def test_setless_items_grouped_separately(
 		self,
 		kfs_items_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that items without setref are grouped under 'setless' key
 		"""
-		result = kfs_items_parser.parse(test_sessions_path)
+		result = kfs_items_parser.parse(test_game_name)
 
 		assert "setless" in result
 		assert "items" in result["setless"]
@@ -179,12 +190,12 @@ class TestKFSItemsParser:
 	def test_all_items_are_items_not_sets(
 		self,
 		kfs_items_parser,
-		test_sessions_path
+		test_game_name
 	):
 		"""
 		Test that set definitions themselves are not included as items
 		"""
-		result = kfs_items_parser.parse(test_sessions_path)
+		result = kfs_items_parser.parse(test_game_name)
 		items = self._get_all_items(result)
 
 		for item in items:

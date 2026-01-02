@@ -4,5 +4,5 @@ import abc
 class IKFSItemsParser(abc.ABC):
 
 	@abc.abstractmethod
-	def parse(self, sessions_path: str) -> dict[str, dict[str, any]]:
+	def parse(self, game_name: str) -> dict[str, dict[str, any]]:
 		...

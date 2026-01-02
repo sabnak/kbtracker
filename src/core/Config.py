@@ -13,6 +13,11 @@ class Config(BaseSettings):
 
 	game_data_path: str = "/data"
 
+	archive_patterns: list[str] = [
+		"{game_path}/data/data.kfs",
+		"{game_path}/sessions/*/*.kfs"
+	]
+
 	localization_config: ['LocalizationConfig'] = [
 		LocalizationConfig(file="items", tag="items"),
 		LocalizationConfig(file="units", tag="units"),

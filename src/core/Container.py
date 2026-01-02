@@ -45,6 +45,7 @@ class Container(containers.DeclarativeContainer):
 
 	# Data extractors and parsers
 	kfs_extractor = providers.AbstractSingleton()
+	kfs_reader = providers.AbstractSingleton()
 	kfs_items_parser = providers.AbstractSingleton()
 	kfs_localization_parser = providers.AbstractSingleton()
 	kfs_locations_and_shops_parser = providers.AbstractSingleton()

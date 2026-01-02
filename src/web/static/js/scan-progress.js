@@ -81,6 +81,20 @@ document.addEventListener('DOMContentLoaded', function() {
 				statusMessage.textContent = event.message;
 				break;
 
+			case 'extraction_started':
+				updateResourceStatus('extraction', 'in_progress');
+				statusMessage.textContent = event.message;
+				break;
+
+			case 'extraction_completed':
+				updateResourceStatus('extraction', 'completed');
+				statusMessage.textContent = event.message;
+				break;
+
+			case 'extraction_warning':
+				console.warn('Extraction warning:', event.message);
+				break;
+
 			case 'resource_started':
 				updateResourceStatus(event.resource_type, 'in_progress');
 				statusMessage.textContent = event.message;

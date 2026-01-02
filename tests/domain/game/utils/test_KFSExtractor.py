@@ -1,88 +1,107 @@
+import os
 import pytest
+import shutil
 
 
 class TestKFSExtractor:
 
-	def test_extract_single_file(self, kfs_extractor, test_sessions_path):
+	def test_extract_archives_creates_extraction_root(self, kfs_extractor, test_game_name):
 		"""
-		Test extracting a single file from archive
+		Test that extract_archives creates extraction root directory
 		"""
-		tables = ["ses.kfs/items.txt"]
+		extraction_root = kfs_extractor.extract_archives(test_game_name)
 
-		results = kfs_extractor.extract(test_sessions_path, tables)
+		assert extraction_root == f'/tmp/{test_game_name}'
+		assert os.path.exists(extraction_root)
+		assert os.path.isdir(extraction_root)
 
-		assert len(results) == 1
-		assert isinstance(results[0], str)
-		assert len(results[0]) > 0
-		assert "snake_belt" in results[0]
+		# Cleanup
+		shutil.rmtree(extraction_root, ignore_errors=True)
 
-	def test_extract_multiple_files(self, kfs_extractor, test_sessions_path):
+	def test_extract_archives_extracts_all_archives(self, kfs_extractor, test_game_name):
 		"""
-		Test extracting multiple files in correct order
+		Test that all archives are extracted to correct directories
 		"""
-		tables = ["ses.kfs/items.txt", "loc_ses.kfs/rus_items.lng"]
+		extraction_root = kfs_extractor.extract_archives(test_game_name)
 
-		results = kfs_extractor.extract(test_sessions_path, tables)
+		# Check that archive directories exist (data.kfs excluded in tests)
+		assert os.path.exists(os.path.join(extraction_root, 'ses'))
+		assert os.path.exists(os.path.join(extraction_root, 'loc_ses'))
 
-		assert len(results) == 2
-		assert isinstance(results[0], str)
-		assert isinstance(results[1], str)
-		assert "snake_belt" in results[0]
-		assert "itm_" in results[1]
+		# Check that files were extracted
+		assert os.path.exists(os.path.join(extraction_root, 'ses', 'items.txt'))
+		assert os.path.exists(os.path.join(extraction_root, 'loc_ses', 'rus_items.lng'))
 
-	def test_extract_with_encoding(self, kfs_extractor, test_sessions_path):
+		# Cleanup
+		shutil.rmtree(extraction_root, ignore_errors=True)
+
+	def test_extract_archives_returns_correct_path(self, kfs_extractor, test_game_name):
 		"""
-		Test UTF-16 LE decoding with Russian characters
+		Test that extract_archives returns correct extraction root path
 		"""
-		tables = ["loc_ses.kfs/rus_items.lng"]
+		result = kfs_extractor.extract_archives(test_game_name)
 
-		results = kfs_extractor.extract(test_sessions_path, tables)
+		assert result == f'/tmp/{test_game_name}'
+		assert isinstance(result, str)
 
-		assert len(results) == 1
-		content = results[0]
-		assert "itm_snake_belt_name" in content
-		assert len(content) > 0
+		# Cleanup
+		shutil.rmtree(result, ignore_errors=True)
 
-	def test_archive_not_found(self, kfs_extractor, test_sessions_path):
+	def test_extract_archives_cleanup_previous_extraction(self, kfs_extractor, test_game_name):
 		"""
-		Test error when archive doesn't exist
+		Test that previous extraction is cleaned up before new extraction
 		"""
-		tables = ["nonexistent.kfs/some_file.txt"]
+		extraction_root = f'/tmp/{test_game_name}'
 
-		with pytest.raises(FileNotFoundError) as exc_info:
-			kfs_extractor.extract(test_sessions_path, tables)
+		# Create a fake previous extraction with a marker file
+		os.makedirs(extraction_root, exist_ok=True)
+		marker_file = os.path.join(extraction_root, 'old_marker.txt')
+		with open(marker_file, 'w') as f:
+			f.write('old extraction')
 
-		assert "nonexistent.kfs" in str(exc_info.value)
+		# Run extraction
+		kfs_extractor.extract_archives(test_game_name)
 
-	def test_file_not_in_archive(self, kfs_extractor, test_sessions_path):
+		# Marker file should be gone (cleanup happened)
+		assert not os.path.exists(marker_file)
+		assert os.path.exists(extraction_root)
+
+		# Cleanup
+		shutil.rmtree(extraction_root, ignore_errors=True)
+
+	def test_extract_archives_with_invalid_game_name(self, kfs_extractor):
 		"""
-		Test error when file doesn't exist in archive
+		Test error when game directory doesn't exist
 		"""
-		tables = ["ses.kfs/nonexistent_file.txt"]
+		with pytest.raises(FileNotFoundError):
+			kfs_extractor.extract_archives("nonexistent_game")
 
-		with pytest.raises(KeyError) as exc_info:
-			kfs_extractor.extract(test_sessions_path, tables)
-
-		assert "nonexistent_file.txt" in str(exc_info.value)
-
-	def test_empty_tables_list(self, kfs_extractor, test_sessions_path):
+	def test_extract_archives_creates_loc_ses_directory(self, kfs_extractor, test_game_name):
 		"""
-		Test extracting with empty tables list
+		Test that loc_ses.kfs is extracted to loc_ses directory
 		"""
-		tables = []
+		extraction_root = kfs_extractor.extract_archives(test_game_name)
 
-		results = kfs_extractor.extract(test_sessions_path, tables)
+		loc_ses_dir = os.path.join(extraction_root, 'loc_ses')
+		assert os.path.exists(loc_ses_dir)
+		assert os.path.isdir(loc_ses_dir)
 
-		assert results == []
+		# Cleanup
+		shutil.rmtree(extraction_root, ignore_errors=True)
 
-	def test_invalid_sessions_path(self, kfs_extractor):
+	def test_extract_archives_creates_ses_directory(self, kfs_extractor, test_game_name):
 		"""
-		Test error when sessions directory doesn't exist
+		Test that ses.kfs is extracted to ses directory
 		"""
-		sessions_path = "/nonexistent_directory"
-		tables = ["ses.kfs/items.txt"]
+		extraction_root = kfs_extractor.extract_archives(test_game_name)
 
-		with pytest.raises(FileNotFoundError) as exc_info:
-			kfs_extractor.extract(sessions_path, tables)
+		ses_dir = os.path.join(extraction_root, 'ses')
+		assert os.path.exists(ses_dir)
+		assert os.path.isdir(ses_dir)
 
-		assert "Sessions directory not found" in str(exc_info.value)
+		# Should contain items.txt from ses.kfs
+		items_file = os.path.join(ses_dir, 'items.txt')
+		assert os.path.exists(items_file)
+
+		# Cleanup
+		shutil.rmtree(extraction_root, ignore_errors=True)
