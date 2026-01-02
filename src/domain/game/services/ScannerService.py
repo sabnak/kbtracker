@@ -228,11 +228,12 @@ class ScannerService:
 			return results
 
 		except Exception as e:
-			# Emit error event with full traceback
-			error_traceback = traceback.format_exc()
+			# Emit error event with structured error data
 			yield ScanProgressEvent(
 				event_type=ScanEventType.SCAN_ERROR,
-				error=error_traceback,
-				message=f"Scan failed: {str(e)}"
+				error=str(e),
+				message="Scan failed during execution",
+				error_type=type(e).__name__,
+				error_traceback=traceback.format_exc()
 			)
 			raise

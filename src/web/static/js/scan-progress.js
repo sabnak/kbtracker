@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 			case 'scan_error':
 				eventSource.close();
-				showError(event.error || event.message);
+				showError(event);
 				break;
 		}
 	}
@@ -176,11 +176,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	/**
 	 * Show error message
+	 *
+	 * :param errorData:
+	 *     Error data object or string
 	 */
-	function showError(message) {
+	function showError(errorData) {
 		progressContainer.style.display = 'none';
 		errorContainer.style.display = 'block';
-		document.getElementById('error-message').textContent = message;
+
+		const errorMessageEl = document.getElementById('error-message');
+		const errorTypeBadge = document.getElementById('error-type-badge');
+		const errorDetailsContainer = document.getElementById('error-details-container');
+		const errorTracebackContent = document.getElementById('error-traceback-content');
+
+		// Handle both string and object error data
+		if (typeof errorData === 'string') {
+			errorMessageEl.textContent = errorData;
+			errorTypeBadge.style.display = 'none';
+			errorDetailsContainer.style.display = 'none';
+		} else {
+			// Display main error message
+			errorMessageEl.textContent = errorData.error || errorData.message || 'Unknown error occurred';
+
+			// Display error type badge if available
+			if (errorData.error_type) {
+				errorTypeBadge.textContent = errorData.error_type;
+				errorTypeBadge.style.display = 'inline-block';
+			} else {
+				errorTypeBadge.style.display = 'none';
+			}
+
+			// Display traceback if available
+			if (errorData.error_traceback) {
+				errorTracebackContent.textContent = errorData.error_traceback;
+				errorDetailsContainer.style.display = 'block';
+			} else {
+				errorDetailsContainer.style.display = 'none';
+			}
+		}
 	}
 
 	/**

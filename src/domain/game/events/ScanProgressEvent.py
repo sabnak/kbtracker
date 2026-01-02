@@ -20,12 +20,18 @@ class ScanProgressEvent:
 		Human-readable message
 	:param error:
 		Error message (only for error events)
+	:param error_type:
+		Type of error (exception class name)
+	:param error_traceback:
+		Full error traceback for debugging
 	"""
 	event_type: ScanEventType
 	resource_type: ResourceType | None = None
 	count: int | None = None
 	message: str = ""
 	error: str | None = None
+	error_type: str | None = None
+	error_traceback: str | None = None
 
 	def to_dict(self) -> dict[str, Any]:
 		"""
@@ -39,5 +45,7 @@ class ScanProgressEvent:
 			"resource_type": self.resource_type.value if self.resource_type else None,
 			"count": self.count,
 			"message": self.message,
-			"error": self.error
+			"error": self.error,
+			"error_type": self.error_type,
+			"error_traceback": self.error_traceback
 		}

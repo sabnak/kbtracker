@@ -135,8 +135,23 @@
 
 		<!-- Error Display (shown on error) -->
 		<div id="scan-error-container" class="alert alert-danger" style="display: none;">
-			<strong>Scan Failed</strong><br>
-			<span id="error-message"></span>
+			<h5 class="alert-heading">
+				<strong>Scan Failed</strong>
+				<span id="error-type-badge" class="badge bg-danger ms-2" style="display: none;"></span>
+			</h5>
+			<div id="error-message" class="mb-3"></div>
+			<div id="error-details-container" style="display: none;">
+				<button class="btn btn-sm btn-outline-danger mb-2" type="button"
+						data-bs-toggle="collapse" data-bs-target="#error-traceback"
+						aria-expanded="false" aria-controls="error-traceback">
+					Show Technical Details
+				</button>
+				<div class="collapse" id="error-traceback">
+					<div class="card card-body bg-dark text-light">
+						<pre id="error-traceback-content" class="mb-0" style="font-size: 0.85rem; max-height: 400px; overflow-y: auto;"></pre>
+					</div>
+				</div>
+			</div>
 			<hr>
 			<button class="btn btn-sm btn-primary" id="retry-scan-btn">Try Again</button>
 		</div>

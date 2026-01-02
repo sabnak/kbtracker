@@ -1,4 +1,5 @@
 import json
+import traceback
 from collections.abc import Generator
 
 from dependency_injector.wiring import inject, Provide
@@ -227,7 +228,8 @@ async def scan_game_files_stream(
 			event = ScanProgressEvent(
 				event_type=ScanEventType.SCAN_ERROR,
 				error="Game not found",
-				message=f"Game with ID {game_id} not found"
+				message=f"Game with ID {game_id} not found",
+				error_type="ValidationError"
 			)
 			yield f"data: {json.dumps(event.to_dict())}\n\n"
 
@@ -264,7 +266,9 @@ async def scan_game_files_stream(
 			error_event = ScanProgressEvent(
 				event_type=ScanEventType.SCAN_ERROR,
 				error=f"Data already exists: {e.message}",
-				message="This game may have already been scanned"
+				message="This game may have already been scanned",
+				error_type=type(e).__name__,
+				error_traceback=traceback.format_exc()
 			)
 			yield f"data: {json.dumps(error_event.to_dict())}\n\n"
 
@@ -272,7 +276,9 @@ async def scan_game_files_stream(
 			error_event = ScanProgressEvent(
 				event_type=ScanEventType.SCAN_ERROR,
 				error=f"Database error: {e.message}",
-				message="Database operation failed"
+				message="Database operation failed",
+				error_type=type(e).__name__,
+				error_traceback=traceback.format_exc()
 			)
 			yield f"data: {json.dumps(error_event.to_dict())}\n\n"
 
@@ -280,7 +286,9 @@ async def scan_game_files_stream(
 			error_event = ScanProgressEvent(
 				event_type=ScanEventType.SCAN_ERROR,
 				error=str(e),
-				message="Unexpected error during scan"
+				message="Unexpected error during scan",
+				error_type=type(e).__name__,
+				error_traceback=traceback.format_exc()
 			)
 			yield f"data: {json.dumps(error_event.to_dict())}\n\n"
 
