@@ -4,6 +4,7 @@ from src.core.Config import Config
 from src.core.Container import Container
 from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.IUnitRepository import IUnitRepository
+from src.domain.game.IUnitFactory import IUnitFactory
 from src.domain.game.IUnitsScannerService import IUnitsScannerService
 from src.domain.game.entities.Unit import Unit
 from src.utils.parsers.game_data.IKFSUnitParser import IKFSUnitParser
@@ -17,6 +18,7 @@ class UnitsScannerService(IUnitsScannerService):
 		unit_repository: IUnitRepository = Provide[Container.unit_repository],
 		game_repository: IGameRepository = Provide[Container.game_repository],
 		parser: IKFSUnitParser = Provide[Container.kfs_unit_parser],
+		unit_factory: IUnitFactory = Provide[Container.unit_factory],
 		config: Config = Provide[Container.config]
 	):
 		"""
@@ -28,12 +30,15 @@ class UnitsScannerService(IUnitsScannerService):
 			Game repository
 		:param parser:
 			KFS unit parser
+		:param unit_factory:
+			Unit factory for creating entities from raw data
 		:param config:
 			Application configuration
 		"""
 		self._unit_repository = unit_repository
 		self._game_repository = game_repository
 		self._parser = parser
+		self._unit_factory = unit_factory
 		self._config = config
 
 	def scan(self, game_id: int, game_name: str) -> list[Unit]:
@@ -47,6 +52,7 @@ class UnitsScannerService(IUnitsScannerService):
 		:return:
 			List of created Unit entities
 		"""
-		units = self._parser.parse(game_name)
+		raw_data_dict = self._parser.parse(game_name)
+		units = self._unit_factory.create_batch_from_raw_data(raw_data_dict)
 		created_units = self._unit_repository.create_batch(units)
 		return created_units

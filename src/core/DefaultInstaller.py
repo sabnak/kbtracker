@@ -20,6 +20,7 @@ from src.domain.game.repositories.LocationRepository import LocationRepository
 from src.domain.game.repositories.ShopHasItemRepository import ShopHasItemRepository
 from src.domain.game.repositories.ShopRepository import ShopRepository
 from src.domain.game.repositories.UnitRepository import UnitRepository
+from src.domain.game.factories.UnitFactory import UnitFactory
 from src.domain.game.services.GameService import GameService
 from src.domain.game.services.ItemsAndSetsScannerService import ItemsAndSetsScannerService
 from src.domain.game.services.ItemService import ItemService
@@ -120,6 +121,9 @@ class DefaultInstaller:
 		)
 		self._container.kfs_locations_and_shops_parser.override(
 			providers.Singleton(KFSLocationsAndShopsParser)
+		)
+		self._container.unit_factory.override(
+			providers.Singleton(UnitFactory)
 		)
 
 	def _install_save_file_parsers(self):

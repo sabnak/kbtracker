@@ -1,7 +1,6 @@
 from dependency_injector.wiring import Provide, inject
 
 from src.core.Container import Container
-from src.domain.game.entities.Unit import Unit
 from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.ILocalizationRepository import ILocalizationRepository
 from src.utils.parsers import atom
@@ -32,10 +31,12 @@ class KFSUnitParser(IKFSUnitParser):
 		self,
 		game_name: str,
 		allowed_kb_ids: list[str] | None = None
-	) -> list[Unit]:
+	) -> dict[str, dict[str, any]]:
 		"""
 		Extract and parse unit data from game files
 
+		Returns dictionary with structure: {kb_id: {kb_id, unit_class, main, params}}
+		Where params contains raw arena_params data (features_hints as list, etc.)
 		Skips units with class='spirit'. Raises exception for invalid atom files.
 
 		:param game_name:
@@ -43,7 +44,7 @@ class KFSUnitParser(IKFSUnitParser):
 		:param allowed_kb_ids:
 			Optional list of unit kb_ids to parse (for testing)
 		:return:
-			List of Unit entities with id=0 (spirits are skipped)
+			Dictionary mapping kb_id to raw unit data
 		:raises FileNotFoundError:
 			When unit atom file not found
 		:raises ValueError:
@@ -54,13 +55,13 @@ class KFSUnitParser(IKFSUnitParser):
 		if allowed_kb_ids:
 			unit_kb_ids = [kb_id for kb_id in unit_kb_ids if kb_id in allowed_kb_ids]
 
-		units = []
+		result = {}
 		for kb_id in unit_kb_ids:
-			unit = self._parse_unit_file(game_name, kb_id)
-			if unit is not None:
-				units.append(unit)
+			unit_data = self._parse_unit_file(game_name, kb_id)
+			if unit_data is not None:
+				result[kb_id] = unit_data
 
-		return units
+		return result
 
 	def _get_unit_kb_ids(self) -> list[str]:
 		"""
@@ -96,7 +97,7 @@ class KFSUnitParser(IKFSUnitParser):
 			return False
 		return True
 
-	def _parse_unit_file(self, game_name: str, kb_id: str) -> Unit | None:
+	def _parse_unit_file(self, game_name: str, kb_id: str) -> dict[str, any] | None:
 		"""
 		Parse single unit atom file
 
@@ -105,7 +106,7 @@ class KFSUnitParser(IKFSUnitParser):
 		:param kb_id:
 			Unit kb_id (e.g., 'bowman')
 		:return:
-			Unit entity or None if unit class is 'spirit'
+			Dictionary {kb_id, unit_class, main, params} or None if spirit
 		:raises FileNotFoundError:
 			When atom file not found
 		:raises ValueError:
@@ -152,14 +153,12 @@ class KFSUnitParser(IKFSUnitParser):
 
 		processed_params = self._process_arena_params(arena_params)
 
-		return Unit(
-			id=0,
-			kb_id=kb_id,
-			name='',
-			unit_class=unit_class,
-			params=processed_params,
-			main=dict(a=1)
-		)
+		return {
+			'kb_id': kb_id,
+			'unit_class': unit_class,
+			'main': main_section,
+			'params': processed_params
+		}
 
 	def _process_arena_params(self, arena_params: dict) -> dict:
 		"""

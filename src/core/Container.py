@@ -54,6 +54,9 @@ class Container(containers.DeclarativeContainer):
 	kfs_unit_parser = providers.AbstractSingleton()
 	kfs_locations_and_shops_parser = providers.AbstractSingleton()
 
+	# Factories
+	unit_factory = providers.AbstractSingleton()
+
 	# Save file parsers
 	save_file_decompressor = providers.AbstractSingleton()
 	shop_inventory_parser = providers.AbstractSingleton()

@@ -106,9 +106,26 @@ class SchemaManagementService(ISchemaManagementService):
 				CREATE TABLE {schema_name}.unit (
 					id SERIAL PRIMARY KEY,
 					kb_id VARCHAR(255) NOT NULL UNIQUE,
+					name VARCHAR(255) NOT NULL,
 					unit_class VARCHAR(50) NOT NULL,
 					main JSONB NOT NULL,
-					params JSONB NOT NULL
+					params JSONB NOT NULL,
+					cost INTEGER,
+					krit INTEGER,
+					race VARCHAR(100),
+					level INTEGER,
+					speed INTEGER,
+					attack INTEGER,
+					defense INTEGER,
+					hitback INTEGER,
+					hitpoint INTEGER,
+					movetype INTEGER,
+					defenseup INTEGER,
+					initiative INTEGER,
+					leadership INTEGER,
+					resistance JSONB,
+					features JSONB,
+					attacks JSONB
 				)
 			"""))
 

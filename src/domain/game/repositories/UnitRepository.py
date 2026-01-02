@@ -23,9 +23,26 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 		"""
 		return UnitMapper(
 			kb_id=entity.kb_id,
+			name=entity.name,
 			unit_class=entity.unit_class.value,
 			params=entity.params,
-			main=entity.main
+			main=entity.main,
+			cost=entity.cost,
+			krit=entity.krit,
+			race=entity.race,
+			level=entity.level,
+			speed=entity.speed,
+			attack=entity.attack,
+			defense=entity.defense,
+			hitback=entity.hitback,
+			hitpoint=entity.hitpoint,
+			movetype=entity.movetype,
+			defenseup=entity.defenseup,
+			initiative=entity.initiative,
+			leadership=entity.leadership,
+			resistance=entity.resistance,
+			features=entity.features,
+			attacks=entity.attacks
 		)
 
 	def _get_entity_type_name(self) -> str:
@@ -48,54 +65,38 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 		"""
 		return f"kb_id={entity.kb_id}"
 
-	def _build_query_with_localization(self, session):
+	def _mapper_to_entity(self, mapper: UnitMapper) -> Unit:
 		"""
-		Build base query with localization JOIN for unit name
+		Convert UnitMapper to Unit entity
 
-		:param session:
-			Database session
-		:return:
-			Tuple of (query, NameLocalization alias)
-		"""
-		NameLocalization = aliased(LocalizationMapper)
-
-		query = session.query(
-			UnitMapper,
-			NameLocalization.text.label('loc_name')
-		).join(
-			NameLocalization,
-			NameLocalization.kb_id == func.concat('cpn_', UnitMapper.kb_id)
-		)
-
-		return query, NameLocalization
-
-	def _row_to_entity(self, row: tuple) -> Unit:
-		"""
-		Convert query row with localization to Unit entity
-
-		:param row:
-			Tuple of (UnitMapper, name_text)
+		:param mapper:
+			UnitMapper to convert
 		:return:
 			Unit entity
-		:raises LocalizationNotFoundException:
-			When name localization is missing
 		"""
-		mapper, name = row
-
-		if not name:
-			raise LocalizationNotFoundException(
-				entity_type="Unit",
-				kb_id=mapper.kb_id,
-				localization_key=f"cpn_{mapper.kb_id}"
-			)
-
 		return Unit(
 			id=mapper.id,
 			kb_id=mapper.kb_id,
-			name=name,
+			name=mapper.name,
 			unit_class=UnitClass(mapper.unit_class),
 			params=mapper.params,
-			main=mapper.main
+			main=mapper.main,
+			cost=mapper.cost,
+			krit=mapper.krit,
+			race=mapper.race,
+			level=mapper.level,
+			speed=mapper.speed,
+			attack=mapper.attack,
+			defense=mapper.defense,
+			hitback=mapper.hitback,
+			hitpoint=mapper.hitpoint,
+			movetype=mapper.movetype,
+			defenseup=mapper.defenseup,
+			initiative=mapper.initiative,
+			leadership=mapper.leadership,
+			resistance=mapper.resistance,
+			features=mapper.features,
+			attacks=mapper.attacks
 		)
 
 	def create(self, unit: Unit) -> Unit:
@@ -111,7 +112,7 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 
 	def get_by_id(self, unit_id: int) -> Unit | None:
 		"""
-		Get unit by ID with localized name
+		Get unit by ID
 
 		:param unit_id:
 			Unit ID
@@ -119,13 +120,12 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			Unit or None
 		"""
 		with self._get_session() as session:
-			query, *_ = self._build_query_with_localization(session)
-			row = query.filter(UnitMapper.id == unit_id).first()
-			return self._row_to_entity(row) if row else None
+			mapper = session.query(UnitMapper).filter(UnitMapper.id == unit_id).first()
+			return self._mapper_to_entity(mapper) if mapper else None
 
 	def get_by_kb_id(self, kb_id: str) -> Unit | None:
 		"""
-		Get unit by kb_id with localized name
+		Get unit by kb_id
 
 		:param kb_id:
 			Unit kb_id
@@ -133,13 +133,12 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			Unit or None
 		"""
 		with self._get_session() as session:
-			query, *_ = self._build_query_with_localization(session)
-			row = query.filter(UnitMapper.kb_id == kb_id).first()
-			return self._row_to_entity(row) if row else None
+			mapper = session.query(UnitMapper).filter(UnitMapper.kb_id == kb_id).first()
+			return self._mapper_to_entity(mapper) if mapper else None
 
 	def list_all(self, sort_by: str = "name", sort_order: str = "asc") -> list[Unit]:
 		"""
-		Get all units with localized names
+		Get all units
 
 		:param sort_by:
 			Field to sort by
@@ -149,10 +148,10 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			List of units
 		"""
 		with self._get_session() as session:
-			query, *_ = self._build_query_with_localization(session)
+			query = session.query(UnitMapper)
 			query = self._apply_sorting(query, sort_by, sort_order)
-			rows = query.all()
-			return [self._row_to_entity(row) for row in rows]
+			mappers = query.all()
+			return [self._mapper_to_entity(mapper) for mapper in mappers]
 
 	def search_by_name(self, query_str: str) -> list[Unit]:
 		"""
@@ -164,11 +163,10 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			List of matching units
 		"""
 		with self._get_session() as session:
-			query, NameLocalization = self._build_query_with_localization(session)
-			rows = query.filter(
-				NameLocalization.text.ilike(f"%{query_str}%")
+			mappers = session.query(UnitMapper).filter(
+				UnitMapper.name.ilike(f"%{query_str}%")
 			).all()
-			return [self._row_to_entity(row) for row in rows]
+			return [self._mapper_to_entity(mapper) for mapper in mappers]
 
 	def create_batch(self, units: list[Unit]) -> list[Unit]:
 		"""
@@ -186,7 +184,7 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 		Apply ORDER BY clause to query
 
 		:param query:
-			SQLAlchemy query with localization joins
+			SQLAlchemy query
 		:param sort_by:
 			Field to sort by (name, kb_id)
 		:param sort_order:
@@ -195,26 +193,13 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			Query with ORDER BY applied
 		"""
 		if sort_by == "name":
-			sort_column = text('loc_name')
+			sort_column = UnitMapper.name
 		elif sort_by == "kb_id":
 			sort_column = UnitMapper.kb_id
 		else:
-			sort_column = text('loc_name')
+			sort_column = UnitMapper.name
 
 		if sort_order.lower() == "desc":
 			return query.order_by(desc(sort_column))
 		else:
 			return query.order_by(asc(sort_column))
-
-	def _mapper_to_entity(self, mapper: UnitMapper) -> Unit:
-		"""
-		Convert UnitMapper to Unit entity
-
-		Note: This method fetches full entity with localization
-
-		:param mapper:
-			UnitMapper to convert
-		:return:
-			Unit entity with localized name
-		"""
-		return self.get_by_id(mapper.id)

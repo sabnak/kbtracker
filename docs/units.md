@@ -14,9 +14,28 @@ Units are creatures and characters that can be recruited, fought, or encountered
 | Column | Type | Description |
 |--------|------|-------------|
 | `id` | Integer | Primary key |
-| `kb_id` | String | Unique in-game identifier for the unit |
-| `unit_class` | String | Unit classification: "pawn" or "chesspiece" |
-| `params` | JSONB | Flexible storage for all unit parameters (arena_params, features, etc.) |
+| `kb_id` | String (255) | Unique in-game identifier for the unit |
+| `unit_class` | String (50) | Unit classification: "pawn" or "chesspiece" |
+| `main` | JSONB | Main section data from atom file |
+| `params` | JSONB | Complete arena_params data from atom file |
+| `cost` | Integer (nullable) | Unit recruitment cost |
+| `krit` | Integer (nullable) | Critical hit chance |
+| `race` | String (100, nullable) | Unit race (human, elf, dwarf, demon, etc.) |
+| `level` | Integer (nullable) | Unit tier/level |
+| `speed` | Integer (nullable) | Initiative/speed rating |
+| `attack` | Integer (nullable) | Attack rating |
+| `defense` | Integer (nullable) | Defense rating |
+| `hitback` | Integer (nullable) | Counterattack capability |
+| `hitpoint` | Integer (nullable) | Hit points/health |
+| `movetype` | Integer (nullable) | Movement type identifier |
+| `defenseup` | Integer (nullable) | Defense bonus |
+| `initiative` | Integer (nullable) | Initiative modifier |
+| `leadership` | Integer (nullable) | Leadership cost/requirement |
+| `resistance` | JSONB (nullable) | Elemental resistances (physical, magic, fire, etc.) |
+| `features` | JSONB (nullable) | Processed features with localized names and hints |
+| `attacks` | JSONB (nullable) | Processed special attacks with localized names and hints |
+
+**Note**: All explicit columns are populated during unit scanning. The `main` and `params` JSONB columns preserve the complete raw data from atom files for reference.
 
 ### Unit Class
 
@@ -151,9 +170,9 @@ The `main` section contains core unit metadata:
 
 | Property | Type | Description | Stored in DB |
 |----------|------|-------------|--------------|
-| `class` | String | Unit class (pawn, chesspiece, spirit) | Yes (as unit_class) |
-| `level` | Integer | Unit tier/level | Yes (in params JSONB) |
-| `race` | String | Unit race (human, elf, dwarf, etc.) | Yes (in params JSONB) |
+| `class` | String | Unit class (pawn, chesspiece, spirit) | Yes (as `unit_class` column) |
+| `level` | Integer | Unit tier/level | Yes (explicit column + params JSONB) |
+| `race` | String | Unit race (human, elf, dwarf, etc.) | Yes (explicit column + params JSONB) |
 | `size` | Integer | Unit size on battlefield | Yes (in params JSONB) |
 | `min_speed` | Integer | Minimum initiative | Yes (in params JSONB) |
 | `max_speed` | Integer | Maximum initiative | Yes (in params JSONB) |
@@ -165,55 +184,115 @@ The `arena_params` section contains combat statistics and abilities:
 
 | Property | Type | Description | Stored in DB |
 |----------|------|-------------|--------------|
-| `health` | Integer | Hit points | Yes (in params JSONB) |
+| `cost` | Integer | Recruitment cost | Yes (explicit column + params JSONB) |
+| `krit` | Integer | Critical hit chance | Yes (explicit column + params JSONB) |
+| `hitpoint` | Integer | Hit points | Yes (explicit column + params JSONB) |
+| `speed` | Integer | Initiative | Yes (explicit column + params JSONB) |
+| `attack` | Integer | Attack rating | Yes (explicit column + params JSONB) |
+| `defense` | Integer | Defense rating | Yes (explicit column + params JSONB) |
+| `defenseup` | Integer | Defense bonus | Yes (explicit column + params JSONB) |
+| `hitback` | Integer | Counterattack capability | Yes (explicit column + params JSONB) |
+| `initiative` | Integer | Initiative modifier | Yes (explicit column + params JSONB) |
+| `leadership` | Integer | Leadership cost | Yes (explicit column + params JSONB) |
+| `movetype` | Integer | Movement type | Yes (explicit column + params JSONB) |
+| `resistances` | Object | Elemental resistances | Yes (as `resistance` column + params JSONB) |
+| `features_hints` | String (CSV) | Comma-separated feature kb_ids | Yes (processed in `features` column) |
+| `attacks` | String (CSV) | Attack names list | Yes (processed in `attacks` column) |
 | `mana` | Integer | Mana points | Yes (in params JSONB) |
-| `speed` | Integer | Initiative | Yes (in params JSONB) |
-| `attack` | Integer | Attack rating | Yes (in params JSONB) |
-| `defense` | Integer | Defense rating | Yes (in params JSONB) |
 | `intellect` | Integer | Intellect/magic power | Yes (in params JSONB) |
 | `min_damage` | Integer | Minimum damage | Yes (in params JSONB) |
 | `max_damage` | Integer | Maximum damage | Yes (in params JSONB) |
-| `features_hints` | String (CSV) | Comma-separated features | Yes (as array in params JSONB) |
-| `attacks` | String (CSV) | Comma-separated attack types | Yes (as array in params JSONB) |
 | `morale` | Integer | Morale bonus | Yes (in params JSONB) |
 | `talents` | Integer | Talent points | Yes (in params JSONB) |
 | `priority` | Integer | AI targeting priority | Yes (in params JSONB) |
 
-### Features Hints
+**Storage Strategy**: Key combat statistics are stored in explicit columns for efficient querying, while preserving complete raw data in JSONB columns for flexibility.
 
-The `features_hints` property is a comma-separated list of unit characteristics:
+### Features Processing
 
-**Common Features**:
-- `shooter` - Ranged attacker
-- `living` - Living creature (affected by certain spells)
-- `undead` - Undead creature (immune to certain effects)
-- `male` / `female` - Gender (affects some abilities)
-- `large` - Large size (affects positioning)
-- `flying` - Can fly over obstacles
-- `noans` - No answer/retaliation
-- `demon_blood` - Demonic creature
-- `mechanical` - Mechanical unit (different resistances)
+The `features_hints` property is a comma-separated list of feature kb_id pairs in the format `header_kb_id/hint_kb_id`:
 
-**Database Storage**: Converted from comma-separated string to array.
+**Raw Data Example**:
+```
+features_hints=stamina_header/stamina_3_hint,light_header/light_hint,fur_taker_header/fur_taker_hint
+```
 
-**Example**:
-- `features_hints=shooter,living,male,noans` → stored as `["shooter", "living", "male", "noans"]`
+**Processing During Scan**:
+1. Split comma-separated string into list
+2. For each feature kb_id pair:
+   - Split by "/" to get `[header_kb_id, hint_kb_id]`
+   - Fetch localized name text from `header_kb_id`
+   - Fetch localized hint text from `hint_kb_id`
+3. Store as JSONB dictionary with full kb_id as key
 
-### Attacks
+**Database Storage Format** (`features` column):
+```json
+{
+  "stamina_header/stamina_3_hint": {
+    "name": "Stamina",
+    "hint": "This unit has 3 health levels"
+  },
+  "light_header/light_hint": {
+    "name": "Light",
+    "hint": "Deals extra damage to undead"
+  }
+}
+```
 
-The `attacks` property is a comma-separated list of attack types:
+**Fallback**: If localization is missing, the kb_id itself is used as the text.
 
-**Common Attack Types**:
-- `melee` - Close combat attack
-- `range` - Ranged attack
-- `special` - Special ability attack
-- `stomp` - Area-of-effect stomp
-- `breath` - Breath weapon
+### Attacks Processing
 
-**Database Storage**: Converted from comma-separated string to array.
+The `attacks` property references attack definitions stored as dictionaries in `params`. Only **special attacks** (those with a `hint` field) are processed:
 
-**Example**:
-- `attacks=melee,stomp` → stored as `["melee", "stomp"]`
+**Raw Data Example**:
+```
+params {
+  attacks=moveattack,archdruid_rock,archdruid_stone
+
+  moveattack {
+    ad_factor=1
+    damage { physical=8,17 }
+  }
+
+  archdruid_rock {
+    hint=special_archdruid_rocks_hint
+    hinthead=special_archdruid_rocks_head
+    class=scripted
+    reload=3
+    # ... attack data ...
+  }
+}
+```
+
+**Processing During Scan**:
+1. Iterate through params to find attack dictionaries
+2. Filter for attacks containing `hint` field (special attacks only)
+3. For each special attack:
+   - Fetch localized hint text from `hint` kb_id
+   - Derive name kb_id by replacing `_hint` with `_name` in hint kb_id
+   - Fetch localized name text (use name kb_id if not found)
+4. Store as JSONB dictionary with attack key as key
+
+**Database Storage Format** (`attacks` column):
+```json
+{
+  "archdruid_rock": {
+    "name": "Stone Throw",
+    "hint": "Throws a rock at the enemy dealing earth damage",
+    "data": { /* complete attack dictionary */ }
+  },
+  "archdruid_stone": {
+    "name": "Boulder Smash",
+    "hint": "Crushes enemies with a massive boulder",
+    "data": { /* complete attack dictionary */ }
+  }
+}
+```
+
+**Note**: Regular attacks like `moveattack` (without `hint` field) are not included in the `attacks` column but remain accessible in the `params` JSONB column.
+
+**Fallback**: If localization is missing, the kb_id itself is used as the text.
 
 ## Unit Class Filtering
 
@@ -259,9 +338,9 @@ cpn_<unit_kb_id>
 SELECT
     u.kb_id,
     u.unit_class,
-    u.params->>'health' as health,
-    u.params->>'attack' as attack,
-    u.params->>'defense' as defense,
+    u.hitpoint,
+    u.attack,
+    u.defense,
     l.text as name
 FROM unit u
 LEFT JOIN localization l
@@ -275,14 +354,15 @@ ORDER BY u.kb_id;
 ```sql
 SELECT
     u.kb_id,
-    u.params->>'race' as race,
+    u.race,
     l.text as name,
-    u.params->>'level' as level
+    u.level,
+    u.cost
 FROM unit u
 LEFT JOIN localization l
     ON l.kb_id = 'cpn_' || u.kb_id
-WHERE u.params->>'race' = 'human'
-ORDER BY (u.params->>'level')::int;
+WHERE u.race = 'human'
+ORDER BY u.level;
 ```
 
 ### Query: Units with Specific Feature
@@ -290,23 +370,53 @@ ORDER BY (u.params->>'level')::int;
 ```sql
 SELECT
     u.kb_id,
-    u.params->'features_hints' as features,
-    l.text as name
+    l.text as name,
+    u.features
 FROM unit u
 LEFT JOIN localization l
     ON l.kb_id = 'cpn_' || u.kb_id
-WHERE u.params->'features_hints' ? 'shooter'
+WHERE u.features ? 'stamina_header/stamina_3_hint'
 ORDER BY u.kb_id;
 ```
 
-## JSONB Parameter Storage
+**Note**: The `features` column stores processed features with localized names. To search by feature name text, use:
 
-All unit parameters are stored in a flexible JSONB column for several reasons:
+```sql
+SELECT kb_id, features->'stamina_header/stamina_3_hint' as stamina_feature
+FROM unit
+WHERE features->'stamina_header/stamina_3_hint' IS NOT NULL;
+```
 
-1. **Different units have different parameters** - Not all units have the same attributes
-2. **Easy extensibility** - New parameters can be added without schema changes
-3. **Comma-separated values** - features_hints and attacks are converted to JSON arrays
-4. **Nested data preservation** - All sections from atom file are preserved
+## Dual Storage Strategy
+
+Units use a **hybrid storage approach** combining explicit columns with JSONB flexibility:
+
+### Explicit Columns (for Performance)
+
+Key combat statistics are stored as explicit columns for:
+- **Fast querying**: Direct column access without JSON extraction
+- **Type safety**: Database enforces integer/string types
+- **Indexing**: Can create indexes on frequently queried columns
+- **Aggregations**: Efficient AVG, SUM, MIN, MAX operations
+
+**Explicit columns**: `cost`, `krit`, `race`, `level`, `speed`, `attack`, `defense`, `hitback`, `hitpoint`, `movetype`, `defenseup`, `initiative`, `leadership`, `resistance`, `features`, `attacks`
+
+### JSONB Columns (for Flexibility)
+
+Complete raw data is preserved in JSONB for:
+- **Extensibility**: New parameters added without schema changes
+- **Raw data preservation**: Full atom file content accessible
+- **Additional properties**: Properties not in explicit columns (e.g., `min_damage`, `max_damage`, `mana`, etc.)
+- **Backward compatibility**: Maintains complete historical data
+
+**JSONB columns**: `main`, `params`
+
+### Best Practices
+
+- **Query explicit columns first** for better performance
+- **Use JSONB for rare/optional properties** not available as explicit columns
+- **Both sources contain same data** for key properties (explicit column values also in JSONB)
+- **Explicit columns take precedence** when building Unit entities
 
 ### Accessing JSONB Data
 
@@ -338,6 +448,10 @@ SELECT * FROM unit WHERE (params->>'health')::int > 100;
 
 ## Extraction Workflow
 
+The extraction process follows a pipeline architecture: **Parser → Factory → Repository**
+
+### Phase 1: Parsing (`KFSUnitParser`)
+
 1. Query localization table for entries with `tag='units'` and `kb_id LIKE 'cpn_%'`
 2. Extract unit kb_ids by stripping `cpn_` prefix
 3. Apply filtering rules (skip hints, names, spawners)
@@ -348,11 +462,46 @@ SELECT * FROM unit WHERE (params->>'health')::int > 100;
    - Check if `main.class == 'spirit'` (skip if true)
    - Extract `unit_class` from `main.class`
    - Convert comma-separated fields to arrays:
-     - `arena_params.features_hints` → split by comma
-     - `arena_params.attacks` → split by comma
-   - Store all parameters in JSONB
-5. Create Unit entity and save to database
-6. Link with localization using `cpn_<kb_id>` pattern
+     - `arena_params.features_hints` → split by comma into list
+     - `arena_params.attacks` → split by comma into list
+   - **Return raw dictionary**: `{kb_id, unit_class, main, params}`
+5. Return dictionary of all units: `{kb_id: raw_data, ...}`
+
+### Phase 2: Entity Creation (`UnitFactory`)
+
+6. For each raw unit dictionary:
+   - **Extract explicit properties** from `params`:
+     - `cost`, `krit`, `race`, `level`, `speed`, `attack`, `defense`
+     - `hitback`, `hitpoint`, `movetype`, `defenseup`, `initiative`, `leadership`
+     - `resistances` → stored as `resistance`
+   - **Process features** (via `UnitFeaturesProcessor`):
+     - Parse `params.features_hints` list
+     - For each `header_kb_id/hint_kb_id` pair:
+       - Fetch localized name and hint from `ILocalizationRepository`
+       - Build dictionary: `{full_kb_id: {name, hint}}`
+   - **Process special attacks** (via `UnitAttacksProcessor`):
+     - Iterate through params to find attack dictionaries
+     - Filter for attacks containing `hint` field
+     - For each special attack:
+       - Fetch localized hint text
+       - Derive and fetch localized name text
+       - Build dictionary: `{attack_key: {name, hint, data}}`
+   - **Create Unit entity** with all properties populated
+   - Return Unit with `id=0` (to be assigned by database)
+
+### Phase 3: Persistence (`UnitRepository`)
+
+7. Batch create all Unit entities in database
+8. Database assigns sequential IDs
+9. Unit names fetched via JOIN with localization using `cpn_<kb_id>` pattern
+
+### Architecture Benefits
+
+- **Separation of Concerns**: Parser extracts data, Factory creates entities, Repository handles persistence
+- **Type Safety**: All properties explicitly typed on Unit entity
+- **Localization**: Features and attacks automatically enriched with translated text
+- **Flexibility**: Raw data preserved in JSONB for extensibility
+- **Maintainability**: Helper classes (`UnitAttacksProcessor`, `UnitFeaturesProcessor`) keep code modular
 
 ## Usage Examples
 
@@ -363,56 +512,72 @@ SELECT
     u.kb_id,
     l.text as name,
     u.unit_class,
-    u.params->>'race' as race,
-    u.params->>'level' as level,
-    u.params->>'health' as health,
-    u.params->>'attack' as attack,
-    u.params->>'defense' as defense,
-    u.params->>'min_damage' as min_damage,
-    u.params->>'max_damage' as max_damage
+    u.race,
+    u.level,
+    u.hitpoint,
+    u.attack,
+    u.defense,
+    u.cost,
+    u.leadership
 FROM unit u
 LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
-ORDER BY u.unit_class, (u.params->>'level')::int;
+ORDER BY u.unit_class, u.level;
 ```
 
-### Find Ranged Units
+**Note**: Uses explicit columns for efficient querying. Additional properties like `min_damage` and `max_damage` remain accessible via `u.params->>'min_damage'`.
+
+### Find Units with Special Attacks
 
 ```sql
 SELECT
     u.kb_id,
     l.text as name,
-    u.params->'attacks' as attack_types
+    u.attacks
 FROM unit u
 LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
-WHERE u.params->'attacks' ? 'range';
+WHERE u.attacks IS NOT NULL
+ORDER BY jsonb_object_keys(u.attacks);
 ```
 
-### Find Flying Units
+**Query specific attack details**:
+```sql
+SELECT
+    u.kb_id,
+    l.text as name,
+    u.attacks->'archdruid_rock'->>'name' as attack_name,
+    u.attacks->'archdruid_rock'->>'hint' as attack_hint
+FROM unit u
+LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
+WHERE u.attacks ? 'archdruid_rock';
+```
+
+### Find Units with Specific Feature
 
 ```sql
 SELECT
     u.kb_id,
     l.text as name,
-    u.params->>'health' as health
+    u.features->'light_header/light_hint'->>'name' as feature_name,
+    u.features->'light_header/light_hint'->>'hint' as feature_hint
 FROM unit u
 LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
-WHERE u.params->'features_hints' ? 'flying'
-ORDER BY (u.params->>'health')::int DESC;
+WHERE u.features ? 'light_header/light_hint';
 ```
 
 ### Get Strongest Units by Race
 
 ```sql
 SELECT
-    u.params->>'race' as race,
+    u.race,
     u.kb_id,
     l.text as name,
-    (u.params->>'attack')::int as attack,
-    (u.params->>'max_damage')::int as max_damage
+    u.attack,
+    u.hitpoint,
+    u.cost
 FROM unit u
 LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
-WHERE u.params->>'race' = 'demon'
-ORDER BY (u.params->>'attack')::int DESC, (u.params->>'max_damage')::int DESC
+WHERE u.race = 'demon'
+ORDER BY u.attack DESC, u.hitpoint DESC
 LIMIT 10;
 ```
 
@@ -422,13 +587,12 @@ LIMIT 10;
 SELECT
     u.kb_id,
     l.text as name,
-    u.params->>'min_speed' as min_speed,
-    u.params->>'max_speed' as max_speed,
-    u.params->>'speed' as initiative
+    u.speed,
+    u.initiative
 FROM unit u
 LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
-WHERE (u.params->>'speed')::int >= 4
-ORDER BY (u.params->>'speed')::int DESC;
+WHERE u.speed >= 4
+ORDER BY u.speed DESC, u.initiative DESC;
 ```
 
 ### Compare Unit Classes
@@ -437,29 +601,50 @@ ORDER BY (u.params->>'speed')::int DESC;
 SELECT
     u.unit_class,
     COUNT(*) as unit_count,
-    AVG((u.params->>'health')::int) as avg_health,
-    AVG((u.params->>'attack')::int) as avg_attack,
-    AVG((u.params->>'defense')::int) as avg_defense
+    ROUND(AVG(u.hitpoint), 2) as avg_health,
+    ROUND(AVG(u.attack), 2) as avg_attack,
+    ROUND(AVG(u.defense), 2) as avg_defense,
+    ROUND(AVG(u.cost), 2) as avg_cost
 FROM unit u
+WHERE u.hitpoint IS NOT NULL
 GROUP BY u.unit_class;
 ```
 
-### Get All Unit Features
+### Get All Unit Features (Localized)
 
 ```sql
 SELECT DISTINCT
-    jsonb_array_elements_text(u.params->'features_hints') as feature
+    jsonb_object_keys(u.features) as feature_kb_id,
+    u.features->jsonb_object_keys(u.features)->>'name' as feature_name
 FROM unit u
-ORDER BY feature;
+WHERE u.features IS NOT NULL
+ORDER BY feature_name;
 ```
 
-### Get All Attack Types
+### Get All Special Attacks (Localized)
 
 ```sql
 SELECT DISTINCT
-    jsonb_array_elements_text(u.params->'attacks') as attack_type
+    jsonb_object_keys(u.attacks) as attack_key,
+    u.attacks->jsonb_object_keys(u.attacks)->>'name' as attack_name
 FROM unit u
-ORDER BY attack_type;
+WHERE u.attacks IS NOT NULL
+ORDER BY attack_name;
+```
+
+### Query Units by Resistance
+
+```sql
+SELECT
+    u.kb_id,
+    l.text as name,
+    u.resistance->'physical' as physical_resistance,
+    u.resistance->'magic' as magic_resistance,
+    u.resistance->'fire' as fire_resistance
+FROM unit u
+LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
+WHERE (u.resistance->>'fire')::int > 50
+ORDER BY (u.resistance->>'fire')::int DESC;
 ```
 
 ## Encoding Handling

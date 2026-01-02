@@ -1,7 +1,5 @@
 import abc
 
-from src.domain.game.entities.Unit import Unit
-
 
 class IKFSUnitParser(abc.ABC):
 
@@ -10,9 +8,12 @@ class IKFSUnitParser(abc.ABC):
 		self,
 		game_name: str,
 		allowed_kb_ids: list[str] | None = None
-	) -> list[Unit]:
+	) -> dict[str, dict[str, any]]:
 		"""
 		Extract and parse unit data from game files
+
+		Returns dictionary with structure: {kb_id: {kb_id, unit_class, main, params}}
+		Where params contains raw arena_params data (features_hints as list, etc.)
 
 		:param game_name:
 			Game name (e.g., 'Darkside', 'Armored_Princess')
@@ -20,7 +21,7 @@ class IKFSUnitParser(abc.ABC):
 			Optional list of unit kb_ids to parse (for testing)
 			If None, parses all units found in localization
 		:return:
-			List of Unit entities with empty id and localized names
+			Dictionary mapping kb_id to raw unit data
 		:raises FileNotFoundError:
 			When unit atom file not found
 		"""
