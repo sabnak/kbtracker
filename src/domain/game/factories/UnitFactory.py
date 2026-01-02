@@ -2,6 +2,7 @@ from dependency_injector.wiring import Provide, inject
 
 from src.core.Container import Container
 from src.domain.game.entities.Unit import Unit
+from src.domain.game.entities.UnitMovetype import UnitMovetype
 from src.domain.game.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.IUnitFactory import IUnitFactory
 from src.domain.game.factories.UnitAttacksProcessor import UnitAttacksProcessor
@@ -42,6 +43,7 @@ class UnitFactory(IUnitFactory):
 		name = self._fetch_name(kb_id)
 		attacks = self._attacks_processor.process(params)
 		features = self._features_processor.process(params)
+		movetype = UnitMovetype(params['movetype']) if params.get('movetype') is not None else None
 
 		return Unit(
 			id=0,
@@ -59,7 +61,7 @@ class UnitFactory(IUnitFactory):
 			defense=params.get('defense'),
 			hitback=params.get('hitback'),
 			hitpoint=params.get('hitpoint'),
-			movetype=params.get('movetype'),
+			movetype=movetype,
 			defenseup=params.get('defenseup'),
 			initiative=params.get('initiative'),
 			leadership=params.get('leadership'),

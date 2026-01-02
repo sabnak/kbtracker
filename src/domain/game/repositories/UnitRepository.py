@@ -4,6 +4,7 @@ from sqlalchemy.orm import aliased
 from src.domain.game.repositories.CrudRepository import CrudRepository
 from src.domain.game.entities.Unit import Unit
 from src.domain.game.entities.UnitClass import UnitClass
+from src.domain.game.entities.UnitMovetype import UnitMovetype
 from src.domain.game.IUnitRepository import IUnitRepository
 from src.domain.game.repositories.mappers.UnitMapper import UnitMapper
 from src.domain.game.repositories.mappers.LocalizationMapper import LocalizationMapper
@@ -36,7 +37,7 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			defense=entity.defense,
 			hitback=entity.hitback,
 			hitpoint=entity.hitpoint,
-			movetype=entity.movetype,
+			movetype=entity.movetype.value if entity.movetype else None,
 			defenseup=entity.defenseup,
 			initiative=entity.initiative,
 			leadership=entity.leadership,
@@ -90,7 +91,7 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			defense=mapper.defense,
 			hitback=mapper.hitback,
 			hitpoint=mapper.hitpoint,
-			movetype=mapper.movetype,
+			movetype=UnitMovetype(mapper.movetype) if mapper.movetype is not None else None,
 			defenseup=mapper.defenseup,
 			initiative=mapper.initiative,
 			leadership=mapper.leadership,

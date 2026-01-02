@@ -2,6 +2,7 @@ import pytest
 
 from src.domain.game.entities.Unit import Unit
 from src.domain.game.entities.UnitClass import UnitClass
+from src.domain.game.entities.UnitMovetype import UnitMovetype
 from src.domain.game.entities.Localization import Localization
 from src.domain.game.factories.UnitFactory import UnitFactory
 
@@ -111,7 +112,7 @@ class TestUnitFactory:
 		assert unit.defense == 5
 		assert unit.hitback == 3
 		assert unit.hitpoint == 50
-		assert unit.movetype == 1
+		assert unit.movetype == UnitMovetype.SOARING
 		assert unit.defenseup == 2
 		assert unit.initiative == 1
 		assert unit.leadership == 0

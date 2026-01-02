@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from src.domain.game.entities.UnitClass import UnitClass
+from src.domain.game.entities.UnitMovetype import UnitMovetype
 
 
 @dataclass
@@ -21,7 +22,7 @@ class Unit:
 	defense: int | None = None
 	hitback: int | None = None
 	hitpoint: int | None = None
-	movetype: int | None = None
+	movetype: UnitMovetype | None = None
 	defenseup: int | None = None
 	initiative: int | None = None
 	leadership: int | None = None
