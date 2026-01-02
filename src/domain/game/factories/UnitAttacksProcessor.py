@@ -31,13 +31,14 @@ class UnitAttacksProcessor:
 				continue
 
 			hint_kb_id = value.get('hint')
+			hinthead_kb_id = value.get('hinthead')
 			if not hint_kb_id:
 				continue
 
 			hint_loc = self._localization_repository.get_by_kb_id(hint_kb_id)
 			hint_text = hint_loc.text if hint_loc else hint_kb_id
 
-			name_kb_id = hint_kb_id.replace('_hint', '_name')
+			name_kb_id = hinthead_kb_id.replace('_head', '_name')
 
 			name_loc = self._localization_repository.get_by_kb_id(name_kb_id)
 			name_text = name_loc.text if name_loc else name_kb_id
