@@ -38,7 +38,7 @@ class KFSLocationsAndShopsParser(IKFSLocationsAndShopsParser):
 
 	def _extract_files(self, game_name: str, lang: str) -> str:
 		"""
-		Read atoms_info.lng from extracted directory
+		Read atoms_info.lng from extracted loc directory
 
 		:param game_name:
 			Game name
@@ -47,10 +47,9 @@ class KFSLocationsAndShopsParser(IKFSLocationsAndShopsParser):
 		:return:
 			Localization file content
 		"""
-		archive_basename = 'loc_ses' if lang == 'rus' else f'loc_ses_{lang}'
-		file_path = f"{archive_basename}/{lang}_atoms_info.lng"
+		filename = f"{lang}_atoms_info.lng"
 
-		results = self._reader.read_files(game_name, [file_path])
+		results = self._reader.read_loc_files(game_name, [filename])
 		return results[0]
 
 	def _parse_localization(self, content: str) -> dict[str, dict[str, str]]:

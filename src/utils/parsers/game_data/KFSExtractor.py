@@ -15,11 +15,15 @@ class KFSExtractor(IKFSExtractor):
 
 	def __init__(self, config: Config = Provide[Container.config]):
 		self._game_data_path = config.game_data_path
-		self._archive_patterns = config.archive_patterns
+		self._data_archive_patterns = config.data_archive_patterns
+		self._loc_archive_patterns = config.loc_archive_patterns
 
 	def extract_archives(self, game_name: str) -> str:
 		"""
 		Extract all game archives to /tmp/<game_name>/
+
+		Data archives go to /tmp/<game_name>/data/
+		Localization archives go to /tmp/<game_name>/loc/
 
 		:param game_name:
 			Game name (e.g., 'Darkside', 'Armored_Princess')
@@ -31,18 +35,16 @@ class KFSExtractor(IKFSExtractor):
 		self._cleanup_previous_extraction(game_name)
 
 		game_path = os.path.join(self._game_data_path, game_name)
-		archive_patterns = self._build_archive_patterns(game_path)
 
-		archive_paths = self._resolve_archive_patterns(archive_patterns)
+		# Extract data archives
+		data_patterns = self._build_archive_patterns(game_path, self._data_archive_patterns)
+		data_paths = self._resolve_archive_patterns(data_patterns)
+		self._extract_archives_to_subdir(data_paths, extraction_root, 'data')
 
-		archive_groups = self._group_archives_by_basename(archive_paths)
-
-		for basename, paths in archive_groups.items():
-			self._extract_archive_group(
-				archive_paths=paths,
-				extraction_root=extraction_root,
-				basename=basename
-			)
+		# Extract localization archives
+		loc_patterns = self._build_archive_patterns(game_path, self._loc_archive_patterns)
+		loc_paths = self._resolve_archive_patterns(loc_patterns)
+		self._extract_archives_to_subdir(loc_paths, extraction_root, 'loc')
 
 		return extraction_root
 
@@ -57,18 +59,24 @@ class KFSExtractor(IKFSExtractor):
 		if os.path.exists(extraction_root):
 			shutil.rmtree(extraction_root)
 
-	def _build_archive_patterns(self, game_path: str) -> list[str]:
+	def _build_archive_patterns(
+		self,
+		game_path: str,
+		patterns: list[str]
+	) -> list[str]:
 		"""
 		Build archive patterns for extraction
 
 		:param game_path:
 			Absolute path to game directory
+		:param patterns:
+			List of pattern templates
 		:return:
 			List of glob patterns
 		"""
 		return [
 			pattern.format(game_path=game_path)
-			for pattern in self._archive_patterns
+			for pattern in patterns
 		]
 
 	def _resolve_archive_patterns(self, patterns: list[str]) -> list[str]:
@@ -96,67 +104,36 @@ class KFSExtractor(IKFSExtractor):
 
 		return all_paths
 
-	def _get_archive_basename(self, archive_path: str) -> str:
-		"""
-		Extract archive basename without .kfs extension
-
-		:param archive_path:
-			Full path to archive
-		:return:
-			Archive basename (e.g., 'ses', 'loc_ses_eng')
-		"""
-		filename = os.path.basename(archive_path)
-		return filename[:-4] if filename.endswith('.kfs') else filename
-
-	def _group_archives_by_basename(
-		self,
-		archive_paths: list[str]
-	) -> dict[str, list[str]]:
-		"""
-		Group archives by basename for merging
-
-		:param archive_paths:
-			List of archive paths
-		:return:
-			Dictionary mapping basename to list of archive paths
-		"""
-		groups: dict[str, list[str]] = defaultdict(list)
-
-		for path in archive_paths:
-			basename = self._get_archive_basename(path)
-			groups[basename].append(path)
-
-		for basename in groups:
-			groups[basename] = sorted(groups[basename])
-
-		return dict(groups)
-
-	def _extract_archive_group(
+	def _extract_archives_to_subdir(
 		self,
 		archive_paths: list[str],
 		extraction_root: str,
-		basename: str
+		target_subdir: str
 	) -> None:
 		"""
-		Extract archives with same basename to single directory
+		Extract archives to target subdirectory (data/ or loc/)
 
 		:param archive_paths:
-			List of archive paths with same basename
+			List of archive paths to extract
 		:param extraction_root:
-			Root extraction directory
-		:param basename:
-			Archive basename
+			Root extraction directory (/tmp/<game_name>/)
+		:param target_subdir:
+			Target subdirectory name ('data' or 'loc')
 		"""
-		target_dir = os.path.join(extraction_root, basename)
+		if not archive_paths:
+			return
+
+		target_dir = os.path.join(extraction_root, target_subdir)
 		os.makedirs(target_dir, exist_ok=True)
 
-		for archive_path in archive_paths:
-			self._extract_archive_to_dir(archive_path, target_dir)
+		for archive_path in sorted(archive_paths):
+			self._extract_archive_to_dir(archive_path, target_dir, target_subdir)
 
 	def _extract_archive_to_dir(
 		self,
 		archive_path: str,
-		target_dir: str
+		target_dir: str,
+		target_subdir: str = ''
 	) -> None:
 		"""
 		Extract archive contents to target directory
@@ -165,6 +142,8 @@ class KFSExtractor(IKFSExtractor):
 			Path to archive file
 		:param target_dir:
 			Directory to extract files into
+		:param target_subdir:
+			Optional subdirectory name for logging context
 		"""
 		try:
 			with zipfile.ZipFile(archive_path, 'r') as archive:
@@ -173,9 +152,11 @@ class KFSExtractor(IKFSExtractor):
 					target_path = os.path.join(target_dir, file_path)
 
 					if os.path.exists(target_path):
+						subdir_msg = f" in '{target_subdir}/' directory" if target_subdir else ""
 						print(
-							f"Warning: File '{file_path}' from '{archive_path}' "
-							f"overwrites existing file"
+							f"Info: File '{file_path}' from archive "
+							f"'{os.path.basename(archive_path)}' overwrites existing file"
+							f"{subdir_msg}. This is expected for modded games."
 						)
 
 					archive.extract(file_info, target_dir)

@@ -4,25 +4,51 @@ import abc
 class IKFSReader(abc.ABC):
 
 	@abc.abstractmethod
-	def read_files(
+	def read_data_files(
 		self,
 		game_name: str,
-		file_paths: list[str],
+		patterns: list[str],
 		encoding: str = 'utf-16-le'
 	) -> list[str]:
 		"""
-		Read file contents from extracted directories
+		Read data files from extracted data directory
+
+		Supports glob patterns for dynamic file discovery.
 
 		:param game_name:
-			Game name (builds extraction_root as /tmp/<game_name>/)
-		:param file_paths:
-			List of file paths in format 'archive_basename/file_path'
-			Example: ['loc_ses/rus_items.lng', 'ses/items.txt']
+			Game name (builds path as /tmp/<game_name>/data/)
+		:param patterns:
+			List of filenames or glob patterns (e.g., ['items*.txt', 'spells.txt'])
 		:param encoding:
 			Text encoding (default: utf-16-le)
 		:return:
-			List of file contents as strings, in same order as file_paths
+			List of file contents as strings
 		:raises FileNotFoundError:
-			If any requested file not found
+			If no files match pattern or directory not found
+		"""
+		...
+
+	@abc.abstractmethod
+	def read_loc_files(
+		self,
+		game_name: str,
+		patterns: list[str],
+		encoding: str = 'utf-16-le'
+	) -> list[str]:
+		"""
+		Read localization files from extracted loc directory
+
+		Supports glob patterns for dynamic file discovery.
+
+		:param game_name:
+			Game name (builds path as /tmp/<game_name>/loc/)
+		:param patterns:
+			List of filenames or glob patterns (e.g., ['rus_*.lng', 'eng_items.lng'])
+		:param encoding:
+			Text encoding (default: utf-16-le)
+		:return:
+			List of file contents as strings
+		:raises FileNotFoundError:
+			If no files match pattern or directory not found
 		"""
 		...

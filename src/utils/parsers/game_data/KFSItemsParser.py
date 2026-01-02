@@ -1,5 +1,3 @@
-import os
-
 from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
@@ -60,44 +58,16 @@ class KFSItemsParser(IKFSItemsParser):
 
 	def _extract_files(self, game_name: str) -> list[str]:
 		"""
-		Read all items*.txt files from extracted directory
+		Read all items*.txt files from extracted data directory
+
+		Uses glob pattern to dynamically discover all items files.
 
 		:param game_name:
 			Game name
 		:return:
 			List of items file contents
 		"""
-		items_files = self._discover_items_files_from_extracted(game_name)
-
-		results = self._reader.read_files(game_name, items_files)
-
-		return results
-
-	def _discover_items_files_from_extracted(self, game_name: str) -> list[str]:
-		"""
-		Discover all items*.txt files in extracted ses directory
-
-		:param game_name:
-			Game name
-		:return:
-			List of file paths in format 'ses/items*.txt'
-		:raises FileNotFoundError:
-			If extracted ses directory not found
-		"""
-		extraction_root = f'/tmp/{game_name}'
-		ses_dir = os.path.join(extraction_root, 'ses')
-
-		if not os.path.exists(ses_dir):
-			raise FileNotFoundError(
-				f"Extracted ses directory not found: {ses_dir}"
-			)
-
-		items_files = []
-		for file_name in os.listdir(ses_dir):
-			if file_name.startswith('items') and file_name.endswith('.txt'):
-				items_files.append(f"ses/{file_name}")
-
-		return sorted(items_files)
+		return self._reader.read_data_files(game_name, ['items*.txt'])
 
 	def _parse_items_file(self, content: str) -> list[dict[str, any]]:
 		"""

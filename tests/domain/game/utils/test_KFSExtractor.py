@@ -24,13 +24,13 @@ class TestKFSExtractor:
 		"""
 		extraction_root = kfs_extractor.extract_archives(test_game_name)
 
-		# Check that archive directories exist (data.kfs excluded in tests)
-		assert os.path.exists(os.path.join(extraction_root, 'ses'))
-		assert os.path.exists(os.path.join(extraction_root, 'loc_ses'))
+		# Check that subdirectories exist
+		assert os.path.exists(os.path.join(extraction_root, 'data'))
+		assert os.path.exists(os.path.join(extraction_root, 'loc'))
 
-		# Check that files were extracted
-		assert os.path.exists(os.path.join(extraction_root, 'ses', 'items.txt'))
-		assert os.path.exists(os.path.join(extraction_root, 'loc_ses', 'rus_items.lng'))
+		# Check that files were extracted to correct locations
+		assert os.path.exists(os.path.join(extraction_root, 'data', 'items.txt'))
+		assert os.path.exists(os.path.join(extraction_root, 'loc', 'rus_items.lng'))
 
 		# Cleanup
 		shutil.rmtree(extraction_root, ignore_errors=True)
@@ -76,31 +76,31 @@ class TestKFSExtractor:
 		with pytest.raises(FileNotFoundError):
 			kfs_extractor.extract_archives("nonexistent_game")
 
-	def test_extract_archives_creates_loc_ses_directory(self, kfs_extractor, test_game_name):
+	def test_extract_archives_creates_loc_directory(self, kfs_extractor, test_game_name):
 		"""
-		Test that loc_ses.kfs is extracted to loc_ses directory
+		Test that localization archives are extracted to loc directory
 		"""
 		extraction_root = kfs_extractor.extract_archives(test_game_name)
 
-		loc_ses_dir = os.path.join(extraction_root, 'loc_ses')
-		assert os.path.exists(loc_ses_dir)
-		assert os.path.isdir(loc_ses_dir)
+		loc_dir = os.path.join(extraction_root, 'loc')
+		assert os.path.exists(loc_dir)
+		assert os.path.isdir(loc_dir)
 
 		# Cleanup
 		shutil.rmtree(extraction_root, ignore_errors=True)
 
-	def test_extract_archives_creates_ses_directory(self, kfs_extractor, test_game_name):
+	def test_extract_archives_creates_data_directory(self, kfs_extractor, test_game_name):
 		"""
-		Test that ses.kfs is extracted to ses directory
+		Test that data archives are extracted to data directory
 		"""
 		extraction_root = kfs_extractor.extract_archives(test_game_name)
 
-		ses_dir = os.path.join(extraction_root, 'ses')
-		assert os.path.exists(ses_dir)
-		assert os.path.isdir(ses_dir)
+		data_dir = os.path.join(extraction_root, 'data')
+		assert os.path.exists(data_dir)
+		assert os.path.isdir(data_dir)
 
-		# Should contain items.txt from ses.kfs
-		items_file = os.path.join(ses_dir, 'items.txt')
+		# Should contain items.txt from ses archives
+		items_file = os.path.join(data_dir, 'items.txt')
 		assert os.path.exists(items_file)
 
 		# Cleanup

@@ -60,9 +60,8 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 		else:
 			self._validate_pattern_has_kb_id_group(kb_id_pattern)
 
-		archive_basename = 'loc_ses' if lang == 'rus' else f'loc_ses_{lang}'
-		file_path = f"{archive_basename}/{lang}_{file_name}.lng"
-		content = self._reader.read_files(game_name, [file_path])[0]
+		filename = f"{lang}_{file_name}.lng"
+		content = self._reader.read_loc_files(game_name, [filename])[0]
 
 		final_pattern = self._build_final_pattern(kb_id_pattern)
 		localizations = self._parse_content(content, final_pattern, file_name, lang, tag)

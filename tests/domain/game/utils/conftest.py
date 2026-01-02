@@ -57,10 +57,13 @@ def test_config(test_game_data_path):
 	"""
 	config = Mock(spec=Config)
 	config.game_data_path = test_game_data_path
-	# Test pattern points directly to darkside directory
+	# Test patterns point directly to darkside directory
 	# Exclude data.kfs from tests - it's large and slows down test execution
-	config.archive_patterns = [
-		"{game_path}/darkside/*.kfs"
+	config.data_archive_patterns = [
+		"{game_path}/darkside/ses*.kfs"
+	]
+	config.loc_archive_patterns = [
+		"{game_path}/darkside/loc_ses*.kfs"
 	]
 	return config
 

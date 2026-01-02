@@ -1,53 +1,145 @@
 import os
+import glob
 
 from src.utils.parsers.game_data.IKFSReader import IKFSReader
 
 
 class KFSReader(IKFSReader):
 
-	def read_files(
+	def read_data_files(
 		self,
 		game_name: str,
-		file_paths: list[str],
+		patterns: list[str],
 		encoding: str = 'utf-16-le'
 	) -> list[str]:
 		"""
-		Read file contents from extracted directories
+		Read data files from extracted data directory
+
+		Supports glob patterns for dynamic file discovery.
 
 		:param game_name:
-			Game name (builds extraction_root as /tmp/<game_name>/)
-		:param file_paths:
-			List of file paths in format 'archive_basename/file_path'
-			Example: ['loc_ses/rus_items.lng', 'ses/items.txt']
+			Game name (builds path as /tmp/<game_name>/data/)
+		:param patterns:
+			List of filenames or glob patterns (e.g., ['items*.txt', 'spells.txt'])
 		:param encoding:
 			Text encoding (default: utf-16-le)
 		:return:
-			List of file contents as strings, in same order as file_paths
+			List of file contents as strings
 		:raises FileNotFoundError:
-			If any requested file not found
+			If no files match pattern or directory not found
 		"""
-		extraction_root = f'/tmp/{game_name}'
-		results = []
+		data_dir = f'/tmp/{game_name}/data'
+		return self._read_files_from_dir(data_dir, patterns, encoding)
 
-		for file_path in file_paths:
-			content = self._read_file(extraction_root, file_path, encoding)
+	def read_loc_files(
+		self,
+		game_name: str,
+		patterns: list[str],
+		encoding: str = 'utf-16-le'
+	) -> list[str]:
+		"""
+		Read localization files from extracted loc directory
+
+		Supports glob patterns for dynamic file discovery.
+
+		:param game_name:
+			Game name (builds path as /tmp/<game_name>/loc/)
+		:param patterns:
+			List of filenames or glob patterns (e.g., ['rus_*.lng', 'eng_items.lng'])
+		:param encoding:
+			Text encoding (default: utf-16-le)
+		:return:
+			List of file contents as strings
+		:raises FileNotFoundError:
+			If no files match pattern or directory not found
+		"""
+		loc_dir = f'/tmp/{game_name}/loc'
+		return self._read_files_from_dir(loc_dir, patterns, encoding)
+
+	def _read_files_from_dir(
+		self,
+		directory: str,
+		patterns: list[str],
+		encoding: str
+	) -> list[str]:
+		"""
+		Read files from specified directory
+
+		Supports glob patterns for dynamic file discovery.
+
+		:param directory:
+			Directory path
+		:param patterns:
+			List of filenames or glob patterns
+		:param encoding:
+			Text encoding
+		:return:
+			List of file contents
+		:raises FileNotFoundError:
+			If directory doesn't exist or no files match patterns
+		"""
+		# Handle empty patterns list
+		if not patterns:
+			return []
+
+		if not os.path.exists(directory):
+			raise FileNotFoundError(f"Directory not found: {directory}")
+
+		# Expand glob patterns to actual filenames
+		filenames = self._expand_patterns(directory, patterns)
+
+		if not filenames:
+			raise FileNotFoundError(
+				f"No files found matching patterns {patterns} in directory '{directory}'"
+			)
+
+		results = []
+		for filename in filenames:
+			content = self._read_file(directory, filename, encoding)
 			results.append(content)
 
 		return results
 
+	def _expand_patterns(self, directory: str, patterns: list[str]) -> list[str]:
+		"""
+		Expand glob patterns to actual filenames
+
+		:param directory:
+			Directory path
+		:param patterns:
+			List of filenames or glob patterns
+		:return:
+			Sorted list of unique filenames (basenames only)
+		"""
+		all_files = set()
+
+		for pattern in patterns:
+			# Build full path pattern
+			full_pattern = os.path.join(directory, pattern)
+
+			# Expand glob pattern
+			matched_paths = glob.glob(full_pattern)
+
+			# Extract basenames and add to set
+			for path in matched_paths:
+				all_files.add(os.path.basename(path))
+
+		# Return sorted list
+		return sorted(all_files)
+
 	def _read_file(
 		self,
-		extraction_root: str,
-		file_path: str,
+		directory: str,
+		filename: str,
 		encoding: str
 	) -> str:
 		"""
-		Read single file from extraction directory
+		Read single file from directory
 
-		:param extraction_root:
-			Root extraction directory
-		:param file_path:
-			File path relative to extraction root
+		:param directory:
+			Directory path
+		:param filename:
+			Filename relative to directory
 		:param encoding:
 			Text encoding
 		:return:
@@ -55,11 +147,11 @@ class KFSReader(IKFSReader):
 		:raises FileNotFoundError:
 			If file not found
 		"""
-		full_path = os.path.join(extraction_root, file_path)
+		full_path = os.path.join(directory, filename)
 
 		if not os.path.exists(full_path):
 			raise FileNotFoundError(
-				f"File '{file_path}' not found in extraction directory '{extraction_root}'"
+				f"File '{filename}' not found in directory '{directory}'"
 			)
 
 		with open(full_path, 'rb') as file:
