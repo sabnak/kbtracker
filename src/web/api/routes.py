@@ -3,7 +3,6 @@ from dependency_injector.wiring import inject, Provide
 from src.web.api.models import AddShopToItemRequest, UpdateShopCountRequest
 from src.domain.game.services.ItemService import ItemService
 from src.domain.game.IProfileService import IProfileService
-from src.domain.exceptions import EntityNotFoundException, DuplicateEntityException
 from src.web.dependencies.game_context import get_game_context, GameContext
 from src.domain.game.repositories.CrudRepository import _game_context
 
@@ -109,18 +108,13 @@ async def add_shop_to_item(
 	if not profile:
 		raise HTTPException(status_code=404, detail=f"Profile {profile_id} not found")
 
-	try:
-		item_tracking_service.link_item_to_shop(
-			profile_id=profile_id,
-			item_id=item_id,
-			shop_id=request_data.shop_id,
-			count=request_data.count
-		)
-		return {"message": "Shop added successfully"}
-	except DuplicateEntityException as e:
-		raise HTTPException(status_code=409, detail=str(e))
-	except Exception as e:
-		raise HTTPException(status_code=400, detail=str(e))
+	item_tracking_service.link_item_to_shop(
+		profile_id=profile_id,
+		item_id=item_id,
+		shop_id=request_data.shop_id,
+		count=request_data.count
+	)
+	return {"message": "Shop added successfully"}
 
 
 @router.patch("/games/{game_id}/profiles/{profile_id}/items/{item_id}/shops/{shop_id}")
@@ -163,18 +157,13 @@ async def update_shop_count(
 	if not profile:
 		raise HTTPException(status_code=404, detail=f"Profile {profile_id} not found")
 
-	try:
-		item_tracking_service.update_item_shop_count(
-			profile_id=profile_id,
-			item_id=item_id,
-			shop_id=shop_id,
-			count=request_data.count
-		)
-		return {"message": "Count updated successfully"}
-	except EntityNotFoundException as e:
-		raise HTTPException(status_code=404, detail=str(e))
-	except Exception as e:
-		raise HTTPException(status_code=400, detail=str(e))
+	item_tracking_service.update_item_shop_count(
+		profile_id=profile_id,
+		item_id=item_id,
+		shop_id=shop_id,
+		count=request_data.count
+	)
+	return {"message": "Count updated successfully"}
 
 
 @router.delete("/games/{game_id}/profiles/{profile_id}/items/{item_id}/shops/{shop_id}")
@@ -214,15 +203,12 @@ async def remove_shop_from_item(
 	if not profile:
 		raise HTTPException(status_code=404, detail=f"Profile {profile_id} not found")
 
-	try:
-		item_tracking_service.remove_item_from_shop(
-			profile_id=profile_id,
-			item_id=item_id,
-			shop_id=shop_id
-		)
-		return {"message": "Shop removed successfully"}
-	except Exception as e:
-		raise HTTPException(status_code=400, detail=str(e))
+	item_tracking_service.remove_item_from_shop(
+		profile_id=profile_id,
+		item_id=item_id,
+		shop_id=shop_id
+	)
+	return {"message": "Shop removed successfully"}
 
 
 @router.get("/games/{game_id}/shops-grouped")
