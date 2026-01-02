@@ -15,6 +15,7 @@ Units are creatures and characters that can be recruited, fought, or encountered
 |--------|------|-------------|
 | `id` | Integer | Primary key |
 | `kb_id` | String (255) | Unique in-game identifier for the unit |
+| `name` | String (255) | Localized unit name (fetched from localization with 'cpn_' prefix) |
 | `unit_class` | String (50) | Unit classification: "pawn" or "chesspiece" |
 | `main` | JSONB | Main section data from atom file |
 | `params` | JSONB | Complete arena_params data from atom file |
@@ -27,7 +28,7 @@ Units are creatures and characters that can be recruited, fought, or encountered
 | `defense` | Integer (nullable) | Defense rating |
 | `hitback` | Integer (nullable) | Counterattack capability |
 | `hitpoint` | Integer (nullable) | Hit points/health |
-| `movetype` | Integer (nullable) | Movement type identifier |
+| `movetype` | Integer (nullable) | Movement type enum (ON_FOOT=0, SOARING=1, FLIES=2, PHANTOM=-2) |
 | `defenseup` | Integer (nullable) | Defense bonus |
 | `initiative` | Integer (nullable) | Initiative modifier |
 | `leadership` | Integer (nullable) | Leadership cost/requirement |
@@ -35,7 +36,7 @@ Units are creatures and characters that can be recruited, fought, or encountered
 | `features` | JSONB (nullable) | Processed features with localized names and hints |
 | `attacks` | JSONB (nullable) | Processed special attacks with localized names and hints |
 
-**Note**: All explicit columns are populated during unit scanning. The `main` and `params` JSONB columns preserve the complete raw data from atom files for reference.
+**Note**: All explicit columns (including `name`) are populated during unit scanning by the `UnitFactory`. The `main` and `params` JSONB columns preserve the complete raw data from atom files for reference.
 
 ### Unit Class
 
@@ -47,6 +48,19 @@ Units are classified into two types:
 | `chesspiece` | Special units with unique abilities or roles |
 
 **Note**: Units with `class=spirit` are automatically filtered out during extraction as they are internal game entities not meant for tracking.
+
+### Unit Movetype
+
+Units have different movement types that affect how they traverse the arena:
+
+| Movetype | Value | Description |
+|----------|-------|-------------|
+| `ON_FOOT` | 0 | Unit moves on foot across the ground |
+| `SOARING` | 1 | Unit soars above obstacles |
+| `FLIES` | 2 | Unit flies freely |
+| `PHANTOM` | -2 | Phantom/incorporeal movement |
+
+**Storage**: Stored as integer in database, converted to `UnitMovetype` enum in application code.
 
 ## Archive Location
 
@@ -182,6 +196,8 @@ The `main` section contains core unit metadata:
 
 The `arena_params` section contains combat statistics and abilities:
 
+**Note**: The `movetype` field uses the `UnitMovetype` enum. See the Unit Movetype section for details.
+
 | Property | Type | Description | Stored in DB |
 |----------|------|-------------|--------------|
 | `cost` | Integer | Recruitment cost | Yes (explicit column + params JSONB) |
@@ -194,7 +210,7 @@ The `arena_params` section contains combat statistics and abilities:
 | `hitback` | Integer | Counterattack capability | Yes (explicit column + params JSONB) |
 | `initiative` | Integer | Initiative modifier | Yes (explicit column + params JSONB) |
 | `leadership` | Integer | Leadership cost | Yes (explicit column + params JSONB) |
-| `movetype` | Integer | Movement type | Yes (explicit column + params JSONB) |
+| `movetype` | Integer | Movement type (see UnitMovetype enum) | Yes (explicit column + params JSONB) |
 | `resistances` | Object | Elemental resistances | Yes (as `resistance` column + params JSONB) |
 | `features_hints` | String (CSV) | Comma-separated feature kb_ids | Yes (processed in `features` column) |
 | `attacks` | String (CSV) | Attack names list | Yes (processed in `attacks` column) |
@@ -332,35 +348,36 @@ cpn_<unit_kb_id>
 
 **Note**: Unlike items which use `itm_<kb_id>_name`, units use a simpler pattern without suffix.
 
+### Name Storage
+
+Unit names are **stored directly in the `name` column** during entity creation by the `UnitFactory`. The factory fetches the localized name from `LocalizationRepository` using the `cpn_{kb_id}` pattern and stores it in the unit table. This eliminates the need for JOIN queries when retrieving units.
+
 ### Query: Units with Names
 
 ```sql
 SELECT
     u.kb_id,
+    u.name,
     u.unit_class,
     u.hitpoint,
     u.attack,
-    u.defense,
-    l.text as name
+    u.defense
 FROM unit u
-LEFT JOIN localization l
-    ON l.kb_id = 'cpn_' || u.kb_id
-WHERE l.tag = 'units'
 ORDER BY u.kb_id;
 ```
+
+**Note**: Unit names are stored directly in the `name` column, so no JOIN with the localization table is required.
 
 ### Query: Units by Race
 
 ```sql
 SELECT
     u.kb_id,
+    u.name,
     u.race,
-    l.text as name,
     u.level,
     u.cost
 FROM unit u
-LEFT JOIN localization l
-    ON l.kb_id = 'cpn_' || u.kb_id
 WHERE u.race = 'human'
 ORDER BY u.level;
 ```
@@ -370,11 +387,9 @@ ORDER BY u.level;
 ```sql
 SELECT
     u.kb_id,
-    l.text as name,
+    u.name,
     u.features
 FROM unit u
-LEFT JOIN localization l
-    ON l.kb_id = 'cpn_' || u.kb_id
 WHERE u.features ? 'stamina_header/stamina_3_hint'
 ORDER BY u.kb_id;
 ```
@@ -470,6 +485,9 @@ The extraction process follows a pipeline architecture: **Parser → Factory →
 ### Phase 2: Entity Creation (`UnitFactory`)
 
 6. For each raw unit dictionary:
+   - **Fetch unit name** from `ILocalizationRepository`:
+     - Lookup localization using `cpn_{kb_id}` pattern
+     - Store directly in `name` property (fallback to kb_id if not found)
    - **Extract explicit properties** from `params`:
      - `cost`, `krit`, `race`, `level`, `speed`, `attack`, `defense`
      - `hitback`, `hitpoint`, `movetype`, `defenseup`, `initiative`, `leadership`
@@ -486,14 +504,14 @@ The extraction process follows a pipeline architecture: **Parser → Factory →
        - Fetch localized hint text
        - Derive and fetch localized name text
        - Build dictionary: `{attack_key: {name, hint, data}}`
-   - **Create Unit entity** with all properties populated
+   - **Create Unit entity** with all properties populated (including name)
    - Return Unit with `id=0` (to be assigned by database)
 
 ### Phase 3: Persistence (`UnitRepository`)
 
-7. Batch create all Unit entities in database
+7. Batch create all Unit entities in database (with names already populated)
 8. Database assigns sequential IDs
-9. Unit names fetched via JOIN with localization using `cpn_<kb_id>` pattern
+9. Unit data ready for querying without requiring localization JOINs
 
 ### Architecture Benefits
 
@@ -510,7 +528,7 @@ The extraction process follows a pipeline architecture: **Parser → Factory →
 ```sql
 SELECT
     u.kb_id,
-    l.text as name,
+    u.name,
     u.unit_class,
     u.race,
     u.level,
@@ -520,7 +538,6 @@ SELECT
     u.cost,
     u.leadership
 FROM unit u
-LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
 ORDER BY u.unit_class, u.level;
 ```
 
@@ -531,10 +548,9 @@ ORDER BY u.unit_class, u.level;
 ```sql
 SELECT
     u.kb_id,
-    l.text as name,
+    u.name,
     u.attacks
 FROM unit u
-LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
 WHERE u.attacks IS NOT NULL
 ORDER BY jsonb_object_keys(u.attacks);
 ```
@@ -543,11 +559,10 @@ ORDER BY jsonb_object_keys(u.attacks);
 ```sql
 SELECT
     u.kb_id,
-    l.text as name,
+    u.name,
     u.attacks->'archdruid_rock'->>'name' as attack_name,
     u.attacks->'archdruid_rock'->>'hint' as attack_hint
 FROM unit u
-LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
 WHERE u.attacks ? 'archdruid_rock';
 ```
 
@@ -556,11 +571,10 @@ WHERE u.attacks ? 'archdruid_rock';
 ```sql
 SELECT
     u.kb_id,
-    l.text as name,
+    u.name,
     u.features->'light_header/light_hint'->>'name' as feature_name,
     u.features->'light_header/light_hint'->>'hint' as feature_hint
 FROM unit u
-LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
 WHERE u.features ? 'light_header/light_hint';
 ```
 
@@ -570,12 +584,11 @@ WHERE u.features ? 'light_header/light_hint';
 SELECT
     u.race,
     u.kb_id,
-    l.text as name,
+    u.name,
     u.attack,
     u.hitpoint,
     u.cost
 FROM unit u
-LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
 WHERE u.race = 'demon'
 ORDER BY u.attack DESC, u.hitpoint DESC
 LIMIT 10;
@@ -586,11 +599,10 @@ LIMIT 10;
 ```sql
 SELECT
     u.kb_id,
-    l.text as name,
+    u.name,
     u.speed,
     u.initiative
 FROM unit u
-LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
 WHERE u.speed >= 4
 ORDER BY u.speed DESC, u.initiative DESC;
 ```
@@ -637,12 +649,11 @@ ORDER BY attack_name;
 ```sql
 SELECT
     u.kb_id,
-    l.text as name,
+    u.name,
     u.resistance->'physical' as physical_resistance,
     u.resistance->'magic' as magic_resistance,
     u.resistance->'fire' as fire_resistance
 FROM unit u
-LEFT JOIN localization l ON l.kb_id = 'cpn_' || u.kb_id
 WHERE (u.resistance->>'fire')::int > 50
 ORDER BY (u.resistance->>'fire')::int DESC;
 ```
