@@ -1,9 +1,8 @@
 import pytest
 
-from src.domain.game.entities.Unit import Unit
+from src.domain.game.entities.Localization import Localization
 from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.entities.UnitMovetype import UnitMovetype
-from src.domain.game.entities.Localization import Localization
 from src.domain.game.factories.UnitFactory import UnitFactory
 
 
@@ -140,6 +139,7 @@ class TestUnitFactory:
 			'params': {
 				'archdruid_rock': {
 					'hint': 'archdruid_rock_hint',
+					'hinthead': 'archdruid_rock_head',
 					'power': 100,
 					'radius': 2
 				},
@@ -167,6 +167,7 @@ class TestUnitFactory:
 			'params': {
 				'unknown_attack': {
 					'hint': 'unknown_hint',
+					'hinthead': 'unknown_head',
 					'power': 50
 				}
 			}

@@ -29,7 +29,7 @@ class UnitAttacksProcessor:
 		for key, value in params.items():
 			if not isinstance(value, dict):
 				continue
-
+			print(value)
 			hint_kb_id = value.get('hint')
 			hinthead_kb_id = value.get('hinthead')
 			if not hint_kb_id:

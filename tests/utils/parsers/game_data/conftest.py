@@ -65,6 +65,7 @@ def test_config(test_game_data_path):
 	config.loc_archive_patterns = [
 		"{game_path}/darkside/loc_ses*.kfs"
 	]
+	config.tmp_dir = "/tmp"
 	return config
 
 
@@ -87,12 +88,8 @@ def test_container(test_config):
 	container.kfs_localization_parser.override(providers.Singleton(KFSLocalizationParser))
 	container.kfs_locations_and_shops_parser.override(providers.Singleton(KFSLocationsAndShopsParser))
 
-	container.wire(modules=[
-		"tests.domain.game.utils.test_KFSExtractor",
-		"tests.domain.game.utils.test_KFSReader",
-		"tests.domain.game.utils.test_KFSItemsParser",
-		"tests.domain.game.utils.test_KFSLocalizationParser",
-		"tests.domain.game.utils.test_KFSLocationsAndShopsParser"
+	container.wire(packages=[
+		"tests.utils.parsers.game_data"
 	])
 
 	yield container
