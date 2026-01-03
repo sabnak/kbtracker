@@ -1,15 +1,15 @@
-from src.domain.game.entities.LocEntity import LocEntity
+from src.domain.game.entities.LocStrings import LocStrings
 from src.domain.game.entities.Localization import Localization
 from src.domain.game.ILocFactory import ILocFactory
 
 
 class LocFactory(ILocFactory):
 
-	def create_from_localizations(self, localizations: list[Localization]) -> LocEntity:
+	def create_from_localizations(self, localizations: list[Localization]) -> LocStrings:
 		"""
-		Create LocEntity from list of Localization entities
+		Create LocStrings from list of Localization entities
 
-		Maps localization kb_id suffixes to LocEntity fields:
+		Maps localization kb_id suffixes to LocStrings fields:
 		- *_name -> name
 		- *_hint -> hint
 		- *_desc -> desc
@@ -19,7 +19,7 @@ class LocFactory(ILocFactory):
 		:param localizations:
 			List of Localization entities for a spell
 		:return:
-			LocEntity with mapped fields
+			LocStrings with mapped fields
 		:raises Exception:
 			If duplicate suffix types found (e.g., two _name entries)
 		"""
@@ -59,7 +59,7 @@ class LocFactory(ILocFactory):
 					raise Exception(f"Duplicate _header suffix found in localizations: {kb_id}")
 				header = loc.text
 
-		return LocEntity(
+		return LocStrings(
 			name=name,
 			hint=hint,
 			desc=desc,

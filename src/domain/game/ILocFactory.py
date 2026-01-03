@@ -1,17 +1,17 @@
 from abc import ABC, abstractmethod
 
-from src.domain.game.entities.LocEntity import LocEntity
+from src.domain.game.entities.LocStrings import LocStrings
 from src.domain.game.entities.Localization import Localization
 
 
 class ILocFactory(ABC):
 
 	@abstractmethod
-	def create_from_localizations(self, localizations: list[Localization]) -> LocEntity:
+	def create_from_localizations(self, localizations: list[Localization]) -> LocStrings:
 		"""
-		Create LocEntity from list of Localization entities
+		Create LocStrings from list of Localization entities
 
-		Maps localization kb_id suffixes to LocEntity fields:
+		Maps localization kb_id suffixes to LocStrings fields:
 		- *_name -> name
 		- *_hint -> hint
 		- *_desc -> desc
@@ -21,7 +21,7 @@ class ILocFactory(ABC):
 		:param localizations:
 			List of Localization entities for a spell
 		:return:
-			LocEntity with mapped fields
+			LocStrings with mapped fields
 		:raises Exception:
 			If duplicate suffix types found (e.g., two _name entries)
 		"""

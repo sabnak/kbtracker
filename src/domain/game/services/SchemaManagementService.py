@@ -139,8 +139,7 @@ class SchemaManagementService(ISchemaManagementService):
 					school INTEGER NOT NULL,
 					mana_cost INTEGER[],
 					crystal_cost INTEGER[],
-					data JSONB NOT NULL,
-					loc JSONB
+					data JSONB NOT NULL
 				)
 			"""))
 

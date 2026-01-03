@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 
 @dataclass
-class LocEntity:
+class LocStrings:
 
 	name: str | None = None
 	hint: str | None = None

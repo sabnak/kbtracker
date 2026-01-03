@@ -12,7 +12,7 @@ class TestLocFactory:
 		return LocFactory()
 
 	def test_create_with_all_suffix_types(self, factory):
-		"""Test creating LocEntity with all localization suffix types"""
+		"""Test creating LocStrings with all localization suffix types"""
 		localizations = [
 			Localization(
 				id=1,
@@ -58,7 +58,7 @@ class TestLocFactory:
 		assert loc_entity.texts['spell_dispell_header'] == 'Order Magic'
 
 	def test_create_with_partial_fields(self, factory):
-		"""Test creating LocEntity with only some localization fields"""
+		"""Test creating LocStrings with only some localization fields"""
 		localizations = [
 			Localization(
 				id=1,
@@ -88,7 +88,7 @@ class TestLocFactory:
 		assert loc_entity.texts['spell_titan_sword_hint'] == 'Summon the legendary Titan Sword'
 
 	def test_create_with_only_name(self, factory):
-		"""Test creating LocEntity with only name field"""
+		"""Test creating LocStrings with only name field"""
 		localizations = [
 			Localization(
 				id=1,
@@ -109,7 +109,7 @@ class TestLocFactory:
 		assert len(loc_entity.texts) == 1
 
 	def test_create_from_empty_list(self, factory):
-		"""Test creating LocEntity from empty list"""
+		"""Test creating LocStrings from empty list"""
 		localizations = []
 
 		loc_entity = factory.create_from_localizations(localizations)

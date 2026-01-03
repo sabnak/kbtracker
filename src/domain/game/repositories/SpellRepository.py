@@ -1,12 +1,37 @@
-from src.domain.game.entities.LocEntity import LocEntity
+import re
+
+from dependency_injector.wiring import Provide, inject
+
+from src.core.Container import Container
+from src.domain.game.entities.LocStrings import LocStrings
 from src.domain.game.entities.Spell import Spell
 from src.domain.game.entities.SpellSchool import SpellSchool
+from src.domain.game.ILocFactory import ILocFactory
+from src.domain.game.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.ISpellRepository import ISpellRepository
 from src.domain.game.repositories.CrudRepository import CrudRepository
 from src.domain.game.repositories.mappers.SpellMapper import SpellMapper
 
 
 class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
+
+	@inject
+	def __init__(
+		self,
+		loc_factory: ILocFactory = Provide[Container.loc_factory],
+		localization_repository: ILocalizationRepository = Provide[Container.localization_repository]
+	):
+		"""
+		Initialize spell repository
+
+		:param loc_factory:
+			Factory for creating LocStrings from localizations
+		:param localization_repository:
+			Repository for fetching localized text
+		"""
+		super().__init__()
+		self._loc_factory = loc_factory
+		self._localization_repository = localization_repository
 
 	def _entity_to_mapper(self, entity: Spell) -> SpellMapper:
 		"""
@@ -17,16 +42,6 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 		:return:
 			SpellMapper instance
 		"""
-		loc_dict = None
-		if entity.loc:
-			loc_dict = {
-				'name': entity.loc.name,
-				'hint': entity.loc.hint,
-				'desc': entity.loc.desc,
-				'header': entity.loc.header,
-				'texts': entity.loc.texts
-			}
-
 		return SpellMapper(
 			kb_id=entity.kb_id,
 			profit=entity.profit,
@@ -34,28 +49,21 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 			school=entity.school.value,
 			mana_cost=entity.mana_cost,
 			crystal_cost=entity.crystal_cost,
-			data=entity.data,
-			loc=loc_dict
+			data=entity.data
 		)
 
 	def _mapper_to_entity(self, mapper: SpellMapper) -> Spell:
 		"""
 		Convert SpellMapper to Spell entity
 
+		Fetches localizations from repository and creates LocStrings
+
 		:param mapper:
 			SpellMapper to convert
 		:return:
-			Spell entity
+			Spell entity with populated loc field
 		"""
-		loc = None
-		if mapper.loc:
-			loc = LocEntity(
-				name=mapper.loc.get('name'),
-				hint=mapper.loc.get('hint'),
-				desc=mapper.loc.get('desc'),
-				header=mapper.loc.get('header'),
-				texts=mapper.loc.get('texts')
-			)
+		loc = self._fetch_loc(mapper.kb_id)
 
 		return Spell(
 			id=mapper.id,
@@ -158,3 +166,27 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 
 			mappers = query.all()
 			return [self._mapper_to_entity(m) for m in mappers]
+
+	def _fetch_loc(self, kb_id: str) -> LocStrings | None:
+		"""
+		Fetch localizations for spell and create LocStrings
+
+		Pattern matches 'spell_{kb_id}_*' or exactly 'spell_{kb_id}'
+		to avoid matching spell_empathy2 when looking for spell_empathy
+
+		:param kb_id:
+			Spell kb_id
+		:return:
+			LocStrings or None if no localizations found
+		"""
+		all_localizations = self._localization_repository.list_all()
+		pattern = re.compile(rf'^spell_{re.escape(kb_id)}(?:_|$)')
+		spell_localizations = [
+			loc for loc in all_localizations
+			if pattern.match(loc.kb_id)
+		]
+
+		if not spell_localizations:
+			return None
+
+		return self._loc_factory.create_from_localizations(spell_localizations)

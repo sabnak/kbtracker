@@ -16,4 +16,3 @@ class SpellMapper(Base):
 	mana_cost = Column(ARRAY(Integer), nullable=True)
 	crystal_cost = Column(ARRAY(Integer), nullable=True)
 	data = Column(JSONB, nullable=False)
-	loc = Column(JSONB, nullable=True)
