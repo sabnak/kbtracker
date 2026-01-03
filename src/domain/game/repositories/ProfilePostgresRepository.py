@@ -17,6 +17,9 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 		"""
 		return ProfileMapper(
 			name=entity.name,
+			hash=entity.hash,
+			full_name=entity.full_name,
+			save_dir=entity.save_dir,
 			created_at=entity.created_at
 		)
 
@@ -83,5 +86,8 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 		return ProfileEntity(**{
 			"id": mapper.id,
 			"name": mapper.name,
+			"hash": mapper.hash,
+			"full_name": mapper.full_name,
+			"save_dir": mapper.save_dir,
 			"created_at": mapper.created_at
 		})

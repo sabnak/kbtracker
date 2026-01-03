@@ -12,6 +12,7 @@ from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
 from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.IProfileRepository import IProfileRepository
 from src.domain.game.IProfileService import IProfileService
+from src.domain.game.ISaveFileService import ISaveFileService
 from src.domain.game.ISpellRepository import ISpellRepository
 from src.domain.game.IUnitRepository import IUnitRepository
 
@@ -40,6 +41,7 @@ class Container(containers.DeclarativeContainer):
 	game_path_service = providers.AbstractFactory(IGamePathService)
 	game_service = providers.AbstractFactory(IGameService)
 	profile_service = providers.AbstractFactory(IProfileService)
+	save_file_service = providers.AbstractFactory(ISaveFileService)
 	scanner_service = providers.AbstractFactory()
 	item_service = providers.AbstractFactory()
 	localization_scanner_service = providers.AbstractFactory()
@@ -66,4 +68,4 @@ class Container(containers.DeclarativeContainer):
 	# Save file parsers
 	save_file_decompressor = providers.AbstractSingleton()
 	shop_inventory_parser = providers.AbstractSingleton()
-	campaign_identifier_parser = providers.AbstractSingleton()
+	hero_save_parser = providers.AbstractSingleton()

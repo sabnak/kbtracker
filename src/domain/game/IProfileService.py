@@ -6,12 +6,24 @@ from src.domain.game.entities.ProfileEntity import ProfileEntity
 class IProfileService(ABC):
 
 	@abstractmethod
-	def create_profile(self, name: str) -> ProfileEntity:
+	def create_profile(
+		self,
+		name: str,
+		hash: str | None = None,
+		full_name: str | None = None,
+		save_dir: str | None = None
+	) -> ProfileEntity:
 		"""
 		Create new game profile
 
 		:param name:
 			Profile name
+		:param hash:
+			Hash (MD5)
+		:param full_name:
+			Hero's full name from save file
+		:param save_dir:
+			Save directory name (timestamp)
 		:return:
 			Created profile
 		"""

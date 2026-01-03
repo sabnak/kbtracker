@@ -44,6 +44,9 @@ class SchemaManagementService(ISchemaManagementService):
 				CREATE TABLE {schema_name}.profile (
 					id SERIAL PRIMARY KEY,
 					name VARCHAR(255) NOT NULL,
+					hash VARCHAR(32),
+					full_name VARCHAR(255),
+					save_dir VARCHAR(255),
 					created_at TIMESTAMP DEFAULT NOW()
 				)
 			"""))

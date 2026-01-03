@@ -3,6 +3,8 @@ from dependency_injector.wiring import inject, Provide
 from src.web.api.models import AddShopToItemRequest, UpdateShopCountRequest
 from src.domain.game.services.ItemService import ItemService
 from src.domain.game.IProfileService import IProfileService
+from src.domain.game.ISaveFileService import ISaveFileService
+from src.domain.game.IGameService import IGameService
 from src.web.dependencies.game_context import get_game_context, GameContext
 from src.domain.game.repositories.CrudRepository import _game_context
 
@@ -256,3 +258,84 @@ async def get_shops_grouped_by_location(
 		})
 
 	return result
+
+
+@router.get("/games/{game_id}/save-directories")
+@inject
+async def list_save_directories(
+	game_id: int,
+	game_context: GameContext = Depends(get_game_context),
+	save_file_service: ISaveFileService = Depends(Provide["save_file_service"]),
+	game_service: IGameService = Depends(Provide["game_service"])
+):
+	"""
+	List available save directories for a game
+
+	:param game_id:
+		Game ID
+	:param game_context:
+		Game context
+	:param save_file_service:
+		Save file service
+	:param game_service:
+		Game service
+	:return:
+		Save directories grouped by game name
+	"""
+	_game_context.set(game_context)
+
+	game = game_service.get_game(game_id)
+	if not game:
+		raise HTTPException(status_code=404, detail="Game not found")
+
+	try:
+		save_dirs = save_file_service.list_save_directories(game.path, limit=100)
+		return save_dirs
+	except Exception as e:
+		raise HTTPException(status_code=500, detail=f"Failed to list saves: {str(e)}")
+
+
+@router.post("/games/{game_id}/scan-save")
+@inject
+async def scan_save_file(
+	game_id: int,
+	request_data: dict,
+	game_context: GameContext = Depends(get_game_context),
+	save_file_service: ISaveFileService = Depends(Provide["save_file_service"]),
+	game_service: IGameService = Depends(Provide["game_service"])
+):
+	"""
+	Scan a save file and extract campaign data
+
+	:param game_id:
+		Game ID
+	:param request_data:
+		Request data with save_dir key
+	:param game_context:
+		Game context
+	:param save_file_service:
+		Save file service
+	:param game_service:
+		Game service
+	:return:
+		Campaign data
+	"""
+	_game_context.set(game_context)
+
+	game = game_service.get_game(game_id)
+	if not game:
+		raise HTTPException(status_code=404, detail="Game not found")
+
+	save_dir = request_data.get("save_dir")
+	if not save_dir:
+		raise HTTPException(status_code=400, detail="save_dir is required")
+
+	try:
+		campaign_data = save_file_service.scan_save_file(game.path, save_dir)
+		return campaign_data
+	except FileNotFoundError as e:
+		raise HTTPException(status_code=404, detail=str(e))
+	except ValueError as e:
+		raise HTTPException(status_code=400, detail=str(e))
+	except Exception as e:
+		raise HTTPException(status_code=500, detail=f"Scan failed: {str(e)}")

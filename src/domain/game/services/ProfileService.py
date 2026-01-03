@@ -1,4 +1,5 @@
 from datetime import datetime
+import hashlib
 
 from dependency_injector.wiring import Provide
 
@@ -13,21 +14,51 @@ class ProfileService(IProfileService):
 	def __init__(self, profile_repository: IProfileRepository = Provide[Container.profile_repository]):
 		self._profile_repository = profile_repository
 
-	def create_profile(self, name: str) -> ProfileEntity:
+	def create_profile(
+		self,
+		name: str,
+		hash: str | None = None,
+		full_name: str | None = None,
+		save_dir: str | None = None
+	) -> ProfileEntity:
 		"""
 		Create new game profile
 
 		:param name:
 			Profile name
+		:param hash:
+			Hash (computed if full_name provided)
+		:param full_name:
+			Hero's full name from save file
+		:param save_dir:
+			Save directory name (timestamp)
 		:return:
 			Created profile
 		"""
+		# Compute hash from full_name if not provided
+		if full_name and not hash:
+			hash = self._compute_hash(full_name)
+
 		profile = ProfileEntity(
 			id=0,
 			name=name,
+			hash=hash,
+			full_name=full_name,
+			save_dir=save_dir,
 			created_at=datetime.now()
 		)
 		return self._profile_repository.create(profile)
+
+	def _compute_hash(self, full_name: str) -> str:
+		"""
+		Compute hash from hero full name
+
+		:param full_name:
+			Hero's full name
+		:return:
+			Hash as MD5 hex string
+		"""
+		return hashlib.md5(full_name.encode('utf-8')).hexdigest()
 
 	def list_profiles(self) -> list[ProfileEntity]:
 		"""

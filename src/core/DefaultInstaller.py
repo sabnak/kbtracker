@@ -36,10 +36,11 @@ from src.domain.game.services.UnitsScannerService import UnitsScannerService
 from src.domain.game.services.LocationsAndShopsScannerService import LocationsAndShopsScannerService
 from src.domain.game.repositories.ProfilePostgresRepository import ProfilePostgresRepository
 from src.domain.game.services.ProfileService import ProfileService
+from src.domain.game.services.SaveFileService import SaveFileService
 from src.utils.db import create_db_engine
 from src.utils.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
 from src.utils.parsers.save_data.ShopInventoryParser import ShopInventoryParser
-from src.utils.parsers.save_data.CampaignIdentifierParser import CampaignIdentifierParser
+from src.utils.parsers.save_data.HeroSaveParser import HeroSaveParser
 
 
 class DefaultInstaller:
@@ -78,6 +79,10 @@ class DefaultInstaller:
 
 		self._container.profile_service.override(
 			providers.Factory(ProfileService)
+		)
+
+		self._container.save_file_service.override(
+			providers.Factory(SaveFileService)
 		)
 
 		self._container.scanner_service.override(
@@ -151,8 +156,8 @@ class DefaultInstaller:
 		self._container.shop_inventory_parser.override(
 			providers.Singleton(ShopInventoryParser)
 		)
-		self._container.campaign_identifier_parser.override(
-			providers.Singleton(CampaignIdentifierParser)
+		self._container.hero_save_parser.override(
+			providers.Singleton(HeroSaveParser)
 		)
 
 	def _install_repositories(self):

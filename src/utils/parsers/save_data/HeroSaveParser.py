@@ -1,14 +1,13 @@
 from pathlib import Path
-import hashlib
 
 from dependency_injector.wiring import inject, Provide
 
 from src.core.Container import Container
-from src.utils.parsers.save_data.ICampaignIdentifierParser import ICampaignIdentifierParser
+from src.utils.parsers.save_data.IHeroSaveParser import IHeroSaveParser
 from src.utils.parsers.save_data.ISaveFileDecompressor import ISaveFileDecompressor
 
 
-class CampaignIdentifierParser(ICampaignIdentifierParser):
+class HeroSaveParser(IHeroSaveParser):
 
 	EXCLUDED_KEYWORDS: set[str] = {
 		'crap', 'flags', 'clouds', 'hero', 'nickname',
@@ -22,7 +21,7 @@ class CampaignIdentifierParser(ICampaignIdentifierParser):
 		decompressor: ISaveFileDecompressor = Provide[Container.save_file_decompressor]
 	):
 		"""
-		Initialize campaign identifier parser
+		Initialize hero save parser
 
 		:param decompressor:
 			Save file decompressor
@@ -31,15 +30,14 @@ class CampaignIdentifierParser(ICampaignIdentifierParser):
 
 	def parse(self, save_path: Path) -> dict[str, str]:
 		"""
-		Extract campaign identifier from save file
+		Extract hero names from save file
 
-		Scans decompressed save data for hero character names and generates
-		a unique campaign ID via MD5 hash.
+		Scans decompressed save data for hero character names.
 
 		:param save_path:
 			Path to save 'data' file
 		:return:
-			Dictionary with campaign_id, first_name, second_name, full_name
+			Dictionary with first_name and second_name
 		:raises ValueError:
 			If save file is invalid
 		:raises FileNotFoundError:
@@ -47,13 +45,10 @@ class CampaignIdentifierParser(ICampaignIdentifierParser):
 		"""
 		data = self._decompressor.decompress(save_path)
 		first_name, second_name = self._extract_hero_names(data)
-		campaign_id = self._compute_campaign_id(first_name, second_name)
 
 		return {
-			'campaign_id': campaign_id,
 			'first_name': first_name,
-			'second_name': second_name,
-			'full_name': f"{first_name} {second_name}".strip()
+			'second_name': second_name
 		}
 
 	def _extract_hero_names(self, data: bytes) -> tuple[str, str]:
@@ -131,17 +126,3 @@ class CampaignIdentifierParser(ICampaignIdentifierParser):
 				return ""
 
 		return ""
-
-	def _compute_campaign_id(self, first_name: str, second_name: str) -> str:
-		"""
-		Compute campaign identifier from hero names
-
-		:param first_name:
-			Hero's first name
-		:param second_name:
-			Hero's second name
-		:return:
-			Campaign ID as hex string
-		"""
-		combined = f"{first_name}|{second_name}"
-		return hashlib.md5(combined.encode('utf-8')).hexdigest()

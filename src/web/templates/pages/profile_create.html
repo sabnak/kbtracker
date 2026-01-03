@@ -4,12 +4,38 @@
 
 {% block content %}
 <div class="row justify-content-center">
-	<div class="col-md-6">
+	<div class="col-md-8" data-game-id="{{ game.id }}">
 		<h1 class="mb-4">Create New Profile</h1>
 
 		<div class="card">
 			<div class="card-body">
+				<!-- Save File Selection Section -->
+				<div class="mb-4">
+					<h5 class="card-title">1. Select Save File</h5>
+					<div class="row g-3">
+						<div class="col-md-8">
+							<label for="save-select" class="form-label">Save Directory</label>
+							<select id="save-select" class="form-select">
+								<option value="">-- Select a save file --</option>
+							</select>
+							<div class="form-text">Select a save file to auto-populate campaign data</div>
+						</div>
+						<div class="col-md-4">
+							<label class="form-label">&nbsp;</label>
+							<button type="button" id="scan-button" class="btn btn-primary w-100 d-block" disabled>
+								Scan Save File
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Scan Results -->
+				<div id="scan-results" class="mb-4" style="display: none;"></div>
+
+				<!-- Profile Form -->
 				<form method="POST" action="/games/{{ game.id }}/profiles">
+					<h5 class="card-title mb-3">2. Profile Information</h5>
+
 					<div class="mb-3">
 						<label for="game" class="form-label">Game</label>
 						<input type="text" class="form-control" id="game" value="{{ game.name }} ({{ game.path }})" readonly>
@@ -22,13 +48,25 @@
 						<div class="form-text">A friendly name for this game playthrough</div>
 					</div>
 
+					<!-- Hidden fields for campaign data -->
+					<input type="hidden" id="full-name" name="full_name">
+					<input type="hidden" id="save-dir" name="save_dir">
+
 					<div class="d-grid gap-2">
-						<button type="submit" class="btn btn-primary">Create Profile</button>
-						<a href="/games/{{ game.id }}/items" class="btn btn-secondary">Cancel</a>
+						<span id="create-profile-wrapper" class="d-inline-block w-100"
+						      data-bs-toggle="tooltip" data-bs-placement="top"
+						      title="Please scan a save file first">
+							<button type="submit" id="create-profile-button" class="btn btn-success w-100" disabled>Create Profile</button>
+						</span>
+						<a href="/games/{{ game.id }}/profiles" class="btn btn-secondary">Cancel</a>
 					</div>
 				</form>
 			</div>
 		</div>
 	</div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/profile-save-scanner.js"></script>
 {% endblock %}

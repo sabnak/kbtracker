@@ -11,6 +11,9 @@ class ProfileMapper(Base):
 
 	id = Column(Integer, primary_key=True, autoincrement=True)
 	name = Column(String, nullable=False)
+	hash = Column(String(32), nullable=True)
+	full_name = Column(String(255), nullable=True)
+	save_dir = Column(String(255), nullable=True)
 	created_at = Column(DateTime, nullable=False, default=datetime.now())
 
 	shop_items = relationship("ShopHasItemMapper", back_populates="profile")
