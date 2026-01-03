@@ -55,13 +55,22 @@ class ISpellRepository(ABC):
 		pass
 
 	@abstractmethod
-	def list_all(self, school: SpellSchool | None = None) -> list[Spell]:
+	def list_all(
+		self,
+		school: SpellSchool | None = None,
+		sort_by: str = "name",
+		sort_order: str = "asc"
+	) -> list[Spell]:
 		"""
 		Get all spells, optionally filtered by school
 
 		:param school:
 			Optional spell school filter
+		:param sort_by:
+			Field to sort by (name, school, mana, crystal)
+		:param sort_order:
+			Sort direction (asc, desc)
 		:return:
-			List of all spells (filtered if school provided)
+			List of all spells (filtered and sorted)
 		"""
 		pass

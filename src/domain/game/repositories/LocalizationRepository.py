@@ -132,6 +132,28 @@ class LocalizationRepository(
 			).all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
+	def search_by_kb_id(self, pattern: str, use_regex: bool = False) -> list[Localization]:
+		"""
+		Search localizations by kb_id pattern using LIKE or regex
+
+		:param pattern:
+			kb_id pattern to search for (use % for LIKE wildcards, or regex pattern)
+		:param use_regex:
+			If True, use PostgreSQL regex matching (~), otherwise use LIKE
+		:return:
+			List of matching localizations
+		"""
+		with self._get_session() as session:
+			if use_regex:
+				mappers = session.query(LocalizationMapper).filter(
+					LocalizationMapper.kb_id.op('~')(pattern)
+				).all()
+			else:
+				mappers = session.query(LocalizationMapper).filter(
+					LocalizationMapper.kb_id.like(pattern)
+				).all()
+			return [self._mapper_to_entity(m) for m in mappers]
+
 	def list_all(self, tag: str | None = None) -> list[Localization]:
 		"""
 		Get all localization entries

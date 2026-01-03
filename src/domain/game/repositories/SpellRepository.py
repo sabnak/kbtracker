@@ -1,5 +1,3 @@
-import re
-
 from dependency_injector.wiring import Provide, inject
 
 from src.core.Container import Container
@@ -151,14 +149,23 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 			).first()
 			return self._mapper_to_entity(mapper) if mapper else None
 
-	def list_all(self, school: SpellSchool | None = None) -> list[Spell]:
+	def list_all(
+		self,
+		school: SpellSchool | None = None,
+		sort_by: str = "name",
+		sort_order: str = "asc"
+	) -> list[Spell]:
 		"""
 		Get all spells, optionally filtered by school
 
 		:param school:
 			Optional spell school filter
+		:param sort_by:
+			Field to sort by (name, school, mana, crystal)
+		:param sort_order:
+			Sort direction (asc, desc)
 		:return:
-			List of all spells (filtered if school provided)
+			List of all spells (filtered and sorted)
 		"""
 		with self._get_session() as session:
 			query = session.query(SpellMapper)
@@ -166,27 +173,68 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 			if school:
 				query = query.filter(SpellMapper.school == school.value)
 
+			# For name sorting, we need to sort by loc.name which is fetched separately
+			# So we skip database sorting and sort in Python after fetching loc
+			if sort_by != "name":
+				query = self._apply_sorting(query, sort_by, sort_order)
+
 			mappers = query.all()
-			return [self._mapper_to_entity(m) for m in mappers]
+			spells = [self._mapper_to_entity(m) for m in mappers]
+
+			# Sort by localized name in Python if requested
+			if sort_by == "name":
+				spells.sort(
+					key=lambda s: (s.loc.name.lower() if s.loc and s.loc.name else ""),
+					reverse=(sort_order.lower() == "desc")
+				)
+
+			return spells
+
+	def _apply_sorting(self, query, sort_by: str, sort_order: str):
+		"""
+		Apply ORDER BY clause to query
+
+		:param query:
+			SQLAlchemy query
+		:param sort_by:
+			Field to sort by
+		:param sort_order:
+			Sort direction (asc, desc)
+		:return:
+			Query with ORDER BY applied
+		"""
+		from sqlalchemy import desc, asc
+
+		# Map sort fields to database columns
+		# For arrays, use [1] to get first element (PostgreSQL arrays are 1-indexed)
+		sort_column_map = {
+			"name": SpellMapper.kb_id,
+			"school": SpellMapper.school,
+			"mana": SpellMapper.mana_cost[1],
+			"crystal": SpellMapper.crystal_cost[1]
+		}
+
+		sort_column = sort_column_map.get(sort_by, SpellMapper.kb_id)
+
+		if sort_order.lower() == "desc":
+			return query.order_by(desc(sort_column))
+		else:
+			return query.order_by(asc(sort_column))
 
 	def _fetch_loc(self, kb_id: str) -> LocStrings | None:
 		"""
 		Fetch localizations for spell and create LocStrings
 
-		Pattern matches 'spell_{kb_id}_*' or exactly 'spell_{kb_id}'
-		to avoid matching spell_empathy2 when looking for spell_empathy
+		Pattern matches 'spell_{kb_id}_%' with escaped underscores
+		This ensures we match spell_empathy_name but not spell_empathy2_name
 
 		:param kb_id:
 			Spell kb_id
 		:return:
 			LocStrings or None if no localizations found
 		"""
-		all_localizations = self._localization_repository.list_all()
-		pattern = re.compile(rf'^spell_{re.escape(kb_id)}(?:_|$)')
-		spell_localizations = [
-			loc for loc in all_localizations
-			if pattern.match(loc.kb_id)
-		]
+		pattern = f"spell\\_{kb_id}\\_%"
+		spell_localizations = self._localization_repository.search_by_kb_id(pattern, use_regex=False)
 
 		if not spell_localizations:
 			return None

@@ -11,6 +11,7 @@ from src.domain.exceptions import DuplicateEntityException, DatabaseOperationExc
 from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameService import IGameService
 from src.domain.game.IProfileService import IProfileService
+from src.domain.game.ISpellRepository import ISpellRepository
 from src.domain.game.IUnitRepository import IUnitRepository
 from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.events.ScanEventType import ScanEventType
@@ -436,6 +437,54 @@ async def list_units(
 			"request": request,
 			"game": game,
 			"units": units,
+			"sort_by": sort_field,
+			"sort_order": sort_direction
+		}
+	)
+
+
+@router.get("/games/{game_id}/spells", response_class=HTMLResponse)
+@inject
+async def list_spells(
+	request: Request,
+	game_id: int,
+	sort_by: str = Query(default="name"),
+	sort_order: str = Query(default="asc"),
+	game_context: GameContext = Depends(get_game_context),
+	spell_repository: ISpellRepository = Depends(Provide["spell_repository"]),
+	game_service: IGameService = Depends(Provide["game_service"])
+):
+	"""
+	List all spells for a game (excluding hidden spells)
+	"""
+	_game_context.set(game_context)
+
+	game = game_service.get_game(game_id)
+	if not game:
+		return RedirectResponse(url="/games", status_code=303)
+
+	# Validate sort parameters
+	allowed_sort_fields = ["name", "school", "mana", "crystal"]
+	sort_field = sort_by if sort_by in allowed_sort_fields else "name"
+
+	allowed_sort_orders = ["asc", "desc"]
+	sort_direction = sort_order.lower() if sort_order.lower() in allowed_sort_orders else "asc"
+
+	# Fetch all spells with sorting
+	all_spells = spell_repository.list_all(
+		sort_by=sort_field,
+		sort_order=sort_direction
+	)
+
+	# Filter hidden spells
+	spells = [spell for spell in all_spells if spell.hide == 0]
+
+	return templates.TemplateResponse(
+		"pages/spells.html",
+		{
+			"request": request,
+			"game": game,
+			"spells": spells,
 			"sort_by": sort_field,
 			"sort_order": sort_direction
 		}
