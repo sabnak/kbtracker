@@ -163,6 +163,96 @@ While items use `itm_` prefix, other entities have their own:
 - Units: Variable patterns based on game version
 - Quests: Variable patterns based on game version
 
+## LocStrings Pattern
+
+### Overview
+
+`LocStrings` is an entity pattern used to group common localization fields for game entities. Instead of storing localization data redundantly in entity tables, the application fetches and maps localizations dynamically using this pattern.
+
+### Entity Structure
+
+**Entity**: `LocStrings`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | String \| None | Display name (from `*_name` suffix) |
+| `hint` | String \| None | Mouse-over hint (from `*_hint` suffix) |
+| `desc` | String \| None | Description (from `*_desc` suffix) |
+| `header` | String \| None | Category/header (from `*_header` suffix) |
+| `texts` | dict \| None | All localization strings as kb_id → text mapping |
+
+### Suffix Mapping
+
+LocStrings maps localization entries based on suffix patterns:
+
+| Suffix | Maps To | Example kb_id |
+|--------|---------|---------------|
+| `_name` | `name` | `spell_dispell_name` |
+| `_hint` | `hint` | `spell_dispell_hint` |
+| `_desc` | `desc` | `spell_dispell_desc` |
+| `_header` | `header` | `spell_dispell_header` |
+| (other) | `texts` | `spell_dispell_custom_field` |
+
+### Usage Example
+
+**Fetch Pattern**: For a spell with kb_id `dispell`, fetch all localizations matching pattern `spell_dispell*`
+
+**Localization Entries**:
+```
+spell_dispell_name=Dispel
+spell_dispell_hint=Removes all effects from target unit
+spell_dispell_desc=This spell removes all magical effects
+spell_dispell_header=Order Magic
+```
+
+**Resulting LocStrings**:
+```python
+LocStrings(
+    name='Dispel',
+    hint='Removes all effects from target unit',
+    desc='This spell removes all magical effects',
+    header='Order Magic',
+    texts={
+        'spell_dispell_name': 'Dispel',
+        'spell_dispell_hint': 'Removes all effects from target unit',
+        'spell_dispell_desc': 'This spell removes all magical effects',
+        'spell_dispell_header': 'Order Magic'
+    }
+)
+```
+
+### Validation Rules
+
+**Duplicate Suffix Detection**: LocFactory raises an exception if multiple entries with the same suffix type are found:
+
+```python
+# INVALID: Two _name suffixes
+spell_dispell_name=Dispel
+spell_another_dispell_name=Another Dispel
+# Exception: Duplicate _name suffix found
+```
+
+### Integration Pattern
+
+Repositories use LocStrings to enrich entities on retrieval:
+
+```python
+# SpellRepository._mapper_to_entity()
+loc = self._fetch_loc(mapper.kb_id)  # Returns LocStrings or None
+
+return Spell(
+    id=mapper.id,
+    kb_id=mapper.kb_id,
+    # ... other fields ...
+    loc=loc  # LocStrings populated from localization table
+)
+```
+
+**Benefits**:
+- No localization data duplication in entity tables
+- Localizations fetched dynamically from single source of truth
+- Easy to add new localization types without schema changes
+
 ## Querying Localization
 
 ### Finding Localization for Specific Entity

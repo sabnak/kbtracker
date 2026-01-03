@@ -55,6 +55,20 @@ Detailed guide for unit (creature) resources. Covers:
 
 **Use this when**: You need to extract or work with game units, creatures, combat statistics, or unit abilities.
 
+### [spells.md](spells.md)
+Detailed guide for spell resources. Covers:
+- Database structure (`spell` table)
+- Spell schools (Order, Chaos, Distortion, Mind, Wandering)
+- Battle spells vs wandering spells
+- Archive locations (`spells.txt`, `spells_adventure.txt`)
+- Atom file format and levels block
+- Mana cost and crystal cost arrays
+- JSONB storage for spell configuration
+- LocStrings integration (dynamic localization fetching)
+- SQL query examples with JSONB operators
+
+**Use this when**: You need to extract or work with game spells, magic abilities, spell costs, or spell configurations.
+
 ### [save-extractor/](save-extractor/)
 Save file extractor tool documentation. Contains complete guide for extracting shop inventory data from King's Bounty save files:
 - **README.md**: Complete documentation with usage, technical details, troubleshooting
@@ -100,6 +114,7 @@ Universal parser for King's Bounty `.atom` file format. Covers:
 | Localization | `loc_*.kfs` | `localization` | [localization.md](localization.md) |
 | Items | `ses.kfs` | `item`, `item_set` | [items.md](items.md) |
 | Units | `data.kfs` | `unit` | [units.md](units.md) |
+| Spells | `ses.kfs` | `spell` | [spells.md](spells.md) |
 | Atom Format Parser | `.atom`, `.txt` (atom format) | - | [atom-parser.md](atom-parser.md) |
 | Save Shops | Save file `data` | - | [save-extractor/](save-extractor/) |
 | Campaign ID | Save file `data` | - | [campaign-identifier.md](campaign-identifier.md) |
