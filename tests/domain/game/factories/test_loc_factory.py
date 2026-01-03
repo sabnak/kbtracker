@@ -50,12 +50,6 @@ class TestLocFactory:
 		assert loc_entity.hint == 'Removes all effects from target unit'
 		assert loc_entity.desc == 'This spell removes all magical effects'
 		assert loc_entity.header == 'Order Magic'
-		assert isinstance(loc_entity.texts, dict)
-		assert len(loc_entity.texts) == 4
-		assert loc_entity.texts['spell_dispell_name'] == 'Dispel'
-		assert loc_entity.texts['spell_dispell_hint'] == 'Removes all effects from target unit'
-		assert loc_entity.texts['spell_dispell_desc'] == 'This spell removes all magical effects'
-		assert loc_entity.texts['spell_dispell_header'] == 'Order Magic'
 
 	def test_create_with_partial_fields(self, factory):
 		"""Test creating LocStrings with only some localization fields"""
@@ -82,10 +76,6 @@ class TestLocFactory:
 		assert loc_entity.hint == 'Summon the legendary Titan Sword'
 		assert loc_entity.desc is None
 		assert loc_entity.header is None
-		assert isinstance(loc_entity.texts, dict)
-		assert len(loc_entity.texts) == 2
-		assert loc_entity.texts['spell_titan_sword_name'] == 'Titan Sword'
-		assert loc_entity.texts['spell_titan_sword_hint'] == 'Summon the legendary Titan Sword'
 
 	def test_create_with_only_name(self, factory):
 		"""Test creating LocStrings with only name field"""
@@ -105,8 +95,6 @@ class TestLocFactory:
 		assert loc_entity.hint is None
 		assert loc_entity.desc is None
 		assert loc_entity.header is None
-		assert isinstance(loc_entity.texts, dict)
-		assert len(loc_entity.texts) == 1
 
 	def test_create_from_empty_list(self, factory):
 		"""Test creating LocStrings from empty list"""
@@ -118,7 +106,6 @@ class TestLocFactory:
 		assert loc_entity.hint is None
 		assert loc_entity.desc is None
 		assert loc_entity.header is None
-		assert loc_entity.texts is None
 
 	def test_exception_on_duplicate_name_suffix(self, factory):
 		"""Test that exception is raised when duplicate _name suffix is found"""
@@ -216,8 +203,8 @@ class TestLocFactory:
 
 		assert 'Duplicate _header suffix found' in str(exc_info.value)
 
-	def test_non_matching_suffixes_preserved_in_texts(self, factory):
-		"""Test that localizations without standard suffixes are preserved in texts"""
+	def test_non_matching_suffixes_dropped_silently(self, factory):
+		"""Test that localizations without standard suffixes are dropped silently"""
 		localizations = [
 			Localization(
 				id=1,
@@ -247,10 +234,10 @@ class TestLocFactory:
 		assert loc_entity.name == 'Dispel'
 		assert loc_entity.hint is None
 		assert loc_entity.desc is None
+		assert loc_entity.desc_list is None
+		assert loc_entity.text is None
+		assert loc_entity.text_list is None
 		assert loc_entity.header is None
-		assert len(loc_entity.texts) == 3
-		assert loc_entity.texts['spell_dispell_custom_field'] == 'Custom field value'
-		assert loc_entity.texts['spell_dispell_another_custom'] == 'Another custom value'
 
 	def test_mixed_prefixes_all_fields_mapped(self, factory):
 		"""Test that different prefixes are handled correctly"""
@@ -292,4 +279,289 @@ class TestLocFactory:
 		assert loc_entity.hint == 'Ice hint'
 		assert loc_entity.desc == 'Water description'
 		assert loc_entity.header == 'Earth header'
-		assert len(loc_entity.texts) == 4
+
+	def test_exact_desc_only(self, factory):
+		"""Test exact _desc suffix without indexed variants"""
+		localizations = [
+			Localization(
+				id=1,
+				kb_id='spell_test_name',
+				text='Test Spell',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=2,
+				kb_id='spell_test_desc',
+				text='Exact description',
+				source='spells',
+				tag='spells'
+			)
+		]
+
+		loc_entity = factory.create_from_localizations(localizations)
+
+		assert loc_entity.name == 'Test Spell'
+		assert loc_entity.desc == 'Exact description'
+		assert loc_entity.desc_list is None
+
+	def test_indexed_desc_only(self, factory):
+		"""Test indexed _desc_N suffixes without exact _desc"""
+		localizations = [
+			Localization(
+				id=1,
+				kb_id='spell_test_name',
+				text='Test Spell',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=2,
+				kb_id='spell_test_desc_1',
+				text='First description',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=3,
+				kb_id='spell_test_desc_2',
+				text='Second description',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=4,
+				kb_id='spell_test_desc_3',
+				text='Third description',
+				source='spells',
+				tag='spells'
+			)
+		]
+
+		loc_entity = factory.create_from_localizations(localizations)
+
+		assert loc_entity.name == 'Test Spell'
+		assert loc_entity.desc is None
+		assert loc_entity.desc_list == ['First description', 'Second description', 'Third description']
+		assert len(loc_entity.desc_list) == 3
+
+	def test_both_exact_and_indexed_desc(self, factory):
+		"""Test coexistence of exact _desc and indexed _desc_N"""
+		localizations = [
+			Localization(
+				id=1,
+				kb_id='spell_test_name',
+				text='Test Spell',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=2,
+				kb_id='spell_test_desc',
+				text='Exact description',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=3,
+				kb_id='spell_test_desc_1',
+				text='Additional info 1',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=4,
+				kb_id='spell_test_desc_2',
+				text='Additional info 2',
+				source='spells',
+				tag='spells'
+			)
+		]
+
+		loc_entity = factory.create_from_localizations(localizations)
+
+		assert loc_entity.name == 'Test Spell'
+		assert loc_entity.desc == 'Exact description'
+		assert loc_entity.desc_list == ['Additional info 1', 'Additional info 2']
+
+	def test_exact_text_only(self, factory):
+		"""Test exact _text suffix without indexed variants"""
+		localizations = [
+			Localization(
+				id=1,
+				kb_id='spell_test_name',
+				text='Test Spell',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=2,
+				kb_id='spell_test_text',
+				text='Exact text',
+				source='spells',
+				tag='spells'
+			)
+		]
+
+		loc_entity = factory.create_from_localizations(localizations)
+
+		assert loc_entity.name == 'Test Spell'
+		assert loc_entity.text == 'Exact text'
+		assert loc_entity.text_list is None
+
+	def test_indexed_text_only(self, factory):
+		"""Test indexed _text_N suffixes without exact _text"""
+		localizations = [
+			Localization(
+				id=1,
+				kb_id='spell_test_name',
+				text='Test Spell',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=2,
+				kb_id='spell_test_text_1',
+				text='First text',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=3,
+				kb_id='spell_test_text_2',
+				text='Second text',
+				source='spells',
+				tag='spells'
+			)
+		]
+
+		loc_entity = factory.create_from_localizations(localizations)
+
+		assert loc_entity.name == 'Test Spell'
+		assert loc_entity.text is None
+		assert loc_entity.text_list == ['First text', 'Second text']
+
+	def test_both_exact_and_indexed_text(self, factory):
+		"""Test coexistence of exact _text and indexed _text_N"""
+		localizations = [
+			Localization(
+				id=1,
+				kb_id='spell_test_name',
+				text='Test Spell',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=2,
+				kb_id='spell_test_text',
+				text='Main text',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=3,
+				kb_id='spell_test_text_1',
+				text='Additional text 1',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=4,
+				kb_id='spell_test_text_2',
+				text='Additional text 2',
+				source='spells',
+				tag='spells'
+			)
+		]
+
+		loc_entity = factory.create_from_localizations(localizations)
+
+		assert loc_entity.name == 'Test Spell'
+		assert loc_entity.text == 'Main text'
+		assert loc_entity.text_list == ['Additional text 1', 'Additional text 2']
+
+	def test_insertion_order_preserved(self, factory):
+		"""Test that indexed lists preserve insertion order, not numeric order"""
+		localizations = [
+			Localization(
+				id=1,
+				kb_id='spell_test_name',
+				text='Test Spell',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=2,
+				kb_id='spell_test_desc_3',
+				text='Third',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=3,
+				kb_id='spell_test_desc_1',
+				text='First',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=4,
+				kb_id='spell_test_desc_2',
+				text='Second',
+				source='spells',
+				tag='spells'
+			)
+		]
+
+		loc_entity = factory.create_from_localizations(localizations)
+
+		# Should preserve insertion order: 3, 1, 2
+		assert loc_entity.desc_list == ['Third', 'First', 'Second']
+
+	def test_exception_on_duplicate_text_suffix(self, factory):
+		"""Test that exception is raised when duplicate _text suffix is found"""
+		localizations = [
+			Localization(
+				id=1,
+				kb_id='spell_test_text',
+				text='First text',
+				source='spells',
+				tag='spells'
+			),
+			Localization(
+				id=2,
+				kb_id='spell_another_text',
+				text='Second text',
+				source='spells',
+				tag='spells'
+			)
+		]
+
+		with pytest.raises(Exception) as exc_info:
+			factory.create_from_localizations(localizations)
+
+		assert 'Duplicate _text suffix found' in str(exc_info.value)
+
+	def test_all_new_fields_together(self, factory):
+		"""Test all field types including new text and indexed variants"""
+		localizations = [
+			Localization(id=1, kb_id='spell_test_name', text='Test Spell', source='spells', tag='spells'),
+			Localization(id=2, kb_id='spell_test_hint', text='Hint text', source='spells', tag='spells'),
+			Localization(id=3, kb_id='spell_test_desc', text='Main desc', source='spells', tag='spells'),
+			Localization(id=4, kb_id='spell_test_desc_1', text='Desc 1', source='spells', tag='spells'),
+			Localization(id=5, kb_id='spell_test_desc_2', text='Desc 2', source='spells', tag='spells'),
+			Localization(id=6, kb_id='spell_test_text', text='Main text', source='spells', tag='spells'),
+			Localization(id=7, kb_id='spell_test_text_1', text='Text 1', source='spells', tag='spells'),
+			Localization(id=8, kb_id='spell_test_text_2', text='Text 2', source='spells', tag='spells'),
+			Localization(id=9, kb_id='spell_test_header', text='Header', source='spells', tag='spells')
+		]
+
+		loc_entity = factory.create_from_localizations(localizations)
+
+		assert loc_entity.name == 'Test Spell'
+		assert loc_entity.hint == 'Hint text'
+		assert loc_entity.desc == 'Main desc'
+		assert loc_entity.desc_list == ['Desc 1', 'Desc 2']
+		assert loc_entity.text == 'Main text'
+		assert loc_entity.text_list == ['Text 1', 'Text 2']
+		assert loc_entity.header == 'Header'

@@ -1,3 +1,5 @@
+import re
+
 from src.domain.game.entities.LocStrings import LocStrings
 from src.domain.game.entities.Localization import Localization
 from src.domain.game.ILocFactory import ILocFactory
@@ -5,55 +7,83 @@ from src.domain.game.ILocFactory import ILocFactory
 
 class LocFactory(ILocFactory):
 
+	_EXACT_NAME = re.compile(r'_name$')
+	_EXACT_HINT = re.compile(r'_hint$')
+	_EXACT_DESC = re.compile(r'_desc$')
+	_EXACT_TEXT = re.compile(r'_text$')
+	_EXACT_HEADER = re.compile(r'_header$')
+	_INDEXED_DESC = re.compile(r'_desc_(\d+)$')
+	_INDEXED_TEXT = re.compile(r'_text_(\d+)$')
+
 	def create_from_localizations(self, localizations: list[Localization]) -> LocStrings:
 		"""
 		Create LocStrings from list of Localization entities
 
 		Maps localization kb_id suffixes to LocStrings fields:
-		- *_name -> name
-		- *_hint -> hint
-		- *_desc -> desc
-		- *_header -> header
-		All localizations stored in texts dict
+		- *_name -> name (exact match, no duplicates)
+		- *_hint -> hint (exact match, no duplicates)
+		- *_desc (exact) -> desc (no duplicates)
+		- *_desc_\d+ (indexed) -> desc_list (allows multiple)
+		- *_text (exact) -> text (no duplicates)
+		- *_text_\d+ (indexed) -> text_list (allows multiple)
+		- *_header -> header (exact match, no duplicates)
+		Non-matching suffixes are dropped silently
 
 		:param localizations:
-			List of Localization entities for a spell
+			List of Localization entities
 		:return:
 			LocStrings with mapped fields
 		:raises Exception:
-			If duplicate suffix types found (e.g., two _name entries)
+			If duplicate exact suffix types found (e.g., two _name entries)
 		"""
 		name = None
 		hint = None
 		desc = None
+		desc_list = []
+		text = None
+		text_list = []
 		header = None
-		texts = {}
 
 		name_count = 0
 		hint_count = 0
 		desc_count = 0
+		text_count = 0
 		header_count = 0
 
 		for loc in localizations:
 			kb_id = loc.kb_id
-			texts[kb_id] = loc.text
 
-			if kb_id.endswith('_name'):
+			if self._EXACT_NAME.search(kb_id):
 				name_count += 1
 				if name_count > 1:
 					raise Exception(f"Duplicate _name suffix found in localizations: {kb_id}")
 				name = loc.text
-			elif kb_id.endswith('_hint'):
+
+			elif self._EXACT_HINT.search(kb_id):
 				hint_count += 1
 				if hint_count > 1:
 					raise Exception(f"Duplicate _hint suffix found in localizations: {kb_id}")
 				hint = loc.text
-			elif kb_id.endswith('_desc'):
+
+			elif self._EXACT_DESC.search(kb_id):
 				desc_count += 1
 				if desc_count > 1:
 					raise Exception(f"Duplicate _desc suffix found in localizations: {kb_id}")
 				desc = loc.text
-			elif kb_id.endswith('_header'):
+
+			elif self._INDEXED_DESC.search(kb_id):
+				desc_list.append(loc.text)
+
+			elif self._EXACT_TEXT.search(kb_id):
+				text_count += 1
+				if text_count > 1:
+					raise Exception(f"Duplicate _text suffix found in localizations: {kb_id}")
+				text = loc.text
+
+			elif self._INDEXED_TEXT.search(kb_id):
+				text_list.append(loc.text)
+
+			elif self._EXACT_HEADER.search(kb_id):
 				header_count += 1
 				if header_count > 1:
 					raise Exception(f"Duplicate _header suffix found in localizations: {kb_id}")
@@ -63,6 +93,8 @@ class LocFactory(ILocFactory):
 			name=name,
 			hint=hint,
 			desc=desc,
-			header=header,
-			texts=texts if texts else None
+			desc_list=desc_list if desc_list else None,
+			text=text,
+			text_list=text_list if text_list else None,
+			header=header
 		)

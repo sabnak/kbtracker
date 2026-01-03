@@ -13,6 +13,7 @@ class SpellMapper(Base):
 	profit = Column(Integer, nullable=False)
 	price = Column(Integer, nullable=False)
 	school = Column(Integer, nullable=False)
+	hide = Column(Integer, nullable=False, default=0)
 	mana_cost = Column(ARRAY(Integer), nullable=True)
 	crystal_cost = Column(ARRAY(Integer), nullable=True)
 	data = Column(JSONB, nullable=False)

@@ -47,6 +47,7 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 			profit=entity.profit,
 			price=entity.price,
 			school=entity.school.value,
+			hide=entity.hide,
 			mana_cost=entity.mana_cost,
 			crystal_cost=entity.crystal_cost,
 			data=entity.data
@@ -71,6 +72,7 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 			profit=mapper.profit,
 			price=mapper.price,
 			school=SpellSchool(mapper.school),
+			hide=mapper.hide,
 			mana_cost=mapper.mana_cost,
 			crystal_cost=mapper.crystal_cost,
 			data=mapper.data,

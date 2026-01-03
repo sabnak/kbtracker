@@ -14,6 +14,7 @@ class Spell:
 	price: int
 	school: SpellSchool
 	data: dict[str, Any]
+	hide: int = 0
 	mana_cost: list[int] | None = None
 	crystal_cost: list[int] | None = None
 	loc: LocStrings | None = None

@@ -137,6 +137,7 @@ class SchemaManagementService(ISchemaManagementService):
 					profit INTEGER NOT NULL,
 					price INTEGER NOT NULL,
 					school INTEGER NOT NULL,
+					hide INTEGER NOT NULL DEFAULT 0,
 					mana_cost INTEGER[],
 					crystal_cost INTEGER[],
 					data JSONB NOT NULL
