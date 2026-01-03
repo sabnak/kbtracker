@@ -12,6 +12,8 @@ class LocalizationConfig(BaseSettings):
 class Config(BaseSettings):
 
 	game_data_path: str = "/data"
+	game_save_path: str = "/save"
+
 	tmp_dir: str = "/tmp"
 
 	data_archive_patterns: list[str] = [
