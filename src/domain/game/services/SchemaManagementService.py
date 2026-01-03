@@ -129,6 +129,21 @@ class SchemaManagementService(ISchemaManagementService):
 				)
 			"""))
 
+			# Create spell table
+			session.execute(text(f"""
+				CREATE TABLE {schema_name}.spell (
+					id SERIAL PRIMARY KEY,
+					kb_id VARCHAR(255) NOT NULL UNIQUE,
+					profit INTEGER NOT NULL,
+					price INTEGER NOT NULL,
+					school INTEGER NOT NULL,
+					mana_cost INTEGER[],
+					crystal_cost INTEGER[],
+					data JSONB NOT NULL,
+					loc JSONB
+				)
+			"""))
+
 			# Create shops_has_items table
 			session.execute(text(f"""
 				CREATE TABLE {schema_name}.shops_has_items (

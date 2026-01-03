@@ -156,6 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			items: parseInt(progressList.querySelector('[data-resource="items"] .count-badge')?.textContent || 0),
 			sets: parseInt(progressList.querySelector('[data-resource="sets"] .count-badge')?.textContent || 0),
 			units: parseInt(progressList.querySelector('[data-resource="units"] .count-badge')?.textContent || 0),
+			spells: parseInt(progressList.querySelector('[data-resource="spells"] .count-badge')?.textContent || 0),
 			locations: parseInt(progressList.querySelector('[data-resource="locations"] .count-badge')?.textContent || 0),
 			shops: parseInt(progressList.querySelector('[data-resource="shops"] .count-badge')?.textContent || 0),
 			localizations: parseInt(progressList.querySelector('[data-resource="localizations"] .count-badge')?.textContent || 0)
@@ -166,6 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			Items scanned: ${counts.items}<br>
 			Sets scanned: ${counts.sets}<br>
 			Units scanned: ${counts.units}<br>
+			Spells scanned: ${counts.spells}<br>
 			Locations scanned: ${counts.locations}<br>
 			Shops scanned: ${counts.shops}<br>
 			Localizations scanned: ${counts.localizations}

@@ -10,6 +10,7 @@ from src.utils.parsers.game_data.KFSExtractor import KFSExtractor
 from src.utils.parsers.game_data.KFSReader import KFSReader
 from src.utils.parsers.game_data.KFSItemsParser import KFSItemsParser
 from src.utils.parsers.game_data.KFSLocalizationParser import KFSLocalizationParser
+from src.utils.parsers.game_data.KFSSpellsParser import KFSSpellsParser
 from src.utils.parsers.game_data.KFSUnitParser import KFSUnitParser
 from src.utils.parsers.game_data.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
 from src.domain.game.repositories.GameRepository import GameRepository
@@ -20,6 +21,9 @@ from src.domain.game.repositories.LocationRepository import LocationRepository
 from src.domain.game.repositories.ShopHasItemRepository import ShopHasItemRepository
 from src.domain.game.repositories.ShopRepository import ShopRepository
 from src.domain.game.repositories.UnitRepository import UnitRepository
+from src.domain.game.repositories.SpellRepository import SpellRepository
+from src.domain.game.factories.LocFactory import LocFactory
+from src.domain.game.factories.SpellFactory import SpellFactory
 from src.domain.game.factories.UnitFactory import UnitFactory
 from src.domain.game.services.GameService import GameService
 from src.domain.game.services.ItemsAndSetsScannerService import ItemsAndSetsScannerService
@@ -27,6 +31,7 @@ from src.domain.game.services.ItemService import ItemService
 from src.domain.game.services.LocalizationScannerService import LocalizationScannerService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services.SchemaManagementService import SchemaManagementService
+from src.domain.game.services.SpellsScannerService import SpellsScannerService
 from src.domain.game.services.UnitsScannerService import UnitsScannerService
 from src.domain.game.services.LocationsAndShopsScannerService import LocationsAndShopsScannerService
 from src.domain.game.repositories.ProfilePostgresRepository import ProfilePostgresRepository
@@ -91,6 +96,10 @@ class DefaultInstaller:
 			providers.Factory(ItemsAndSetsScannerService)
 		)
 
+		self._container.spells_scanner_service.override(
+			providers.Factory(SpellsScannerService)
+		)
+
 		self._container.units_scanner_service.override(
 			providers.Factory(UnitsScannerService)
 		)
@@ -121,6 +130,15 @@ class DefaultInstaller:
 		)
 		self._container.kfs_locations_and_shops_parser.override(
 			providers.Singleton(KFSLocationsAndShopsParser)
+		)
+		self._container.kfs_spells_parser.override(
+			providers.Singleton(KFSSpellsParser)
+		)
+		self._container.loc_factory.override(
+			providers.Singleton(LocFactory)
+		)
+		self._container.spell_factory.override(
+			providers.Singleton(SpellFactory)
 		)
 		self._container.unit_factory.override(
 			providers.Singleton(UnitFactory)
@@ -168,6 +186,10 @@ class DefaultInstaller:
 
 		self._container.profile_repository.override(
 			providers.Singleton(ProfilePostgresRepository)
+		)
+
+		self._container.spell_repository.override(
+			providers.Singleton(SpellRepository)
 		)
 
 		self._container.unit_repository.override(

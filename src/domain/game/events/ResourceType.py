@@ -10,4 +10,5 @@ class ResourceType(Enum):
 	SETS = "sets"
 	LOCATIONS = "locations"
 	SHOPS = "shops"
+	SPELLS = "spells"
 	UNITS = "units"

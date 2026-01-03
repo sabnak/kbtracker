@@ -9,6 +9,7 @@ from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.IItemsAndSetsScannerService import IItemsAndSetsScannerService
 from src.domain.game.ILocalizationScannerService import ILocalizationScannerService
 from src.domain.game.IShopsAndLocationsScannerService import IShopsAndLocationsScannerService
+from src.domain.game.ISpellsScannerService import ISpellsScannerService
 from src.domain.game.IUnitsScannerService import IUnitsScannerService
 from src.domain.game.dto.ScanResults import ScanResults
 from src.domain.game.events.ResourceType import ResourceType
@@ -24,6 +25,7 @@ class ScannerService:
 		game_repository: IGameRepository = Provide[Container.game_repository],
 		localization_scanner_service: ILocalizationScannerService = Provide[Container.localization_scanner_service],
 		items_and_sets_scanner_service: IItemsAndSetsScannerService = Provide[Container.items_and_sets_scanner_service],
+		spells_scanner_service: ISpellsScannerService = Provide[Container.spells_scanner_service],
 		units_scanner_service: IUnitsScannerService = Provide[Container.units_scanner_service],
 		shops_and_locations_scanner_service: IShopsAndLocationsScannerService = Provide[Container.locations_and_shops_scanner_service],
 		kfs_extractor: IKFSExtractor = Provide[Container.kfs_extractor],
@@ -32,6 +34,7 @@ class ScannerService:
 		self._game_repository = game_repository
 		self._localization_scanner = localization_scanner_service
 		self._items_and_sets_scanner = items_and_sets_scanner_service
+		self._spells_scanner = spells_scanner_service
 		self._units_scanner = units_scanner_service
 		self._shops_and_locations_scanner = shops_and_locations_scanner_service
 		self._kfs_extractor = kfs_extractor
@@ -72,6 +75,9 @@ class ScannerService:
 		units = self._units_scanner.scan(game_id, game.path)
 		total_units = len(units)
 
+		spells = self._spells_scanner.scan(game_id, game.path)
+		total_spells = len(spells)
+
 		locations, shops = self._shops_and_locations_scanner.scan(game_id, game.path, language)
 
 		return ScanResults(
@@ -80,6 +86,7 @@ class ScannerService:
 			shops=len(shops),
 			sets=total_sets,
 			localizations=localizations_string,
+			spells=total_spells,
 			units=total_units
 		)
 
@@ -187,7 +194,24 @@ class ScannerService:
 				message=f"Created {total_units} units"
 			)
 
-			# Step 4: Parse and create locations/shops
+			# Step 4: Parse and create spells
+			yield ScanProgressEvent(
+				event_type=ScanEventType.RESOURCE_STARTED,
+				resource_type=ResourceType.SPELLS,
+				message="Parsing spells"
+			)
+
+			spells = self._spells_scanner.scan(game_id, game.path)
+			total_spells = len(spells)
+
+			yield ScanProgressEvent(
+				event_type=ScanEventType.RESOURCE_COMPLETED,
+				resource_type=ResourceType.SPELLS,
+				count=total_spells,
+				message=f"Created {total_spells} spells"
+			)
+
+			# Step 5: Parse and create locations/shops
 			yield ScanProgressEvent(
 				event_type=ScanEventType.RESOURCE_STARTED,
 				resource_type=ResourceType.LOCATIONS,
@@ -217,6 +241,7 @@ class ScannerService:
 				shops=len(shops),
 				sets=total_sets,
 				localizations=localizations_count,
+				spells=total_spells,
 				units=total_units
 			)
 
