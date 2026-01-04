@@ -1,7 +1,7 @@
 # Production Ready Status ✅
 
-**King's Bounty Shop Inventory Extractor v1.1.0**
-**Date:** 2026-01-04
+**King's Bounty Shop Inventory Extractor v1.2.0**
+**Date:** 2026-01-05
 **Status:** Production Ready with Caveats
 
 ## Summary
@@ -12,7 +12,7 @@
 
 **Overall Score:** 85% Production Ready
 
-## Recent Updates (v1.1.0)
+## Recent Updates (v1.2.0)
 
 ### Critical Bug Fixes
 
@@ -35,6 +35,15 @@
    - **Result:** 48 false "moral" items across all shops
    - **Fix:** Added "moral" to METADATA_KEYWORDS filter list
    - **Impact:** Reduced total items from 837 → 789 (48 false positives removed)
+   - **Status:** ✅ FIXED & VALIDATED
+
+4. **Bug #4 - Shops Without "m_" Prefix**
+   - **Issue:** Entire locations missing from exports (aralan, dragondor, d)
+   - **Example:** `itext_aralan_3338` and 58 other shops not extracted
+   - **Root Cause:** Regex pattern required "m_" prefix in shop IDs
+   - **Fix:** Updated regex to universal pattern `r'itext_([-\w]+)_(\d+)'`
+   - **Impact:** 59 additional shops discovered (aralan: 25, dragondor: 16, d: 18)
+   - **Statistics:** Shops: 255 → 314, Items: 789 → 882, Units: 894 → 994, Spells: 738 → 828
    - **Status:** ✅ FIXED & VALIDATED
 
 ## Files Included
@@ -66,12 +75,12 @@
 ### ✅ Tested on Multiple Save Files
 
 **Save 1707047253 (Endgame):**
-- Shops: 255 total
-- Items: 789 (after "moral" fix)
-- Units: 894
-- Spells: 738
-- Garrison: 23
-- Coverage: 69% items, 75% units, 75% spells
+- Shops: 314 total (after Bug #4 fix)
+- Items: 882
+- Units: 994
+- Spells: 828
+- Garrison: 29
+- Coverage: 63% items, 69% units, 71% spells
 - **Status:** ✅ **PASS**
 
 **Save 1767209722 (Early Game):**
@@ -96,6 +105,11 @@
 **Bug #3 ("moral" Metadata):**
 - Test: 0 "moral" entries found as items
 - Status: ✅ PASS - Metadata correctly filtered
+
+**Bug #4 (Shops Without "m_" Prefix):**
+- Test: Shop `aralan_3338` successfully extracted with 3 items, 3 units, 3 spells
+- Test: 59 previously missing shops now found (aralan: 25, dragondor: 16, d: 18)
+- Status: ✅ PASS - Universal shop ID pattern working
 
 ### ✅ Quantity Parsing Verified
 
@@ -122,6 +136,8 @@
 - Short entity names (3-4 chars): ✅ Works (Bug #1 fix)
 - Adjacent sections (.temp): ✅ Boundaries detected (Bug #2 fix)
 - Metadata fields (moral): ✅ Filtered (Bug #3 fix)
+- Shops without "m_" prefix: ✅ Works (Bug #4 fix)
+- Location names with hyphens: ✅ Supported (Bug #4 fix)
 
 ## Feature Completeness
 
@@ -255,10 +271,11 @@ When integrating into your application:
 - Item names are internal IDs (not localized)
 - Docker container required for execution
 
-### Fixed Limitations (v1.1.0)
-- ✅ Short-named entities now work (3+ chars)
-- ✅ Section boundaries properly detected
-- ✅ "moral" metadata correctly filtered
+### Fixed Limitations (v1.2.0)
+- ✅ Short-named entities now work (3+ chars) - Bug #1
+- ✅ Section boundaries properly detected - Bug #2
+- ✅ "moral" metadata correctly filtered - Bug #3
+- ✅ Shops without "m_" prefix now extracted - Bug #4
 
 ### Remaining Considerations
 - Uses conservative limits for validation
@@ -269,7 +286,7 @@ When integrating into your application:
 
 ## Support & Maintenance
 
-**Version:** 1.1.0 (2026-01-04)
+**Version:** 1.2.0 (2026-01-05)
 **Status:** Production Ready with Testing Gaps ⚠️
 **Stability:** Stable (validated on 2 save files)
 **Dependencies:** Project container dependencies
@@ -316,6 +333,6 @@ When integrating into your application:
 ---
 
 **Developed by:** Claude (Anthropic)
-**Date:** 2026-01-04
+**Date:** 2026-01-05
 **Status:** 85% Production Ready ✅⚠️
-**Version:** 1.1.0
+**Version:** 1.2.0

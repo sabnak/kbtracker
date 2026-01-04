@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-**Version:** 1.1.0 | **Date:** 2026-01-04
+**Version:** 1.2.0 | **Date:** 2026-01-05
 
 ## 5-Minute Setup
 
@@ -148,20 +148,25 @@ docker cp kbtracker_app:/tmp/save_export/. ./save_exports/
 docker cp kbtracker_app:/tmp/save_export/1707047253_20260104_211453.json ./
 ```
 
-## What's New in v1.1.0?
+## What's New in v1.2.0?
 
-**Bug Fixes:**
+**Critical Bug Fix - Missing Locations:**
+- ✅ **Bug #4 Fixed:** Entire locations (aralan, dragondor, d) now extracted
+- ✅ **+59 shops discovered** (255 → 314 total shops)
+- ✅ Example: `aralan_3338` and 58 other shops now in exports
+
+**Previous Bug Fixes (v1.1.0):**
 - ✅ Short names (imp, orc, trap) now work (was missing 3-4 char entities)
 - ✅ "moral" metadata no longer appears as items
 - ✅ Section boundaries properly detected (no invalid entries)
 
-**Before v1.1.0:**
-- Shop had 15 items (2 false "moral" entries)
-- Missing imp, trap, orc units
+**Before v1.2.0:**
+- Save 1707047253: 255 shops
+- Missing: All aralan shops, dragondor shops, d shops
 
-**After v1.1.0:**
-- Shop has 13 actual items ✅
-- All short-named entities present ✅
+**After v1.2.0:**
+- Save 1707047253: 314 shops (+59) ✅
+- All locations extracted including aralan, dragondor, d ✅
 
 ## Troubleshooting
 
@@ -175,6 +180,9 @@ docker cp kbtracker_app:/tmp/save_export/1707047253_20260104_211453.json ./
 
 ### Missing entities (imp, trap, orc)
 - ✅ Fixed in v1.1.0 - Update to latest version
+
+### Missing entire locations (aralan, dragondor)
+- ✅ Fixed in v1.2.0 - Update to latest version
 
 ## Need Help?
 
@@ -191,5 +199,5 @@ docker cp kbtracker_app:/tmp/save_export/1707047253_20260104_211453.json ./
 
 ---
 
-**Version:** 1.1.0
-**Last Updated:** 2026-01-04
+**Version:** 1.2.0
+**Last Updated:** 2026-01-05

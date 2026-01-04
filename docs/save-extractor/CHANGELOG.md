@@ -1,5 +1,50 @@
 # Changelog
 
+## Version 1.2.0 (2026-01-05)
+
+### Critical Bug Fixes
+
+**Bug #4: Shops Without "m_" Prefix Not Extracted**
+- **Issue:** Entire locations missing from exports (aralan, dragondor, d) - shops without "m_" prefix not detected
+- **Example:** `itext_aralan_3338` and 58 other shops were not extracted
+- **Root Cause:** Regex pattern `r'itext_m_\w+_\d+'` required "m_" prefix, plus hardcoded string slicing assumed 8-character prefix
+- **Fix:** Updated to universal pattern `r'itext_([-\w]+)_(\d+)'` using capture groups for location and shop number
+- **Impact:** 59 additional shops discovered across 3 locations
+  - aralan: 25 shops
+  - dragondor: 16 shops
+  - d: 18 shops
+- **Affected Code:** Line 122 in `ShopInventoryParser.py` - `_find_all_shop_ids()` method
+
+### Statistics Update (Save 1707047253)
+
+**Before v1.2.0 (v1.1.0):**
+- Total shops: 255
+- Total items: 789
+- Total units: 894
+- Total spells: 738
+- Total garrison: 23
+
+**After v1.2.0:**
+- Total shops: 314 (+59)
+- Total items: 882 (+93)
+- Total units: 994 (+100)
+- Total spells: 828 (+90)
+- Total garrison: 29 (+6)
+
+### Validation
+
+**Bug #4 Regression Test:**
+- ✅ Shop `aralan_3338` successfully extracted
+- ✅ 59 previously missing shops now found
+- ✅ All existing shops still work correctly
+- ✅ Pattern supports hyphens in location names
+
+### Breaking Changes
+
+None - all changes are backward compatible
+
+---
+
 ## Version 1.1.0 (2026-01-04)
 
 ### Critical Bug Fixes

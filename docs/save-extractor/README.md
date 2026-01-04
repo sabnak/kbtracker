@@ -1,19 +1,25 @@
 # King's Bounty Shop Inventory Extractor
 
-**Version:** 1.1.0
-**Date:** 2026-01-04
+**Version:** 1.2.0
+**Date:** 2026-01-05
 **Status:** Production Ready ✅
 
 ## Overview
 
 Production-ready tool to extract shop inventory data from King's Bounty save files. Extracts all shop contents including items, units, spells, and garrison across all game locations.
 
-## Recent Updates (v1.1.0)
+## Recent Updates (v1.2.0)
 
 **Critical Bug Fixes:**
 - ✅ **Bug #1 Fixed:** Short-named entities (imp, trap, orc, mana) now correctly extracted (minimum 3 chars, was 5)
 - ✅ **Bug #2 Fixed:** Section boundary detection prevents invalid entries from adjacent sections
 - ✅ **Bug #3 Fixed:** "moral" metadata no longer appears as items
+- ✅ **Bug #4 Fixed:** Shops without "m_" prefix now extracted (aralan, dragondor, d locations) - **+59 shops discovered!**
+
+**Impact of Bug #4 Fix:**
+- Total shops: 255 → 314 (+59 shops)
+- New locations found: aralan (25 shops), dragondor (16 shops), d (18 shops)
+- Updated shop ID pattern: `itext_{location}_{id}` (location can now contain hyphens)
 
 **Improvements:**
 - ✅ Validated on multiple save files (endgame + early game)
@@ -26,9 +32,10 @@ Production-ready tool to extract shop inventory data from King's Bounty save fil
 - ✅ Handles correct quantity parsing for all item types
 - ✅ Filters metadata keywords automatically (including "moral")
 - ✅ Exports to JSON, TXT, and statistics files
-- ✅ Validated on multiple save files (255 shops endgame, 247 shops early game)
+- ✅ Validated on multiple save files (314 shops endgame, 247 shops early game)
 - ✅ Integrated with project dependency injection
 - ✅ Proper section boundary detection
+- ✅ Universal shop ID pattern (supports all location naming conventions)
 
 ## Requirements
 
@@ -168,7 +175,8 @@ Each shop in the decompressed data follows this pattern:
 [.shopunits section]  ← Units/troops for hire
 [.spells section]     ← Spells for purchase
 [.temp section]       ← Temporary metadata (optional)
-[Shop ID UTF-16 LE]   ← Identifier: "itext_m_<location>_<number>"
+[Shop ID UTF-16 LE]   ← Identifier: "itext_{location}_{number}"
+                         Examples: "itext_m_portland_6820", "itext_aralan_3338"
 ```
 
 **Important:** Section boundary detection prevents parsing data from adjacent sections (Bug #2 fix).
@@ -222,12 +230,12 @@ Different sections use different formats for storing quantities:
 The extractor has been validated on multiple save files:
 
 ### Save 1707047253 (Endgame)
-- **Shops:** 255 total
-- **Items:** 789 total
-- **Units:** 894 total
-- **Spells:** 738 total
-- **Garrison:** 23 total
-- **Coverage:** 69% items, 75% units, 75% spells
+- **Shops:** 314 total (after Bug #4 fix)
+- **Items:** 882 total
+- **Units:** 994 total
+- **Spells:** 828 total
+- **Garrison:** 29 total
+- **Coverage:** 63% items, 69% units, 71% spells
 - **Status:** ✅ PASS
 
 ### Save 1767209722 (Early Game)
@@ -243,6 +251,7 @@ The extractor has been validated on multiple save files:
 - **Bug #1 (Short names):** ✅ 10 short-named entities found in early game
 - **Bug #2 (Section boundaries):** ✅ No invalid entries from adjacent sections
 - **Bug #3 ("moral" metadata):** ✅ 0 "moral" entries found (correctly filtered)
+- **Bug #4 (Shops without "m_" prefix):** ✅ 59 previously missing shops now extracted (aralan, dragondor, d)
 
 ## Technical Details
 
@@ -286,10 +295,11 @@ Valid item/unit/spell IDs must:
 - Requires decompressed save file to be valid King's Bounty format
 - Item names are internal game IDs (not localized display names)
 
-### Fixed in v1.1.0
-- ✅ Short-named entities (3-4 chars) now work correctly
-- ✅ Section boundaries properly detected
-- ✅ "moral" metadata no longer appears as items
+### Fixed in v1.2.0
+- ✅ Short-named entities (3-4 chars) now work correctly (Bug #1)
+- ✅ Section boundaries properly detected (Bug #2)
+- ✅ "moral" metadata no longer appears as items (Bug #3)
+- ✅ Shops without "m_" prefix now extracted (Bug #4)
 
 ### Remaining Considerations
 - **Uses conservative limits** that work for normal saves but may need adjustment for:
@@ -321,7 +331,18 @@ Valid item/unit/spell IDs must:
 - **Fixed in v1.1.0** - Ensure you're using latest version
 - This was metadata being misidentified as items
 
+### Missing entire locations (aralan, dragondor)
+- **Fixed in v1.2.0** - Ensure you're using latest version
+- Shops without "m_" prefix now correctly extracted
+
 ## Version History
+
+### 1.2.0 (2026-01-05)
+- ✅ **Bug #4 Fixed:** Shops without "m_" prefix now extracted (aralan, dragondor, d locations)
+- ✅ **Impact:** +59 shops discovered (255 → 314 total)
+- ✅ **Updated regex pattern:** `r'itext_([-\w]+)_(\d+)'` with capture groups
+- ✅ **Support for hyphens:** Location names can contain hyphens
+- ✅ Validated shop `aralan_3338` extracted correctly
 
 ### 1.1.0 (2026-01-04)
 - ✅ **Bug #1 Fixed:** Minimum name length reduced from 5 to 3 characters
@@ -357,6 +378,6 @@ This tool was created for research and educational purposes.
 ---
 
 **Developed by:** Claude (Anthropic)
-**Date:** 2026-01-04
+**Date:** 2026-01-05
 **Status:** Production Ready ✅
-**Version:** 1.1.0
+**Version:** 1.2.0

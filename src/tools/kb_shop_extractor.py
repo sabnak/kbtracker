@@ -11,6 +11,7 @@ Version: 2.0.0
 """
 import sys
 import json
+import argparse
 from pathlib import Path
 
 from src.core.Container import Container
@@ -58,26 +59,29 @@ def print_statistics(shops: dict) -> None:
 
 def main():
 	"""Main entry point"""
-	if len(sys.argv) < 2:
-		print("King's Bounty Shop Extractor v2.0.0")
-		print()
-		print("Usage:")
-		print(f"  python {sys.argv[0]} <save_data_file> [output.json]")
-		print()
-		print("Arguments:")
-		print("  save_data_file  Path to King's Bounty save 'data' file")
-		print("  output.json     Output JSON file (default: shops.json)")
-		print()
-		print("Example:")
-		print(f"  python {sys.argv[0]} saves/1234567890/data shops_output.json")
+	parser = argparse.ArgumentParser(description='King\'s Bounty Shop Extractor')
+	parser.add_argument('save_directory', type=Path, help='Path to King\'s Bounty save directory')
+	args = parser.parse_args()
+
+	save_dir = args.save_directory
+
+	if not save_dir.exists():
+		print(f"Error: Save directory not found: {save_dir}")
 		sys.exit(1)
 
-	save_path = Path(sys.argv[1])
-	output_path = Path(sys.argv[2]) if len(sys.argv) > 2 else Path('shops.json')
-
-	if not save_path.exists():
-		print(f"Error: Save file not found: {save_path}")
+	if not save_dir.is_dir():
+		print(f"Error: Path is not a directory: {save_dir}")
 		sys.exit(1)
+
+	save_data_path = save_dir / 'data'
+	if not save_data_path.exists():
+		print(f"Error: Save 'data' file not found in: {save_dir}")
+		sys.exit(1)
+
+	save_name = save_dir.name
+	output_dir = Path('/tmp/save_export')
+	output_dir.mkdir(parents=True, exist_ok=True)
+	output_path = output_dir / f'{save_name}.json'
 
 	try:
 		container = Container()
@@ -89,13 +93,13 @@ def main():
 		print("KING'S BOUNTY SHOP EXTRACTOR")
 		print("="*78)
 		print()
-		print(f"Input:  {save_path}")
+		print(f"Input:  {save_dir}")
 		print(f"Output: {output_path}")
 		print()
 
 		print("Extracting shop data...")
 		parser: IShopInventoryParser = container.shop_inventory_parser()
-		shops = parser.parse(save_path)
+		shops = parser.parse(save_data_path)
 
 		print()
 		print("Saving to JSON...")

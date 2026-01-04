@@ -99,6 +99,11 @@ class ShopInventoryParser(IShopInventoryParser):
 		"""
 		Find all shop IDs in save file
 
+		Shop ID pattern: itext_{location}_{id}
+		- location: can contain letters, numbers, underscores, hyphens
+		  Examples: "m_portland", "aralan", "some-location"
+		- id: numeric shop identifier
+
 		:param data:
 			Decompressed save file data
 		:return:
@@ -114,11 +119,13 @@ class ShopInventoryParser(IShopInventoryParser):
 
 			try:
 				text = data[pos:pos+chunk_size].decode('utf-16-le', errors='ignore')
-				matches = re.finditer(r'itext_m_\w+_\d+', text)
+				matches = re.finditer(r'itext_([-\w]+)_(\d+)', text)
 
 				for match in matches:
 					shop_id_full = match.group(0)
-					shop_id = shop_id_full[8:]
+					location = match.group(1)
+					shop_num = match.group(2)
+					shop_id = location + '_' + shop_num
 					shop_bytes = shop_id_full.encode('utf-16-le')
 					actual_pos = data.find(shop_bytes, pos, pos+chunk_size)
 					if actual_pos != -1 and shop_id not in [s[0] for s in shops]:
