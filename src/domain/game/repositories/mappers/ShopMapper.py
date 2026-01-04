@@ -14,4 +14,4 @@ class ShopMapper(Base):
 	msg = Column(Text, nullable=True)
 
 	location = relationship("LocationMapper", back_populates="shops")
-	shop_items = relationship("ShopHasItemMapper", back_populates="shop")
+	inventory = relationship("ShopInventoryMapper", back_populates="shop")

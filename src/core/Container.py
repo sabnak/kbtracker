@@ -8,7 +8,7 @@ from src.domain.game.IItemSetRepository import IItemSetRepository
 from src.domain.game.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.ILocationRepository import ILocationRepository
 from src.domain.game.ISchemaManagementService import ISchemaManagementService
-from src.domain.game.IShopHasItemRepository import IShopHasItemRepository
+from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.IProfileRepository import IProfileRepository
 from src.domain.game.IProfileService import IProfileService
@@ -33,7 +33,7 @@ class Container(containers.DeclarativeContainer):
 	localization_repository = providers.AbstractSingleton(ILocalizationRepository)
 	location_repository = providers.AbstractSingleton(ILocationRepository)
 	shop_repository = providers.AbstractSingleton(IShopRepository)
-	shop_has_item_repository = providers.AbstractSingleton(IShopHasItemRepository)
+	shop_inventory_repository = providers.AbstractSingleton(IShopInventoryRepository)
 	profile_repository = providers.AbstractSingleton(IProfileRepository)
 	spell_repository = providers.AbstractSingleton(ISpellRepository)
 	unit_repository = providers.AbstractSingleton(IUnitRepository)

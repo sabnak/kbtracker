@@ -147,14 +147,15 @@ class SchemaManagementService(ISchemaManagementService):
 				)
 			"""))
 
-			# Create shops_has_items table
+			# Create shop_inventory table
 			session.execute(text(f"""
-				CREATE TABLE {schema_name}.shops_has_items (
-					item_id INTEGER REFERENCES {schema_name}.item(id),
+				CREATE TABLE {schema_name}.shop_inventory (
+					entity_id INTEGER NOT NULL,
 					shop_id INTEGER REFERENCES {schema_name}.shop(id),
 					profile_id INTEGER REFERENCES {schema_name}.profile(id),
+					type VARCHAR(20) NOT NULL,
 					count INTEGER DEFAULT 1,
-					PRIMARY KEY (item_id, shop_id, profile_id)
+					PRIMARY KEY (entity_id, shop_id, profile_id, type)
 				)
 			"""))
 

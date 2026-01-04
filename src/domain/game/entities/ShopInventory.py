@@ -2,8 +2,9 @@ from dataclasses import dataclass
 
 
 @dataclass
-class ShopHasItem:
-	item_id: int
+class ShopInventory:
+	entity_id: int
 	shop_id: int
 	profile_id: int
+	type: str
 	count: int

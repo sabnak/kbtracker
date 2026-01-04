@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
 
 from src.domain.game.repositories.mappers.base import Base
 
@@ -29,3 +30,17 @@ class UnitMapper(Base):
 	resistance = Column(JSONB, nullable=True)
 	features = Column(JSONB, nullable=True)
 	attacks = Column(JSONB, nullable=True)
+
+	shop_inventory_sale = relationship(
+		"ShopInventoryMapper",
+		foreign_keys="[ShopInventoryMapper.entity_id]",
+		primaryjoin="and_(UnitMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == 'unit')",
+		viewonly=True
+	)
+
+	shop_inventory_garrison = relationship(
+		"ShopInventoryMapper",
+		foreign_keys="[ShopInventoryMapper.entity_id]",
+		primaryjoin="and_(UnitMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == 'garrison')",
+		viewonly=True
+	)

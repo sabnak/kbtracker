@@ -14,5 +14,10 @@ class ItemMapper(Base):
 	item_set_id = Column(Integer, ForeignKey("item_set.id"), nullable=True)
 	level = Column(Integer, nullable=False, default=1)
 
-	shop_items = relationship("ShopHasItemMapper", back_populates="item")
+	shop_inventory = relationship(
+		"ShopInventoryMapper",
+		foreign_keys="[ShopInventoryMapper.entity_id]",
+		primaryjoin="and_(ItemMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == 'item')",
+		viewonly=True
+	)
 	item_set = relationship("ItemSetMapper")

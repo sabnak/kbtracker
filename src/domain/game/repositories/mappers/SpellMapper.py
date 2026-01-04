@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, ARRAY
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
 
 from src.domain.game.repositories.mappers.base import Base
 
@@ -17,3 +18,10 @@ class SpellMapper(Base):
 	mana_cost = Column(ARRAY(Integer), nullable=True)
 	crystal_cost = Column(ARRAY(Integer), nullable=True)
 	data = Column(JSONB, nullable=False)
+
+	shop_inventory = relationship(
+		"ShopInventoryMapper",
+		foreign_keys="[ShopInventoryMapper.entity_id]",
+		primaryjoin="and_(SpellMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == 'spell')",
+		viewonly=True
+	)

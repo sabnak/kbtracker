@@ -18,7 +18,7 @@ from src.domain.game.repositories.ItemRepository import ItemRepository
 from src.domain.game.repositories.ItemSetRepository import ItemSetRepository
 from src.domain.game.repositories.LocalizationRepository import LocalizationRepository
 from src.domain.game.repositories.LocationRepository import LocationRepository
-from src.domain.game.repositories.ShopHasItemRepository import ShopHasItemRepository
+from src.domain.game.repositories.ShopInventoryRepository import ShopInventoryRepository
 from src.domain.game.repositories.ShopRepository import ShopRepository
 from src.domain.game.repositories.UnitRepository import UnitRepository
 from src.domain.game.repositories.SpellRepository import SpellRepository
@@ -185,8 +185,8 @@ class DefaultInstaller:
 			providers.Singleton(ShopRepository)
 		)
 
-		self._container.shop_has_item_repository.override(
-			providers.Singleton(ShopHasItemRepository)
+		self._container.shop_inventory_repository.override(
+			providers.Singleton(ShopInventoryRepository)
 		)
 
 		self._container.profile_repository.override(

@@ -16,4 +16,4 @@ class ProfileMapper(Base):
 	save_dir = Column(String(255), nullable=True)
 	created_at = Column(DateTime, nullable=False, default=datetime.now())
 
-	shop_items = relationship("ShopHasItemMapper", back_populates="profile")
+	shop_inventory = relationship("ShopInventoryMapper", back_populates="profile")
