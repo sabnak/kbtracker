@@ -41,11 +41,12 @@ class SaveFileService(ISaveFileService):
 
 		saves = []
 		for save_dir in game_save_dir.iterdir():
-			if save_dir.is_dir() and save_dir.name.isdigit():
+			if save_dir.is_dir():
+				timestamp = int(save_dir.stat().st_mtime)
 				saves.append({
 					'name': save_dir.name,
 					'path': str(save_dir),
-					'timestamp': int(save_dir.name)
+					'timestamp': timestamp
 				})
 
 		saves.sort(key=lambda x: x['timestamp'], reverse=True)
