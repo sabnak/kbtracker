@@ -1,0 +1,6022 @@
+================================================================================
+KING'S BOUNTY - SHOP INVENTORY EXPORT
+================================================================================
+Save file: 1707047253
+Total shops: 255
+Export date: 2026-01-04
+================================================================================
+
+
+================================================================================
+SHOP: amasonia_1173
+================================================================================
+Summary: 6 items, 5 units, 4 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_spell_rock_kamikaze_100 x1
+  2. addon4_spell_rock_raise_dead_40 x1
+  3. pirat_band x1
+  4. sling_ x1
+  5. tur_hammer x1
+  6. warm_gloves x1
+
+UNITS (5):
+  1. viking x8520
+  2. berserk2 x5720
+  3. axthrower x5475
+  4. yarl x380
+  5. horsevalkyrie x690
+
+SPELLS (4):
+  1. spell_advspell_summon_viking x1
+  2. spell_empathy x1
+  3. spell_necromancy x1
+  4. spell_titan_sword x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: amasonia_1242
+================================================================================
+Summary: 10 items, 7 units, 7 spells, 0 garrison
+
+ITEMS (10):
+  1. addon4_3_crystal x5
+  2. addon4_beholder_ring x1
+  3. addon4_poison_snake_gloves x1
+  4. addon4_primitive_orc_belt x1
+  5. addon4_spell_rock_globe_lightning_200 x1
+  6. addon4_spell_rock_necromancy_400 x1
+  7. adrenalin_potion x1
+  8. cook_rat x1
+  9. engineer_adjuster x1
+ 10. mana_well x1
+
+UNITS (7):
+  1. snake_royal x3440
+  2. snake_green x6600
+  3. snake x6400
+  4. minotaur x1200
+  5. horseamazon x1250
+  6. troll x65
+  7. cyclop x85
+
+SPELLS (7):
+  1. spell_accuracy x2
+  2. spell_advspell_summon_bandit x1
+  3. spell_advspell_summon_plant x1
+  4. spell_advspell_summon_viking x1
+  5. spell_life_stealer x1
+  6. spell_mad_rage x1
+  7. spell_resurrection x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: amasonia_1244
+================================================================================
+Summary: 4 items, 3 units, 3 spells, 0 garrison
+
+ITEMS (4):
+  1. addon2_weapon_lumberman_axe x1
+  2. big_shield x1
+  3. rune_belt x1
+  4. wizard_cloak x1
+
+UNITS (3):
+  1. bear x5690
+  2. bear2 x4930
+  3. bear_white x1580
+
+SPELLS (3):
+  1. spell_advspell_summon_lizard x1
+  2. spell_animal_call x1
+  3. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: amasonia_1890
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: amasonia_1891
+================================================================================
+Summary: 8 items, 1 units, 4 spells, 0 garrison
+
+ITEMS (8):
+  1. addon4_heavy_knight_pants x1
+  2. addon4_human_firemage_staff x1
+  3. addon4_neutral_beholder_eyestaff x1
+  4. addon4_neutral_pirate_regalia x1
+  5. addon4_neutral_stone_helmet x1
+  6. limit x1
+  7. mana x1
+  8. tur_hammer x1
+
+UNITS (1):
+  1. horseamazon x1830
+
+SPELLS (4):
+  1. spell_advspell_summon_lizard x1
+  2. spell_advspell_summon_viking x1
+  3. spell_geyser x1
+  4. spell_sound_burst x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: amasonia_1932
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: amasonia_2009
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: amasonia_2012
+================================================================================
+Summary: 6 items, 5 units, 4 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_spell_rock_kamikaze_100 x1
+  2. addon4_spell_rock_raise_dead_40 x1
+  3. pirat_band x1
+  4. sling_ x1
+  5. tur_hammer x1
+  6. warm_gloves x1
+
+UNITS (5):
+  1. viking x8520
+  2. berserk2 x5720
+  3. axthrower x5475
+  4. yarl x380
+  5. horsevalkyrie x690
+
+SPELLS (4):
+  1. spell_advspell_summon_viking x1
+  2. spell_empathy x1
+  3. spell_necromancy x1
+  4. spell_titan_sword x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_10
+================================================================================
+Summary: 0 items, 3 units, 2 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (3):
+  1. priestess_blood x656
+  2. gargoyle x100
+  3. demon x165
+
+SPELLS (2):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_advspell_summon_mech x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_14
+================================================================================
+Summary: 2 items, 3 units, 4 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_dwarf_amulet_1 x1
+  2. telescopic_sight x1
+
+UNITS (3):
+  1. blacksmith x605
+  2. miner x310
+  3. light_runemaster x155
+
+SPELLS (4):
+  1. spell_berserker x3
+  2. spell_defenseless x3
+  3. spell_flame_gaze x1
+  4. spell_mine_field x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_5
+================================================================================
+Summary: 0 items, 4 units, 3 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (4):
+  1. robber x305
+  2. robber2 x260
+  3. viking x90
+  4. slinger_man x175
+
+SPELLS (3):
+  1. spell_advspell_summon_viking x1
+  2. spell_wasp_swarm x1
+  3. spell_weakness x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_708
+================================================================================
+Summary: 0 items, 5 units, 4 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (5):
+  1. viking x8520
+  2. berserk2 x5720
+  3. axthrower x5475
+  4. yarl x380
+  5. horsevalkyrie x690
+
+SPELLS (4):
+  1. spell_advspell_summon_viking x1
+  2. spell_empathy x1
+  3. spell_necromancy x1
+  4. spell_titan_sword x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_10
+================================================================================
+Summary: 3 items, 5 units, 5 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_neutral_retreat_helmet x1
+  2. rage_braces x1
+  3. scaly_braces x1
+
+UNITS (5):
+  1. demonologist x400
+  2. dragonfly_fire x15200
+  3. demon x340
+  4. archdemon x26
+  5. occultistess x7400
+
+SPELLS (5):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_demon x1
+  3. spell_fortune_smile x1
+  4. spell_titan_armor x1
+  5. spell_titan_sword x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_1209
+================================================================================
+Summary: 0 items, 4 units, 3 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (4):
+  1. cerberus x3500
+  2. unicorn3 x335
+  3. demon x425
+  4. archdemon x34
+
+SPELLS (3):
+  1. spell_advspell_summon_demon x1
+  2. spell_death_star x1
+  3. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_14
+================================================================================
+Summary: 6 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_demon_seal_of_baal x1
+  2. addon4_hell_stigma x1
+  3. addon4_orcish_pants x1
+  4. joker_hat x1
+  5. mana_well x1
+  6. picture_griffin_king x1
+
+UNITS (4):
+  1. imp x3000
+  2. priestess_blood x1360
+  3. demoness x340
+  4. demon2 x200
+
+SPELLS (2):
+  1. spell_advspell_summon_demon x1
+  2. spell_fire_breath x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_1711
+================================================================================
+Summary: 0 items, 3 units, 4 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (3):
+  1. occultistess x2860
+  2. demon x280
+  3. demonologist x160
+
+SPELLS (4):
+  1. spell_advspell_summon_demon x1
+  2. spell_demonologist x1
+  3. spell_evilbook x2
+  4. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_1805
+================================================================================
+Summary: 3 items, 5 units, 5 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_neutral_retreat_helmet x1
+  2. rage_braces x1
+  3. scaly_braces x1
+
+UNITS (5):
+  1. demonologist x400
+  2. dragonfly_fire x15200
+  3. demon x340
+  4. archdemon x26
+  5. occultistess x7400
+
+SPELLS (5):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_demon x1
+  3. spell_fortune_smile x1
+  4. spell_titan_armor x1
+  5. spell_titan_sword x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_1814
+================================================================================
+Summary: 0 items, 3 units, 4 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (3):
+  1. occultistess x2860
+  2. demon x280
+  3. demonologist x160
+
+SPELLS (4):
+  1. spell_advspell_summon_demon x1
+  2. spell_demonologist x1
+  3. spell_evilbook x2
+  4. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_1970
+================================================================================
+Summary: 3 items, 5 units, 6 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_neutral_spike_gloves x1
+  2. exorcist_necklace x1
+  3. insanity_staff x1
+
+UNITS (5):
+  1. footman x3900
+  2. priest2 x2400
+  3. paladin x950
+  4. archmage x760
+  5. runemage x85
+
+SPELLS (6):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_demon x1
+  3. spell_advspell_summon_human x1
+  4. spell_mechanisation x1
+  5. spell_unholy_rain x1
+  6. spell_warding_healing x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_1971
+================================================================================
+Summary: 3 items, 3 units, 3 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_demon_scarlet_carbuncle x1
+  2. addon4_mage_staff x1
+  3. inkpot x1
+
+UNITS (3):
+  1. cerberus x610
+  2. demon2 x170
+  3. gargoyle x90
+
+SPELLS (3):
+  1. spell_advspell_summon_demon x1
+  2. spell_evilbook x2
+  3. spell_fire_arrow x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_1972
+================================================================================
+Summary: 3 items, 5 units, 5 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_neutral_retreat_helmet x1
+  2. rage_braces x1
+  3. scaly_braces x1
+
+UNITS (5):
+  1. demonologist x400
+  2. dragonfly_fire x15200
+  3. demon x340
+  4. archdemon x26
+  5. occultistess x7400
+
+SPELLS (5):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_demon x1
+  3. spell_fortune_smile x1
+  4. spell_titan_armor x1
+  5. spell_titan_sword x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_477
+================================================================================
+Summary: 3 items, 4 units, 1 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_neutral_retreat_helmet x1
+  2. rage_braces x1
+  3. scaly_braces x1
+
+UNITS (4):
+  1. imp x3000
+  2. priestess_blood x1750
+  3. demon2 x250
+  4. demonologist x160
+
+SPELLS (1):
+  1. spell_bless x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_493
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_5
+================================================================================
+Summary: 10 items, 5 units, 3 spells, 0 garrison
+
+ITEMS (10):
+  1. addon3_boots_demon_mistress x1
+  2. addon4_battle_mage_pants x1
+  3. addon4_demon_book_of_chaos x1
+  4. addon4_demon_fire_spell_gloves x1
+  5. addon4_demon_summon_book_1 x1
+  6. addon4_spell_rock_fire_ball_150 x1
+  7. addon4_spell_rock_sound_burst_250 x1
+  8. addon4_spell_rock_winter_dance_150 x1
+  9. dog_bone x1
+ 10. kerian_boots x1
+
+UNITS (5):
+  1. imp x5900
+  2. priestess_blood x1150
+  3. demon2 x950
+  4. demonologist x285
+  5. archdemon x34
+
+SPELLS (3):
+  1. spell_advspell_summon_demon x2
+  2. spell_chaos_gifts x1
+  3. spell_evilbook x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_late_708
+================================================================================
+Summary: 5 items, 3 units, 5 spells, 0 garrison
+
+ITEMS (5):
+  1. addon3_armor_undeadmaster_suit x1
+  2. addon4_neutral_cyclop_amulet x1
+  3. addon4_spell_rock_ghost_sword_150 x1
+  4. addon4_spell_rock_sacrifice_150 x1
+  5. trap x1
+
+UNITS (3):
+  1. imp2 x2250
+  2. imp x810
+  3. cerberus x490
+
+SPELLS (5):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_demon x1
+  3. spell_advspell_summon_human x1
+  4. spell_cowardness x2
+  5. spell_fire_arrow x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: atrixus_masterprison_570
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_1201
+================================================================================
+Summary: 0 items, 4 units, 6 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (4):
+  1. dark_bowman x2200
+  2. dark_footman x1820
+  3. dark_archmage x490
+  4. dark_knight x790
+
+SPELLS (6):
+  1. spell_acid_ground x2
+  2. spell_advspell_summon_dwarf x1
+  3. spell_advspell_summon_elf x1
+  4. spell_advspell_summon_human x1
+  5. spell_inferno_dragon x1
+  6. spell_whammy x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_1305
+================================================================================
+Summary: 0 items, 0 units, 2 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS (2):
+  1. spell_advspell_summon_orc x1
+  2. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_1313
+================================================================================
+Summary: 1 items, 0 units, 1 spells, 0 garrison
+
+ITEMS (1):
+  1. copper_flute x1
+
+UNITS: None
+
+SPELLS (1):
+  1. spell_advspell_summon_mech x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_1408
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_1629
+================================================================================
+Summary: 2 items, 4 units, 4 spells, 0 garrison
+
+ITEMS (2):
+  1. addon2_clothes_loohi x1
+  2. addon4_heavy_knight_pants x1
+
+UNITS (4):
+  1. dark_miner x5900
+  2. dark_miner2 x920
+  3. dark_dwarf x1340
+  4. dark_giant x90
+
+SPELLS (4):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_advspell_summon_mech x1
+  3. spell_pain_mirror x3
+  4. spell_whammy x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_1630
+================================================================================
+Summary: 2 items, 4 units, 4 spells, 0 garrison
+
+ITEMS (2):
+  1. addon2_clothes_loohi x1
+  2. addon4_heavy_knight_pants x1
+
+UNITS (4):
+  1. dark_miner x5900
+  2. dark_miner2 x920
+  3. dark_dwarf x1340
+  4. dark_giant x90
+
+SPELLS (4):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_advspell_summon_mech x1
+  3. spell_pain_mirror x3
+  4. spell_whammy x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_1636
+================================================================================
+Summary: 4 items, 1 units, 5 spells, 0 garrison
+
+ITEMS (4):
+  1. addon2_clothes_aristocrat_clothes x1
+  2. addon4_scaly_pants x1
+  3. battle_talmud x1
+  4. pictures_book x1
+
+UNITS (1):
+  1. dark_alchemist x850
+
+SPELLS (5):
+  1. spell_advspell_summon_mech x1
+  2. spell_advspell_summon_plant x1
+  3. spell_dispell x3
+  4. spell_inferno_dragon x1
+  5. spell_sanctuary x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_1638
+================================================================================
+Summary: 3 items, 2 units, 1 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_spell_rock_acid_ground_150 x1
+  2. gryphon_banner x1
+  3. pirat_band x1
+
+UNITS (2):
+  1. spider_mech x60
+  2. droideka x77
+
+SPELLS (1):
+  1. spell_advspell_summon_mech x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_1640
+================================================================================
+Summary: 0 items, 0 units, 2 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS (2):
+  1. spell_advspell_summon_orc x1
+  2. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_1724
+================================================================================
+Summary: 1 items, 5 units, 1 spells, 0 garrison
+
+ITEMS (1):
+  1. copper_flute x1
+
+UNITS (5):
+  1. dark_ingeneer x490
+  2. dark_cannoner x340
+  3. droideka x2660
+  4. spider_mech x1095
+  5. steambot x46
+
+SPELLS (1):
+  1. spell_advspell_summon_mech x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3425
+================================================================================
+Summary: 5 items, 4 units, 3 spells, 0 garrison
+
+ITEMS (5):
+  1. addon3_weapon_experimental_arbalet x1
+  2. addon4_giant_dwarf_amulet x1
+  3. addon4_orcish_pants x1
+  4. lens x1
+  5. mechanic_sword x1
+
+UNITS (4):
+  1. dark_blacksmith x1700
+  2. dark_runemaster x1300
+  3. dark_dwarf_trapper x500
+  4. dark_giant x45
+
+SPELLS (3):
+  1. spell_berserker x3
+  2. spell_devatron x1
+  3. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3429
+================================================================================
+Summary: 0 items, 4 units, 3 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (4):
+  1. dark_blacksmith x1700
+  2. dark_runemaster x1300
+  3. dark_dwarf_trapper x500
+  4. dark_giant x45
+
+SPELLS (3):
+  1. spell_berserker x3
+  2. spell_devatron x1
+  3. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3461
+================================================================================
+Summary: 2 items, 0 units, 0 spells, 0 garrison
+
+ITEMS (2):
+  1. limit x1
+  2. mana x1
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3488
+================================================================================
+Summary: 2 items, 0 units, 0 spells, 0 garrison
+
+ITEMS (2):
+  1. limit x1
+  2. mana x1
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3503
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3529
+================================================================================
+Summary: 5 items, 4 units, 3 spells, 0 garrison
+
+ITEMS (5):
+  1. addon3_weapon_experimental_arbalet x1
+  2. addon4_giant_dwarf_amulet x1
+  3. addon4_orcish_pants x1
+  4. lens x1
+  5. mechanic_sword x1
+
+UNITS (4):
+  1. dark_blacksmith x1700
+  2. dark_runemaster x1300
+  3. dark_dwarf_trapper x500
+  4. dark_giant x45
+
+SPELLS (3):
+  1. spell_berserker x3
+  2. spell_devatron x1
+  3. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3534
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3535
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3540
+================================================================================
+Summary: 5 items, 4 units, 3 spells, 0 garrison
+
+ITEMS (5):
+  1. addon3_weapon_experimental_arbalet x1
+  2. addon4_giant_dwarf_amulet x1
+  3. addon4_orcish_pants x1
+  4. lens x1
+  5. mechanic_sword x1
+
+UNITS (4):
+  1. dark_blacksmith x1700
+  2. dark_runemaster x1300
+  3. dark_dwarf_trapper x500
+  4. dark_giant x45
+
+SPELLS (3):
+  1. spell_berserker x3
+  2. spell_devatron x1
+  3. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3544
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3545
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3578
+================================================================================
+Summary: 5 items, 5 units, 5 spells, 0 garrison
+
+ITEMS (5):
+  1. addon3_weapon_experimental_arbalet x1
+  2. addon4_giant_dwarf_amulet x1
+  3. addon4_orcish_pants x1
+  4. lens x1
+  5. mechanic_sword x1
+
+UNITS (5):
+  1. dark_blacksmith x11200
+  2. dark_miner x9900
+  3. dark_ingeneer x4300
+  4. dark_alchemist x1100
+  5. dark_giant x120
+
+SPELLS (5):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_advspell_summon_mech x1
+  3. spell_battle_frenzy x2
+  4. spell_magic_stream x1
+  5. spell_sacrifice x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3579
+================================================================================
+Summary: 6 items, 4 units, 5 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_dwarf_magic_attenuator_1 x1
+  2. addon4_spell_rock_corrosion_150 x1
+  3. addon4_spell_rock_winter_dance_150 x1
+  4. alchemist_toolkit x1
+  5. boots x1
+  6. jackboots x1
+
+UNITS (4):
+  1. dark_blacksmith x5000
+  2. dark_runemaster x3900
+  3. dark_dwarf_trapper x900
+  4. dark_giant x80
+
+SPELLS (5):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_advspell_summon_mech x1
+  3. spell_evilbook x2
+  4. spell_healing x4
+  5. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: barazgund_3741
+================================================================================
+Summary: 4 items, 6 units, 5 spells, 0 garrison
+
+ITEMS (4):
+  1. addon3_armor_orc_veteran_armor x1
+  2. addon4_orc_noble_belt x1
+  3. drill x1
+  4. thunder_musket x1
+
+UNITS (6):
+  1. dark_miner x3330
+  2. dark_runemaster x1630
+  3. dark_miner2 x130
+  4. goblin2 x5880
+  5. goblin_rider x930
+  6. orc2 x175
+
+SPELLS (5):
+  1. spell_acid_ground x1
+  2. spell_advspell_summon_dwarf x1
+  3. spell_advspell_summon_mech x1
+  4. spell_advspell_summon_orc x1
+  5. spell_fire_ball x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: bear_mountain_1518
+================================================================================
+Summary: 9 items, 5 units, 6 spells, 0 garrison
+
+ITEMS (9):
+  1. addon3_shield_goblin_shield x1
+  2. addon4_neutral_poison_pants x1
+  3. addon4_orc_dance_mask x1
+  4. addon4_orc_trophy_shield x1
+  5. addon4_regalia_of_mind x1
+  6. addon4_spell_rock_ghost_sword_150 x1
+  7. snake_egg x220
+  8. spider_egg x340
+  9. thorn_seed x400
+
+UNITS (5):
+  1. bat_neutral x8220
+  2. snake x3860
+  3. gorgon x215
+  4. kingthorn x290
+  5. werewolf x1960
+
+SPELLS (6):
+  1. spell_advspell_summon_lizard x1
+  2. spell_advspell_summon_orc x1
+  3. spell_advspell_summon_plant x1
+  4. spell_ghost_sword x1
+  5. spell_mad_rage x1
+  6. spell_weakness x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: bear_mountain_3536
+================================================================================
+Summary: 0 items, 3 units, 1 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (3):
+  1. vampire x1
+  2. vampire2 x1
+  3. vampire_woman x1
+
+SPELLS (1):
+  1. spell_fire_breath x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: bear_mountain_3586
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: bear_mountain_3598
+================================================================================
+Summary: 4 items, 4 units, 1 spells, 0 garrison
+
+ITEMS (4):
+  1. addon2_clothes_dark_lord_cape x1
+  2. addon4_neutral_legioner_armor x1
+  3. addon4_orc_assault_shield x1
+  4. snake_staff x1
+
+UNITS (4):
+  1. orc x2100
+  2. catapult x1710
+  3. orc2 x106957178
+  4. ogre_chieftain x80
+
+SPELLS (1):
+  1. spell_advspell_summon_orc x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: bear_mountain_3613
+================================================================================
+Summary: 9 items, 5 units, 6 spells, 0 garrison
+
+ITEMS (9):
+  1. addon3_shield_goblin_shield x1
+  2. addon4_neutral_poison_pants x1
+  3. addon4_orc_dance_mask x1
+  4. addon4_orc_trophy_shield x1
+  5. addon4_regalia_of_mind x1
+  6. addon4_spell_rock_ghost_sword_150 x1
+  7. snake_egg x220
+  8. spider_egg x340
+  9. thorn_seed x400
+
+UNITS (5):
+  1. bat_neutral x8220
+  2. snake x3860
+  3. gorgon x215
+  4. kingthorn x290
+  5. werewolf x1960
+
+SPELLS (6):
+  1. spell_advspell_summon_lizard x1
+  2. spell_advspell_summon_orc x1
+  3. spell_advspell_summon_plant x1
+  4. spell_ghost_sword x1
+  5. spell_mad_rage x1
+  6. spell_weakness x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: bear_mountain_3636
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: bear_mountain_3771
+================================================================================
+Summary: 3 items, 6 units, 4 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_neutral_robber_gloves x1
+  2. addon4_orc_primitive_sword x1
+  3. ritual_spear x1
+
+UNITS (6):
+  1. catapult x1195
+  2. goblin x8100
+  3. goblin2 x5560
+  4. orc x1320
+  5. shaman_blood x555
+  6. ogre_chieftain x60
+
+SPELLS (4):
+  1. spell_advspell_summon_lizard x1
+  2. spell_advspell_summon_orc x1
+  3. spell_blind x1
+  4. spell_fire_rain x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: bear_mountain_4
+================================================================================
+Summary: 6 items, 5 units, 3 spells, 0 garrison
+
+ITEMS (6):
+  1. addon3_shield_goblin_shield x1
+  2. addon4_happy_temple_sign x1
+  3. addon4_orc_earth_power_ring x1
+  4. addon4_orc_horde_sign x1
+  5. addon4_orc_marsh_boots x1
+  6. addon4_primitive_orc_belt x1
+
+UNITS (5):
+  1. goblin2 x1870
+  2. goblin_rider x3140
+  3. orc2 x600
+  4. shaman_blood x970
+  5. orc_hunter x1660
+
+SPELLS (3):
+  1. spell_advspell_summon_elf x1
+  2. spell_advspell_summon_orc x1
+  3. spell_healing x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: bear_mountain_44
+================================================================================
+Summary: 8 items, 6 units, 5 spells, 0 garrison
+
+ITEMS (8):
+  1. addon3_armor_ork_warrior_armor x1
+  2. addon3_sword_orc_chief_sword x1
+  3. addon4_orc_rough_ring x1
+  4. addon4_orc_simple_braces x1
+  5. addon4_spell_rock_desintegration_100 x1
+  6. addon4_spell_rock_undertaker_200 x1
+  7. addon4_spell_rock_warding_healing_60 x1
+  8. addon4_spell_rock_winter_dance_150 x1
+
+UNITS (6):
+  1. goblin2 x10500
+  2. catapult x2600
+  3. goblin_rider x3225
+  4. orc2 x980
+  5. shaman x790
+  6. ogre x85
+
+SPELLS (5):
+  1. spell_advspell_summon_elf x1
+  2. spell_advspell_summon_orc x1
+  3. spell_magic_stream x1
+  4. spell_volcano x1
+  5. spell_warding_healing x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: castle_of_monteville_1205
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: castle_of_monteville_1215
+================================================================================
+Summary: 1 items, 3 units, 1 spells, 0 garrison
+
+ITEMS (1):
+  1. addon4_orc_primitive_sword x1
+
+UNITS (3):
+  1. vampire x1
+  2. vampire2 x1
+  3. vampire_woman x1
+
+SPELLS (1):
+  1. spell_fire_breath x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: catacombs_2759
+================================================================================
+Summary: 3 items, 11 units, 3 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_dwarf_brace_knuckles x1
+  2. addon4_gorgul_spear x1
+  3. addon4_orc_beads x1
+
+UNITS (11):
+  1. zombie2 x74
+  2. ghost x43
+  3. vampire2 x5
+  4. imp x146
+  5. demoness x1
+  6. goblin2 x64
+  7. goblin_shaman x40
+  8. shaman_blood x10
+  9. bat_neutral x925
+ 10. snake x160
+ 11. spider_venom x160
+
+SPELLS (3):
+  1. spell_animal_call x1
+  2. spell_plantation x1
+  3. spell_smile_skull x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: catacombs_2767
+================================================================================
+Summary: 2 items, 3 units, 1 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_spell_rock_animal_call_100 x1
+  2. addon4_spell_rock_magic_axe_100 x1
+
+UNITS (3):
+  1. archer x630
+  2. ghost x56
+  3. necromant x4
+
+SPELLS (1):
+  1. spell_advspell_summon_undead x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: catacombs_2782
+================================================================================
+Summary: 3 items, 5 units, 1 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_demon_cult_braces x1
+  2. addon4_demon_fire_revenge x1
+  3. addon4_demon_seal_of_baal x1
+
+UNITS (5):
+  1. demon x10
+  2. demon2 x10
+  3. gargoyle x10
+  4. demoness x10
+  5. unicorn3 x10
+
+SPELLS (1):
+  1. spell_fire_arrow x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: catacombs_2784
+================================================================================
+Summary: 2 items, 4 units, 0 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_dwarf_pliers_tool x1
+  2. fire_master_braces x1
+
+UNITS (4):
+  1. droideka x52
+  2. droideka_guard x33
+  3. droideka_laser x12
+  4. orc_saboteur x4
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: darenbam_274
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: darenbam_282
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: darenbam_316
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: darenbam_325
+================================================================================
+Summary: 2 items, 3 units, 2 spells, 0 garrison
+
+ITEMS (2):
+  1. addon2_weapon_ice_dragon_sword x1
+  2. addon4_viking_geyser_ring x1
+
+UNITS (3):
+  1. yotun x85
+  2. troll x110
+  3. bear_white x1380
+
+SPELLS (2):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_advspell_summon_viking x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: darenbam_397
+================================================================================
+Summary: 4 items, 5 units, 5 spells, 0 garrison
+
+ITEMS (4):
+  1. addon2_artefact_holey_plate x1
+  2. addon4_dwarf_hand_grenade x1
+  3. addon4_spell_rock_kamikaze_100 x1
+  4. addon4_spell_rock_sacrifice_150 x1
+
+UNITS (5):
+  1. miner x930
+  2. light_runemaster x370
+  3. underguard x100
+  4. giant x7
+  5. cyclop x10
+
+SPELLS (5):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_advspell_summon_mech x1
+  3. spell_advspell_summon_viking x1
+  4. spell_dragon_slayer x1
+  5. spell_gold_rush x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: darenbam_91
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: flying_360
+================================================================================
+Summary: 3 items, 2 units, 2 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_crying_undead_shield x1
+  2. moon_sword x1
+  3. pain_blade_ x1
+
+UNITS (2):
+  1. ghost2 x2960
+  2. vampire x600
+
+SPELLS (2):
+  1. spell_advspell_summon_undead x1
+  2. spell_dark_knight x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: flying_414
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_1462
+================================================================================
+Summary: 12 items, 9 units, 4 spells, 0 garrison
+
+ITEMS (12):
+  1. addon3_helmet_necromancer_helmet x1
+  2. addon4_3_crystal x7
+  3. addon4_clever_of_luck x1
+  4. addon4_dead_horror_ring x1
+  5. addon4_demon_amber_cloak x1
+  6. addon4_hell_stigma x1
+  7. addon4_human_noble_pants x1
+  8. addon4_spell_rock_blizzard_250 x1
+  9. addon4_spell_rock_globe_lightning_200 x1
+ 10. addon4_spell_rock_life_stealer_100 x1
+ 11. addon4_spell_rock_lightning_250 x1
+ 12. addon4_spell_rock_warding_healing_60 x1
+
+UNITS (9):
+  1. dark_sprite_lake x13000
+  2. dark_druid x4760
+  3. dark_elf2 x1070
+  4. dark_satyr x4100
+  5. dark_elf x1710
+  6. dark_ent x570
+  7. dark_ent2 x62
+  8. greendragon x7
+  9. dark_unicorn x500
+
+SPELLS (4):
+  1. spell_advspell_summon_elf x1
+  2. spell_advspell_summon_plant x1
+  3. spell_fire_rain x2
+  4. spell_magic_stream x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_1650
+================================================================================
+Summary: 5 items, 4 units, 5 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_dwarf_fighter_belt x1
+  2. addon4_heavy_pants x1
+  3. silver_armor x1
+  4. snake_boots x1
+  5. wanderer_gloves x1
+
+UNITS (4):
+  1. ice_minion x7900
+  2. barbarian2 x4625
+  3. assassin x134
+  4. beholder x265
+
+SPELLS (5):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_elf x1
+  3. spell_advspell_summon_human x1
+  4. spell_lull x2
+  5. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_1692
+================================================================================
+Summary: 12 items, 9 units, 4 spells, 0 garrison
+
+ITEMS (12):
+  1. addon3_helmet_necromancer_helmet x1
+  2. addon4_3_crystal x7
+  3. addon4_clever_of_luck x1
+  4. addon4_dead_horror_ring x1
+  5. addon4_demon_amber_cloak x1
+  6. addon4_hell_stigma x1
+  7. addon4_human_noble_pants x1
+  8. addon4_spell_rock_blizzard_250 x1
+  9. addon4_spell_rock_globe_lightning_200 x1
+ 10. addon4_spell_rock_life_stealer_100 x1
+ 11. addon4_spell_rock_lightning_250 x1
+ 12. addon4_spell_rock_warding_healing_60 x1
+
+UNITS (9):
+  1. dark_sprite_lake x13000
+  2. dark_druid x4760
+  3. dark_elf2 x1070
+  4. dark_satyr x4100
+  5. dark_elf x1710
+  6. dark_ent x570
+  7. dark_ent2 x62
+  8. greendragon x7
+  9. dark_unicorn x500
+
+SPELLS (4):
+  1. spell_advspell_summon_elf x1
+  2. spell_advspell_summon_plant x1
+  3. spell_fire_rain x2
+  4. spell_magic_stream x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_1756
+================================================================================
+Summary: 0 items, 11 units, 2 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (11):
+  1. zombie2 x74
+  2. ghost x43
+  3. vampire2 x5
+  4. imp x146
+  5. demoness x1
+  6. goblin2 x64
+  7. goblin_shaman x40
+  8. shaman_blood x10
+  9. bat_neutral x925
+ 10. snake x160
+ 11. spider_venom x160
+
+SPELLS (2):
+  1. spell_advspell_summon_elf x1
+  2. spell_magic_bullet x4
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_1759
+================================================================================
+Summary: 4 items, 0 units, 2 spells, 0 garrison
+
+ITEMS (4):
+  1. black_band x1
+  2. limit x1
+  3. mana x1
+  4. war_bracers x1
+
+UNITS: None
+
+SPELLS (2):
+  1. spell_advspell_summon_elf x1
+  2. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_1760
+================================================================================
+Summary: 0 items, 3 units, 5 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (3):
+  1. sprite_lake x14300
+  2. satyr x4900
+  3. druid x2210
+
+SPELLS (5):
+  1. spell_advspell_summon_elf x1
+  2. spell_battle_frenzy x4
+  3. spell_magic_axe x3
+  4. spell_shifted_time x2
+  5. spell_trap x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_1865
+================================================================================
+Summary: 3 items, 11 units, 3 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_dwarf_brace_knuckles x1
+  2. addon4_gorgul_spear x1
+  3. addon4_orc_beads x1
+
+UNITS (11):
+  1. zombie2 x74
+  2. ghost x43
+  3. vampire2 x5
+  4. imp x146
+  5. demoness x1
+  6. goblin2 x64
+  7. goblin_shaman x40
+  8. shaman_blood x10
+  9. bat_neutral x925
+ 10. snake x160
+ 11. spider_venom x160
+
+SPELLS (3):
+  1. spell_animal_call x1
+  2. spell_plantation x1
+  3. spell_smile_skull x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_2207
+================================================================================
+Summary: 0 items, 11 units, 1 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (11):
+  1. zombie2 x74
+  2. ghost x43
+  3. vampire2 x5
+  4. imp x146
+  5. demoness x1
+  6. goblin2 x64
+  7. goblin_shaman x40
+  8. shaman_blood x10
+  9. bat_neutral x925
+ 10. snake x160
+ 11. spider_venom x160
+
+SPELLS (1):
+  1. spell_advspell_summon_elf x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_2281
+================================================================================
+Summary: 5 items, 3 units, 1 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_dwarf_fighter_belt x1
+  2. addon4_heavy_pants x1
+  3. silver_armor x1
+  4. snake_boots x1
+  5. wanderer_gloves x1
+
+UNITS (3):
+  1. ent x390
+  2. thorn_warrior x13600
+  3. kingthorn x320
+
+SPELLS (1):
+  1. spell_advspell_summon_plant x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_2570
+================================================================================
+Summary: 4 items, 4 units, 1 spells, 0 garrison
+
+ITEMS (4):
+  1. addon4_elf_amulet_1 x1
+  2. addon4_spell_rock_gold_rush_1 x1
+  3. dfly_egg x4880
+  4. jolly_roger x1
+
+UNITS (4):
+  1. dragonfly_lake x9100
+  2. bat_neutral x5600
+  3. dragonfly_fire x10400
+  4. spider x13800
+
+SPELLS (1):
+  1. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_4040
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_4041
+================================================================================
+Summary: 4 items, 4 units, 1 spells, 0 garrison
+
+ITEMS (4):
+  1. addon4_elf_amulet_1 x1
+  2. addon4_spell_rock_gold_rush_1 x1
+  3. dfly_egg x4880
+  4. jolly_roger x1
+
+UNITS (4):
+  1. dragonfly_lake x9100
+  2. bat_neutral x5600
+  3. dragonfly_fire x10400
+  4. spider x13800
+
+SPELLS (1):
+  1. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_4087
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_4107
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_4109
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_4113
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: galenirimm_4368
+================================================================================
+Summary: 4 items, 3 units, 5 spells, 0 garrison
+
+ITEMS (4):
+  1. addon4_arachnomancer_helmet x1
+  2. addon4_elf_golden_bow x1
+  3. addon4_elf_seeker_belt x1
+  4. mystic_boots x1
+
+UNITS (3):
+  1. sprite_lake x14300
+  2. satyr x4900
+  3. druid x2210
+
+SPELLS (5):
+  1. spell_advspell_summon_elf x1
+  2. spell_advspell_summon_plant x1
+  3. spell_magic_bondage x2
+  4. spell_phoenix x3
+  5. spell_volcano x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_1236
+================================================================================
+Summary: 6 items, 4 units, 3 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_battle_mage_pants x1
+  2. addon4_demon_amber_cloak x1
+  3. addon4_demon_carmine_shield x1
+  4. addon4_demon_fire_spell_gloves x1
+  5. addon4_elf_moon_pants x1
+  6. addon4_neutral_poison_pants x1
+
+UNITS (4):
+  1. cerberus x3500
+  2. unicorn3 x335
+  3. demon x425
+  4. archdemon x34
+
+SPELLS (3):
+  1. spell_advspell_summon_demon x1
+  2. spell_death_star x1
+  3. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_1412
+================================================================================
+Summary: 6 items, 4 units, 3 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_battle_mage_pants x1
+  2. addon4_demon_amber_cloak x1
+  3. addon4_demon_carmine_shield x1
+  4. addon4_demon_fire_spell_gloves x1
+  5. addon4_elf_moon_pants x1
+  6. addon4_neutral_poison_pants x1
+
+UNITS (4):
+  1. cerberus x3500
+  2. unicorn3 x335
+  3. demon x425
+  4. archdemon x34
+
+SPELLS (3):
+  1. spell_advspell_summon_demon x1
+  2. spell_death_star x1
+  3. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_1413
+================================================================================
+Summary: 6 items, 4 units, 3 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_battle_mage_pants x1
+  2. addon4_demon_amber_cloak x1
+  3. addon4_demon_carmine_shield x1
+  4. addon4_demon_fire_spell_gloves x1
+  5. addon4_elf_moon_pants x1
+  6. addon4_neutral_poison_pants x1
+
+UNITS (4):
+  1. cerberus x3500
+  2. unicorn3 x335
+  3. demon x425
+  4. archdemon x34
+
+SPELLS (3):
+  1. spell_advspell_summon_demon x1
+  2. spell_death_star x1
+  3. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_1414
+================================================================================
+Summary: 6 items, 4 units, 3 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_battle_mage_pants x1
+  2. addon4_demon_amber_cloak x1
+  3. addon4_demon_carmine_shield x1
+  4. addon4_demon_fire_spell_gloves x1
+  5. addon4_elf_moon_pants x1
+  6. addon4_neutral_poison_pants x1
+
+UNITS (4):
+  1. cerberus x3500
+  2. unicorn3 x335
+  3. demon x425
+  4. archdemon x34
+
+SPELLS (3):
+  1. spell_advspell_summon_demon x1
+  2. spell_death_star x1
+  3. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_1415
+================================================================================
+Summary: 0 items, 3 units, 5 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (3):
+  1. sprite_lake x14300
+  2. satyr x4900
+  3. druid x2210
+
+SPELLS (5):
+  1. spell_advspell_summon_elf x1
+  2. spell_battle_frenzy x4
+  3. spell_magic_axe x3
+  4. spell_shifted_time x2
+  5. spell_trap x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_1416
+================================================================================
+Summary: 0 items, 9 units, 4 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (9):
+  1. dark_sprite_lake x13000
+  2. dark_druid x4760
+  3. dark_elf2 x1070
+  4. dark_satyr x4100
+  5. dark_elf x1710
+  6. dark_ent x570
+  7. dark_ent2 x62
+  8. greendragon x7
+  9. dark_unicorn x500
+
+SPELLS (4):
+  1. spell_advspell_summon_elf x1
+  2. spell_advspell_summon_plant x1
+  3. spell_fire_rain x2
+  4. spell_magic_stream x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_184
+================================================================================
+Summary: 9 items, 4 units, 5 spells, 0 garrison
+
+ITEMS (9):
+  1. addon3_quest_whip_kinnia x1
+  2. addon4_demon_demonic_small_ring x1
+  3. addon4_demon_drive_boots x1
+  4. addon4_demonlord_pants x1
+  5. addon4_neutral_varvar_pants x1
+  6. addon4_spell_rock_heat_drop_200 x1
+  7. addon4_spell_rock_unholy_rain_100 x1
+  8. dog_bone x1
+  9. mana_well x1
+
+UNITS (4):
+  1. firemental x16950
+  2. imp2 x11200
+  3. demon x500
+  4. unicorn3 x240
+
+SPELLS (5):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_demon x1
+  3. spell_advspell_summon_human x1
+  4. spell_chaos_breath x1
+  5. spell_ice_serpent x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_2205
+================================================================================
+Summary: 0 items, 3 units, 5 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (3):
+  1. sprite_lake x14300
+  2. satyr x4900
+  3. druid x2210
+
+SPELLS (5):
+  1. spell_advspell_summon_elf x1
+  2. spell_battle_frenzy x4
+  3. spell_magic_axe x3
+  4. spell_shifted_time x2
+  5. spell_trap x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_2206
+================================================================================
+Summary: 0 items, 3 units, 5 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (3):
+  1. sprite_lake x14300
+  2. satyr x4900
+  3. druid x2210
+
+SPELLS (5):
+  1. spell_advspell_summon_elf x1
+  2. spell_battle_frenzy x4
+  3. spell_magic_axe x3
+  4. spell_shifted_time x2
+  5. spell_trap x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_2207
+================================================================================
+Summary: 7 items, 5 units, 2 spells, 0 garrison
+
+ITEMS (7):
+  1. addon3_boots_demon_mistress x1
+  2. addon3_quest_necklace_chemosh x1
+  3. addon4_demon_gargoyle_boots x1
+  4. addon4_demon_horseshoe x1
+  5. addon4_spell_rock_dimensional_call_250 x1
+  6. addon4_spell_rock_lightning_250 x1
+  7. addon4_spell_rock_sound_burst_250 x1
+
+UNITS (5):
+  1. imp x6450
+  2. priestess_blood x4000
+  3. gargoyle x339
+  4. unicorn3 x485
+  5. archdemon x3
+
+SPELLS (2):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_demon x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_2208
+================================================================================
+Summary: 9 items, 4 units, 5 spells, 0 garrison
+
+ITEMS (9):
+  1. addon3_quest_whip_kinnia x1
+  2. addon4_demon_demonic_small_ring x1
+  3. addon4_demon_drive_boots x1
+  4. addon4_demonlord_pants x1
+  5. addon4_neutral_varvar_pants x1
+  6. addon4_spell_rock_heat_drop_200 x1
+  7. addon4_spell_rock_unholy_rain_100 x1
+  8. dog_bone x1
+  9. mana_well x1
+
+UNITS (4):
+  1. firemental x16950
+  2. imp2 x11200
+  3. demon x500
+  4. unicorn3 x240
+
+SPELLS (5):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_demon x1
+  3. spell_advspell_summon_human x1
+  4. spell_chaos_breath x1
+  5. spell_ice_serpent x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_2209
+================================================================================
+Summary: 7 items, 5 units, 2 spells, 0 garrison
+
+ITEMS (7):
+  1. addon3_boots_demon_mistress x1
+  2. addon3_quest_necklace_chemosh x1
+  3. addon4_demon_gargoyle_boots x1
+  4. addon4_demon_horseshoe x1
+  5. addon4_spell_rock_dimensional_call_250 x1
+  6. addon4_spell_rock_lightning_250 x1
+  7. addon4_spell_rock_sound_burst_250 x1
+
+UNITS (5):
+  1. imp x6450
+  2. priestess_blood x4000
+  3. gargoyle x339
+  4. unicorn3 x485
+  5. archdemon x3
+
+SPELLS (2):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_demon x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_2213
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_2214
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_2217
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_2219
+================================================================================
+Summary: 9 items, 4 units, 5 spells, 0 garrison
+
+ITEMS (9):
+  1. addon3_quest_whip_kinnia x1
+  2. addon4_demon_demonic_small_ring x1
+  3. addon4_demon_drive_boots x1
+  4. addon4_demonlord_pants x1
+  5. addon4_neutral_varvar_pants x1
+  6. addon4_spell_rock_heat_drop_200 x1
+  7. addon4_spell_rock_unholy_rain_100 x1
+  8. dog_bone x1
+  9. mana_well x1
+
+UNITS (4):
+  1. firemental x16950
+  2. imp2 x11200
+  3. demon x500
+  4. unicorn3 x240
+
+SPELLS (5):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_demon x1
+  3. spell_advspell_summon_human x1
+  4. spell_chaos_breath x1
+  5. spell_ice_serpent x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_2298
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_2406
+================================================================================
+Summary: 14 items, 0 units, 11 spells, 0 garrison
+
+ITEMS (14):
+  1. addon4_lizard_untilizard_regalia x1
+  2. addon4_orc_battle_horn x1
+  3. addon4_orc_dance_mask x1
+  4. addon4_runicstone_magic_to_might x1
+  5. addon4_runicstone_might_to_magic x1
+  6. addon4_rusty_sword x1
+  7. addon4_undead_voodoo_shield x1
+  8. addon4_viking_solid_boots x1
+  9. addon4_warlock_demon_gloves x1
+ 10. battle_hammer x1
+ 11. engineer_adjuster x1
+ 12. horn_helm x1
+ 13. snake_boots x1
+ 14. werewolf_skin x1
+
+UNITS: None
+
+SPELLS (11):
+  1. spell_advspell_summon_demon x1
+  2. spell_advspell_summon_human x1
+  3. spell_cowardness x1
+  4. spell_desintegration x2
+  5. spell_fire_breath x2
+  6. spell_giant_birth x1
+  7. spell_haste x2
+  8. spell_lightning x2
+  9. spell_mechanisation x3
+ 10. spell_whammy x4
+ 11. spell_winter_dance x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_2407
+================================================================================
+Summary: 3 items, 4 units, 3 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_human_grandmage_mantle x1
+  2. ghost_sword x1
+  3. ring_angi x1
+
+UNITS (4):
+  1. knight x2510
+  2. paladin x1650
+  3. horseman x1385
+  4. runemage x139
+
+SPELLS (3):
+  1. spell_advspell_summon_human x1
+  2. spell_holy_rain x1
+  3. spell_ice_serpent x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_507
+================================================================================
+Summary: 7 items, 5 units, 2 spells, 0 garrison
+
+ITEMS (7):
+  1. addon3_boots_demon_mistress x1
+  2. addon3_quest_necklace_chemosh x1
+  3. addon4_demon_gargoyle_boots x1
+  4. addon4_demon_horseshoe x1
+  5. addon4_spell_rock_dimensional_call_250 x1
+  6. addon4_spell_rock_lightning_250 x1
+  7. addon4_spell_rock_sound_burst_250 x1
+
+UNITS (5):
+  1. imp x6450
+  2. priestess_blood x4000
+  3. gargoyle x339
+  4. unicorn3 x485
+  5. archdemon x3
+
+SPELLS (2):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_demon x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: helvedia_96
+================================================================================
+Summary: 12 items, 9 units, 4 spells, 0 garrison
+
+ITEMS (12):
+  1. addon3_helmet_necromancer_helmet x1
+  2. addon4_3_crystal x7
+  3. addon4_clever_of_luck x1
+  4. addon4_dead_horror_ring x1
+  5. addon4_demon_amber_cloak x1
+  6. addon4_hell_stigma x1
+  7. addon4_human_noble_pants x1
+  8. addon4_spell_rock_blizzard_250 x1
+  9. addon4_spell_rock_globe_lightning_200 x1
+ 10. addon4_spell_rock_life_stealer_100 x1
+ 11. addon4_spell_rock_lightning_250 x1
+ 12. addon4_spell_rock_warding_healing_60 x1
+
+UNITS (9):
+  1. dark_sprite_lake x13000
+  2. dark_druid x4760
+  3. dark_elf2 x1070
+  4. dark_satyr x4100
+  5. dark_elf x1710
+  6. dark_ent x570
+  7. dark_ent2 x62
+  8. greendragon x7
+  9. dark_unicorn x500
+
+SPELLS (4):
+  1. spell_advspell_summon_elf x1
+  2. spell_advspell_summon_plant x1
+  3. spell_fire_rain x2
+  4. spell_magic_stream x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_1602
+================================================================================
+Summary: 0 items, 10 units, 2 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (10):
+  1. robber x2140
+  2. robber2 x1880
+  3. snake_royal x190
+  4. griffin x70
+  5. griffin2 x138
+  6. dark_ethereal x5000
+  7. dark_footman x2160
+  8. dark_bowman x2310
+  9. dark_knight x275
+ 10. icemage x490
+
+SPELLS (2):
+  1. spell_advspell_summon_human x1
+  2. spell_advspell_summon_mech x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_1926
+================================================================================
+Summary: 5 items, 3 units, 1 spells, 0 garrison
+
+ITEMS (5):
+  1. addon2_boots_mocasins x1
+  2. addon4_neutral_beholder_eyeball x1
+  3. addon4_spell_rock_angel_avenger_100 x1
+  4. rage_sign x1
+  5. wizard_hat x1
+
+UNITS (3):
+  1. bat_neutral x6100
+  2. bear2 x940
+  3. graywolf x2940
+
+SPELLS (1):
+  1. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_2724
+================================================================================
+Summary: 5 items, 3 units, 3 spells, 0 garrison
+
+ITEMS (5):
+  1. addon2_helmet_ushanka_cap x1
+  2. addon2_regalia_amanita_basket x1
+  3. addon4_troll_pants x1
+  4. addon4_viking_axethrower_axe x1
+  5. thorn_seed x1
+
+UNITS (3):
+  1. thorn x5150
+  2. thorn_warrior x4620
+  3. monstera x65
+
+SPELLS (3):
+  1. spell_advspell_summon_lizard x1
+  2. spell_advspell_summon_plant x1
+  3. spell_advspell_summon_viking x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_3626
+================================================================================
+Summary: 3 items, 7 units, 5 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_demon_scarlet_carbuncle x1
+  2. addon4_orc_ancient_book x1
+  3. sword_full_moon x1
+
+UNITS (7):
+  1. pirat x2960
+  2. robber2 x2140
+  3. assassin x14
+  4. spider_venom x23800
+  5. spider_fire x18400
+  6. robber x2280
+  7. pirat2 x1950
+
+SPELLS (5):
+  1. spell_advspell_summon_bandit x1
+  2. spell_magic_axe x3
+  3. spell_parent_experience x1
+  4. spell_ram x2
+  5. spell_titan_sword x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_3823
+================================================================================
+Summary: 5 items, 3 units, 3 spells, 0 garrison
+
+ITEMS (5):
+  1. addon2_helmet_ushanka_cap x1
+  2. addon2_regalia_amanita_basket x1
+  3. addon4_troll_pants x1
+  4. addon4_viking_axethrower_axe x1
+  5. thorn_seed x1
+
+UNITS (3):
+  1. thorn x5150
+  2. thorn_warrior x4620
+  3. monstera x65
+
+SPELLS (3):
+  1. spell_advspell_summon_lizard x1
+  2. spell_advspell_summon_plant x1
+  3. spell_advspell_summon_viking x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_4111
+================================================================================
+Summary: 5 items, 4 units, 6 spells, 3 garrison
+
+ITEMS (5):
+  1. addon4_human_archmage_boots x1
+  2. addon4_human_defensive_mantle x1
+  3. addon4_spell_rock_mine_field_60 x1
+  4. addon4_spell_rock_sacrifice_150 x1
+  5. tactical_manual x1
+
+UNITS (4):
+  1. dark_bowman x2200
+  2. dark_footman x1820
+  3. dark_archmage x490
+  4. dark_knight x790
+
+SPELLS (6):
+  1. spell_acid_ground x2
+  2. spell_advspell_summon_dwarf x1
+  3. spell_advspell_summon_elf x1
+  4. spell_advspell_summon_human x1
+  5. spell_inferno_dragon x1
+  6. spell_whammy x2
+
+GARRISON (3):
+  1. gargoyle x3
+  2. demon x8
+  3. imp2 x60
+
+
+================================================================================
+SHOP: inselburg_6507
+================================================================================
+Summary: 0 items, 4 units, 2 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (4):
+  1. spider x1700
+  2. barbarian x1590
+  3. axthrower x210
+  4. viking x650
+
+SPELLS (2):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_viking x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6526
+================================================================================
+Summary: 5 items, 3 units, 1 spells, 0 garrison
+
+ITEMS (5):
+  1. addon2_boots_mocasins x1
+  2. addon4_neutral_beholder_eyeball x1
+  3. addon4_spell_rock_angel_avenger_100 x1
+  4. rage_sign x1
+  5. wizard_hat x1
+
+UNITS (3):
+  1. bat_neutral x6100
+  2. bear2 x940
+  3. graywolf x2940
+
+SPELLS (1):
+  1. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6529
+================================================================================
+Summary: 3 items, 7 units, 5 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_demon_scarlet_carbuncle x1
+  2. addon4_orc_ancient_book x1
+  3. sword_full_moon x1
+
+UNITS (7):
+  1. pirat x2960
+  2. robber2 x2140
+  3. assassin x14
+  4. spider_venom x23800
+  5. spider_fire x18400
+  6. robber x2280
+  7. pirat2 x1950
+
+SPELLS (5):
+  1. spell_advspell_summon_bandit x1
+  2. spell_magic_axe x3
+  3. spell_parent_experience x1
+  4. spell_ram x2
+  5. spell_titan_sword x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6532
+================================================================================
+Summary: 2 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (2):
+  1. alchemist_toolkit x1
+  2. snake_belt x1
+
+UNITS (4):
+  1. spider_venom x2920
+  2. graywolf x740
+  3. griffin x420
+  4. griffin2 x140
+
+SPELLS (2):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_advspell_summon_mech x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6535
+================================================================================
+Summary: 4 items, 10 units, 4 spells, 0 garrison
+
+ITEMS (4):
+  1. addon4_orcish_pants x1
+  2. addon4_regalia_of_magic x1
+  3. army_drum x1
+  4. charmed_armor x1
+
+UNITS (10):
+  1. robber x2140
+  2. robber2 x1880
+  3. snake_royal x190
+  4. griffin x70
+  5. griffin2 x138
+  6. dark_ethereal x5000
+  7. dark_footman x2160
+  8. dark_bowman x2310
+  9. dark_knight x275
+ 10. icemage x490
+
+SPELLS (4):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+  3. spell_fire_arrow x3
+  4. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6557
+================================================================================
+Summary: 5 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_lizard_claw x1
+  2. addon4_lizard_untilizard_regalia x1
+  3. addon4_neutral_bear_paw x1
+  4. addon4_viking_icy_club x1
+  5. flame_torch x1
+
+UNITS (4):
+  1. spider x1700
+  2. barbarian x1590
+  3. axthrower x210
+  4. viking x650
+
+SPELLS (2):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_viking x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6568
+================================================================================
+Summary: 2 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (2):
+  1. alchemist_toolkit x1
+  2. snake_belt x1
+
+UNITS (4):
+  1. spider_venom x2920
+  2. graywolf x740
+  3. griffin x420
+  4. griffin2 x140
+
+SPELLS (2):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_advspell_summon_mech x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6575
+================================================================================
+Summary: 5 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_lizard_claw x1
+  2. addon4_lizard_untilizard_regalia x1
+  3. addon4_neutral_bear_paw x1
+  4. addon4_viking_icy_club x1
+  5. flame_torch x1
+
+UNITS (4):
+  1. spider x1700
+  2. barbarian x1590
+  3. axthrower x210
+  4. viking x650
+
+SPELLS (2):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_viking x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6578
+================================================================================
+Summary: 5 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_lizard_claw x1
+  2. addon4_lizard_untilizard_regalia x1
+  3. addon4_neutral_bear_paw x1
+  4. addon4_viking_icy_club x1
+  5. flame_torch x1
+
+UNITS (4):
+  1. spider x1700
+  2. barbarian x1590
+  3. axthrower x210
+  4. viking x650
+
+SPELLS (2):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_viking x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6582
+================================================================================
+Summary: 5 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_lizard_claw x1
+  2. addon4_lizard_untilizard_regalia x1
+  3. addon4_neutral_bear_paw x1
+  4. addon4_viking_icy_club x1
+  5. flame_torch x1
+
+UNITS (4):
+  1. spider x1700
+  2. barbarian x1590
+  3. axthrower x210
+  4. viking x650
+
+SPELLS (2):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_viking x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6587
+================================================================================
+Summary: 0 items, 10 units, 2 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (10):
+  1. robber x2140
+  2. robber2 x1880
+  3. snake_royal x190
+  4. griffin x70
+  5. griffin2 x138
+  6. dark_ethereal x5000
+  7. dark_footman x2160
+  8. dark_bowman x2310
+  9. dark_knight x275
+ 10. icemage x490
+
+SPELLS (2):
+  1. spell_advspell_summon_human x1
+  2. spell_advspell_summon_mech x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6588
+================================================================================
+Summary: 2 items, 3 units, 4 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_human_noble_pants x1
+  2. snake_staff x1
+
+UNITS (3):
+  1. minotaur x355
+  2. footman2 x760
+  3. robber2 x970
+
+SPELLS (4):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+  3. spell_defenseless x1
+  4. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6625
+================================================================================
+Summary: 2 items, 3 units, 4 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_human_noble_pants x1
+  2. snake_staff x1
+
+UNITS (3):
+  1. minotaur x355
+  2. footman2 x760
+  3. robber2 x970
+
+SPELLS (4):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+  3. spell_defenseless x1
+  4. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6640
+================================================================================
+Summary: 2 items, 3 units, 4 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_human_noble_pants x1
+  2. snake_staff x1
+
+UNITS (3):
+  1. minotaur x355
+  2. footman2 x760
+  3. robber2 x970
+
+SPELLS (4):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+  3. spell_defenseless x1
+  4. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6641
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6667
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6668
+================================================================================
+Summary: 3 items, 5 units, 1 spells, 0 garrison
+
+ITEMS (3):
+  1. addon3_artefact_order_of_betrayal x1
+  2. addon4_human_empire_cloak x1
+  3. monk_belt x1
+
+UNITS (5):
+  1. dark_ethereal x8720
+  2. dark_footman x1920
+  3. dark_witch_hunter x2680
+  4. dark_bowman x1380
+  5. dark_knight x495
+
+SPELLS (1):
+  1. spell_advspell_summon_human x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6729
+================================================================================
+Summary: 5 items, 3 units, 6 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_spell_rock_acid_ground_150 x1
+  2. addon4_spell_rock_ghost_sword_150 x1
+  3. addon4_spell_rock_horde_totem_300 x1
+  4. addon4_spell_rock_resurrection_80 x1
+  5. hunter_armor x1
+
+UNITS (3):
+  1. icemage x1140
+  2. dark_archmage x680
+  3. dark_runemage x44
+
+SPELLS (6):
+  1. spell_advspell_summon_human x1
+  2. spell_corrosion x3
+  3. spell_dragon_slayer x3
+  4. spell_parent_experience x1
+  5. spell_phantom x2
+  6. spell_snowstorm x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_6762
+================================================================================
+Summary: 5 items, 3 units, 6 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_spell_rock_acid_ground_150 x1
+  2. addon4_spell_rock_ghost_sword_150 x1
+  3. addon4_spell_rock_horde_totem_300 x1
+  4. addon4_spell_rock_resurrection_80 x1
+  5. hunter_armor x1
+
+UNITS (3):
+  1. icemage x1140
+  2. dark_archmage x680
+  3. dark_runemage x44
+
+SPELLS (6):
+  1. spell_advspell_summon_human x1
+  2. spell_corrosion x3
+  3. spell_dragon_slayer x3
+  4. spell_parent_experience x1
+  5. spell_phantom x2
+  6. spell_snowstorm x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_754
+================================================================================
+Summary: 2 items, 3 units, 3 spells, 0 garrison
+
+ITEMS (2):
+  1. addon2_clothes_loohi x1
+  2. horseman_shield x1
+
+UNITS (3):
+  1. devilfish x5220
+  2. dragonfly_fire x4800
+  3. dragonfly_lake x4280
+
+SPELLS (3):
+  1. spell_advspell_summon_bandit x1
+  2. spell_healing x1
+  3. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_769
+================================================================================
+Summary: 2 items, 3 units, 4 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_beholder_regalia x1
+  2. blackthorn_crown x1
+
+UNITS (3):
+  1. robber x2860
+  2. pirat x3220
+  3. assassin x179
+
+SPELLS (4):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_dwarf x1
+  3. spell_advspell_summon_human x1
+  4. spell_haste x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_771
+================================================================================
+Summary: 5 items, 5 units, 3 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_runicstone_magic_to_mind x1
+  2. addon4_undead_lethal_braces x1
+  3. ghost_armor x1
+  4. limit x1
+  5. mana x1
+
+UNITS (5):
+  1. archer x4960
+  2. skeleton x4080
+  3. zombie2 x1940
+  4. vampire x455
+  5. dread_eye x106
+
+SPELLS (3):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_undead x1
+  3. spell_magic_axe x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_8585
+================================================================================
+Summary: 3 items, 4 units, 4 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_demon_furious_gaiters x1
+  2. addon4_demon_horseshoe x1
+  3. addon4_demon_spiked_helmet x1
+
+UNITS (4):
+  1. occultistess x4620
+  2. imp x2470
+  3. priestess_blood x650
+  4. demoness x387
+
+SPELLS (4):
+  1. spell_advspell_summon_demon x1
+  2. spell_evilbook x2
+  3. spell_fire_ball x1
+  4. spell_raise_dead x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: inselburg_8586
+================================================================================
+Summary: 3 items, 4 units, 6 spells, 0 garrison
+
+ITEMS (3):
+  1. branding_iron x1
+  2. flame_torch x1
+  3. silver_rapier x1
+
+UNITS (4):
+  1. pirat x1330
+  2. pirat2 x1150
+  3. barbarian x2550
+  4. beholder2 x225
+
+SPELLS (6):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+  3. spell_berserker x5
+  4. spell_gifts x3
+  5. spell_kamikaze x4
+  6. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_210
+================================================================================
+Summary: 3 items, 0 units, 2 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_spell_rock_plantation_20 x1
+  2. limit x1
+  3. mana x1
+
+UNITS: None
+
+SPELLS (2):
+  1. spell_advspell_summon_human x1
+  2. spell_advspell_summon_viking x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_219
+================================================================================
+Summary: 5 items, 5 units, 2 spells, 0 garrison
+
+ITEMS (5):
+  1. addon2_clothes_bear_skin x1
+  2. addon4_book_easy_magic x1
+  3. addon4_healthdrain_gloves x1
+  4. addon4_human_uncursed_shield x1
+  5. addon4_troll_pants x1
+
+UNITS (5):
+  1. robber x1150
+  2. bocman x410
+  3. robber2 x680
+  4. pirat x1020
+  5. pirat2 x520
+
+SPELLS (2):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_221
+================================================================================
+Summary: 2 items, 2 units, 5 spells, 0 garrison
+
+ITEMS (2):
+  1. knight_shield x1
+  2. sun_cloak x1
+
+UNITS (2):
+  1. firemage x232
+  2. dark_archmage x342
+
+SPELLS (5):
+  1. spell_advspell_summon_human x1
+  2. spell_gold_rush x1
+  3. spell_healing x3
+  4. spell_mind_depth x1
+  5. spell_stone_skin x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_3257
+================================================================================
+Summary: 4 items, 4 units, 4 spells, 3 garrison
+
+ITEMS (4):
+  1. addon3_boots_undeadmaster_boots x1
+  2. addon4_mage_staff x1
+  3. addon4_spell_rock_gold_rush_1 x1
+  4. addon4_undead_big_bone_braces x1
+
+UNITS (4):
+  1. ghost x360
+  2. death_horseman x1
+  3. zombie x1000
+  4. necromant x2
+
+SPELLS (4):
+  1. spell_advspell_summon_undead x1
+  2. spell_desintegration x2
+  3. spell_mutation x2
+  4. spell_poison_cloud x2
+
+GARRISON (3):
+  1. gargoyle x3
+  2. demon x8
+  3. imp2 x60
+
+
+================================================================================
+SHOP: monteville_3272
+================================================================================
+Summary: 2 items, 2 units, 5 spells, 0 garrison
+
+ITEMS (2):
+  1. knight_shield x1
+  2. sun_cloak x1
+
+UNITS (2):
+  1. firemage x232
+  2. dark_archmage x342
+
+SPELLS (5):
+  1. spell_advspell_summon_human x1
+  2. spell_gold_rush x1
+  3. spell_healing x3
+  4. spell_mind_depth x1
+  5. spell_stone_skin x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_3288
+================================================================================
+Summary: 3 items, 2 units, 2 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_elf_werewolf_sharp_claw x1
+  2. guard_braces x1
+  3. hunter_gloves x1
+
+UNITS (2):
+  1. berserk2 x215
+  2. snake x675
+
+SPELLS (2):
+  1. spell_advspell_summon_human x1
+  2. spell_spiderling x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_3290
+================================================================================
+Summary: 2 items, 4 units, 4 spells, 0 garrison
+
+ITEMS (2):
+  1. battle_shield x1
+  2. palmer_boots x1
+
+UNITS (4):
+  1. viking x635
+  2. snake_green x2255
+  3. spider_ice x490
+  4. griffin x295
+
+SPELLS (4):
+  1. spell_gifts x3
+  2. spell_revival x2
+  3. spell_titan_armor x1
+  4. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_3315
+================================================================================
+Summary: 4 items, 4 units, 1 spells, 0 garrison
+
+ITEMS (4):
+  1. addon2_artefact_honey_deck x1
+  2. addon2_artefact_obereg x1
+  3. addon2_boots_mocasins x1
+  4. thorn_seed x15
+
+UNITS (4):
+  1. dragonfly_fire x975
+  2. ice_minion x495
+  3. pirat2 x68
+  4. bear2 x80
+
+SPELLS (1):
+  1. spell_advspell_summon_plant x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_3349
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_3384
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_382
+================================================================================
+Summary: 9 items, 4 units, 7 spells, 0 garrison
+
+ITEMS (9):
+  1. addon3_helmet_necromancer_helmet x1
+  2. addon4_3_crystal x4
+  3. addon4_skeleton_power_belt x1
+  4. addon4_skeleton_shield x1
+  5. addon4_spell_rock_angel_avenger_100 x1
+  6. addon4_spell_rock_kamikaze_100 x1
+  7. addon4_undead_absolute_black_mantle x1
+  8. addon4_undead_bone_small_ring x1
+  9. rage_sign x1
+
+UNITS (4):
+  1. dread_eye x229
+  2. vampire x2390
+  3. vampire2 x1180
+  4. vampire_woman x12
+
+SPELLS (7):
+  1. spell_advspell_summon_undead x1
+  2. spell_animal_call x2
+  3. spell_desintegration x1
+  4. spell_evilbook x1
+  5. spell_magic_source x1
+  6. spell_undertaker x5
+  7. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_394
+================================================================================
+Summary: 6 items, 4 units, 5 spells, 0 garrison
+
+ITEMS (6):
+  1. iron_karaklum x1
+  2. limit x1
+  3. mana x1
+  4. skull_karrah x1
+  5. snake_egg x1
+  6. spider_egg x1
+
+UNITS (4):
+  1. gobot x800
+  2. highterrant x69
+  3. gorguana2 x160
+  4. gobot2 x550
+
+SPELLS (5):
+  1. spell_advspell_summon_lizard x1
+  2. spell_raise_dead x1
+  3. spell_snowstorm x1
+  4. spell_titan_sword x1
+  5. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_3966
+================================================================================
+Summary: 6 items, 2 units, 2 spells, 0 garrison
+
+ITEMS (6):
+  1. addon2_artefact_holey_plate x1
+  2. addon3_weapon_undead_sword x1
+  3. addon4_neutral_snake_small_ring x1
+  4. fisher_net x1
+  5. vampire_grave x660
+  6. vampire_ring x1
+
+UNITS (2):
+  1. vampire x3980
+  2. vampire2 x2640
+
+SPELLS (2):
+  1. spell_advspell_summon_undead x1
+  2. spell_evilbook x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_3974
+================================================================================
+Summary: 2 items, 2 units, 5 spells, 0 garrison
+
+ITEMS (2):
+  1. knight_shield x1
+  2. sun_cloak x1
+
+UNITS (2):
+  1. firemage x232
+  2. dark_archmage x342
+
+SPELLS (5):
+  1. spell_advspell_summon_human x1
+  2. spell_gold_rush x1
+  3. spell_healing x3
+  4. spell_mind_depth x1
+  5. spell_stone_skin x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_439
+================================================================================
+Summary: 5 items, 5 units, 2 spells, 0 garrison
+
+ITEMS (5):
+  1. addon2_clothes_bear_skin x1
+  2. addon4_book_easy_magic x1
+  3. addon4_healthdrain_gloves x1
+  4. addon4_human_uncursed_shield x1
+  5. addon4_troll_pants x1
+
+UNITS (5):
+  1. robber x1150
+  2. bocman x410
+  3. robber2 x680
+  4. pirat x1020
+  5. pirat2 x520
+
+SPELLS (2):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_605
+================================================================================
+Summary: 2 items, 2 units, 5 spells, 0 garrison
+
+ITEMS (2):
+  1. knight_shield x1
+  2. sun_cloak x1
+
+UNITS (2):
+  1. firemage x232
+  2. dark_archmage x342
+
+SPELLS (5):
+  1. spell_advspell_summon_human x1
+  2. spell_gold_rush x1
+  3. spell_healing x3
+  4. spell_mind_depth x1
+  5. spell_stone_skin x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_6879
+================================================================================
+Summary: 3 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (3):
+  1. addon3_belt_orc_chief_belt x1
+  2. diplomat_sign x1
+  3. fisher_net x1
+
+UNITS (4):
+  1. devilfish x2450
+  2. gorguana_poison x625
+  3. gorguana_elder x200
+  4. soothsayer x50
+
+SPELLS (2):
+  1. spell_healing x1
+  2. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_692
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_6937
+================================================================================
+Summary: 1 items, 3 units, 4 spells, 0 garrison
+
+ITEMS (1):
+  1. addon4_runicstone_magic_to_mind x1
+
+UNITS (3):
+  1. zombie x310
+  2. zombie2 x360
+  3. ghost x135
+
+SPELLS (4):
+  1. spell_accuracy x1
+  2. spell_advspell_summon_undead x1
+  3. spell_spiderling x1
+  4. spell_wasp_swarm x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_6966
+================================================================================
+Summary: 1 items, 3 units, 4 spells, 0 garrison
+
+ITEMS (1):
+  1. addon4_runicstone_magic_to_mind x1
+
+UNITS (3):
+  1. zombie x310
+  2. zombie2 x360
+  3. ghost x135
+
+SPELLS (4):
+  1. spell_accuracy x1
+  2. spell_advspell_summon_undead x1
+  3. spell_spiderling x1
+  4. spell_wasp_swarm x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_7162
+================================================================================
+Summary: 3 items, 1 units, 4 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_dead_void_touch x1
+  2. addon4_undead_spider_manual x1
+  3. yew_bow x1
+
+UNITS (1):
+  1. ghost x338
+
+SPELLS (4):
+  1. spell_advspell_summon_undead x1
+  2. spell_phantom x2
+  3. spell_titan_sword x1
+  4. spell_undertaker x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_7164
+================================================================================
+Summary: 3 items, 3 units, 2 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_aggressive_orc_shield x1
+  2. addon4_happy_temple_sign x1
+  3. silver_chain x1
+
+UNITS (3):
+  1. goblin_shaman x485
+  2. orc2 x264
+  3. ogre_chieftain x12
+
+SPELLS (2):
+  1. spell_advspell_summon_orc x1
+  2. spell_cowardness x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_74
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: monteville_84
+================================================================================
+Summary: 4 items, 4 units, 4 spells, 3 garrison
+
+ITEMS (4):
+  1. addon3_boots_undeadmaster_boots x1
+  2. addon4_mage_staff x1
+  3. addon4_spell_rock_gold_rush_1 x1
+  4. addon4_undead_big_bone_braces x1
+
+UNITS (4):
+  1. ghost x360
+  2. death_horseman x1
+  3. zombie x1000
+  4. necromant x2
+
+SPELLS (4):
+  1. spell_advspell_summon_undead x1
+  2. spell_desintegration x2
+  3. spell_mutation x2
+  4. spell_poison_cloud x2
+
+GARRISON (3):
+  1. gargoyle x3
+  2. demon x8
+  3. imp2 x60
+
+
+================================================================================
+SHOP: monteville_dungeon_2039
+================================================================================
+Summary: 6 items, 4 units, 3 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_lizard_necklace_1 x1
+  2. addon4_lizard_wisdom_book x1
+  3. addon4_neutral_minotaur_belt x1
+  4. addon4_spell_rock_animal_call_100 x1
+  5. addon4_spell_rock_healing_20 x1
+  6. nephrite_belt x1
+
+UNITS (4):
+  1. gobot2 x900
+  2. gorguana x350
+  3. gorguana_elder x175
+  4. basilisk x9
+
+SPELLS (3):
+  1. spell_advspell_summon_lizard x1
+  2. spell_plague x2
+  3. spell_sacrifice x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_290
+================================================================================
+Summary: 4 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (4):
+  1. addon2_armor_leather_armor2 x1
+  2. addon2_clothes_bear_skin x1
+  3. addon2_gauntlet_bear_gloves x1
+  4. addon2_regalia_bear_tooth x1
+
+UNITS (4):
+  1. bear x5020
+  2. bear2 x2800
+  3. bear_white x1270
+  4. graywolf x12800
+
+SPELLS (2):
+  1. spell_advspell_summon_viking x1
+  2. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_34
+================================================================================
+Summary: 2 items, 3 units, 2 spells, 0 garrison
+
+ITEMS (2):
+  1. addon2_regalia_amanita_basket x1
+  2. addon4_viking_solid_boots x1
+
+UNITS (3):
+  1. viking x4580
+  2. berserk2 x1660
+  3. slinger_man x4400
+
+SPELLS (2):
+  1. spell_advspell_summon_viking x1
+  2. spell_mechanisation x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_4311
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_4352
+================================================================================
+Summary: 7 items, 7 units, 4 spells, 0 garrison
+
+ITEMS (7):
+  1. addon2_boots_battle_boots x1
+  2. addon2_gauntlet_blade_braces x1
+  3. addon4_3_crystal x5
+  4. addon4_spell_rock_cryotic_soil_400 x1
+  5. addon4_spell_rock_resurrection_80 x1
+  6. addon4_viking_wind_pendent x1
+  7. horn_helm x1
+
+UNITS (7):
+  1. slinger_man x13880
+  2. skald x6840
+  3. viking x8280
+  4. berserk2 x5180
+  5. axthrower x5550
+  6. yarl x200
+  7. horsevalkyrie x520
+
+SPELLS (4):
+  1. spell_advspell_summon_viking x1
+  2. spell_mad_rage x1
+  3. spell_ram x1
+  4. spell_trap x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_4365
+================================================================================
+Summary: 3 items, 4 units, 7 spells, 0 garrison
+
+ITEMS (3):
+  1. addon2_artefact_obereg x1
+  2. addon2_clothes_bear_skin x1
+  3. assassin_dagger x1
+
+UNITS (4):
+  1. slinger_man x4900
+  2. skald x5900
+  3. soothsayer x200
+  4. yotun x55
+
+SPELLS (7):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_viking x1
+  3. spell_bless x1
+  4. spell_dragon_slayer x3
+  5. spell_light_knight x1
+  6. spell_parent_experience x1
+  7. spell_pygmy x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_4375
+================================================================================
+Summary: 7 items, 7 units, 4 spells, 0 garrison
+
+ITEMS (7):
+  1. addon2_armor_leather_armor2 x1
+  2. addon2_artefact_bronze_ring2 x1
+  3. addon4_3_crystal x6
+  4. addon4_north_warm_belt x1
+  5. addon4_poison_snake_gloves x1
+  6. addon4_spell_rock_raise_dead_40 x1
+  7. addon4_spell_rock_undertaker_200 x1
+
+UNITS (7):
+  1. slinger_man x18040
+  2. skald x14180
+  3. viking x8440
+  4. berserk2 x5380
+  5. axthrower x5050
+  6. yarl x360
+  7. horsevalkyrie x490
+
+SPELLS (4):
+  1. spell_advspell_summon_viking x1
+  2. spell_cold_grasp x1
+  3. spell_inferno_dragon x1
+  4. spell_light_knight x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_4378
+================================================================================
+Summary: 7 items, 0 units, 4 spells, 0 garrison
+
+ITEMS (7):
+  1. addon2_armor_leather_armor2 x1
+  2. addon2_artefact_bronze_ring2 x1
+  3. addon4_3_crystal x6
+  4. addon4_north_warm_belt x1
+  5. addon4_poison_snake_gloves x1
+  6. addon4_spell_rock_raise_dead_40 x1
+  7. addon4_spell_rock_undertaker_200 x1
+
+UNITS: None
+
+SPELLS (4):
+  1. spell_advspell_summon_viking x1
+  2. spell_cold_grasp x1
+  3. spell_inferno_dragon x1
+  4. spell_light_knight x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_4379
+================================================================================
+Summary: 6 items, 5 units, 4 spells, 0 garrison
+
+ITEMS (6):
+  1. addon2_regalia_sun_rune x1
+  2. addon4_spell_rock_trap_100 x1
+  3. addon4_spell_rock_undertaker_200 x1
+  4. barbar_axe x1
+  5. chain x1
+  6. trap x1
+
+UNITS (5):
+  1. viking x9380
+  2. berserk2 x5520
+  3. axthrower x5650
+  4. yarl x390
+  5. horsevalkyrie x580
+
+SPELLS (4):
+  1. spell_advspell_summon_viking x1
+  2. spell_blind x1
+  3. spell_pain_mirror x1
+  4. spell_parent_experience x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_4380
+================================================================================
+Summary: 6 items, 5 units, 4 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_spell_rock_kamikaze_100 x1
+  2. addon4_spell_rock_raise_dead_40 x1
+  3. pirat_band x1
+  4. sling_ x1
+  5. tur_hammer x1
+  6. warm_gloves x1
+
+UNITS (5):
+  1. viking x8520
+  2. berserk2 x5720
+  3. axthrower x5475
+  4. yarl x380
+  5. horsevalkyrie x690
+
+SPELLS (4):
+  1. spell_advspell_summon_viking x1
+  2. spell_empathy x1
+  3. spell_necromancy x1
+  4. spell_titan_sword x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_4386
+================================================================================
+Summary: 7 items, 2 units, 7 spells, 0 garrison
+
+ITEMS (7):
+  1. addon2_belt_ice_dragon_belt x1
+  2. addon4_orc_battle_hoe x1
+  3. addon4_orc_jagged_ring x1
+  4. addon4_speedy_pants x1
+  5. addon4_spell_rock_holy_rain_100 x1
+  6. addon4_spell_rock_life_stealer_100 x1
+  7. young_mask x1
+
+UNITS (2):
+  1. gorgon x255
+  2. snake_royal x865
+
+SPELLS (7):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_orc x1
+  3. spell_advspell_summon_viking x1
+  4. spell_cowardness x3
+  5. spell_magic_source x2
+  6. spell_titan_armor x1
+  7. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_4387
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_4902
+================================================================================
+Summary: 4 items, 2 units, 3 spells, 0 garrison
+
+ITEMS (4):
+  1. addon4_spell_rock_heat_drop_200 x1
+  2. addon4_viking_axethrower_axe x1
+  3. addon4_viking_wind_pendent x1
+  4. berserker_shield x1
+
+UNITS (2):
+  1. skald x5600
+  2. soothsayer x185
+
+SPELLS (3):
+  1. spell_advspell_summon_viking x1
+  2. spell_light_knight x3
+  3. spell_warding_healing x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: okkarland_8303
+================================================================================
+Summary: 3 items, 3 units, 5 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_icy_scale_armor x1
+  2. addon4_undead_zombie_alebard x1
+  3. equilibrium_sword x1
+
+UNITS (3):
+  1. pirat_ghost x4420
+  2. blackknight x960
+  3. bonedragon x58
+
+SPELLS (5):
+  1. spell_advspell_summon_undead x1
+  2. spell_fire_shield x1
+  3. spell_forest_spawn x2
+  4. spell_light_knight x1
+  5. spell_target x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_1275
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_16
+================================================================================
+Summary: 0 items, 6 units, 9 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (6):
+  1. dark_bowman x800
+  2. dark_peasant x1215
+  3. dark_witch_hunter x200
+  4. robber2 x1060
+  5. dark_priest x540
+  6. dark_knight x50
+
+SPELLS (9):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+  3. spell_defenseless x4
+  4. spell_fire_arrow x3
+  5. spell_horde_totem x1
+  6. spell_last_hero x2
+  7. spell_stupefaction x1
+  8. spell_weakness x3
+  9. spell_whammy x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_450
+================================================================================
+Summary: 3 items, 9 units, 3 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_runicstone_might_to_magic x1
+  2. iron_will_necklace x1
+  3. sling_ x1
+
+UNITS (9):
+  1. hyena x430
+  2. spider_venom x170
+  3. skald x60
+  4. slinger_man x450
+  5. pirat x290
+  6. dark_witch_hunter x260
+  7. dark_bowman x260
+  8. dark_priest2 x415
+  9. spider x850
+
+SPELLS (3):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_viking x1
+  3. spell_revival x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_451
+================================================================================
+Summary: 1 items, 3 units, 2 spells, 0 garrison
+
+ITEMS (1):
+  1. addon4_neutral_beast_regalia x1
+
+UNITS (3):
+  1. devilfish x1590
+  2. snake_green x160
+  3. skald x250
+
+SPELLS (2):
+  1. spell_last_hero x1
+  2. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_5064
+================================================================================
+Summary: 4 items, 5 units, 5 spells, 0 garrison
+
+ITEMS (4):
+  1. addon4_dead_scrawny_hand x1
+  2. addon4_human_poor_pants x1
+  3. addon4_orc_willow_pipe x1
+  4. addon4_skeleton_shield x1
+
+UNITS (5):
+  1. spider x595
+  2. bear2 x20
+  3. spider_venom x765
+  4. gorguana_poison x404
+  5. gorguana_council x57
+
+SPELLS (5):
+  1. spell_advspell_summon_lizard x1
+  2. spell_advspell_summon_plant x1
+  3. spell_animal_call x3
+  4. spell_fire_arrow x3
+  5. spell_wasp_swarm x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_5090
+================================================================================
+Summary: 6 items, 6 units, 9 spells, 2 garrison
+
+ITEMS (6):
+  1. horseman_shield x1
+  2. iron_will_necklace x1
+  3. knight_armor x1
+  4. limit x1
+  5. mana x1
+  6. true_belief_banner x1
+
+UNITS (6):
+  1. dark_bowman x800
+  2. dark_peasant x1215
+  3. dark_witch_hunter x200
+  4. robber2 x1060
+  5. dark_priest x540
+  6. dark_knight x50
+
+SPELLS (9):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+  3. spell_defenseless x4
+  4. spell_fire_arrow x3
+  5. spell_horde_totem x1
+  6. spell_last_hero x2
+  7. spell_stupefaction x1
+  8. spell_weakness x3
+  9. spell_whammy x2
+
+GARRISON (2):
+  1. cerberus x49
+  2. beholder x41
+
+
+================================================================================
+SHOP: portland_5103
+================================================================================
+Summary: 6 items, 6 units, 9 spells, 2 garrison
+
+ITEMS (6):
+  1. horseman_shield x1
+  2. iron_will_necklace x1
+  3. knight_armor x1
+  4. limit x1
+  5. mana x1
+  6. true_belief_banner x1
+
+UNITS (6):
+  1. dark_bowman x800
+  2. dark_peasant x1215
+  3. dark_witch_hunter x200
+  4. robber2 x1060
+  5. dark_priest x540
+  6. dark_knight x50
+
+SPELLS (9):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+  3. spell_defenseless x4
+  4. spell_fire_arrow x3
+  5. spell_horde_totem x1
+  6. spell_last_hero x2
+  7. spell_stupefaction x1
+  8. spell_weakness x3
+  9. spell_whammy x2
+
+GARRISON (2):
+  1. cerberus x49
+  2. beholder x41
+
+
+================================================================================
+SHOP: portland_6617
+================================================================================
+Summary: 3 items, 2 units, 1 spells, 0 garrison
+
+ITEMS (3):
+  1. alebarda_pirates x1
+  2. gryphon_banner x1
+  3. light_boots x1
+
+UNITS (2):
+  1. skeleton x620
+  2. zombie2 x497
+
+SPELLS (1):
+  1. spell_advspell_summon_undead x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_6622
+================================================================================
+Summary: 9 items, 5 units, 1 spells, 0 garrison
+
+ITEMS (9):
+  1. addon2_helmet_ushanka_cap x1
+  2. addon4_elf_moon_pants x1
+  3. addon4_human_parrying_sword x1
+  4. addon4_human_witch_hunter_armor x1
+  5. doc_searcher x1
+  6. hunter_armor x1
+  7. invisible_helm x1
+  8. knight_shield x1
+  9. scaly_armor x1
+
+UNITS (5):
+  1. footman x240
+  2. witch_hunter x150
+  3. dark_footman x405
+  4. dark_footman2 x425
+  5. dark_knight x30
+
+SPELLS (1):
+  1. spell_advspell_summon_mech x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_6650
+================================================================================
+Summary: 0 items, 7 units, 3 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (7):
+  1. viking x325
+  2. droideka x90
+  3. bocman x36
+  4. slinger_man x300
+  5. dark_witch_hunter x160
+  6. dark_priestes x455
+  7. dark_footman x420
+
+SPELLS (3):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_viking x1
+  3. spell_magic_source x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_6671
+================================================================================
+Summary: 2 items, 4 units, 0 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_dwarf_pliers_tool x1
+  2. fire_master_braces x1
+
+UNITS (4):
+  1. droideka x52
+  2. droideka_guard x33
+  3. droideka_laser x12
+  4. orc_saboteur x4
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_6672
+================================================================================
+Summary: 2 items, 4 units, 0 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_dwarf_pliers_tool x1
+  2. fire_master_braces x1
+
+UNITS (4):
+  1. droideka x52
+  2. droideka_guard x33
+  3. droideka_laser x12
+  4. orc_saboteur x4
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_6808
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_6820
+================================================================================
+Summary: 2 items, 2 units, 5 spells, 0 garrison
+
+ITEMS (2):
+  1. knight_shield x1
+  2. sun_cloak x1
+
+UNITS (2):
+  1. firemage x232
+  2. dark_archmage x342
+
+SPELLS (5):
+  1. spell_advspell_summon_human x1
+  2. spell_gold_rush x1
+  3. spell_healing x3
+  4. spell_mind_depth x1
+  5. spell_stone_skin x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_6822
+================================================================================
+Summary: 3 items, 7 units, 1 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_lizard_claw_regalia x1
+  2. dice x1
+  3. titan_pick x1
+
+UNITS (7):
+  1. barbarian x305
+  2. griffin_spirit x180
+  3. gorguana_poison x315
+  4. gorguana x125
+  5. dark_priest2 x650
+  6. dark_footman2 x195
+  7. dark_knight x190
+
+SPELLS (1):
+  1. spell_advspell_summon_lizard x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_6840
+================================================================================
+Summary: 6 items, 6 units, 9 spells, 2 garrison
+
+ITEMS (6):
+  1. horseman_shield x1
+  2. iron_will_necklace x1
+  3. knight_armor x1
+  4. limit x1
+  5. mana x1
+  6. true_belief_banner x1
+
+UNITS (6):
+  1. dark_bowman x800
+  2. dark_peasant x1215
+  3. dark_witch_hunter x200
+  4. robber2 x1060
+  5. dark_priest x540
+  6. dark_knight x50
+
+SPELLS (9):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+  3. spell_defenseless x4
+  4. spell_fire_arrow x3
+  5. spell_horde_totem x1
+  6. spell_last_hero x2
+  7. spell_stupefaction x1
+  8. spell_weakness x3
+  9. spell_whammy x2
+
+GARRISON (2):
+  1. cerberus x49
+  2. beholder x41
+
+
+================================================================================
+SHOP: portland_6846
+================================================================================
+Summary: 2 items, 5 units, 3 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_human_brace_knuckles x1
+  2. snake_belt x1
+
+UNITS (5):
+  1. snake x230
+  2. dark_bowman x155
+  3. dark_footman2 x175
+  4. dark_witch_hunter x162
+  5. dark_knight x49
+
+SPELLS (3):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+  3. spell_lull x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_6851
+================================================================================
+Summary: 2 items, 4 units, 0 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_dwarf_pliers_tool x1
+  2. fire_master_braces x1
+
+UNITS (4):
+  1. droideka x52
+  2. droideka_guard x33
+  3. droideka_laser x12
+  4. orc_saboteur x4
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_6855
+================================================================================
+Summary: 9 items, 5 units, 1 spells, 0 garrison
+
+ITEMS (9):
+  1. addon2_helmet_ushanka_cap x1
+  2. addon4_elf_moon_pants x1
+  3. addon4_human_parrying_sword x1
+  4. addon4_human_witch_hunter_armor x1
+  5. doc_searcher x1
+  6. hunter_armor x1
+  7. invisible_helm x1
+  8. knight_shield x1
+  9. scaly_armor x1
+
+UNITS (5):
+  1. footman x240
+  2. witch_hunter x150
+  3. dark_footman x405
+  4. dark_footman2 x425
+  5. dark_knight x30
+
+SPELLS (1):
+  1. spell_advspell_summon_mech x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_6858
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_785
+================================================================================
+Summary: 4 items, 7 units, 3 spells, 0 garrison
+
+ITEMS (4):
+  1. addon2_gauntlet_reptile_catcher x1
+  2. addon4_human_manapool_gloves x1
+  3. chief_belt x1
+  4. guard_braces x1
+
+UNITS (7):
+  1. viking x325
+  2. droideka x90
+  3. bocman x36
+  4. slinger_man x300
+  5. dark_witch_hunter x160
+  6. dark_priestes x455
+  7. dark_footman x420
+
+SPELLS (3):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_viking x1
+  3. spell_magic_source x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_8383
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_8605
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_8668
+================================================================================
+Summary: 2 items, 2 units, 4 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_runicstone_mind_to_magic x1
+  2. addon4_spell_rock_kamikaze_100 x1
+
+UNITS (2):
+  1. archmage x21
+  2. priestes x93
+
+SPELLS (4):
+  1. spell_accuracy x1
+  2. spell_advspell_summon_human x1
+  3. spell_sanctuary x1
+  4. spell_smile_skull x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_8671
+================================================================================
+Summary: 2 items, 0 units, 0 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_dwarf_pliers_tool x1
+  2. fire_master_braces x1
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_8675
+================================================================================
+Summary: 1 items, 5 units, 3 spells, 0 garrison
+
+ITEMS (1):
+  1. addon4_neutral_leaf_necklace x1
+
+UNITS (5):
+  1. skeleton x530
+  2. zombie x280
+  3. blackknight x33
+  4. necromant x20
+  5. dread_eye x13
+
+SPELLS (3):
+  1. spell_advspell_summon_undead x1
+  2. spell_ghost_sword x2
+  3. spell_healing x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_869
+================================================================================
+Summary: 1 items, 2 units, 3 spells, 0 garrison
+
+ITEMS (1):
+  1. addon4_undead_undertaker_boots x1
+
+UNITS (2):
+  1. skeleton x2700
+  2. ghost x240
+
+SPELLS (3):
+  1. spell_advspell_summon_undead x1
+  2. spell_fire_arrow x2
+  3. spell_scare x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_dark_16
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_dark_5064
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_dark_5103
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: portland_dark_6533
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_141
+================================================================================
+Summary: 5 items, 5 units, 9 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_gorguana_talisman x1
+  2. addon4_orc_marsh_boots x1
+  3. addon4_spell_rock_heat_drop_200 x1
+  4. dfly_egg x1
+  5. ent_seed x100
+
+UNITS (5):
+  1. bat_neutral x2600
+  2. gobot x3500
+  3. gobot2 x1350
+  4. beholder2 x280
+  5. monstera x140
+
+SPELLS (9):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_lizard x1
+  3. spell_advspell_summon_plant x1
+  4. spell_dark_knight x1
+  5. spell_gold_rush x2
+  6. spell_spiderling x3
+  7. spell_titan_sword x1
+  8. spell_warding_healing x1
+  9. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_144
+================================================================================
+Summary: 2 items, 4 units, 7 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_lizard_skin x1
+  2. treasure_box x1
+
+UNITS (4):
+  1. tirex x22
+  2. gorguana_council x510
+  3. soothsayer x55
+  4. slinger_man x400
+
+SPELLS (7):
+  1. spell_advspell_summon_lizard x1
+  2. spell_advspell_summon_viking x1
+  3. spell_desintegration x4
+  4. spell_last_hero x4
+  5. spell_light_knight x1
+  6. spell_revival x3
+  7. spell_wasp_swarm x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_150
+================================================================================
+Summary: 2 items, 5 units, 4 spells, 0 garrison
+
+ITEMS (2):
+  1. addon2_gauntlet_death_gloves x1
+  2. battle_shield x1
+
+UNITS (5):
+  1. pirat x4500
+  2. gobot2 x800
+  3. gorguana x860
+  4. chosha x80
+  5. gorguana_council x160
+
+SPELLS (4):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_human x1
+  3. spell_fire_arrow x3
+  4. spell_weakness x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_157
+================================================================================
+Summary: 4 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (4):
+  1. addon3_quest_rum_keg x3
+  2. addon4_yanichar_pants x1
+  3. champion_belt x1
+  4. crag_axe x1
+
+UNITS (4):
+  1. tirex x10
+  2. gorguana x440
+  3. basilisk x31
+  4. gobot x2900
+
+SPELLS (2):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_lizard x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_159
+================================================================================
+Summary: 5 items, 2 units, 3 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_dwarf_miner_boots x1
+  2. addon4_human_magic_bow x1
+  3. addon4_spell_rock_sound_burst_250 x1
+  4. alchemist_toolkit x1
+  5. dwarf_helm x1
+
+UNITS (2):
+  1. dark_alchemist x300
+  2. dark_ingeneer x840
+
+SPELLS (3):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_advspell_summon_mech x1
+  3. spell_warding_healing x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_161
+================================================================================
+Summary: 1 items, 3 units, 1 spells, 0 garrison
+
+ITEMS (1):
+  1. paladin_shield x1
+
+UNITS (3):
+  1. gorguana_poison x1140
+  2. pirat2 x2740
+  3. bat_neutral x13600
+
+SPELLS (1):
+  1. spell_advspell_summon_bandit x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_167
+================================================================================
+Summary: 3 items, 6 units, 2 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_neutral_wooden_hand x1
+  2. addon4_spell_rock_heat_drop_200 x1
+  3. addon4_undead_spider_manual x1
+
+UNITS (6):
+  1. skeleton x10700
+  2. zombie x4650
+  3. ghost x1900
+  4. ghost2 x730
+  5. necromant x335
+  6. bonedragon x30
+
+SPELLS (2):
+  1. spell_advspell_summon_undead x1
+  2. spell_smile_skull x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_222
+================================================================================
+Summary: 3 items, 6 units, 2 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_neutral_wooden_hand x1
+  2. addon4_spell_rock_heat_drop_200 x1
+  3. addon4_undead_spider_manual x1
+
+UNITS (6):
+  1. skeleton x10700
+  2. zombie x4650
+  3. ghost x1900
+  4. ghost2 x730
+  5. necromant x335
+  6. bonedragon x30
+
+SPELLS (2):
+  1. spell_advspell_summon_undead x1
+  2. spell_smile_skull x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_2573
+================================================================================
+Summary: 3 items, 6 units, 2 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_neutral_wooden_hand x1
+  2. addon4_spell_rock_heat_drop_200 x1
+  3. addon4_undead_spider_manual x1
+
+UNITS (6):
+  1. skeleton x10700
+  2. zombie x4650
+  3. ghost x1900
+  4. ghost2 x730
+  5. necromant x335
+  6. bonedragon x30
+
+SPELLS (2):
+  1. spell_advspell_summon_undead x1
+  2. spell_smile_skull x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_2575
+================================================================================
+Summary: 8 items, 2 units, 1 spells, 0 garrison
+
+ITEMS (8):
+  1. addon4_spell_rock_armageddon_250 x1
+  2. addon4_spell_rock_dimensional_call_250 x1
+  3. addon4_viking_ice_small_ring x1
+  4. black_dragon_egg x3
+  5. king_borg_horn x1
+  6. limit x1
+  7. mana x1
+  8. red_dragon_egg x5
+
+UNITS (2):
+  1. blackdragon x48
+  2. dragon_ice x48
+
+SPELLS (1):
+  1. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_2625
+================================================================================
+Summary: 3 items, 6 units, 2 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_neutral_wooden_hand x1
+  2. addon4_spell_rock_heat_drop_200 x1
+  3. addon4_undead_spider_manual x1
+
+UNITS (6):
+  1. skeleton x10700
+  2. zombie x4650
+  3. ghost x1900
+  4. ghost2 x730
+  5. necromant x335
+  6. bonedragon x30
+
+SPELLS (2):
+  1. spell_advspell_summon_undead x1
+  2. spell_smile_skull x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_2630
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_2645
+================================================================================
+Summary: 3 items, 3 units, 2 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_lizard_belt x1
+  2. addon4_lizard_claw_regalia x1
+  3. addon4_lizard_defense_ring x1
+
+UNITS (3):
+  1. devilfish x13700
+  2. beholder x630
+  3. beholder2 x570
+
+SPELLS (2):
+  1. spell_advspell_summon_lizard x1
+  2. spell_advspell_summon_plant x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_2683
+================================================================================
+Summary: 3 items, 7 units, 5 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_demon_demonic_small_ring x1
+  2. addon4_demon_entropy_belt x1
+  3. addon4_demon_spiked_helmet x1
+
+UNITS (7):
+  1. gorguana2 x310
+  2. chosha x250
+  3. bocman x520
+  4. sea_magess x340
+  5. demon x120
+  6. gargoyle x169
+  7. archdemon x20
+
+SPELLS (5):
+  1. spell_advspell_summon_demon x1
+  2. spell_advspell_summon_viking x1
+  3. spell_armageddon x1
+  4. spell_kamikaze x2
+  5. spell_titan_sword x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_2846
+================================================================================
+Summary: 4 items, 7 units, 3 spells, 0 garrison
+
+ITEMS (4):
+  1. addon4_chosha_king_egg x1
+  2. addon4_mel_period_ring x1
+  3. addon4_neutral_legioner_armor x1
+  4. addon4_spell_rock_fire_shield_200 x1
+
+UNITS (7):
+  1. gobot x4200
+  2. gobot2 x2610
+  3. gorguana x920
+  4. gorguana2 x860
+  5. highterrant x510
+  6. brontor x450
+  7. tirex x80
+
+SPELLS (3):
+  1. spell_advspell_summon_lizard x1
+  2. spell_whammy x3
+  3. spell_winter_dance x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: sandy_61
+================================================================================
+Summary: 6 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_dwarf_noble_pants x1
+  2. addon4_orc_goblin_master_armor x1
+  3. addon4_spell_rock_acid_ground_150 x1
+  4. addon4_spell_rock_mine_field_60 x1
+  5. guard_shield x1
+  6. scaly_armor x1
+
+UNITS (4):
+  1. gorguana_elder x490
+  2. gorguana_poison x2800
+  3. highterrant x170
+  4. gorguana2 x720
+
+SPELLS (2):
+  1. spell_advspell_summon_lizard x1
+  2. spell_advspell_summon_orc x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_late_180
+================================================================================
+Summary: 6 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (6):
+  1. addon3_belt_orc_chief_belt x1
+  2. addon4_orc_bone_sword x1
+  3. addon4_orc_brace_knuckles x1
+  4. addon4_orc_goblin_master_armor x1
+  5. addon4_orc_horde_sign x1
+  6. uho_orka x1
+
+UNITS (4):
+  1. ogre x187
+  2. ogre_chieftain x61
+  3. yotun x120
+  4. troll x89
+
+SPELLS (2):
+  1. spell_advspell_summon_orc x1
+  2. spell_titan_sword x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_late_1962
+================================================================================
+Summary: 6 items, 4 units, 5 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_dwarf_magic_attenuator_1 x1
+  2. addon4_spell_rock_corrosion_150 x1
+  3. addon4_spell_rock_winter_dance_150 x1
+  4. alchemist_toolkit x1
+  5. boots x1
+  6. jackboots x1
+
+UNITS (4):
+  1. dark_blacksmith x5000
+  2. dark_runemaster x3900
+  3. dark_dwarf_trapper x900
+  4. dark_giant x80
+
+SPELLS (5):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_advspell_summon_mech x1
+  3. spell_evilbook x2
+  4. spell_healing x4
+  5. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_late_1963
+================================================================================
+Summary: 6 items, 4 units, 5 spells, 0 garrison
+
+ITEMS (6):
+  1. addon4_dwarf_magic_attenuator_1 x1
+  2. addon4_spell_rock_corrosion_150 x1
+  3. addon4_spell_rock_winter_dance_150 x1
+  4. alchemist_toolkit x1
+  5. boots x1
+  6. jackboots x1
+
+UNITS (4):
+  1. dark_blacksmith x5000
+  2. dark_runemaster x3900
+  3. dark_dwarf_trapper x900
+  4. dark_giant x80
+
+SPELLS (5):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_advspell_summon_mech x1
+  3. spell_evilbook x2
+  4. spell_healing x4
+  5. spell_wind_song x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_late_200
+================================================================================
+Summary: 6 items, 5 units, 3 spells, 0 garrison
+
+ITEMS (6):
+  1. addon3_shield_goblin_shield x1
+  2. addon4_happy_temple_sign x1
+  3. addon4_orc_earth_power_ring x1
+  4. addon4_orc_horde_sign x1
+  5. addon4_orc_marsh_boots x1
+  6. addon4_primitive_orc_belt x1
+
+UNITS (5):
+  1. goblin2 x1870
+  2. goblin_rider x3140
+  3. orc2 x600
+  4. shaman_blood x970
+  5. orc_hunter x1660
+
+SPELLS (3):
+  1. spell_advspell_summon_elf x1
+  2. spell_advspell_summon_orc x1
+  3. spell_healing x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_late_2150
+================================================================================
+Summary: 4 items, 2 units, 1 spells, 0 garrison
+
+ITEMS (4):
+  1. addon3_armor_black_knight_cuirass x1
+  2. addon4_heavy_knight_pants x1
+  3. addon4_orc_noble_belt x1
+  4. addon4_runicstone_mind_to_might x1
+
+UNITS (2):
+  1. goblin2 x4450
+  2. orc_hunter x570
+
+SPELLS (1):
+  1. spell_advspell_summon_orc x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_late_2183
+================================================================================
+Summary: 4 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (4):
+  1. addon3_artefact_dead_enemies_ears x1
+  2. addon4_orc_siege_shield x1
+  3. ogr_sandal x1
+  4. smoke_pipe x1
+
+UNITS (4):
+  1. orc x2750
+  2. orc_saboteur x1200
+  3. ogre x80
+  4. ogre_chieftain x120
+
+SPELLS (2):
+  1. spell_advspell_summon_elf x1
+  2. spell_advspell_summon_orc x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_late_2369
+================================================================================
+Summary: 3 items, 4 units, 9 spells, 0 garrison
+
+ITEMS (3):
+  1. addon3_gloves_goblin_gloves x1
+  2. addon4_orc_bloody_coulomb x1
+  3. addon4_orc_pipe_of_war x1
+
+UNITS (4):
+  1. orc x2150
+  2. catapult x680
+  3. shaman x920
+  4. ogre x55
+
+SPELLS (9):
+  1. spell_advspell_summon_orc x1
+  2. spell_blur x2
+  3. spell_desintegration x4
+  4. spell_evilbook x3
+  5. spell_inferno_dragon x1
+  6. spell_plague x2
+  7. spell_pygmy x1
+  8. spell_smile_skull x3
+  9. spell_winter_dance x3
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_late_2373
+================================================================================
+Summary: 4 items, 4 units, 2 spells, 0 garrison
+
+ITEMS (4):
+  1. addon3_artefact_dead_enemies_ears x1
+  2. addon4_orc_siege_shield x1
+  3. ogr_sandal x1
+  4. smoke_pipe x1
+
+UNITS (4):
+  1. orc x2750
+  2. orc_saboteur x1200
+  3. ogre x80
+  4. ogre_chieftain x120
+
+SPELLS (2):
+  1. spell_advspell_summon_elf x1
+  2. spell_advspell_summon_orc x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_late_2705
+================================================================================
+Summary: 2 items, 5 units, 3 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_orc_wild_necklace x1
+  2. uho_orka x1
+
+UNITS (5):
+  1. goblin x1000
+  2. goblin2 x740
+  3. catapult x250
+  4. goblin_rider x380
+  5. orc_saboteur x110
+
+SPELLS (3):
+  1. spell_advspell_summon_orc x1
+  2. spell_chaos_coagulate x2
+  3. spell_trap x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_late_2709
+================================================================================
+Summary: 5 items, 8 units, 2 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_elf_antiarcher_helmet x1
+  2. addon4_orc_automatic_crossbow x1
+  3. addon4_orc_wild_necklace x1
+  4. black_band x1
+  5. life_branch x1
+
+UNITS (8):
+  1. catapult x1065
+  2. shaman x355
+  3. orc2 x435
+  4. troll x34
+  5. ogre_chieftain x36
+  6. dark_sprite x5300
+  7. dark_satyr x1870
+  8. dark_werewolf x985
+
+SPELLS (2):
+  1. spell_advspell_summon_elf x1
+  2. spell_advspell_summon_orc x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_late_357
+================================================================================
+Summary: 0 items, 4 units, 3 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (4):
+  1. dark_blacksmith x1700
+  2. dark_runemaster x1300
+  3. dark_dwarf_trapper x500
+  4. dark_giant x45
+
+SPELLS (3):
+  1. spell_berserker x3
+  2. spell_devatron x1
+  3. spell_giant_birth x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_start_180
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_start_200
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: tristrem_start_357
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: whitehill_1326
+================================================================================
+Summary: 13 items, 13 units, 0 spells, 0 garrison
+
+ITEMS (13):
+  1. addon2_regalia_orc_banner x1
+  2. addon3_artefact_great_leader_talisman x1
+  3. addon4_orc_bagatyr_helmet x1
+  4. addon4_orc_beads x1
+  5. addon4_orc_goblin_horn x1
+  6. addon4_orc_jagged_ring x1
+  7. addon4_orc_rough_ring x1
+  8. addon4_ritual_orc_skull x1
+  9. ogr_sandal x1
+ 10. picture_magic x1
+ 11. shark_teant x1
+ 12. skull_karrah x1
+ 13. wizard_hat x1
+
+UNITS (13):
+  1. goblin x10900
+  2. goblin2 x10320
+  3. goblin_rider x3490
+  4. goblin_shaman x3990
+  5. catapult x3990
+  6. orc x3950
+  7. orc_hunter x3990
+  8. orc2 x1600
+  9. orc_saboteur x800
+ 10. shaman x800
+ 11. shaman_blood x800
+ 12. ogre x210
+ 13. ogre_chieftain x210
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: whitehill_1724
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: whitehill_1725
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: whitehill_1726
+================================================================================
+Summary: 2 items, 4 units, 0 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_dwarf_pliers_tool x1
+  2. fire_master_braces x1
+
+UNITS (4):
+  1. droideka x52
+  2. droideka_guard x33
+  3. droideka_laser x12
+  4. orc_saboteur x4
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: whitehill_1849
+================================================================================
+Summary: 5 items, 4 units, 5 spells, 0 garrison
+
+ITEMS (5):
+  1. addon4_neutral_plant_staff x1
+  2. addon4_spell_rock_angel_avenger_100 x1
+  3. addon4_spell_rock_gold_rush_1 x1
+  4. giant_shield x1
+  5. tactical_manual x1
+
+UNITS (4):
+  1. slinger_man x1960
+  2. barbarian x1960
+  3. bear x375
+  4. axthrower x300
+
+SPELLS (5):
+  1. spell_advspell_summon_bandit x1
+  2. spell_advspell_summon_viking x1
+  3. spell_flame_gaze x1
+  4. spell_magic_bondage x3
+  5. spell_trap x2
+
+GARRISON: None
+
+
+================================================================================
+SHOP: whitehill_1850
+================================================================================
+Summary: 3 items, 4 units, 4 spells, 0 garrison
+
+ITEMS (3):
+  1. addon4_neutral_hypno_amulet x1
+  2. dragon_cloak x1
+  3. jackboots x1
+
+UNITS (4):
+  1. bear_white x2007
+  2. spider_ice x2080
+  3. ice_minion x7850
+  4. yotun x19
+
+SPELLS (4):
+  1. spell_advspell_summon_viking x1
+  2. spell_anger_management x3
+  3. spell_giant_birth x1
+  4. spell_target x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: whitehill_1861
+================================================================================
+Summary: 1 items, 4 units, 2 spells, 3 garrison
+
+ITEMS (1):
+  1. addon4_runicstone_might_to_mind x1
+
+UNITS (4):
+  1. blacksmith x475
+  2. miner x345
+  3. dwarf x190
+  4. alchemist x10
+
+SPELLS (2):
+  1. spell_lull x3
+  2. spell_reaction x2
+
+GARRISON (3):
+  1. death_horseman x68
+  2. dark_paladin x38
+  3. steambot x8
+
+
+================================================================================
+SHOP: whitehill_951
+================================================================================
+Summary: 0 items, 4 units, 3 spells, 0 garrison
+
+ITEMS: None
+
+UNITS (4):
+  1. robber x305
+  2. robber2 x260
+  3. viking x90
+  4. slinger_man x175
+
+SPELLS (3):
+  1. spell_advspell_summon_viking x1
+  2. spell_wasp_swarm x1
+  3. spell_weakness x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: zcom_1296
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: zcom_1302
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: zcom_1317
+================================================================================
+Summary: 0 items, 0 units, 0 spells, 0 garrison
+
+ITEMS: None
+
+UNITS: None
+
+SPELLS: None
+
+GARRISON: None
+
+
+================================================================================
+SHOP: zcom_1422
+================================================================================
+Summary: 11 items, 40 units, 32 spells, 3 garrison
+
+ITEMS (11):
+  1. addon4_dwarf_shield_generator x1
+  2. addon4_dwarf_simple_belt x1
+  3. addon4_elf_bird_armor x1
+  4. addon4_elf_botanic_book x1
+  5. addon4_elf_fairy_amulet x1
+  6. addon4_human_life_cup x1
+  7. dragon_heart x1
+  8. exorcist_necklace x1
+  9. fire_master_braces x1
+ 10. moon_sword x1
+ 11. tournament_helm x1
+
+UNITS (40):
+  1. dark_ethereal x8273
+  2. dark_priest x1220
+  3. dark_bowman x696
+  4. icemage x3204
+  5. dark_horseman x50
+  6. dark_sprite x8800
+  7. dark_dryad x1375
+  8. dark_elf x2849
+  9. dark_druid x2896
+ 10. dark_ent x552
+ 11. dark_blacksmith x35875
+ 12. dark_miner x17641
+ 13. dark_dwarf x1394
+ 14. dark_ingeneer x2629
+ 15. dark_alchemist x857
+ 16. dark_peasant x28000
+ 17. dark_footman2 x300
+ 18. dark_archmage x1150
+ 19. dark_sprite_lake x28000
+ 20. dark_satyr x16500
+ 21. dark_werewolf x1300
+ 22. dark_elf2 x100
+ 23. dark_cannoner x422
+ 24. dark_priest2 x2500
+ 25. dark_powerman x250
+ 26. dark_runemage x140
+ 27. dark_unicorn x800
+ 28. dark_hawk x110
+ 29. dark_runemaster x1000
+ 30. dark_underguard x750
+ 31. dark_giant x140
+ 32. dark_priestes x6000
+ 33. dark_clown x1000
+ 34. dark_knight x300
+ 35. dark_unicorn_runic x300
+ 36. dark_ent2 x30
+ 37. dark_footman x10000
+ 38. dark_paladin x500
+ 39. dark_elf3 x500
+ 40. dark_dwarf_trapper x2000
+
+SPELLS (32):
+  1. spell_blind x1
+  2. spell_chaos_coagulate x2
+  3. spell_cold_grasp x2
+  4. spell_defenseless x1
+  5. spell_demonologist x1
+  6. spell_desintegration x4
+  7. spell_dispell x4
+  8. spell_dragon_arrow x2
+  9. spell_empathy x4
+ 10. spell_fire_breath x3
+ 11. spell_fire_shield x1
+ 12. spell_ghost_sword x2
+ 13. spell_gold_rush x4
+ 14. spell_healing x6
+ 15. spell_holy_rain x1
+ 16. spell_horde_totem x1
+ 17. spell_kamikaze x2
+ 18. spell_life_stealer x2
+ 19. spell_lull x7
+ 20. spell_magic_source x2
+ 21. spell_mine_field x2
+ 22. spell_pain_mirror x2
+ 23. spell_plague x1
+ 24. spell_raise_dead x3
+ 25. spell_revival x2
+ 26. spell_scare x3
+ 27. spell_shifted_time x2
+ 28. spell_slow x1
+ 29. spell_undertaker x3
+ 30. spell_wasp_swarm x1
+ 31. spell_weakness x1
+ 32. spell_winter_dance x1
+
+GARRISON (3):
+  1. dread_eye x53
+  2. cyclop x27
+  3. gargoyle x159
+
+
+================================================================================
+SHOP: zcom_519
+================================================================================
+Summary: 13 items, 12 units, 34 spells, 2 garrison
+
+ITEMS (13):
+  1. addon3_gloves_fire_gloves x1
+  2. addon4_dead_catchy_claw x1
+  3. addon4_dead_inception_ring x1
+  4. addon4_demon_smoldering_boots x1
+  5. addon4_elf_moon_pants x1
+  6. addon4_imp_belt x1
+  7. addon4_lizard_claw x1
+  8. addon4_lizard_defense_ring x1
+  9. addon4_lizard_swamp_armor_1 x1
+ 10. addon4_orc_goblin_boots x1
+ 11. addon4_orc_willow_pipe x1
+ 12. addon4_undead_dark_crossbow x1
+ 13. battle_talmud x1
+
+UNITS (12):
+  1. archer x1298
+  2. skeleton x960
+  3. zombie x950
+  4. zombie2 x1120
+  5. occultistess x1000
+  6. imp x490
+  7. imp2 x339
+  8. goblin x840
+  9. goblin2 x740
+ 10. gobot x1440
+ 11. gobot2 x1180
+ 12. gorguana_poison x300
+
+SPELLS (34):
+  1. spell_advspell_summon_demon x1
+  2. spell_advspell_summon_lizard x1
+  3. spell_advspell_summon_orc x1
+  4. spell_advspell_summon_undead x1
+  5. spell_animal_call x2
+  6. spell_berserker x5
+  7. spell_bless x3
+  8. spell_blind x2
+  9. spell_blur x2
+ 10. spell_cold_grasp x3
+ 11. spell_defenseless x6
+ 12. spell_desintegration x5
+ 13. spell_dispell x1
+ 14. spell_empathy x1
+ 15. spell_evilbook x2
+ 16. spell_gifts x2
+ 17. spell_haste x4
+ 18. spell_healing x1
+ 19. spell_last_hero x3
+ 20. spell_magic_axe x4
+ 21. spell_magic_source x2
+ 22. spell_mutation x2
+ 23. spell_pain_mirror x3
+ 24. spell_raise_dead x7
+ 25. spell_reaction x4
+ 26. spell_revival x1
+ 27. spell_scare x3
+ 28. spell_slow x4
+ 29. spell_spiderling x3
+ 30. spell_stone_skin x3
+ 31. spell_trap x11
+ 32. spell_undertaker x6
+ 33. spell_wasp_swarm x4
+ 34. spell_weakness x7
+
+GARRISON (2):
+  1. necromant x165
+  2. dark_cannoner x179
+
+
+================================================================================
+SHOP: zcom_68
+================================================================================
+Summary: 8 items, 4 units, 5 spells, 0 garrison
+
+ITEMS (8):
+  1. addon2_gauntlet_avrelii_gauntlet x1
+  2. addon4_human_basic_spells_book x1
+  3. addon4_spell_rock_acid_ground_150 x1
+  4. addon4_spell_rock_cryogen_tornado_250 x1
+  5. addon4_spell_rock_heat_drop_200 x1
+  6. alebarda_pirates x1
+  7. armor x1
+  8. picture_griffin_king x1
+
+UNITS (4):
+  1. dark_archmage x235
+  2. dark_ent x175
+  3. dark_druid x150
+  4. soothsayer x58
+
+SPELLS (5):
+  1. spell_advspell_summon_elf x1
+  2. spell_advspell_summon_human x1
+  3. spell_anger_management x3
+  4. spell_globe_lightning x1
+  5. spell_magic_stream x1
+
+GARRISON: None
+
+
+================================================================================
+SHOP: zcom_start_519
+================================================================================
+Summary: 2 items, 0 units, 5 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_dwarf_amulet_1 x1
+  2. telescopic_sight x1
+
+UNITS: None
+
+SPELLS (5):
+  1. spell_advspell_summon_dwarf x1
+  2. spell_gifts x1
+  3. spell_plantation x3
+  4. spell_poison_cloud x1
+  5. spell_reaction x2
+
+GARRISON: None
+

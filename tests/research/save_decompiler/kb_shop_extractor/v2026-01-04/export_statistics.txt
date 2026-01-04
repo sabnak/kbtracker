@@ -1,0 +1,13 @@
+EXPORT STATISTICS
+================================================================================
+
+Total shops: 255
+Total items: 789
+Total units: 894
+Total spells: 738
+Total garrison: 23
+
+Shops with items: 176
+Shops with units: 190
+Shops with spells: 192
+Shops with garrison: 9

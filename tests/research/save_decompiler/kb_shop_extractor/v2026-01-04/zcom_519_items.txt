@@ -1,0 +1,75 @@
+Shop: zcom_519 (itext_m_zcom_519)
+
+ITEMS (15 entries found by parser):
+1. addon3_gloves_fire_gloves
+2. addon4_dead_catchy_claw
+3. addon4_dead_inception_ring
+4. addon4_demon_smoldering_boots
+5. addon4_elf_moon_pants
+6. addon4_imp_belt
+7. addon4_lizard_claw
+8. addon4_lizard_defense_ring
+9. addon4_lizard_swamp_armor_1
+10. addon4_orc_goblin_boots
+11. addon4_orc_willow_pipe
+12. addon4_undead_dark_crossbow
+13. battle_talmud
+14. moral (DUPLICATE - appears twice!)
+15. moral (DUPLICATE - appears twice!)
+
+NOTE: "moral" appears twice in parser output - this is likely a bug!
+If you see only 13 unique items in-game, this duplicate is the problem.
+
+UNITS (12):
+1. archer x1298
+2. skeleton x960
+3. zombie x950
+4. zombie2 x1120
+5. occultistess x1000
+6. imp x490
+7. imp2 x339
+8. goblin x840
+9. goblin2 x740
+10. gobot x1440
+11. gobot2 x1180
+12. gorguana_poison x300
+
+SPELLS (34):
+1. spell_advspell_summon_demon x1
+2. spell_advspell_summon_lizard x1
+3. spell_advspell_summon_orc x1
+4. spell_advspell_summon_undead x1
+5. spell_animal_call x2
+6. spell_berserker x5
+7. spell_bless x3
+8. spell_blind x2
+9. spell_blur x2
+10. spell_cold_grasp x3
+11. spell_defenseless x6
+12. spell_desintegration x5
+13. spell_dispell x1
+14. spell_empathy x1
+15. spell_evilbook x2
+16. spell_gifts x2
+17. spell_haste x4
+18. spell_healing x1
+19. spell_last_hero x3
+20. spell_magic_axe x4
+21. spell_magic_source x2
+22. spell_mutation x2
+23. spell_pain_mirror x3
+24. spell_raise_dead x7
+25. spell_reaction x4
+26. spell_revival x1
+27. spell_scare x3
+28. spell_slow x4
+29. spell_spiderling x3
+30. spell_stone_skin x3
+31. spell_trap x11
+32. spell_undertaker x6
+33. spell_wasp_swarm x4
+34. spell_weakness x7
+
+GARRISON (2):
+1. necromant x165
+2. dark_cannoner x179

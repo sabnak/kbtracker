@@ -21,7 +21,11 @@ class ShopInventoryParser(IShopInventoryParser):
 
 	METADATA_KEYWORDS: set[str] = {
 		'count', 'flags', 'lvars', 'slruck', 'id', 'strg', 'bmd', 'ugid',
-		'temp', 'hint', 'label', 'name', 'image', 'text', 's', 'h'
+		'temp', 'hint', 'label', 'name', 'image', 'text', 's', 'h', 'moral'
+	}
+
+	SECTION_MARKERS: set[bytes] = {
+		b'.items', b'.spells', b'.shopunits', b'.garrison', b'.temp'
 	}
 
 	@inject
@@ -155,6 +159,39 @@ class ShopInventoryParser(IShopInventoryParser):
 			return search_start + last_pos
 		return None
 
+	def _find_section_end(
+		self,
+		data: bytes,
+		section_start: int,
+		max_end: int
+	) -> int:
+		"""
+		Find actual end of section by detecting next section marker
+
+		Prevents parsing beyond section boundaries into adjacent sections
+		like .temp, which can contain data that matches entry patterns
+		but isn't part of the current section.
+
+		:param data:
+			Save file data
+		:param section_start:
+			Starting position of current section
+		:param max_end:
+			Maximum possible end (usually shop ID position)
+		:return:
+			Actual end position of section
+		"""
+		search_area = data[section_start:max_end]
+		earliest_marker_pos = max_end
+
+		for marker in self.SECTION_MARKERS:
+			pos = search_area.find(marker, 1)
+			if pos != -1:
+				absolute_pos = section_start + pos
+				earliest_marker_pos = min(earliest_marker_pos, absolute_pos)
+
+		return earliest_marker_pos
+
 	def _parse_slash_separated(
 		self,
 		data: bytes,
@@ -243,7 +280,7 @@ class ShopInventoryParser(IShopInventoryParser):
 			try:
 				name_length = struct.unpack('<I', data[pos:pos+4])[0]
 
-				if 5 <= name_length <= 100:
+				if 3 <= name_length <= 100:
 					if pos + 4 + name_length > len(data):
 						pos += 1
 						continue
@@ -316,7 +353,7 @@ class ShopInventoryParser(IShopInventoryParser):
 			try:
 				name_length = struct.unpack('<I', data[pos:pos+4])[0]
 
-				if 5 <= name_length <= 100:
+				if 3 <= name_length <= 100:
 					if pos + 4 + name_length + 4 > len(data):
 						pos += 1
 						continue
@@ -374,14 +411,17 @@ class ShopInventoryParser(IShopInventoryParser):
 
 		if items_pos:
 			next_pos = units_pos if units_pos else (spells_pos if spells_pos else shop_pos)
-			result['items'] = self._parse_items_section(data, items_pos, next_pos)
+			actual_end = self._find_section_end(data, items_pos, next_pos)
+			result['items'] = self._parse_items_section(data, items_pos, actual_end)
 
 		if units_pos:
 			next_pos = spells_pos if spells_pos else shop_pos
-			result['units'] = self._parse_slash_separated(data, units_pos, next_pos)
+			actual_end = self._find_section_end(data, units_pos, next_pos)
+			result['units'] = self._parse_slash_separated(data, units_pos, actual_end)
 
 		if spells_pos:
-			result['spells'] = self._parse_spells_section(data, spells_pos, shop_pos)
+			actual_end = self._find_section_end(data, spells_pos, shop_pos)
+			result['spells'] = self._parse_spells_section(data, spells_pos, actual_end)
 
 		return result
 
@@ -394,7 +434,7 @@ class ShopInventoryParser(IShopInventoryParser):
 		:return:
 			True if valid, False otherwise
 		"""
-		if not item_id or item_id in self.METADATA_KEYWORDS or len(item_id) < 5:
+		if not item_id or item_id in self.METADATA_KEYWORDS or len(item_id) < 3:
 			return False
 		return bool(re.match(r'^[a-z][a-z0-9_]*$', item_id))
 

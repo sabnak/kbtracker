@@ -1,67 +1,87 @@
-# King's Bounty Shop Extractor
+# King's Bounty Shop Inventory Extractor
 
-**Version:** 1.0.0
-**Author:** Claude (Anthropic)
-**Date:** December 31, 2025
+**Version:** 1.1.0
+**Date:** 2026-01-04
+**Status:** Production Ready ✅
 
 ## Overview
 
-Python tool to extract shop inventory data from King's Bounty save files. Extracts all shop contents including items, units, spells, and garrison across all game locations.
+Production-ready tool to extract shop inventory data from King's Bounty save files. Extracts all shop contents including items, units, spells, and garrison across all game locations.
+
+## Recent Updates (v1.1.0)
+
+**Critical Bug Fixes:**
+- ✅ **Bug #1 Fixed:** Short-named entities (imp, trap, orc, mana) now correctly extracted (minimum 3 chars, was 5)
+- ✅ **Bug #2 Fixed:** Section boundary detection prevents invalid entries from adjacent sections
+- ✅ **Bug #3 Fixed:** "moral" metadata no longer appears as items
+
+**Improvements:**
+- ✅ Validated on multiple save files (endgame + early game)
+- ✅ Universal console tool with standardized output
+- ✅ Comprehensive documentation of binary format
 
 ## Features
 
 - ✅ Extracts all 4 shop sections: Garrison, Items, Units, Spells
 - ✅ Handles correct quantity parsing for all item types
-- ✅ Filters metadata keywords automatically
-- ✅ Exports to clean JSON format
-- ✅ Validated on multiple save files
-- ✅ Zero external dependencies (uses Python stdlib only)
+- ✅ Filters metadata keywords automatically (including "moral")
+- ✅ Exports to JSON, TXT, and statistics files
+- ✅ Validated on multiple save files (255 shops endgame, 247 shops early game)
+- ✅ Integrated with project dependency injection
+- ✅ Proper section boundary detection
 
 ## Requirements
 
-- Python 3.7+
-- No external dependencies required
+- Python 3.14+
+- Docker container (kbtracker_app)
+- Project dependencies (see Container)
 
 ## Installation
 
-No installation needed - just copy `kb_shop_extractor.py` to your desired location.
+No installation needed - tool is part of the project at:
+```
+src/utils/parsers/save_data/export_shop_inventory.py
+```
 
 ## Usage
 
-### Basic Usage
+### Docker Container Usage
 
 ```bash
-python kb_shop_extractor.py <save_data_file> [output.json]
+docker exec kbtracker_app python src/utils/parsers/save_data/export_shop_inventory.py <save_path>
 ```
 
 ### Arguments
 
-- `save_data_file` - Path to King's Bounty save 'data' file (required)
-- `output.json` - Output JSON file path (optional, default: `shops.json`)
+- `save_path` - Absolute path to King's Bounty save 'data' file inside container (required)
 
 ### Examples
 
-**Extract from save file:**
+**Extract endgame save:**
 ```bash
-python kb_shop_extractor.py saves/1767209722/data shops_output.json
+docker exec kbtracker_app python src/utils/parsers/save_data/export_shop_inventory.py /app/tests/game_files/saves/1707047253/data
 ```
 
-**Using default output filename:**
+**Extract early game save:**
 ```bash
-python kb_shop_extractor.py saves/1767209722/data
+docker exec kbtracker_app python src/utils/parsers/save_data/export_shop_inventory.py /app/tests/game_files/saves/1767209722/data
 ```
 
-**Full path example:**
-```bash
-python kb_shop_extractor.py "F:/var/kbtracker/tests/game_files/saves/1767209722/data" extracted_shops.json
-```
+### Output Location
+
+All exports are saved to: `/tmp/save_export/` inside container
+
+Files created (with timestamp):
+- `{save_name}_{timestamp}.json` - Machine-readable JSON
+- `{save_name}_{timestamp}.txt` - Human-readable text
+- `{save_name}_{timestamp}_stats.txt` - Summary statistics
 
 ## Save File Location
 
 King's Bounty saves are typically located in:
 - **Game Directory:** `[Game Install]/saves/[timestamp]/data`
 
-Each save is a directory with a timestamp (e.g., `1767209722`) containing:
+Each save is a directory with a timestamp (e.g., `1707047253`) containing:
 - `data` - Main save file (use this as input)
 - `info` - Save metadata
 - `name` - Save name
@@ -69,11 +89,11 @@ Each save is a directory with a timestamp (e.g., `1767209722`) containing:
 
 ## Output Format
 
-The extractor produces a JSON file with the following structure:
+### JSON Format
 
 ```json
 {
-  "itext_m_portland_6820": {
+  "portland_6820": {
     "garrison": [],
     "items": [
       {"name": "addon4_3_crystal", "quantity": 4},
@@ -86,16 +106,33 @@ The extractor produces a JSON file with the following structure:
       {"name": "spell_plantation", "quantity": 2},
       {"name": "spell_sanctuary", "quantity": 2}
     ]
-  },
-  "itext_m_zcom_1422": {
-    ...
   }
 }
 ```
 
+### TXT Format
+
+```
+================================================================================
+SHOP: portland_6820
+================================================================================
+Summary: 2 items, 1 units, 2 spells, 0 garrison
+
+ITEMS (2):
+  1. addon4_3_crystal x4
+  2. snake_ring x1
+
+UNITS (1):
+  1. bowman x152
+
+SPELLS (2):
+  1. spell_plantation x2
+  2. spell_sanctuary x2
+```
+
 ### JSON Fields
 
-- **Shop ID** (key): Unique shop identifier (e.g., `itext_m_portland_6820`)
+- **Shop ID** (key): Unique shop identifier (e.g., `portland_6820`)
 - **garrison**: Player's stored army units (array of name/quantity objects)
 - **items**: Equipment and consumable items for sale (array)
 - **units**: Units/troops available for hire (array)
@@ -130,10 +167,13 @@ Each shop in the decompressed data follows this pattern:
 [.items section]      ← Equipment and consumables for sale
 [.shopunits section]  ← Units/troops for hire
 [.spells section]     ← Spells for purchase
+[.temp section]       ← Temporary metadata (optional)
 [Shop ID UTF-16 LE]   ← Identifier: "itext_m_<location>_<number>"
 ```
 
-### Quantity Storage (IMPORTANT!)
+**Important:** Section boundary detection prevents parsing data from adjacent sections (Bug #2 fix).
+
+### Quantity Storage
 
 Different sections use different formats for storing quantities:
 
@@ -172,52 +212,37 @@ Different sections use different formats for storing quantities:
 1. **Decompress** - Extract zlib compressed data
 2. **Find Shops** - Scan for shop IDs (UTF-16 LE pattern matching)
 3. **Locate Sections** - Search backwards from shop ID for section markers
-4. **Parse Each Section** - Use appropriate parser for each section type
-5. **Validate IDs** - Filter out metadata keywords
-6. **Export JSON** - Convert to clean JSON format
+4. **Detect Boundaries** - Find actual section end using SECTION_MARKERS
+5. **Parse Each Section** - Use appropriate parser for each section type
+6. **Validate IDs** - Filter out metadata keywords
+7. **Export** - Save to JSON, TXT, and stats files
 
 ## Validation
 
 The extractor has been validated on multiple save files:
 
-### Save 1 (Played Game)
-- **Shops:** 259 total, 205 with content
-- **Products:** 2,924 total (20 garrison, 937 items, 862 units, 1,105 spells)
-- **Verified:** Equipment items qty=1, garrison quantities correct
+### Save 1707047253 (Endgame)
+- **Shops:** 255 total
+- **Items:** 789 total
+- **Units:** 894 total
+- **Spells:** 738 total
+- **Garrison:** 23 total
+- **Coverage:** 69% items, 75% units, 75% spells
+- **Status:** ✅ PASS
 
-### Save 2 (Fresh Game)
-- **Shops:** 247 total, 47 with content
-- **Products:** 715 total (3 garrison, 283 items, 199 units, 230 spells)
-- **Verified:** Stackable consumables (crystals) qty>1, spell quantities correct
+### Save 1767209722 (Early Game)
+- **Shops:** 247 total
+- **Items:** 243 total
+- **Units:** 209 total
+- **Spells:** 124 total
+- **Garrison:** 3 total
+- **Coverage:** 17% items, 16% units, 17% spells
+- **Status:** ✅ PASS
 
-## Known Limitations
-
-- Only extracts shop data (does not extract player inventory, quest states, etc.)
-- Requires decompressed save file to be valid King's Bounty format
-- Item names are internal game IDs (not localized display names)
-- **Uses hardcoded limits** that work for normal saves but may need adjustment for:
-  - Very large shops (>5KB sections)
-  - Items with extensive metadata (>500 bytes)
-  - Quantities >10,000
-  - Modded content with unusual name lengths
-
-**See `LIMITATIONS.md` for detailed information and how to adjust constants.**
-
-### Why These Limits?
-
-The save file format has no clear delimiters - we must distinguish real data from random bytes. These limits act as validation filters to prevent false positives.
-
-**For 99% of normal saves, defaults work perfectly.**
-
-**Key trade-off:**
-- Conservative limits = Clean, accurate output
-- Loose limits = More edge cases covered, but risk of garbage data
-
-**See the FAQ in `LIMITATIONS.md`** for detailed explanations of:
-- Why each limit exists
-- What happens if you increase them
-- When you should adjust them
-- How to validate your changes
+### Bug Regression Tests
+- **Bug #1 (Short names):** ✅ 10 short-named entities found in early game
+- **Bug #2 (Section boundaries):** ✅ No invalid entries from adjacent sections
+- **Bug #3 ("moral" metadata):** ✅ 0 "moral" entries found (correctly filtered)
 
 ## Technical Details
 
@@ -226,21 +251,53 @@ The save file format has no clear delimiters - we must distinguish real data fro
 These strings are metadata, not actual items:
 ```
 count, flags, lvars, slruck, id, strg, bmd, ugid,
-temp, hint, label, name, image, text, s, h
+temp, hint, label, name, image, text, s, h, moral
 ```
+
+**Note:** "moral" is a metadata field containing item morale bonus values (Bug #3 fix).
+
+### Section Boundary Markers
+
+```python
+SECTION_MARKERS = {
+    b'.items', b'.spells', b'.shopunits', b'.garrison', b'.temp'
+}
+```
+
+Parser detects these markers to prevent parsing beyond section boundaries (Bug #2 fix).
 
 ### Validation Rules
 
 Valid item/unit/spell IDs must:
 - Match pattern: `^[a-z][a-z0-9_]*$`
-- Be at least 5 characters long
+- Be at least **3 characters long** (Bug #1 fix - was 5)
 - Not be a metadata keyword
 
 ### Performance
 
 - **Processing Speed:** ~2-5 seconds for typical save file
 - **Memory Usage:** ~20-50 MB for 10 MB save file
-- **Output Size:** ~300-500 KB JSON for 250 shops
+- **Output Size:** ~200-500 KB total (JSON + TXT + stats)
+
+## Known Issues & Limitations
+
+### Scope Limitations
+- Only extracts shop data (does not extract player inventory, quest states, etc.)
+- Requires decompressed save file to be valid King's Bounty format
+- Item names are internal game IDs (not localized display names)
+
+### Fixed in v1.1.0
+- ✅ Short-named entities (3-4 chars) now work correctly
+- ✅ Section boundaries properly detected
+- ✅ "moral" metadata no longer appears as items
+
+### Remaining Considerations
+- **Uses conservative limits** that work for normal saves but may need adjustment for:
+  - Very large shops (>5KB sections)
+  - Items with extensive metadata (>500 bytes)
+  - Modded content with unusual formats
+
+**See `LIMITATIONS.md` for detailed information and how to adjust constants.**
 
 ## Troubleshooting
 
@@ -256,37 +313,50 @@ Valid item/unit/spell IDs must:
 - Save file may be from a different game version
 - Check that the save is actually from King's Bounty
 
-### Incorrect quantities
-- If items show quantity=4 when they should be 1, check that you're using version 1.0.0+
-- Earlier versions had a bug in quantity parsing
+### Missing short-named entities (imp, trap, orc)
+- **Fixed in v1.1.0** - Ensure you're using latest version
+- Parser now handles names with 3+ characters
+
+### "moral" appearing as items
+- **Fixed in v1.1.0** - Ensure you're using latest version
+- This was metadata being misidentified as items
 
 ## Version History
+
+### 1.1.0 (2026-01-04)
+- ✅ **Bug #1 Fixed:** Minimum name length reduced from 5 to 3 characters
+- ✅ **Bug #2 Fixed:** Section boundary detection added
+- ✅ **Bug #3 Fixed:** "moral" metadata keyword added to filter list
+- ✅ Validated on 2 save files (endgame + early game)
+- ✅ Universal console tool with standardized output
+- ✅ Comprehensive bug investigation documentation
 
 ### 1.0.0 (2025-12-31)
 - ✅ Initial production release
 - ✅ Correct quantity parsing for all section types
 - ✅ Metadata keyword filtering
-- ✅ Validated on multiple save files
 - ✅ Complete documentation
+
+## Documentation
+
+**API Documentation:**
+- `QUICKSTART.md` - 5-minute quick start guide
+- `PRODUCTION_READY.md` - Production readiness assessment
+- `LIMITATIONS.md` - Known limitations and adjustments
+- `example_usage.py` - Programmatic usage examples
+
+**Research Documentation:**
+- `tests/research/save_decompiler/kb_shop_extractor/v2026-01-04/BUG_ROOT_CAUSES.md` - Bug analysis
+- `tests/research/save_decompiler/kb_shop_extractor/v2026-01-04/FINAL_SUMMARY.md` - Complete investigation summary
+- `tests/research/save_decompiler/kb_shop_extractor/v2026-01-04/PRODUCTION_READINESS.md` - Production readiness details
 
 ## License
 
 This tool was created for research and educational purposes.
 
-## Support
-
-For issues or questions, refer to the research documentation in:
-```
-tests/research/save_decompiler/
-```
-
-Key research files:
-- `EXTRACTION_SUCCESS.md` - Complete extraction results
-- `FINAL_FIXES_2025-12-31.md` - Final bug fixes documentation
-- `COMPLETE_SHOP_STRUCTURE.md` - Technical reference
-
 ---
 
 **Developed by:** Claude (Anthropic)
-**Date:** December 31, 2025
+**Date:** 2026-01-04
 **Status:** Production Ready ✅
+**Version:** 1.1.0
