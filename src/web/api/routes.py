@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import JSONResponse
 from dependency_injector.wiring import inject, Provide
 from src.web.api.models import AddShopToItemRequest, UpdateShopCountRequest
 from src.domain.game.services.ItemService import ItemService
@@ -8,6 +9,7 @@ from src.domain.game.ISaveFileService import ISaveFileService
 from src.domain.game.IGameService import IGameService
 from src.web.dependencies.game_context import get_game_context, GameContext
 from src.domain.game.repositories.CrudRepository import _game_context
+from src.domain.exceptions import EntityNotFoundException, InvalidKbIdException
 
 
 router = APIRouter(prefix="/api", tags=["api"])
@@ -340,3 +342,78 @@ async def scan_save_file(
 		raise HTTPException(status_code=400, detail=str(e))
 	except Exception as e:
 		raise HTTPException(status_code=500, detail=f"Scan failed: {str(e)}")
+
+
+@router.post("/games/{game_id}/profiles/{profile_id}/scan")
+@inject
+async def scan_profile_save(
+	game_id: int,
+	profile_id: int,
+	game_context: GameContext = Depends(get_game_context),
+	profile_service: IProfileService = Depends(Provide["profile_service"])
+):
+	"""
+	Scan most recent save file for profile and sync shop inventories
+
+	:param game_id:
+		Game ID
+	:param profile_id:
+		Profile ID
+	:param game_context:
+		Game context with schema information
+	:param profile_service:
+		Profile service
+	:return:
+		Counts dictionary
+	"""
+	import traceback
+
+	_game_context.set(game_context)
+
+	try:
+		counts = profile_service.scan_most_recent_save(profile_id)
+		return counts
+	except EntityNotFoundException as e:
+		return JSONResponse(
+			status_code=404,
+			content={
+				"detail": {
+					"error": str(e),
+					"error_type": "EntityNotFoundException",
+					"error_traceback": traceback.format_exc()
+				}
+			}
+		)
+	except FileNotFoundError as e:
+		return JSONResponse(
+			status_code=404,
+			content={
+				"detail": {
+					"error": f"No matching save file: {str(e)}",
+					"error_type": "FileNotFoundError",
+					"error_traceback": traceback.format_exc()
+				}
+			}
+		)
+	except InvalidKbIdException as e:
+		return JSONResponse(
+			status_code=400,
+			content={
+				"detail": {
+					"error": f"Invalid game data: {str(e)}",
+					"error_type": "InvalidKbIdException",
+					"error_traceback": traceback.format_exc()
+				}
+			}
+		)
+	except Exception as e:
+		return JSONResponse(
+			status_code=500,
+			content={
+				"detail": {
+					"error": f"Scan failed: {str(e)}",
+					"error_type": type(e).__name__,
+					"error_traceback": traceback.format_exc()
+				}
+			}
+		)

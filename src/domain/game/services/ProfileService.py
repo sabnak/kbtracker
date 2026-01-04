@@ -1,18 +1,33 @@
 from datetime import datetime
 import hashlib
+from pathlib import Path
 
-from dependency_injector.wiring import Provide
+from dependency_injector.wiring import Provide, inject
 
 from src.core.Container import Container
+from src.core.Config import Config
 from src.domain.game.IProfileRepository import IProfileRepository
 from src.domain.game.IProfileService import IProfileService
 from src.domain.game.entities.ProfileEntity import ProfileEntity
+from src.domain.exceptions import EntityNotFoundException
+from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
+from src.utils.parsers.save_data.IHeroSaveParser import IHeroSaveParser
 
 
 class ProfileService(IProfileService):
 
-	def __init__(self, profile_repository: IProfileRepository = Provide[Container.profile_repository]):
+	@inject
+	def __init__(
+		self,
+		profile_repository: IProfileRepository = Provide[Container.profile_repository],
+		shop_parser: IShopInventoryParser = Provide[Container.shop_inventory_parser],
+		hero_parser: IHeroSaveParser = Provide[Container.hero_save_parser],
+		config: Config = Provide[Container.config]
+	):
 		self._profile_repository = profile_repository
+		self._shop_parser = shop_parser
+		self._hero_parser = hero_parser
+		self._config = config
 
 	def create_profile(
 		self,
@@ -89,3 +104,56 @@ class ProfileService(IProfileService):
 		:return:
 		"""
 		self._profile_repository.delete(profile_id)
+
+	def scan_most_recent_save(self, profile_id: int) -> dict[str, int]:
+		"""
+		Scan most recent save file and sync shop inventories
+
+		:param profile_id:
+			Profile ID to scan for
+		:return:
+			Counts dict {items: int, spells: int, units: int, garrison: int}
+		:raises EntityNotFoundException:
+			If profile, shop, item, spell, or unit not found
+		:raises FileNotFoundError:
+			If no matching save file found
+		"""
+		profile = self._profile_repository.get_by_id(profile_id)
+		if not profile:
+			raise EntityNotFoundException("Profile", profile_id)
+
+		matching_save = self._find_matching_save(profile)
+		shop_data = self._shop_parser.parse(matching_save)
+		counts = self._shop_parser.sync(shop_data, profile_id)
+
+		return counts
+
+	def _find_matching_save(self, profile: ProfileEntity) -> Path:
+		"""
+		Find most recent save file matching profile hash
+
+		:param profile:
+			Profile entity
+		:return:
+			Path to matching save file
+		:raises FileNotFoundError:
+			If no matching save found
+		"""
+		game_dir = profile.save_dir.split('/')[0]
+		save_path = Path(self._config.game_save_path) / game_dir
+
+		lif_files = list(save_path.glob("*/data"))
+		lif_files = sorted(lif_files, key=lambda p: p.stat().st_mtime, reverse=True)[:5]
+
+		for lif_file in lif_files:
+			try:
+				hero_data = self._hero_parser.parse(lif_file)
+				full_name = f"{hero_data['first_name']} {hero_data['second_name']}"
+				computed_hash = self._compute_hash(full_name)
+
+				if computed_hash == profile.hash:
+					return lif_file
+			except Exception:
+				continue
+
+		raise FileNotFoundError(f"No matching save found for profile {profile.id}")

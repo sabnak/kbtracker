@@ -61,3 +61,19 @@ class IProfileService(ABC):
 		:return:
 		"""
 		pass
+
+	@abstractmethod
+	def scan_most_recent_save(self, profile_id: int) -> dict[str, int]:
+		"""
+		Scan most recent save file and sync shop inventories
+
+		:param profile_id:
+			Profile ID to scan for
+		:return:
+			Counts dict {items: int, spells: int, units: int, garrison: int}
+		:raises EntityNotFoundException:
+			If profile, shop, item, spell, or unit not found
+		:raises FileNotFoundError:
+			If no matching save file found
+		"""
+		pass

@@ -21,3 +21,23 @@ class IShopInventoryParser(abc.ABC):
 			If save file doesn't exist
 		"""
 		...
+
+	@abc.abstractmethod
+	def sync(
+		self,
+		data: dict[str, dict[str, list[dict[str, Any]]]],
+		profile_id: int
+	) -> dict[str, int]:
+		"""
+		Sync parsed shop inventory data to database
+
+		:param data:
+			Parsed shop data from parse() method
+		:param profile_id:
+			Profile ID to associate inventories with
+		:return:
+			Dictionary with counts: {items: int, spells: int, units: int, garrison: int}
+		:raises EntityNotFoundException:
+			If any shop, item, spell, or unit not found in database
+		"""
+		...

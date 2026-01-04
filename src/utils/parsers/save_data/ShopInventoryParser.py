@@ -6,6 +6,13 @@ from typing import Any, Optional
 from dependency_injector.wiring import inject, Provide
 
 from src.core.Container import Container
+from src.domain.exceptions import InvalidKbIdException, EntityNotFoundException
+from src.domain.game.IItemRepository import IItemRepository
+from src.domain.game.IShopRepository import IShopRepository
+from src.domain.game.ISpellRepository import ISpellRepository
+from src.domain.game.IUnitRepository import IUnitRepository
+from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
+from src.domain.game.entities.ShopInventory import ShopInventory
 from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
 from src.utils.parsers.save_data.ISaveFileDecompressor import ISaveFileDecompressor
 
@@ -20,15 +27,35 @@ class ShopInventoryParser(IShopInventoryParser):
 	@inject
 	def __init__(
 		self,
-		decompressor: ISaveFileDecompressor = Provide[Container.save_file_decompressor]
+		decompressor: ISaveFileDecompressor = Provide[Container.save_file_decompressor],
+		item_repository: IItemRepository = Provide[Container.item_repository],
+		spell_repository: ISpellRepository = Provide[Container.spell_repository],
+		unit_repository: IUnitRepository = Provide[Container.unit_repository],
+		shop_repository: IShopRepository = Provide[Container.shop_repository],
+		shop_inventory_repository: IShopInventoryRepository = Provide[Container.shop_inventory_repository]
 	):
 		"""
 		Initialize shop inventory parser
 
 		:param decompressor:
 			Save file decompressor
+		:param item_repository:
+			Item repository
+		:param spell_repository:
+			Spell repository
+		:param unit_repository:
+			Unit repository
+		:param shop_repository:
+			Shop repository
+		:param shop_inventory_repository:
+			Shop inventory repository
 		"""
 		self._decompressor = decompressor
+		self._item_repository = item_repository
+		self._spell_repository = spell_repository
+		self._unit_repository = unit_repository
+		self._shop_repository = shop_repository
+		self._shop_inventory_repository = shop_inventory_repository
 
 	def parse(self, save_path: Path) -> dict[str, dict[str, list[dict[str, Any]]]]:
 		"""
@@ -370,3 +397,188 @@ class ShopInventoryParser(IShopInventoryParser):
 		if not item_id or item_id in self.METADATA_KEYWORDS or len(item_id) < 5:
 			return False
 		return bool(re.match(r'^[a-z][a-z0-9_]*$', item_id))
+
+	def sync(
+		self,
+		data: dict[str, dict[str, list[dict[str, Any]]]],
+		profile_id: int
+	) -> dict[str, int]:
+		"""
+		Sync parsed shop inventory data to database
+
+		:param data:
+			Parsed shop data from parse() method
+		:param profile_id:
+			Profile ID to associate inventories with
+		:return:
+			Dictionary with counts
+		:raises EntityNotFoundException:
+			If any shop, item, spell, or unit not found in database
+		"""
+		counts = {"items": 0, "spells": 0, "units": 0, "garrison": 0}
+
+		for shop_kb_id, inventories in data.items():
+			cleaned_kb_id = shop_kb_id[2:] if shop_kb_id.startswith('m_') else shop_kb_id
+			shop = self._shop_repository.get_by_kb_id(cleaned_kb_id)
+
+			if not shop:
+				raise EntityNotFoundException("Shop", cleaned_kb_id)
+
+			counts["items"] += self._sync_items(inventories['items'], shop.id, profile_id)
+			counts["spells"] += self._sync_spells(inventories['spells'], shop.id, profile_id)
+			counts["units"] += self._sync_units(inventories['units'], shop.id, profile_id)
+			counts["garrison"] += self._sync_garrison(inventories['garrison'], shop.id, profile_id)
+
+		return counts
+
+	def _sync_items(
+		self,
+		items: list[dict[str, Any]],
+		shop_id: int,
+		profile_id: int
+	) -> int:
+		"""
+		Sync item inventories
+
+		:param items:
+			Item inventory data
+		:param shop_id:
+			Shop ID
+		:param profile_id:
+			Profile ID
+		:return:
+			Number of items synced
+		"""
+		count = 0
+		for item_data in items:
+			kb_id = item_data['name']
+			item = self._item_repository.get_by_kb_id(kb_id)
+
+			if not item:
+				raise EntityNotFoundException("Item", kb_id)
+
+			inventory = ShopInventory(
+				entity_id=item.id,
+				shop_id=shop_id,
+				profile_id=profile_id,
+				type="item",
+				count=item_data['quantity']
+			)
+			self._shop_inventory_repository.create(inventory)
+			count += 1
+
+		return count
+
+	def _sync_spells(
+		self,
+		spells: list[dict[str, Any]],
+		shop_id: int,
+		profile_id: int
+	) -> int:
+		"""
+		Sync spell inventories
+
+		:param spells:
+			Spell inventory data
+		:param shop_id:
+			Shop ID
+		:param profile_id:
+			Profile ID
+		:return:
+			Number of spells synced
+		"""
+		count = 0
+		for spell_data in spells:
+			kb_id = spell_data['name']
+			spell = self._spell_repository.get_by_kb_id(kb_id)
+
+			if not spell:
+				raise EntityNotFoundException("Spell", kb_id)
+
+			inventory = ShopInventory(
+				entity_id=spell.id,
+				shop_id=shop_id,
+				profile_id=profile_id,
+				type="spell",
+				count=spell_data['quantity']
+			)
+			self._shop_inventory_repository.create(inventory)
+			count += 1
+
+		return count
+
+	def _sync_units(
+		self,
+		units: list[dict[str, Any]],
+		shop_id: int,
+		profile_id: int
+	) -> int:
+		"""
+		Sync unit inventories
+
+		:param units:
+			Unit inventory data
+		:param shop_id:
+			Shop ID
+		:param profile_id:
+			Profile ID
+		:return:
+			Number of units synced
+		"""
+		count = 0
+		for unit_data in units:
+			kb_id = unit_data['name']
+			unit = self._unit_repository.get_by_kb_id(kb_id)
+
+			if not unit:
+				raise EntityNotFoundException("Unit", kb_id)
+
+			inventory = ShopInventory(
+				entity_id=unit.id,
+				shop_id=shop_id,
+				profile_id=profile_id,
+				type="unit",
+				count=unit_data['quantity']
+			)
+			self._shop_inventory_repository.create(inventory)
+			count += 1
+
+		return count
+
+	def _sync_garrison(
+		self,
+		garrison: list[dict[str, Any]],
+		shop_id: int,
+		profile_id: int
+	) -> int:
+		"""
+		Sync garrison inventories
+
+		:param garrison:
+			Garrison inventory data
+		:param shop_id:
+			Shop ID
+		:param profile_id:
+			Profile ID
+		:return:
+			Number of garrison units synced
+		"""
+		count = 0
+		for unit_data in garrison:
+			kb_id = unit_data['name']
+			unit = self._unit_repository.get_by_kb_id(kb_id)
+
+			if not unit:
+				raise EntityNotFoundException("Unit", kb_id)
+
+			inventory = ShopInventory(
+				entity_id=unit.id,
+				shop_id=shop_id,
+				profile_id=profile_id,
+				type="garrison",
+				count=unit_data['quantity']
+			)
+			self._shop_inventory_repository.create(inventory)
+			count += 1
+
+		return count
