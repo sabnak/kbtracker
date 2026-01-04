@@ -3,13 +3,9 @@ from dependency_injector.wiring import Provide
 from src.core.Container import Container
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.ItemSet import ItemSet
-from src.domain.game.entities.Location import Location
 from src.domain.game.entities.Propbit import Propbit
-from src.domain.game.entities.Shop import Shop
 from src.domain.game.IItemRepository import IItemRepository
 from src.domain.game.IItemSetRepository import IItemSetRepository
-from src.domain.game.ILocationRepository import ILocationRepository
-from src.domain.game.IShopRepository import IShopRepository
 from src.domain.exceptions import InvalidRegexException
 
 
@@ -18,13 +14,9 @@ class ItemService:
 	def __init__(
 		self,
 		item_repository: IItemRepository = Provide[Container.item_repository],
-		location_repository: ILocationRepository = Provide[Container.location_repository],
-		shop_repository: IShopRepository = Provide[Container.shop_repository],
 		item_set_repository: IItemSetRepository = Provide[Container.item_set_repository]
 	):
 		self._item_repository = item_repository
-		self._location_repository = location_repository
-		self._shop_repository = shop_repository
 		self._item_set_repository = item_set_repository
 
 	def search_items(self, query: str) -> list[Item]:
@@ -155,45 +147,6 @@ class ItemService:
 				item_data["tier_items"] = tier_items
 
 			result.append(item_data)
-
-		return result
-
-	def get_locations(self) -> list[Location]:
-		"""
-		Get all locations
-
-		:return:
-			List of all locations
-		"""
-		return self._location_repository.list_all()
-
-	def get_shops_by_location(self, location_id: int) -> list[Shop]:
-		"""
-		Get all shops in a location
-
-		:param location_id:
-			Location ID
-		:return:
-			List of shops
-		"""
-		return self._shop_repository.get_by_location_id(location_id)
-
-	def get_shops_grouped_by_location(self) -> list[dict]:
-		"""
-		Get shops grouped by location
-
-		:return:
-			List of locations with their shops
-		"""
-		locations = self._location_repository.list_all()
-
-		result = []
-		for location in locations:
-			shops = self._shop_repository.get_by_location_id(location.id)
-			result.append({
-				"location": location,
-				"shops": shops
-			})
 
 		return result
 

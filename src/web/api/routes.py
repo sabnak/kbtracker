@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from dependency_injector.wiring import inject, Provide
 from src.web.api.models import AddShopToItemRequest, UpdateShopCountRequest
 from src.domain.game.services.ItemService import ItemService
+from src.domain.game.ILocationService import ILocationService
 from src.domain.game.IProfileService import IProfileService
 from src.domain.game.ISaveFileService import ISaveFileService
 from src.domain.game.IGameService import IGameService
@@ -218,7 +219,7 @@ async def remove_shop_from_item(
 async def get_shops_grouped_by_location(
 	game_id: int,
 	game_context: GameContext = Depends(get_game_context),
-	item_tracking_service: ItemService = Depends(Provide["item_tracking_service"])
+	location_service: ILocationService = Depends(Provide["location_service"])
 ):
 	"""
 	Get shops grouped by location for dropdown
@@ -227,14 +228,14 @@ async def get_shops_grouped_by_location(
 		Game ID
 	:param game_context:
 		Game context with schema information
-	:param item_tracking_service:
-		Item tracking service
+	:param location_service:
+		Location service
 	:return:
 		Shops grouped by location
 	"""
 	_game_context.set(game_context)
 
-	groups = item_tracking_service.get_shops_grouped_by_location()
+	groups = location_service.get_shops_grouped_by_location()
 
 	result = []
 	for group in groups:

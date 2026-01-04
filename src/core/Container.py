@@ -7,6 +7,7 @@ from src.domain.game.IItemRepository import IItemRepository
 from src.domain.game.IItemSetRepository import IItemSetRepository
 from src.domain.game.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.ILocationRepository import ILocationRepository
+from src.domain.game.ILocationService import ILocationService
 from src.domain.game.ISchemaManagementService import ISchemaManagementService
 from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.IShopRepository import IShopRepository
@@ -42,6 +43,7 @@ class Container(containers.DeclarativeContainer):
 	game_service = providers.AbstractFactory(IGameService)
 	profile_service = providers.AbstractFactory(IProfileService)
 	save_file_service = providers.AbstractFactory(ISaveFileService)
+	location_service = providers.AbstractFactory(ILocationService)
 	scanner_service = providers.AbstractFactory()
 	item_service = providers.AbstractFactory()
 	localization_scanner_service = providers.AbstractFactory()

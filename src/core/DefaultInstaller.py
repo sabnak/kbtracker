@@ -29,6 +29,7 @@ from src.domain.game.services.GameService import GameService
 from src.domain.game.services.ItemsAndSetsScannerService import ItemsAndSetsScannerService
 from src.domain.game.services.ItemService import ItemService
 from src.domain.game.services.LocalizationScannerService import LocalizationScannerService
+from src.domain.game.services.LocationService import LocationService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services.SchemaManagementService import SchemaManagementService
 from src.domain.game.services.SpellsScannerService import SpellsScannerService
@@ -83,6 +84,10 @@ class DefaultInstaller:
 
 		self._container.save_file_service.override(
 			providers.Factory(SaveFileService)
+		)
+
+		self._container.location_service.override(
+			providers.Factory(LocationService)
 		)
 
 		self._container.scanner_service.override(
