@@ -11,6 +11,7 @@ from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.ISpellRepository import ISpellRepository
 from src.domain.game.IUnitRepository import IUnitRepository
 from src.domain.game.entities.ShopInventory import ShopInventory
+from src.domain.game.entities.ShopInventoryType import ShopInventoryType
 
 
 class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
@@ -91,7 +92,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 				entity_id=item.id,
 				atom_map_id=atom_map_id,
 				profile_id=profile_id,
-				type="item",
+				type=ShopInventoryType.ITEM,
 				count=item_data['quantity']
 			)
 			self._shop_inventory_repository.create(inventory)
@@ -129,7 +130,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 				entity_id=spell.id,
 				atom_map_id=atom_map_id,
 				profile_id=profile_id,
-				type="spell",
+				type=ShopInventoryType.SPELL,
 				count=spell_data['quantity']
 			)
 			self._shop_inventory_repository.create(inventory)
@@ -167,7 +168,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 				entity_id=unit.id,
 				atom_map_id=atom_map_id,
 				profile_id=profile_id,
-				type="unit",
+				type=ShopInventoryType.UNIT,
 				count=unit_data['quantity']
 			)
 			self._shop_inventory_repository.create(inventory)
@@ -205,7 +206,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 				entity_id=unit.id,
 				atom_map_id=atom_map_id,
 				profile_id=profile_id,
-				type="garrison",
+				type=ShopInventoryType.GARRISON,
 				count=unit_data['quantity']
 			)
 			self._shop_inventory_repository.create(inventory)

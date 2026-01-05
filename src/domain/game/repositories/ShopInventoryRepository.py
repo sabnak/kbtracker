@@ -1,5 +1,6 @@
 from src.domain.game.repositories.CrudRepository import CrudRepository
 from src.domain.game.entities.ShopInventory import ShopInventory
+from src.domain.game.entities.ShopInventoryType import ShopInventoryType
 from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.repositories.mappers.ShopInventoryMapper import ShopInventoryMapper
 
@@ -41,7 +42,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 		:return:
 			Identifier string
 		"""
-		return f"entity_id={entity.entity_id}, type={entity.type}, atom_map_id={entity.atom_map_id}, profile_id={entity.profile_id}"
+		return f"entity_id={entity.entity_id}, type={entity.type.value}, atom_map_id={entity.atom_map_id}, profile_id={entity.profile_id}"
 
 	def create(self, inventory: ShopInventory) -> ShopInventory:
 		"""
@@ -57,7 +58,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 	def get_by_profile(
 		self,
 		profile_id: int,
-		type: str | None = None
+		type: ShopInventoryType | None = None
 	) -> list[ShopInventory]:
 		"""
 		Get all inventory entries for a profile, optionally filtered by type
@@ -81,7 +82,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 	def get_by_entity(
 		self,
 		entity_id: int,
-		type: str,
+		type: ShopInventoryType,
 		profile_id: int
 	) -> list[ShopInventory]:
 		"""
@@ -107,7 +108,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 	def delete(
 		self,
 		entity_id: int,
-		type: str,
+		type: ShopInventoryType,
 		atom_map_id: int,
 		profile_id: int
 	) -> None:
@@ -150,7 +151,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 	def update_count(
 		self,
 		entity_id: int,
-		type: str,
+		type: ShopInventoryType,
 		atom_map_id: int,
 		profile_id: int,
 		new_count: int
@@ -182,7 +183,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 			if not mapper:
 				from src.domain.exceptions import EntityNotFoundException
 				raise EntityNotFoundException(
-					f"ShopInventory not found: entity_id={entity_id}, type={type}, atom_map_id={atom_map_id}, profile_id={profile_id}"
+					f"ShopInventory not found: entity_id={entity_id}, type={type.value}, atom_map_id={atom_map_id}, profile_id={profile_id}"
 				)
 
 			mapper.count = new_count

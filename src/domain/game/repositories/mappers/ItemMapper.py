@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, ARRAY, ForeignKey
 from sqlalchemy.orm import relationship
 from src.domain.game.repositories.mappers.base import Base
+from src.domain.game.entities.ShopInventoryType import ShopInventoryType
 
 
 class ItemMapper(Base):
@@ -17,7 +18,7 @@ class ItemMapper(Base):
 	shop_inventory = relationship(
 		"ShopInventoryMapper",
 		foreign_keys="[ShopInventoryMapper.entity_id]",
-		primaryjoin="and_(ItemMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == 'item')",
+		primaryjoin=f"and_(ItemMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == '{ShopInventoryType.ITEM.value}')",
 		viewonly=True
 	)
 	item_set = relationship("ItemSetMapper")

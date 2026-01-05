@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from src.domain.game.repositories.mappers.base import Base
+from src.domain.game.entities.ShopInventoryType import ShopInventoryType
 
 
 class SpellMapper(Base):
@@ -22,6 +23,6 @@ class SpellMapper(Base):
 	shop_inventory = relationship(
 		"ShopInventoryMapper",
 		foreign_keys="[ShopInventoryMapper.entity_id]",
-		primaryjoin="and_(SpellMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == 'spell')",
+		primaryjoin=f"and_(SpellMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == '{ShopInventoryType.SPELL.value}')",
 		viewonly=True
 	)

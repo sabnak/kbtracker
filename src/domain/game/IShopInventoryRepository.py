@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from src.domain.game.entities.ShopInventory import ShopInventory
+from src.domain.game.entities.ShopInventoryType import ShopInventoryType
 
 
 class IShopInventoryRepository(ABC):
@@ -20,7 +21,7 @@ class IShopInventoryRepository(ABC):
 	def get_by_profile(
 		self,
 		profile_id: int,
-		type: str | None = None
+		type: ShopInventoryType | None = None
 	) -> list[ShopInventory]:
 		"""
 		Get all inventory entries for a profile, optionally filtered by type
@@ -38,7 +39,7 @@ class IShopInventoryRepository(ABC):
 	def get_by_entity(
 		self,
 		entity_id: int,
-		type: str,
+		type: ShopInventoryType,
 		profile_id: int
 	) -> list[ShopInventory]:
 		"""
@@ -59,7 +60,7 @@ class IShopInventoryRepository(ABC):
 	def delete(
 		self,
 		entity_id: int,
-		type: str,
+		type: ShopInventoryType,
 		atom_map_id: int,
 		profile_id: int
 	) -> None:
@@ -93,7 +94,7 @@ class IShopInventoryRepository(ABC):
 	def update_count(
 		self,
 		entity_id: int,
-		type: str,
+		type: ShopInventoryType,
 		atom_map_id: int,
 		profile_id: int,
 		new_count: int
