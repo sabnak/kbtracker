@@ -139,7 +139,7 @@ class SchemaManagementService(ISchemaManagementService):
 				CREATE TABLE {schema_name}.shop_inventory (
 					entity_id INTEGER NOT NULL,
 					atom_map_id INTEGER REFERENCES {schema_name}.atom_map(id),
-					profile_id INTEGER REFERENCES {schema_name}.profile(id),
+					profile_id INTEGER REFERENCES {schema_name}.profile(id) ON DELETE CASCADE,
 					type VARCHAR(20) NOT NULL,
 					count INTEGER DEFAULT 1,
 					PRIMARY KEY (entity_id, atom_map_id, profile_id, type)
