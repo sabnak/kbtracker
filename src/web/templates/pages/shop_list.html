@@ -41,10 +41,10 @@
 			<div class="location-section mb-5">
 				<h2 class="mb-3">{{ location_data['name'] }} <small class="text-muted" style="font-size: 0.5em;">{{ location_kb_id }}</small></h2>
 
-				<!-- Shop Grid (3 per row) -->
+				<!-- Shop Grid (2 per row) -->
 				<div class="row">
 					{% for shop in location_data['shops'] %}
-					<div class="col-md-4 mb-4">
+					<div class="col-md-6 mb-4">
 						<div class="card shop-card">
 							<div class="card-header d-flex justify-content-between align-items-center">
 								<strong>
@@ -75,11 +75,14 @@
 												<div class="shop-inventory-list {% if shop['items']|length > 10 %}scrollable{% endif %}">
 													<ul class="list-unstyled mb-0">
 														{% for item in shop['items'] %}
-														<li class="shop-item">
-															{{ item['name'] }}
-															{% if item['count'] > 1 %}
-															<strong>{{ item['count'] }}</strong>
-															{% endif %}
+														<li class="shop-item" style="display: flex; justify-content: space-between;">
+															<span>
+																<a href="/games/{{ game.id }}/items?id={{ item['id'] }}">{{ item['name'] }}</a>
+																{% if item['count'] > 1 %}
+																<strong>{{ item['count'] }}</strong>
+																{% endif %}
+															</span>
+															<span class="shop-cost">{{ item['price']|format_price }}</span>
 														</li>
 														{% endfor %}
 													</ul>
@@ -95,11 +98,14 @@
 												<div class="shop-inventory-list {% if shop['spells']|length > 10 %}scrollable{% endif %}">
 													<ul class="list-unstyled mb-0">
 														{% for spell in shop['spells'] %}
-														<li class="shop-item">
-															{{ spell['name'] }}
-															{% if spell['count'] > 1 %}
-															<strong>{{ spell['count'] }}</strong>
-															{% endif %}
+														<li class="shop-item" style="display: flex; justify-content: space-between;">
+															<span>
+																{{ spell['name'] }}
+																{% if spell['count'] > 1 %}
+																<strong>{{ spell['count'] }}</strong>
+																{% endif %}
+															</span>
+															<span class="shop-cost">{{ spell['price']|format_price }}</span>
 														</li>
 														{% endfor %}
 													</ul>
@@ -115,11 +121,14 @@
 												<div class="shop-inventory-list {% if shop['units']|length > 10 %}scrollable{% endif %}">
 													<ul class="list-unstyled mb-0">
 														{% for unit in shop['units'] %}
-														<li class="shop-item">
-															{{ unit['name'] }}
-															{% if unit['count'] > 1 %}
-															<strong>{{ unit['count'] }}</strong>
-															{% endif %}
+														<li class="shop-item" style="display: flex; justify-content: space-between;">
+															<span>
+																{{ unit['name'] }}
+																{% if unit['count'] > 1 %}
+																<strong>{{ unit['count'] }}</strong>
+																{% endif %}
+															</span>
+															<span class="shop-cost">{{ unit['cost']|format_price }}</span>
 														</li>
 														{% endfor %}
 													</ul>
@@ -134,9 +143,19 @@
 								{% if shop['garrison'] %}
 								<div class="shop-garrison">
 									<strong>Garrison:</strong>
-									{% for unit in shop['garrison'] %}
-										{{ unit['name'] }}{% if unit['count'] > 1 %} <strong>{{ unit['count'] }}</strong>{% endif %}{% if not loop.last %}, {% endif %}
-									{% endfor %}
+									<ul class="list-unstyled mb-0" style="margin-left: 0; padding-left: 0;">
+										{% for unit in shop['garrison'] %}
+										<li style="display: flex; justify-content: space-between;">
+											<span>
+												{{ unit['name'] }}
+												{% if unit['count'] > 1 %}
+												<strong>{{ unit['count'] }}</strong>
+												{% endif %}
+											</span>
+											<span class="shop-cost">{{ unit['cost']|format_price }}</span>
+										</li>
+										{% endfor %}
+									</ul>
 								</div>
 								{% endif %}
 							</div>

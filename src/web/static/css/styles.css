@@ -345,3 +345,9 @@ footer {
 	background-color: #f8f9fa;
 }
 
+.shop-cost {
+	white-space: nowrap;
+	color: #DAA520;
+	font-weight: 500;
+}
+

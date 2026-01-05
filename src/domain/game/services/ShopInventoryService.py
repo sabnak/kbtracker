@@ -89,7 +89,8 @@ class ShopInventoryService:
 					shops_by_atom_map[atom_map_id]["items"].append({
 						"id": item.id,
 						"name": item.name,
-						"count": inv.count
+						"count": inv.count,
+						"price": item.price
 					})
 			elif inv.type == ShopInventoryType.SPELL:
 				spell = spells_dict.get(inv.entity_id)
@@ -97,7 +98,8 @@ class ShopInventoryService:
 					shops_by_atom_map[atom_map_id]["spells"].append({
 						"id": spell.id,
 						"name": spell.loc.name,
-						"count": inv.count
+						"count": inv.count,
+						"price": spell.price
 					})
 			elif inv.type == ShopInventoryType.UNIT:
 				unit = units_dict.get(inv.entity_id)
@@ -105,7 +107,8 @@ class ShopInventoryService:
 					shops_by_atom_map[atom_map_id]["units"].append({
 						"id": unit.id,
 						"name": unit.name,
-						"count": inv.count
+						"count": inv.count,
+						"cost": unit.cost
 					})
 			elif inv.type == ShopInventoryType.GARRISON:
 				unit = units_dict.get(inv.entity_id)
@@ -113,7 +116,8 @@ class ShopInventoryService:
 					shops_by_atom_map[atom_map_id]["garrison"].append({
 						"id": unit.id,
 						"name": unit.name,
-						"count": inv.count
+						"count": inv.count,
+						"cost": unit.cost
 					})
 
 		shops_with_location = []
