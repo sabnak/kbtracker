@@ -143,6 +143,8 @@ class ProfileService(IProfileService):
 		if not profile:
 			raise EntityNotFoundException("Profile", profile_id)
 
+		self.clear_profile(profile_id)
+
 		matching_save = self._find_matching_save(profile)
 		shop_data = self._shop_parser.parse(matching_save)
 		counts = self._data_syncer.sync(shop_data, profile_id)

@@ -119,7 +119,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		"""
 		count = 0
 		for spell_data in spells:
-			kb_id = spell_data['name']
+			kb_id = spell_data['name'][6:]  # spell_
 			spell = self._spell_repository.get_by_kb_id(kb_id)
 
 			if not spell:
