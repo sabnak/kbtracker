@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Any
 
 from dependency_injector.wiring import Provide
@@ -10,8 +11,16 @@ from src.domain.game.IProfileGameDataSyncerService import IProfileGameDataSyncer
 from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.ISpellRepository import ISpellRepository
 from src.domain.game.IUnitRepository import IUnitRepository
+from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
+from src.domain.game.entities.CorruptedProfileData import CorruptedProfileData
 from src.domain.game.entities.ShopInventory import ShopInventory
 from src.domain.game.entities.ShopInventoryType import ShopInventoryType
+
+
+@dataclass
+class _SyncItemResult:
+	count: int
+	missing_kb_ids: list[str]
 
 
 class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
@@ -34,7 +43,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		self,
 		data: dict[str, dict[str, list[dict[str, Any]]]],
 		profile_id: int
-	) -> dict[str, int]:
+	) -> ProfileSyncResult:
 		"""
 		Sync parsed shop inventory data to database
 
@@ -43,24 +52,48 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		:param profile_id:
 			Profile ID to associate inventories with
 		:return:
-			Dictionary with counts
-		:raises EntityNotFoundException:
-			If any shop, item, spell, or unit not found in database
+			ProfileSyncResult with counts and corrupted data
 		"""
 		counts = {"items": 0, "spells": 0, "units": 0, "garrison": 0}
+		missing_shops: list[str] = []
+		missing_items: list[str] = []
+		missing_units: list[str] = []
+		missing_garrison: list[str] = []
 
 		for shop_kb_id, inventories in data.items():
 			atom_map = self._atom_map_repository.get_by_kb_id(shop_kb_id)
 
 			if not atom_map:
-				raise EntityNotFoundException("AtomMap", shop_kb_id)
+				missing_shops.append(shop_kb_id)
+				continue
 
-			counts["items"] += self._sync_items(inventories['items'], atom_map.id, profile_id, shop_kb_id)
-			counts["spells"] += self._sync_spells(inventories['spells'], atom_map.id, profile_id, shop_kb_id)
-			counts["units"] += self._sync_units(inventories['units'], atom_map.id, profile_id, shop_kb_id)
-			counts["garrison"] += self._sync_garrison(inventories['garrison'], atom_map.id, profile_id, shop_kb_id)
+			item_result = self._sync_items(inventories['items'], atom_map.id, profile_id, shop_kb_id)
+			counts["items"] += item_result.count
+			missing_items.extend(item_result.missing_kb_ids)
 
-		return counts
+			spell_result = self._sync_spells(inventories['spells'], atom_map.id, profile_id, shop_kb_id)
+			counts["spells"] += spell_result.count
+			missing_items.extend(spell_result.missing_kb_ids)
+
+			unit_result = self._sync_units(inventories['units'], atom_map.id, profile_id, shop_kb_id)
+			counts["units"] += unit_result.count
+			missing_units.extend(unit_result.missing_kb_ids)
+
+			garrison_result = self._sync_garrison(inventories['garrison'], atom_map.id, profile_id, shop_kb_id)
+			counts["garrison"] += garrison_result.count
+			missing_garrison.extend(garrison_result.missing_kb_ids)
+
+		corrupted_data = self._build_corrupted_data(
+			missing_shops, missing_items, missing_units, missing_garrison
+		)
+
+		return ProfileSyncResult(
+			items=counts["items"],
+			spells=counts["spells"],
+			units=counts["units"],
+			garrison=counts["garrison"],
+			corrupted_data=corrupted_data
+		)
 
 	def _sync_items(
 		self,
@@ -68,7 +101,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		atom_map_id: int,
 		profile_id: int,
 		atom_kb_id: str
-	) -> int:
+	) -> _SyncItemResult:
 		"""
 		Sync item inventories
 
@@ -78,16 +111,21 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			Atom map ID
 		:param profile_id:
 			Profile ID
+		:param atom_kb_id:
+			Shop KB ID for context
 		:return:
-			Number of items synced
+			Sync result with count and missing KB IDs
 		"""
 		count = 0
+		missing_kb_ids: list[str] = []
+
 		for item_data in items:
 			kb_id = item_data['name']
 			item = self._item_repository.get_by_kb_id(kb_id)
 
 			if not item:
-				raise EntityNotFoundException("Item", kb_id, atom_kb_id=atom_kb_id)
+				missing_kb_ids.append(kb_id)
+				continue
 
 			inventory = ShopInventory(
 				entity_id=item.id,
@@ -99,7 +137,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			self._shop_inventory_repository.create(inventory)
 			count += 1
 
-		return count
+		return _SyncItemResult(count=count, missing_kb_ids=missing_kb_ids)
 
 	def _sync_spells(
 		self,
@@ -107,7 +145,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		atom_map_id: int,
 		profile_id: int,
 		atom_kb_id: str
-	) -> int:
+	) -> _SyncItemResult:
 		"""
 		Sync spell inventories
 
@@ -117,16 +155,21 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			Atom map ID
 		:param profile_id:
 			Profile ID
+		:param atom_kb_id:
+			Shop KB ID for context
 		:return:
-			Number of spells synced
+			Sync result with count and missing KB IDs
 		"""
 		count = 0
+		missing_kb_ids: list[str] = []
+
 		for spell_data in spells:
 			kb_id = spell_data['name'][6:]  # spell_
 			spell = self._spell_repository.get_by_kb_id(kb_id)
 
 			if not spell:
-				raise EntityNotFoundException("Spell", kb_id, atom_kb_id=atom_kb_id)
+				missing_kb_ids.append(kb_id)
+				continue
 
 			inventory = ShopInventory(
 				entity_id=spell.id,
@@ -138,7 +181,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			self._shop_inventory_repository.create(inventory)
 			count += 1
 
-		return count
+		return _SyncItemResult(count=count, missing_kb_ids=missing_kb_ids)
 
 	def _sync_units(
 		self,
@@ -146,7 +189,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		atom_map_id: int,
 		profile_id: int,
 		atom_kb_id: str
-	) -> int:
+	) -> _SyncItemResult:
 		"""
 		Sync unit inventories
 
@@ -156,16 +199,21 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			Atom map ID
 		:param profile_id:
 			Profile ID
+		:param atom_kb_id:
+			Shop KB ID for context
 		:return:
-			Number of units synced
+			Sync result with count and missing KB IDs
 		"""
 		count = 0
+		missing_kb_ids: list[str] = []
+
 		for unit_data in units:
 			kb_id = unit_data['name']
 			unit = self._unit_repository.get_by_kb_id(kb_id)
 
 			if not unit:
-				raise EntityNotFoundException("Unit", kb_id, atom_kb_id=atom_kb_id)
+				missing_kb_ids.append(kb_id)
+				continue
 
 			inventory = ShopInventory(
 				entity_id=unit.id,
@@ -177,7 +225,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			self._shop_inventory_repository.create(inventory)
 			count += 1
 
-		return count
+		return _SyncItemResult(count=count, missing_kb_ids=missing_kb_ids)
 
 	def _sync_garrison(
 		self,
@@ -185,7 +233,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		atom_map_id: int,
 		profile_id: int,
 		atom_kb_id: str
-	) -> int:
+	) -> _SyncItemResult:
 		"""
 		Sync garrison inventories
 
@@ -195,16 +243,21 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			Atom map ID
 		:param profile_id:
 			Profile ID
+		:param atom_kb_id:
+			Shop KB ID for context
 		:return:
-			Number of garrison units synced
+			Sync result with count and missing KB IDs
 		"""
 		count = 0
+		missing_kb_ids: list[str] = []
+
 		for unit_data in garrison:
 			kb_id = unit_data['name']
 			unit = self._unit_repository.get_by_kb_id(kb_id)
 
 			if not unit:
-				raise EntityNotFoundException("Unit", kb_id, atom_kb_id=atom_kb_id)
+				missing_kb_ids.append(kb_id)
+				continue
 
 			inventory = ShopInventory(
 				entity_id=unit.id,
@@ -216,4 +269,35 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			self._shop_inventory_repository.create(inventory)
 			count += 1
 
-		return count
+		return _SyncItemResult(count=count, missing_kb_ids=missing_kb_ids)
+
+	def _build_corrupted_data(
+		self,
+		shops: list[str],
+		items: list[str],
+		units: list[str],
+		garrison: list[str]
+	) -> CorruptedProfileData | None:
+		"""
+		Build CorruptedProfileData if any missing KB IDs found
+
+		:param shops:
+			Missing shop KB IDs
+		:param items:
+			Missing item KB IDs
+		:param units:
+			Missing unit KB IDs
+		:param garrison:
+			Missing garrison unit KB IDs
+		:return:
+			CorruptedProfileData or None if no errors
+		"""
+		if not any([shops, items, units, garrison]):
+			return None
+
+		return CorruptedProfileData(
+			shops=shops if shops else None,
+			items=items if items else None,
+			units=units if units else None,
+			garrison=garrison if garrison else None
+		)

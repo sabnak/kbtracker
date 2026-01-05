@@ -11,6 +11,7 @@ from src.domain.exceptions import EntityNotFoundException
 from src.domain.game.IProfileRepository import IProfileRepository
 from src.domain.game.IProfileService import IProfileService
 from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
+from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
 from src.domain.game.entities.ProfileEntity import ProfileEntity
 from src.utils.parsers.save_data.IHeroSaveParser import IHeroSaveParser
 from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
@@ -126,16 +127,16 @@ class ProfileService(IProfileService):
 
 		self._shop_inventory_repository.delete_by_profile(profile_id)
 
-	def scan_most_recent_save(self, profile_id: int) -> dict[str, int]:
+	def scan_most_recent_save(self, profile_id: int) -> ProfileSyncResult:
 		"""
 		Scan most recent save file and sync shop inventories
 
 		:param profile_id:
 			Profile ID to scan for
 		:return:
-			Counts dict {items: int, spells: int, units: int, garrison: int}
+			ProfileSyncResult with counts and corrupted data
 		:raises EntityNotFoundException:
-			If profile, shop, item, spell, or unit not found
+			If profile not found
 		:raises FileNotFoundError:
 			If no matching save file found
 		"""
@@ -147,9 +148,13 @@ class ProfileService(IProfileService):
 
 		matching_save = self._find_matching_save(profile)
 		shop_data = self._shop_parser.parse(matching_save)
-		counts = self._data_syncer.sync(shop_data, profile_id)
+		result = self._data_syncer.sync(shop_data, profile_id)
 
-		return counts
+		profile.last_scan_time = datetime.now()
+		profile.last_corrupted_data = result.corrupted_data
+		self._profile_repository.update(profile)
+
+		return result
 
 	def _find_matching_save(self, profile: ProfileEntity) -> Path:
 		"""

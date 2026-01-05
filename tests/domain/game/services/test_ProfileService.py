@@ -5,6 +5,7 @@ from datetime import datetime
 from unittest.mock import Mock, MagicMock, patch
 from src.domain.game.services.ProfileService import ProfileService
 from src.domain.game.entities.ProfileEntity import ProfileEntity
+from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
 from src.domain.exceptions import EntityNotFoundException, InvalidKbIdException
 
 
@@ -29,18 +30,30 @@ class TestProfileServiceScan:
 		return config
 
 	@pytest.fixture
+	def mock_data_syncer(self):
+		return Mock()
+
+	@pytest.fixture
+	def mock_shop_inventory_repo(self):
+		return Mock()
+
+	@pytest.fixture
 	def service(
 		self,
 		mock_profile_repo,
 		mock_shop_parser,
 		mock_hero_parser,
-		mock_config
+		mock_config,
+		mock_data_syncer,
+		mock_shop_inventory_repo
 	):
 		return ProfileService(
 			profile_repository=mock_profile_repo,
 			shop_parser=mock_shop_parser,
 			hero_parser=mock_hero_parser,
-			config=mock_config
+			config=mock_config,
+			data_syncer=mock_data_syncer,
+			shop_inventory_repository=mock_shop_inventory_repo
 		)
 
 	@pytest.fixture
@@ -60,6 +73,7 @@ class TestProfileServiceScan:
 		mock_profile_repo,
 		mock_hero_parser,
 		mock_shop_parser,
+		mock_data_syncer,
 		sample_profile,
 		mock_config,
 		tmp_path
@@ -87,17 +101,24 @@ class TestProfileServiceScan:
 			}
 		}
 
-		mock_shop_parser.sync.return_value = {
-			'items': 1,
-			'spells': 1,
-			'units': 1,
-			'garrison': 1
-		}
+		mock_data_syncer.sync.return_value = ProfileSyncResult(
+			items=1,
+			spells=1,
+			units=1,
+			garrison=1,
+			corrupted_data=None
+		)
 
 		result = service.scan_most_recent_save(1)
 
-		assert result == {'items': 1, 'spells': 1, 'units': 1, 'garrison': 1}
-		mock_shop_parser.sync.assert_called_once()
+		assert isinstance(result, ProfileSyncResult)
+		assert result.items == 1
+		assert result.spells == 1
+		assert result.units == 1
+		assert result.garrison == 1
+		assert result.corrupted_data is None
+		mock_data_syncer.sync.assert_called_once()
+		mock_profile_repo.update.assert_called_once()
 
 	def test_scan_profile_not_found(self, service, mock_profile_repo):
 		"""Test scan when profile doesn't exist"""
@@ -141,6 +162,7 @@ class TestProfileServiceScan:
 		mock_profile_repo,
 		mock_hero_parser,
 		mock_shop_parser,
+		mock_data_syncer,
 		sample_profile,
 		mock_config,
 		tmp_path
@@ -160,7 +182,7 @@ class TestProfileServiceScan:
 		}
 
 		mock_shop_parser.parse.return_value = {}
-		mock_shop_parser.sync.side_effect = InvalidKbIdException('invalid_item', 'shop_1422')
+		mock_data_syncer.sync.side_effect = InvalidKbIdException('invalid_item', 'shop_1422')
 
 		with pytest.raises(InvalidKbIdException) as exc:
 			service.scan_most_recent_save(1)
@@ -173,6 +195,7 @@ class TestProfileServiceScan:
 		mock_profile_repo,
 		mock_hero_parser,
 		mock_shop_parser,
+		mock_data_syncer,
 		sample_profile,
 		mock_config,
 		tmp_path
@@ -200,16 +223,22 @@ class TestProfileServiceScan:
 			}
 		}
 
-		mock_shop_parser.sync.return_value = {
-			'items': 0,
-			'spells': 0,
-			'units': 0,
-			'garrison': 0
-		}
+		mock_data_syncer.sync.return_value = ProfileSyncResult(
+			items=0,
+			spells=0,
+			units=0,
+			garrison=0,
+			corrupted_data=None
+		)
 
 		result = service.scan_most_recent_save(1)
 
-		assert result == {'items': 0, 'spells': 0, 'units': 0, 'garrison': 0}
+		assert isinstance(result, ProfileSyncResult)
+		assert result.items == 0
+		assert result.spells == 0
+		assert result.units == 0
+		assert result.garrison == 0
+		assert result.corrupted_data is None
 
 	def test_scan_multiple_saves_selects_most_recent(
 		self,

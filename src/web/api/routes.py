@@ -121,19 +121,14 @@ async def scan_profile_save(
 	_game_context.set(game_context)
 
 	try:
-		counts = profile_service.scan_most_recent_save(profile_id)
-		return counts
-	except EntityNotFoundException as e:
-		return JSONResponse(
-			status_code=404,
-			content={
-				"detail": {
-					"error": str(e),
-					"error_type": "EntityNotFoundException",
-					"error_traceback": traceback.format_exc()
-				}
-			}
-		)
+		result = profile_service.scan_most_recent_save(profile_id)
+		return {
+			"items": result.items,
+			"spells": result.spells,
+			"units": result.units,
+			"garrison": result.garrison,
+			"corrupted_data": result.corrupted_data.model_dump() if result.corrupted_data else None
+		}
 	except FileNotFoundError as e:
 		return JSONResponse(
 			status_code=404,

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
 from src.domain.game.entities.ProfileEntity import ProfileEntity
 
 
@@ -76,16 +77,16 @@ class IProfileService(ABC):
 		pass
 
 	@abstractmethod
-	def scan_most_recent_save(self, profile_id: int) -> dict[str, int]:
+	def scan_most_recent_save(self, profile_id: int) -> ProfileSyncResult:
 		"""
 		Scan most recent save file and sync shop inventories
 
 		:param profile_id:
 			Profile ID to scan for
 		:return:
-			Counts dict {items: int, spells: int, units: int, garrison: int}
+			ProfileSyncResult with counts and corrupted data
 		:raises EntityNotFoundException:
-			If profile, shop, item, spell, or unit not found
+			If profile not found
 		:raises FileNotFoundError:
 			If no matching save file found
 		"""

@@ -18,6 +18,18 @@ class IProfileRepository(ABC):
 		pass
 
 	@abstractmethod
+	def update(self, profile: ProfileEntity) -> ProfileEntity:
+		"""
+		Update existing profile
+
+		:param profile:
+			Profile to update
+		:return:
+			Updated profile
+		"""
+		pass
+
+	@abstractmethod
 	def get_by_id(self, profile_id: int) -> ProfileEntity | None:
 		"""
 		Get profile by ID

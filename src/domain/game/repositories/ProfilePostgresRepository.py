@@ -1,6 +1,8 @@
+from src.domain.exceptions import EntityNotFoundException
 from src.domain.game.repositories.CrudRepository import CrudRepository
 from src.domain.game.IProfileRepository import IProfileRepository
 from src.domain.game.entities.ProfileEntity import ProfileEntity
+from src.domain.game.entities.CorruptedProfileData import CorruptedProfileData
 from src.domain.game.repositories.mappers.ProfileMapper import ProfileMapper
 
 
@@ -15,12 +17,18 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 		:return:
 			ProfileMapper instance
 		"""
+		corrupted_data_json = None
+		if entity.last_corrupted_data:
+			corrupted_data_json = entity.last_corrupted_data.model_dump()
+
 		return ProfileMapper(
 			name=entity.name,
 			hash=entity.hash,
 			full_name=entity.full_name,
 			save_dir=entity.save_dir,
-			created_at=entity.created_at
+			created_at=entity.created_at,
+			last_scan_time=entity.last_scan_time,
+			last_corrupted_data=corrupted_data_json
 		)
 
 	def _get_entity_type_name(self) -> str:
@@ -54,6 +62,39 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 		"""
 		return self._create_single(profile)
 
+	def update(self, profile: ProfileEntity) -> ProfileEntity:
+		"""
+		Update existing profile
+
+		:param profile:
+			ProfileEntity to update
+		:return:
+			Updated profile
+		"""
+		with self._get_session() as session:
+			mapper = session.query(ProfileMapper).filter(
+				ProfileMapper.id == profile.id
+			).first()
+
+			if not mapper:
+				raise EntityNotFoundException("Profile", profile.id)
+
+			mapper.name = profile.name
+			mapper.hash = profile.hash
+			mapper.full_name = profile.full_name
+			mapper.save_dir = profile.save_dir
+			mapper.last_scan_time = profile.last_scan_time
+
+			if profile.last_corrupted_data:
+				mapper.last_corrupted_data = profile.last_corrupted_data.model_dump()
+			else:
+				mapper.last_corrupted_data = None
+
+			session.commit()
+			session.refresh(mapper)
+
+			return self._mapper_to_entity(mapper)
+
 	def get_by_id(self, profile_id: int) -> ProfileEntity | None:
 		with self._get_session() as session:
 			model = session.query(ProfileMapper).filter(
@@ -83,11 +124,17 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 			session.commit()
 
 	def _mapper_to_entity(self, mapper: ProfileMapper) -> ProfileEntity:
+		corrupted_data = None
+		if mapper.last_corrupted_data:
+			corrupted_data = CorruptedProfileData(**mapper.last_corrupted_data)
+
 		return ProfileEntity(**{
 			"id": mapper.id,
 			"name": mapper.name,
 			"hash": mapper.hash,
 			"full_name": mapper.full_name,
 			"save_dir": mapper.save_dir,
-			"created_at": mapper.created_at
+			"created_at": mapper.created_at,
+			"last_scan_time": mapper.last_scan_time,
+			"last_corrupted_data": corrupted_data
 		})

@@ -12,6 +12,9 @@ class ProfileScanner {
 			if (e.target.classList.contains('scan-profile-btn')) {
 				this.handleScanClick(e.target);
 			}
+			if (e.target.classList.contains('examine-issues-btn')) {
+				this.handleExamineClick(e.target);
+			}
 		});
 	}
 
@@ -56,10 +59,12 @@ class ProfileScanner {
 		}
 	}
 
-	showSuccess(counts) {
+	showSuccess(result) {
 		const successContainer = document.getElementById('scan-success-container');
 		const errorContainer = document.getElementById('scan-error-container');
 		const messageEl = document.getElementById('success-message');
+		const corruptedWarning = document.getElementById('corrupted-data-warning');
+		const corruptedContent = document.getElementById('corrupted-data-content');
 
 		if (!successContainer || !messageEl) return;
 
@@ -68,22 +73,37 @@ class ProfileScanner {
 		}
 
 		const message = `
-			Successfully scanned save file:
-			${counts.items} items,
-			${counts.spells} spells,
-			${counts.units} units,
-			${counts.garrison} garrison units added.
+			Successfully synced:
+			${result.items} items,
+			${result.spells} spells,
+			${result.units} units,
+			${result.garrison} garrison units.
 		`;
 
 		messageEl.textContent = message;
-		successContainer.style.display = 'block';
 
-		setTimeout(() => {
-			if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
-				const bsAlert = new bootstrap.Alert(successContainer);
-				bsAlert.close();
+		if (result.corrupted_data) {
+			let formattedData = 'Missing objects:\n';
+			if (result.corrupted_data.shops) {
+				formattedData += `- Shops: ${result.corrupted_data.shops.join(', ')}\n`;
 			}
-		}, 5000);
+			if (result.corrupted_data.items) {
+				formattedData += `- Items: ${result.corrupted_data.items.join(', ')}\n`;
+			}
+			if (result.corrupted_data.units) {
+				formattedData += `- Units: ${result.corrupted_data.units.join(', ')}\n`;
+			}
+			if (result.corrupted_data.garrison) {
+				formattedData += `- Garrison: ${result.corrupted_data.garrison.join(', ')}\n`;
+			}
+
+			corruptedWarning.style.display = 'block';
+			corruptedContent.textContent = formattedData;
+		} else {
+			corruptedWarning.style.display = 'none';
+		}
+
+		successContainer.style.display = 'block';
 	}
 
 	showError(errorData) {
@@ -138,6 +158,37 @@ class ProfileScanner {
 		errorContainer.style.display = 'block';
 
 		console.error('[ProfileScanner] Scan failed:', errorData);
+	}
+
+	handleExamineClick(button) {
+		const shops = button.dataset.shops;
+		const items = button.dataset.items;
+		const units = button.dataset.units;
+		const garrison = button.dataset.garrison;
+
+		const successContainer = document.getElementById('scan-success-container');
+		const errorContainer = document.getElementById('scan-error-container');
+		const messageEl = document.getElementById('success-message');
+		const corruptedWarning = document.getElementById('corrupted-data-warning');
+		const corruptedContent = document.getElementById('corrupted-data-content');
+
+		if (errorContainer) {
+			errorContainer.style.display = 'none';
+		}
+
+		messageEl.textContent = 'Profile has corrupted/missing data from last scan.';
+
+		let formattedData = 'Missing objects:\n';
+		if (shops) formattedData += `- Shops: ${shops}\n`;
+		if (items) formattedData += `- Items: ${items}\n`;
+		if (units) formattedData += `- Units: ${units}\n`;
+		if (garrison) formattedData += `- Garrison: ${garrison}\n`;
+
+		corruptedWarning.style.display = 'block';
+		corruptedContent.textContent = formattedData;
+		successContainer.style.display = 'block';
+
+		successContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 	}
 }
 

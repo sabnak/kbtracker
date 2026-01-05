@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+from src.domain.game.entities.CorruptedProfileData import CorruptedProfileData
+
 
 @dataclass
 class ProfileEntity:
@@ -10,3 +12,5 @@ class ProfileEntity:
 	hash: str | None = None
 	full_name: str | None = None
 	save_dir: str | None = None
+	last_scan_time: datetime | None = None
+	last_corrupted_data: CorruptedProfileData | None = None
