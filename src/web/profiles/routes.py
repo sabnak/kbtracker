@@ -92,7 +92,7 @@ async def create_profile(
 		full_name=full_name,
 		save_dir=save_dir
 	)
-	return RedirectResponse(url=f"/games/{game_id}/items", status_code=303)
+	return RedirectResponse(url=f"/games/{game_id}/profiles", status_code=303)
 
 
 @router.post("/games/{game_id}/profiles/{profile_id}/delete")
@@ -106,4 +106,4 @@ async def delete_profile(
 	_game_context.set(game_context)
 
 	profile_service.delete_profile(profile_id)
-	return RedirectResponse(url=f"/games/{game_id}/items", status_code=303)
+	return RedirectResponse(url=f"/games/{game_id}/profiles", status_code=303)
