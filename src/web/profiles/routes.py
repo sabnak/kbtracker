@@ -107,3 +107,17 @@ async def delete_profile(
 
 	profile_service.delete_profile(profile_id)
 	return RedirectResponse(url=f"/games/{game_id}/profiles", status_code=303)
+
+
+@router.post("/games/{game_id}/profiles/{profile_id}/clear")
+@inject
+async def clear_profile(
+	game_id: int,
+	profile_id: int,
+	game_context: GameContext = Depends(get_game_context),
+	profile_service: IProfileService = Depends(Provide["profile_service"])
+):
+	_game_context.set(game_context)
+
+	profile_service.clear_profile(profile_id)
+	return RedirectResponse(url=f"/games/{game_id}/profiles", status_code=303)

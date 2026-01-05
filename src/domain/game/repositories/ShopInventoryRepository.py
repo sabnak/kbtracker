@@ -133,6 +133,20 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 			).delete()
 			session.commit()
 
+	def delete_by_profile(self, profile_id: int) -> None:
+		"""
+		Delete all shop inventory entries for a profile
+
+		:param profile_id:
+			Profile ID
+		:return:
+		"""
+		with self._get_session() as session:
+			session.query(ShopInventoryMapper).filter(
+				ShopInventoryMapper.profile_id == profile_id
+			).delete()
+			session.commit()
+
 	def update_count(
 		self,
 		entity_id: int,

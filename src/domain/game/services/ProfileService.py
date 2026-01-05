@@ -10,6 +10,7 @@ from src.core.Container import Container
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.game.IProfileRepository import IProfileRepository
 from src.domain.game.IProfileService import IProfileService
+from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.entities.ProfileEntity import ProfileEntity
 from src.utils.parsers.save_data.IHeroSaveParser import IHeroSaveParser
 from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
@@ -23,13 +24,15 @@ class ProfileService(IProfileService):
 		shop_parser: IShopInventoryParser = Provide[Container.shop_inventory_parser],
 		hero_parser: IHeroSaveParser = Provide[Container.hero_save_parser],
 		data_syncer: Any = Provide[Container.profile_data_syncer_service],
-		config: Config = Provide[Container.config]
+		config: Config = Provide[Container.config],
+		shop_inventory_repository: IShopInventoryRepository = Provide[Container.shop_inventory_repository]
 	):
 		self._profile_repository = profile_repository
 		self._shop_parser = shop_parser
 		self._hero_parser = hero_parser
 		self._data_syncer = data_syncer
 		self._config = config
+		self._shop_inventory_repository = shop_inventory_repository
 
 	def create_profile(
 		self,
@@ -106,6 +109,22 @@ class ProfileService(IProfileService):
 		:return:
 		"""
 		self._profile_repository.delete(profile_id)
+
+	def clear_profile(self, profile_id: int) -> None:
+		"""
+		Clear all shop inventory data for a profile
+
+		:param profile_id:
+			Profile ID
+		:return:
+		:raises EntityNotFoundException:
+			If profile not found
+		"""
+		profile = self._profile_repository.get_by_id(profile_id)
+		if not profile:
+			raise EntityNotFoundException("Profile", profile_id)
+
+		self._shop_inventory_repository.delete_by_profile(profile_id)
 
 	def scan_most_recent_save(self, profile_id: int) -> dict[str, int]:
 		"""

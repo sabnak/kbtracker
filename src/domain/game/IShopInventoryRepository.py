@@ -79,6 +79,17 @@ class IShopInventoryRepository(ABC):
 		pass
 
 	@abstractmethod
+	def delete_by_profile(self, profile_id: int) -> None:
+		"""
+		Delete all shop inventory entries for a profile
+
+		:param profile_id:
+			Profile ID
+		:return:
+		"""
+		pass
+
+	@abstractmethod
 	def update_count(
 		self,
 		entity_id: int,

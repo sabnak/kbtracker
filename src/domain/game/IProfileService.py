@@ -63,6 +63,19 @@ class IProfileService(ABC):
 		pass
 
 	@abstractmethod
+	def clear_profile(self, profile_id: int) -> None:
+		"""
+		Clear all shop inventory data for a profile
+
+		:param profile_id:
+			Profile ID
+		:return:
+		:raises EntityNotFoundException:
+			If profile not found
+		"""
+		pass
+
+	@abstractmethod
 	def scan_most_recent_save(self, profile_id: int) -> dict[str, int]:
 		"""
 		Scan most recent save file and sync shop inventories

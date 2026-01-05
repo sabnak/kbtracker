@@ -59,6 +59,9 @@
 								data-game-id="{{ game.id }}">
 								Scan Save File
 							</button>
+							<form method="POST" action="/games/{{ game.id }}/profiles/{{ profile.id }}/clear" onsubmit="return confirm('Are you sure you want to clear all shop inventory data for this profile? This action cannot be undone.');">
+								<button type="submit" class="btn btn-sm btn-warning w-100">Clear Inventory</button>
+							</form>
 							<form method="POST" action="/games/{{ game.id }}/profiles/{{ profile.id }}/delete" onsubmit="return confirm('Are you sure you want to delete this profile?');">
 								<button type="submit" class="btn btn-sm btn-danger w-100">Delete</button>
 							</form>
