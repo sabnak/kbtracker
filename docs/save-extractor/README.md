@@ -1,6 +1,6 @@
 # King's Bounty Shop Inventory Extractor
 
-**Version:** 1.2.0
+**Version:** 1.3.0
 **Date:** 2026-01-05
 **Status:** Production Ready ✅
 
@@ -8,23 +8,23 @@
 
 Production-ready tool to extract shop inventory data from King's Bounty save files. Extracts all shop contents including items, units, spells, and garrison across all game locations.
 
-## Recent Updates (v1.2.0)
+## Recent Updates (v1.3.0)
 
 **Critical Bug Fixes:**
-- ✅ **Bug #1 Fixed:** Short-named entities (imp, trap, orc, mana) now correctly extracted (minimum 3 chars, was 5)
-- ✅ **Bug #2 Fixed:** Section boundary detection prevents invalid entries from adjacent sections
-- ✅ **Bug #3 Fixed:** "moral" metadata no longer appears as items
+- ✅ **Bug #5 Fixed:** Missing units in shops with out-of-order sections (m_portland_8671: 4 units recovered)
+- ✅ **Bug #6 Fixed:** False positive spells from other shops (cross-shop section attribution prevented)
+- ✅ **Bug #7 Fixed:** Added `mana` and `limit` to metadata keywords (dragondor_5464 fixed)
+
+**Architecture Improvements:**
+- ✅ Section ownership verification prevents cross-shop attribution
+- ✅ Section parsing order independence - handles sections in any order
+- ✅ Research validated: structural validation alone cannot replace metadata keywords list
+
+**Previous Fixes (v1.2.0):**
 - ✅ **Bug #4 Fixed:** Shops without "m_" prefix now extracted (aralan, dragondor, d locations) - **+59 shops discovered!**
-
-**Impact of Bug #4 Fix:**
-- Total shops: 255 → 314 (+59 shops)
-- New locations found: aralan (25 shops), dragondor (16 shops), d (18 shops)
-- Updated shop ID pattern: `itext_{location}_{id}` (location can now contain hyphens)
-
-**Improvements:**
-- ✅ Validated on multiple save files (endgame + early game)
-- ✅ Universal console tool with standardized output
-- ✅ Comprehensive documentation of binary format
+- ✅ **Bug #3 Fixed:** "moral" metadata no longer appears as items
+- ✅ **Bug #2 Fixed:** Section boundary detection prevents invalid entries from adjacent sections
+- ✅ **Bug #1 Fixed:** Short-named entities (imp, trap, orc, mana) now correctly extracted (minimum 3 chars, was 5)
 
 ## Features
 
@@ -260,10 +260,31 @@ The extractor has been validated on multiple save files:
 These strings are metadata, not actual items:
 ```
 count, flags, lvars, slruck, id, strg, bmd, ugid,
-temp, hint, label, name, image, text, s, h, moral
+temp, hint, label, name, image, text, s, h, moral,
+mana, limit
 ```
 
-**Note:** "moral" is a metadata field containing item morale bonus values (Bug #3 fix).
+**Why Metadata Keywords Are Required:**
+
+The parser MUST maintain this list of metadata keywords because **structural validation alone cannot distinguish metadata from real items**. Even metadata keywords can be followed by the same binary patterns (`count id slruck`) as real items in the save file.
+
+**Attempted Alternative:** We tested using structural validation (checking for `count id slruck` pattern) instead of maintaining a keyword list. Result: **FAILED** - metadata keywords like `count`, `flags`, `slruck`, `limit`, `strg` were incorrectly identified as items, adding 704 false positives across all shops.
+
+**Why This Happens:** The binary format stores metadata fields with similar structures to actual items:
+- Real item: `addon4_fillet_manabass count id slruck 1,2`
+- Metadata: `mana count limit` (appears in item metadata context)
+
+Both match the basic pattern, so the only reliable way to filter them is maintaining the METADATA_KEYWORDS list.
+
+**How to Identify New Metadata Keywords:**
+1. If parser extracts items with very generic names (e.g., `mana`, `limit`, `count`)
+2. Verify the item doesn't appear in the game at that shop
+3. Check if it appears in many shops (metadata keywords appear frequently)
+4. Add to METADATA_KEYWORDS set in `ShopInventoryParser.py`
+
+**Recent Additions:**
+- `mana`, `limit` - Added 2026-01-05 (found in dragondor_5464 item metadata)
+- `moral` - Added 2026-01-04 (item morale bonus field)
 
 ### Section Boundary Markers
 
@@ -337,6 +358,15 @@ Valid item/unit/spell IDs must:
 
 ## Version History
 
+### 1.3.0 (2026-01-05)
+- ✅ **Bug #5 Fixed:** Missing units when sections appear out of expected order
+- ✅ **Bug #6 Fixed:** False positive spells from wrong shops (cross-shop attribution)
+- ✅ **Bug #7 Fixed:** Added `mana` and `limit` to metadata keywords
+- ✅ **Architecture:** Section ownership verification (`_section_belongs_to_shop()`)
+- ✅ **Architecture:** Section order independence (sorts sections by position)
+- ✅ **Research:** Validated that structural validation cannot replace metadata keywords
+- ✅ **Documentation:** Explained why metadata keywords list is required
+
 ### 1.2.0 (2026-01-05)
 - ✅ **Bug #4 Fixed:** Shops without "m_" prefix now extracted (aralan, dragondor, d locations)
 - ✅ **Impact:** +59 shops discovered (255 → 314 total)
@@ -380,4 +410,4 @@ This tool was created for research and educational purposes.
 **Developed by:** Claude (Anthropic)
 **Date:** 2026-01-05
 **Status:** Production Ready ✅
-**Version:** 1.2.0
+**Version:** 1.3.0

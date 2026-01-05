@@ -55,10 +55,10 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			if not atom_map:
 				raise EntityNotFoundException("AtomMap", shop_kb_id)
 
-			counts["items"] += self._sync_items(inventories['items'], atom_map.id, profile_id)
-			counts["spells"] += self._sync_spells(inventories['spells'], atom_map.id, profile_id)
-			counts["units"] += self._sync_units(inventories['units'], atom_map.id, profile_id)
-			counts["garrison"] += self._sync_garrison(inventories['garrison'], atom_map.id, profile_id)
+			counts["items"] += self._sync_items(inventories['items'], atom_map.id, profile_id, shop_kb_id)
+			counts["spells"] += self._sync_spells(inventories['spells'], atom_map.id, profile_id, shop_kb_id)
+			counts["units"] += self._sync_units(inventories['units'], atom_map.id, profile_id, shop_kb_id)
+			counts["garrison"] += self._sync_garrison(inventories['garrison'], atom_map.id, profile_id, shop_kb_id)
 
 		return counts
 
@@ -66,7 +66,8 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		self,
 		items: list[dict[str, Any]],
 		atom_map_id: int,
-		profile_id: int
+		profile_id: int,
+		atom_kb_id: str
 	) -> int:
 		"""
 		Sync item inventories
@@ -86,7 +87,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			item = self._item_repository.get_by_kb_id(kb_id)
 
 			if not item:
-				raise EntityNotFoundException("Item", kb_id)
+				raise EntityNotFoundException("Item", kb_id, atom_kb_id=atom_kb_id)
 
 			inventory = ShopInventory(
 				entity_id=item.id,
@@ -104,7 +105,8 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		self,
 		spells: list[dict[str, Any]],
 		atom_map_id: int,
-		profile_id: int
+		profile_id: int,
+		atom_kb_id: str
 	) -> int:
 		"""
 		Sync spell inventories
@@ -124,7 +126,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			spell = self._spell_repository.get_by_kb_id(kb_id)
 
 			if not spell:
-				raise EntityNotFoundException("Spell", kb_id)
+				raise EntityNotFoundException("Spell", kb_id, atom_kb_id=atom_kb_id)
 
 			inventory = ShopInventory(
 				entity_id=spell.id,
@@ -142,7 +144,8 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		self,
 		units: list[dict[str, Any]],
 		atom_map_id: int,
-		profile_id: int
+		profile_id: int,
+		atom_kb_id: str
 	) -> int:
 		"""
 		Sync unit inventories
@@ -162,7 +165,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			unit = self._unit_repository.get_by_kb_id(kb_id)
 
 			if not unit:
-				raise EntityNotFoundException("Unit", kb_id)
+				raise EntityNotFoundException("Unit", kb_id, atom_kb_id=atom_kb_id)
 
 			inventory = ShopInventory(
 				entity_id=unit.id,
@@ -180,7 +183,8 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		self,
 		garrison: list[dict[str, Any]],
 		atom_map_id: int,
-		profile_id: int
+		profile_id: int,
+		atom_kb_id: str
 	) -> int:
 		"""
 		Sync garrison inventories
@@ -200,7 +204,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			unit = self._unit_repository.get_by_kb_id(kb_id)
 
 			if not unit:
-				raise EntityNotFoundException("Unit", kb_id)
+				raise EntityNotFoundException("Unit", kb_id, atom_kb_id=atom_kb_id)
 
 			inventory = ShopInventory(
 				entity_id=unit.id,

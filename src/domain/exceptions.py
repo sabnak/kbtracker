@@ -58,11 +58,12 @@ class EntityNotFoundException(RepositoryException):
 		self,
 		entity_type: str,
 		identifier: str | int,
-		original_exception: Exception | None = None
+		original_exception: Exception | None = None,
+		atom_kb_id: str = None
 	):
 		self._entity_type = entity_type
 		self._identifier = identifier
-		message = f"{entity_type} with identifier '{identifier}' not found"
+		message = f"{entity_type} with identifier '{identifier}' not found. Atom kb_id: {atom_kb_id}"
 		super().__init__(message, original_exception)
 
 	@property
