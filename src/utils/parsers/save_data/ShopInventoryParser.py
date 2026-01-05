@@ -465,11 +465,10 @@ class ShopInventoryParser(IShopInventoryParser):
 		counts = {"items": 0, "spells": 0, "units": 0, "garrison": 0}
 
 		for shop_kb_id, inventories in data.items():
-			cleaned_kb_id = shop_kb_id[2:] if shop_kb_id.startswith('m_') else shop_kb_id
-			shop = self._shop_repository.get_by_kb_id(cleaned_kb_id)
+			shop = self._shop_repository.get_by_kb_id(shop_kb_id)
 
 			if not shop:
-				raise EntityNotFoundException("Shop", cleaned_kb_id)
+				raise EntityNotFoundException("Shop", shop_kb_id)
 
 			counts["items"] += self._sync_items(inventories['items'], shop.id, profile_id)
 			counts["spells"] += self._sync_spells(inventories['spells'], shop.id, profile_id)
