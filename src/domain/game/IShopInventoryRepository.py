@@ -60,7 +60,7 @@ class IShopInventoryRepository(ABC):
 		self,
 		entity_id: int,
 		type: str,
-		shop_id: int,
+		atom_map_id: int,
 		profile_id: int
 	) -> None:
 		"""
@@ -70,8 +70,8 @@ class IShopInventoryRepository(ABC):
 			Entity ID
 		:param type:
 			Entity type
-		:param shop_id:
-			Shop ID
+		:param atom_map_id:
+			Atom map ID
 		:param profile_id:
 			Profile ID
 		:return:
@@ -83,7 +83,7 @@ class IShopInventoryRepository(ABC):
 		self,
 		entity_id: int,
 		type: str,
-		shop_id: int,
+		atom_map_id: int,
 		profile_id: int,
 		new_count: int
 	) -> ShopInventory:
@@ -94,8 +94,8 @@ class IShopInventoryRepository(ABC):
 			Entity ID
 		:param type:
 			Entity type
-		:param shop_id:
-			Shop ID
+		:param atom_map_id:
+			Atom map ID
 		:param profile_id:
 			Profile ID
 		:param new_count:

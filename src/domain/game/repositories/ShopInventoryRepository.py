@@ -18,7 +18,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 		return ShopInventoryMapper(
 			entity_id=entity.entity_id,
 			type=entity.type,
-			shop_id=entity.shop_id,
+			atom_map_id=entity.atom_map_id,
 			profile_id=entity.profile_id,
 			count=entity.count
 		)
@@ -41,7 +41,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 		:return:
 			Identifier string
 		"""
-		return f"entity_id={entity.entity_id}, type={entity.type}, shop_id={entity.shop_id}, profile_id={entity.profile_id}"
+		return f"entity_id={entity.entity_id}, type={entity.type}, atom_map_id={entity.atom_map_id}, profile_id={entity.profile_id}"
 
 	def create(self, inventory: ShopInventory) -> ShopInventory:
 		"""
@@ -108,7 +108,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 		self,
 		entity_id: int,
 		type: str,
-		shop_id: int,
+		atom_map_id: int,
 		profile_id: int
 	) -> None:
 		"""
@@ -118,8 +118,8 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 			Entity ID
 		:param type:
 			Entity type
-		:param shop_id:
-			Shop ID
+		:param atom_map_id:
+			Atom map ID
 		:param profile_id:
 			Profile ID
 		:return:
@@ -128,7 +128,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 			session.query(ShopInventoryMapper).filter(
 				ShopInventoryMapper.entity_id == entity_id,
 				ShopInventoryMapper.type == type,
-				ShopInventoryMapper.shop_id == shop_id,
+				ShopInventoryMapper.atom_map_id == atom_map_id,
 				ShopInventoryMapper.profile_id == profile_id
 			).delete()
 			session.commit()
@@ -137,7 +137,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 		self,
 		entity_id: int,
 		type: str,
-		shop_id: int,
+		atom_map_id: int,
 		profile_id: int,
 		new_count: int
 	) -> ShopInventory:
@@ -148,8 +148,8 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 			Entity ID
 		:param type:
 			Entity type
-		:param shop_id:
-			Shop ID
+		:param atom_map_id:
+			Atom map ID
 		:param profile_id:
 			Profile ID
 		:param new_count:
@@ -161,14 +161,14 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 			mapper = session.query(ShopInventoryMapper).filter(
 				ShopInventoryMapper.entity_id == entity_id,
 				ShopInventoryMapper.type == type,
-				ShopInventoryMapper.shop_id == shop_id,
+				ShopInventoryMapper.atom_map_id == atom_map_id,
 				ShopInventoryMapper.profile_id == profile_id
 			).first()
 
 			if not mapper:
 				from src.domain.exceptions import EntityNotFoundException
 				raise EntityNotFoundException(
-					f"ShopInventory not found: entity_id={entity_id}, type={type}, shop_id={shop_id}, profile_id={profile_id}"
+					f"ShopInventory not found: entity_id={entity_id}, type={type}, atom_map_id={atom_map_id}, profile_id={profile_id}"
 				)
 
 			mapper.count = new_count
@@ -189,7 +189,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 		return ShopInventory(
 			entity_id=mapper.entity_id,
 			type=mapper.type,
-			shop_id=mapper.shop_id,
+			atom_map_id=mapper.atom_map_id,
 			profile_id=mapper.profile_id,
 			count=mapper.count
 		)

@@ -72,24 +72,11 @@ class SchemaManagementService(ISchemaManagementService):
 				)
 			"""))
 
-			# Create location table
+			# Create atom_map table
 			session.execute(text(f"""
-				CREATE TABLE {schema_name}.location (
+				CREATE TABLE {schema_name}.atom_map (
 					id SERIAL PRIMARY KEY,
-					kb_id VARCHAR(255) NOT NULL UNIQUE,
-					name VARCHAR(255) NOT NULL
-				)
-			"""))
-
-			# Create shop table
-			session.execute(text(f"""
-				CREATE TABLE {schema_name}.shop (
-					id SERIAL PRIMARY KEY,
-					kb_id VARCHAR(255) NOT NULL UNIQUE,
-					location_id INTEGER REFERENCES {schema_name}.location(id),
-					name VARCHAR(255) NOT NULL,
-					hint TEXT,
-					msg TEXT
+					kb_id VARCHAR(255) NOT NULL UNIQUE
 				)
 			"""))
 
@@ -151,11 +138,11 @@ class SchemaManagementService(ISchemaManagementService):
 			session.execute(text(f"""
 				CREATE TABLE {schema_name}.shop_inventory (
 					entity_id INTEGER NOT NULL,
-					shop_id INTEGER REFERENCES {schema_name}.shop(id),
+					atom_map_id INTEGER REFERENCES {schema_name}.atom_map(id),
 					profile_id INTEGER REFERENCES {schema_name}.profile(id),
 					type VARCHAR(20) NOT NULL,
 					count INTEGER DEFAULT 1,
-					PRIMARY KEY (entity_id, shop_id, profile_id, type)
+					PRIMARY KEY (entity_id, atom_map_id, profile_id, type)
 				)
 			"""))
 

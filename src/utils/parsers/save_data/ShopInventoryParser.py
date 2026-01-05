@@ -7,8 +7,8 @@ from dependency_injector.wiring import inject, Provide
 
 from src.core.Container import Container
 from src.domain.exceptions import InvalidKbIdException, EntityNotFoundException
+from src.domain.game.IAtomMapRepository import IAtomMapRepository
 from src.domain.game.IItemRepository import IItemRepository
-from src.domain.game.IShopRepository import IShopRepository
 from src.domain.game.ISpellRepository import ISpellRepository
 from src.domain.game.IUnitRepository import IUnitRepository
 from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
@@ -35,7 +35,7 @@ class ShopInventoryParser(IShopInventoryParser):
 		item_repository: IItemRepository = Provide[Container.item_repository],
 		spell_repository: ISpellRepository = Provide[Container.spell_repository],
 		unit_repository: IUnitRepository = Provide[Container.unit_repository],
-		shop_repository: IShopRepository = Provide[Container.shop_repository],
+		atom_map_repository: IAtomMapRepository = Provide[Container.atom_map_repository],
 		shop_inventory_repository: IShopInventoryRepository = Provide[Container.shop_inventory_repository]
 	):
 		"""
@@ -49,8 +49,8 @@ class ShopInventoryParser(IShopInventoryParser):
 			Spell repository
 		:param unit_repository:
 			Unit repository
-		:param shop_repository:
-			Shop repository
+		:param atom_map_repository:
+			Atom map repository
 		:param shop_inventory_repository:
 			Shop inventory repository
 		"""
@@ -58,7 +58,7 @@ class ShopInventoryParser(IShopInventoryParser):
 		self._item_repository = item_repository
 		self._spell_repository = spell_repository
 		self._unit_repository = unit_repository
-		self._shop_repository = shop_repository
+		self._atom_map_repository = atom_map_repository
 		self._shop_inventory_repository = shop_inventory_repository
 
 	def parse(self, save_path: Path) -> dict[str, dict[str, list[dict[str, Any]]]]:
@@ -465,22 +465,22 @@ class ShopInventoryParser(IShopInventoryParser):
 		counts = {"items": 0, "spells": 0, "units": 0, "garrison": 0}
 
 		for shop_kb_id, inventories in data.items():
-			shop = self._shop_repository.get_by_kb_id(shop_kb_id)
+			atom_map = self._atom_map_repository.get_by_kb_id(shop_kb_id)
 
-			if not shop:
-				raise EntityNotFoundException("Shop", shop_kb_id)
+			if not atom_map:
+				raise EntityNotFoundException("AtomMap", shop_kb_id)
 
-			counts["items"] += self._sync_items(inventories['items'], shop.id, profile_id)
-			counts["spells"] += self._sync_spells(inventories['spells'], shop.id, profile_id)
-			counts["units"] += self._sync_units(inventories['units'], shop.id, profile_id)
-			counts["garrison"] += self._sync_garrison(inventories['garrison'], shop.id, profile_id)
+			counts["items"] += self._sync_items(inventories['items'], atom_map.id, profile_id)
+			counts["spells"] += self._sync_spells(inventories['spells'], atom_map.id, profile_id)
+			counts["units"] += self._sync_units(inventories['units'], atom_map.id, profile_id)
+			counts["garrison"] += self._sync_garrison(inventories['garrison'], atom_map.id, profile_id)
 
 		return counts
 
 	def _sync_items(
 		self,
 		items: list[dict[str, Any]],
-		shop_id: int,
+		atom_map_id: int,
 		profile_id: int
 	) -> int:
 		"""
@@ -488,8 +488,8 @@ class ShopInventoryParser(IShopInventoryParser):
 
 		:param items:
 			Item inventory data
-		:param shop_id:
-			Shop ID
+		:param atom_map_id:
+			Atom map ID
 		:param profile_id:
 			Profile ID
 		:return:
@@ -505,7 +505,7 @@ class ShopInventoryParser(IShopInventoryParser):
 
 			inventory = ShopInventory(
 				entity_id=item.id,
-				shop_id=shop_id,
+				atom_map_id=atom_map_id,
 				profile_id=profile_id,
 				type="item",
 				count=item_data['quantity']
@@ -518,7 +518,7 @@ class ShopInventoryParser(IShopInventoryParser):
 	def _sync_spells(
 		self,
 		spells: list[dict[str, Any]],
-		shop_id: int,
+		atom_map_id: int,
 		profile_id: int
 	) -> int:
 		"""
@@ -526,8 +526,8 @@ class ShopInventoryParser(IShopInventoryParser):
 
 		:param spells:
 			Spell inventory data
-		:param shop_id:
-			Shop ID
+		:param atom_map_id:
+			Atom map ID
 		:param profile_id:
 			Profile ID
 		:return:
@@ -543,7 +543,7 @@ class ShopInventoryParser(IShopInventoryParser):
 
 			inventory = ShopInventory(
 				entity_id=spell.id,
-				shop_id=shop_id,
+				atom_map_id=atom_map_id,
 				profile_id=profile_id,
 				type="spell",
 				count=spell_data['quantity']
@@ -556,7 +556,7 @@ class ShopInventoryParser(IShopInventoryParser):
 	def _sync_units(
 		self,
 		units: list[dict[str, Any]],
-		shop_id: int,
+		atom_map_id: int,
 		profile_id: int
 	) -> int:
 		"""
@@ -564,8 +564,8 @@ class ShopInventoryParser(IShopInventoryParser):
 
 		:param units:
 			Unit inventory data
-		:param shop_id:
-			Shop ID
+		:param atom_map_id:
+			Atom map ID
 		:param profile_id:
 			Profile ID
 		:return:
@@ -581,7 +581,7 @@ class ShopInventoryParser(IShopInventoryParser):
 
 			inventory = ShopInventory(
 				entity_id=unit.id,
-				shop_id=shop_id,
+				atom_map_id=atom_map_id,
 				profile_id=profile_id,
 				type="unit",
 				count=unit_data['quantity']
@@ -594,7 +594,7 @@ class ShopInventoryParser(IShopInventoryParser):
 	def _sync_garrison(
 		self,
 		garrison: list[dict[str, Any]],
-		shop_id: int,
+		atom_map_id: int,
 		profile_id: int
 	) -> int:
 		"""
@@ -602,8 +602,8 @@ class ShopInventoryParser(IShopInventoryParser):
 
 		:param garrison:
 			Garrison inventory data
-		:param shop_id:
-			Shop ID
+		:param atom_map_id:
+			Atom map ID
 		:param profile_id:
 			Profile ID
 		:return:
@@ -619,7 +619,7 @@ class ShopInventoryParser(IShopInventoryParser):
 
 			inventory = ShopInventory(
 				entity_id=unit.id,
-				shop_id=shop_id,
+				atom_map_id=atom_map_id,
 				profile_id=profile_id,
 				type="garrison",
 				count=unit_data['quantity']

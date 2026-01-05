@@ -22,7 +22,7 @@
 		<div class="alert alert-danger">
 			<strong>⚠️ WARNING:</strong> This game was previously scanned on
 			{{ game.last_scan_time.strftime('%Y-%m-%d %H:%M') }}.
-			Rescanning will <strong>permanently delete all existing data</strong> including items, locations, shops, and profiles!
+			Rescanning will <strong>permanently delete all existing data</strong> including items, atoms, and profiles!
 		</div>
 		{% endif %}
 
@@ -108,18 +108,10 @@
 						<span class="badge bg-secondary count-badge" style="display: none;">0</span>
 					</li>
 					<li class="list-group-item d-flex justify-content-between align-items-center"
-						data-resource="locations">
+						data-resource="atoms">
 						<span>
 							<span class="status-icon">⏸️</span>
-							<span class="resource-label">Locations</span>
-						</span>
-						<span class="badge bg-secondary count-badge" style="display: none;">0</span>
-					</li>
-					<li class="list-group-item d-flex justify-content-between align-items-center"
-						data-resource="shops">
-						<span>
-							<span class="status-icon">⏸️</span>
-							<span class="resource-label">Shops</span>
+							<span class="resource-label">Atoms</span>
 						</span>
 						<span class="badge bg-secondary count-badge" style="display: none;">0</span>
 					</li>

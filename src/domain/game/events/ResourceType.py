@@ -8,7 +8,6 @@ class ResourceType(Enum):
 	LOCALIZATIONS = "localizations"
 	ITEMS = "items"
 	SETS = "sets"
-	LOCATIONS = "locations"
-	SHOPS = "shops"
+	ATOMS = "atoms"
 	SPELLS = "spells"
 	UNITS = "units"

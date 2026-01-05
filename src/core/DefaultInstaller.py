@@ -12,29 +12,27 @@ from src.utils.parsers.game_data.KFSItemsParser import KFSItemsParser
 from src.utils.parsers.game_data.KFSLocalizationParser import KFSLocalizationParser
 from src.utils.parsers.game_data.KFSSpellsParser import KFSSpellsParser
 from src.utils.parsers.game_data.KFSUnitParser import KFSUnitParser
-from src.utils.parsers.game_data.KFSLocationsAndShopsParser import KFSLocationsAndShopsParser
+from src.utils.parsers.game_data.KFSAtomsMapInfoParser import KFSAtomsMapInfoParser
 from src.domain.game.repositories.GameRepository import GameRepository
+from src.domain.game.repositories.AtomMapRepository import AtomMapRepository
 from src.domain.game.repositories.ItemRepository import ItemRepository
 from src.domain.game.repositories.ItemSetRepository import ItemSetRepository
 from src.domain.game.repositories.LocalizationRepository import LocalizationRepository
-from src.domain.game.repositories.LocationRepository import LocationRepository
 from src.domain.game.repositories.ShopInventoryRepository import ShopInventoryRepository
-from src.domain.game.repositories.ShopRepository import ShopRepository
 from src.domain.game.repositories.UnitRepository import UnitRepository
 from src.domain.game.repositories.SpellRepository import SpellRepository
 from src.domain.game.factories.LocFactory import LocFactory
 from src.domain.game.factories.SpellFactory import SpellFactory
 from src.domain.game.factories.UnitFactory import UnitFactory
+from src.domain.game.services.AtomMapScannerService import AtomMapScannerService
 from src.domain.game.services.GameService import GameService
 from src.domain.game.services.ItemsAndSetsScannerService import ItemsAndSetsScannerService
 from src.domain.game.services.ItemService import ItemService
 from src.domain.game.services.LocalizationScannerService import LocalizationScannerService
-from src.domain.game.services.LocationService import LocationService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services.SchemaManagementService import SchemaManagementService
 from src.domain.game.services.SpellsScannerService import SpellsScannerService
 from src.domain.game.services.UnitsScannerService import UnitsScannerService
-from src.domain.game.services.LocationsAndShopsScannerService import LocationsAndShopsScannerService
 from src.domain.game.repositories.ProfilePostgresRepository import ProfilePostgresRepository
 from src.domain.game.services.ProfileService import ProfileService
 from src.domain.game.services.SaveFileService import SaveFileService
@@ -86,10 +84,6 @@ class DefaultInstaller:
 			providers.Factory(SaveFileService)
 		)
 
-		self._container.location_service.override(
-			providers.Factory(LocationService)
-		)
-
 		self._container.scanner_service.override(
 			providers.Factory(ScannerService)
 		)
@@ -114,8 +108,8 @@ class DefaultInstaller:
 			providers.Factory(UnitsScannerService)
 		)
 
-		self._container.locations_and_shops_scanner_service.override(
-			providers.Factory(LocationsAndShopsScannerService)
+		self._container.atom_map_scanner_service.override(
+			providers.Factory(AtomMapScannerService)
 		)
 
 		self._container.schema_management_service.override(
@@ -138,8 +132,8 @@ class DefaultInstaller:
 		self._container.kfs_unit_parser.override(
 			providers.Singleton(KFSUnitParser)
 		)
-		self._container.kfs_locations_and_shops_parser.override(
-			providers.Singleton(KFSLocationsAndShopsParser)
+		self._container.kfs_atoms_map_info_parser.override(
+			providers.Singleton(KFSAtomsMapInfoParser)
 		)
 		self._container.kfs_spells_parser.override(
 			providers.Singleton(KFSSpellsParser)
@@ -182,12 +176,8 @@ class DefaultInstaller:
 			providers.Singleton(LocalizationRepository)
 		)
 
-		self._container.location_repository.override(
-			providers.Singleton(LocationRepository)
-		)
-
-		self._container.shop_repository.override(
-			providers.Singleton(ShopRepository)
+		self._container.atom_map_repository.override(
+			providers.Singleton(AtomMapRepository)
 		)
 
 		self._container.shop_inventory_repository.override(

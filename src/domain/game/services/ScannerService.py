@@ -5,10 +5,10 @@ from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
+from src.domain.game.IAtomMapScannerService import IAtomMapScannerService
 from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.IItemsAndSetsScannerService import IItemsAndSetsScannerService
 from src.domain.game.ILocalizationScannerService import ILocalizationScannerService
-from src.domain.game.IShopsAndLocationsScannerService import IShopsAndLocationsScannerService
 from src.domain.game.ISpellsScannerService import ISpellsScannerService
 from src.domain.game.IUnitsScannerService import IUnitsScannerService
 from src.domain.game.dto.ScanResults import ScanResults
@@ -27,7 +27,7 @@ class ScannerService:
 		items_and_sets_scanner_service: IItemsAndSetsScannerService = Provide[Container.items_and_sets_scanner_service],
 		spells_scanner_service: ISpellsScannerService = Provide[Container.spells_scanner_service],
 		units_scanner_service: IUnitsScannerService = Provide[Container.units_scanner_service],
-		shops_and_locations_scanner_service: IShopsAndLocationsScannerService = Provide[Container.locations_and_shops_scanner_service],
+		atom_map_scanner_service: IAtomMapScannerService = Provide[Container.atom_map_scanner_service],
 		kfs_extractor: IKFSExtractor = Provide[Container.kfs_extractor],
 		config: Config = Provide[Container.config]
 	):
@@ -36,7 +36,7 @@ class ScannerService:
 		self._items_and_sets_scanner = items_and_sets_scanner_service
 		self._spells_scanner = spells_scanner_service
 		self._units_scanner = units_scanner_service
-		self._shops_and_locations_scanner = shops_and_locations_scanner_service
+		self._atom_map_scanner = atom_map_scanner_service
 		self._kfs_extractor = kfs_extractor
 		self._config = config
 
@@ -78,12 +78,11 @@ class ScannerService:
 		spells = self._spells_scanner.scan(game_id, game.path)
 		total_spells = len(spells)
 
-		locations, shops = self._shops_and_locations_scanner.scan(game_id, game.path, language)
+		atoms = self._atom_map_scanner.scan(game_id, game.path, language)
 
 		return ScanResults(
 			items=total_items,
-			locations=len(locations),
-			shops=len(shops),
+			atoms=len(atoms),
 			sets=total_sets,
 			localizations=localizations_string,
 			spells=total_spells,
@@ -211,34 +210,26 @@ class ScannerService:
 				message=f"Created {total_spells} spells"
 			)
 
-			# Step 5: Parse and create locations/shops
+			# Step 5: Parse and create atoms
 			yield ScanProgressEvent(
 				event_type=ScanEventType.RESOURCE_STARTED,
-				resource_type=ResourceType.LOCATIONS,
-				message="Parsing locations and shops"
+				resource_type=ResourceType.ATOMS,
+				message="Parsing atoms"
 			)
 
-			locations, shops = self._shops_and_locations_scanner.scan(game_id, game.path, language)
+			atoms = self._atom_map_scanner.scan(game_id, game.path, language)
 
 			yield ScanProgressEvent(
 				event_type=ScanEventType.RESOURCE_COMPLETED,
-				resource_type=ResourceType.LOCATIONS,
-				count=len(locations),
-				message=f"Created {len(locations)} locations"
-			)
-
-			yield ScanProgressEvent(
-				event_type=ScanEventType.RESOURCE_COMPLETED,
-				resource_type=ResourceType.SHOPS,
-				count=len(shops),
-				message=f"Created {len(shops)} shops"
+				resource_type=ResourceType.ATOMS,
+				count=len(atoms),
+				message=f"Created {len(atoms)} atoms"
 			)
 
 			# Final results
 			results = ScanResults(
 				items=total_items,
-				locations=len(locations),
-				shops=len(shops),
+				atoms=len(atoms),
 				sets=total_sets,
 				localizations=localizations_count,
 				spells=total_spells,

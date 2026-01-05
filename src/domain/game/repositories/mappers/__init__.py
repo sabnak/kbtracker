@@ -1,12 +1,10 @@
+from .AtomMapMapper import AtomMapMapper
 from .ItemMapper import ItemMapper
-from .LocationMapper import LocationMapper
-from .ShopMapper import ShopMapper
 from .ShopInventoryMapper import ShopInventoryMapper
 
 
 __all__ = [
+	"AtomMapMapper",
 	"ItemMapper",
-	"LocationMapper",
-	"ShopMapper",
 	"ShopInventoryMapper",
 ]
