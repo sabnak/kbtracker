@@ -31,7 +31,7 @@ class Config(BaseSettings):
 		LocalizationConfig(file="units_features", tag="units_features"),
 		LocalizationConfig(file="units_specials", tag="units_specials"),
 		LocalizationConfig(file="spells", tag="spells"),
-		LocalizationConfig(file="atoms_info", tag="atoms"),
+		LocalizationConfig(file="atoms_info", tag="atoms_info"),
 		LocalizationConfig(file="map", tag="maps"),
 	]
 
