@@ -7,6 +7,7 @@ from src.domain.game.IItemRepository import IItemRepository
 from src.domain.game.IItemSetRepository import IItemSetRepository
 from src.domain.game.IAtomMapRepository import IAtomMapRepository
 from src.domain.game.ILocalizationRepository import ILocalizationRepository
+from src.domain.game.IProfileGameDataSyncerService import IProfileGameDataSyncerService
 from src.domain.game.ISchemaManagementService import ISchemaManagementService
 from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.IProfileRepository import IProfileRepository
@@ -36,9 +37,11 @@ class Container(containers.DeclarativeContainer):
 	spell_repository = providers.AbstractSingleton(ISpellRepository)
 	unit_repository = providers.AbstractSingleton(IUnitRepository)
 
+	# Services
 	game_path_service = providers.AbstractFactory(IGamePathService)
 	game_service = providers.AbstractFactory(IGameService)
 	profile_service = providers.AbstractFactory(IProfileService)
+	profile_data_syncer_service = providers.AbstractFactory(IProfileGameDataSyncerService)
 	save_file_service = providers.AbstractFactory(ISaveFileService)
 	scanner_service = providers.AbstractFactory()
 	item_service = providers.AbstractFactory()

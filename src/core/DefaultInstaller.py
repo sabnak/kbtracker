@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from src.core.Config import Config
 from src.core.Container import Container
 from src.domain.filesystem.services.GamePathService import GamePathService
+from src.domain.game.services.ProfileGameDataSyncerService import ProfileGameDataSyncerService
 from src.utils.parsers.game_data.KFSExtractor import KFSExtractor
 from src.utils.parsers.game_data.KFSReader import KFSReader
 from src.utils.parsers.game_data.KFSItemsParser import KFSItemsParser
@@ -72,126 +73,43 @@ class DefaultInstaller:
 			)
 		)
 
-		self._container.game_service.override(
-			providers.Factory(GameService)
-		)
-
-		self._container.profile_service.override(
-			providers.Factory(ProfileService)
-		)
-
-		self._container.save_file_service.override(
-			providers.Factory(SaveFileService)
-		)
-
-		self._container.scanner_service.override(
-			providers.Factory(ScannerService)
-		)
-
-		self._container.item_service.override(
-			providers.Factory(ItemService)
-		)
-
-		self._container.localization_scanner_service.override(
-			providers.Factory(LocalizationScannerService)
-		)
-
-		self._container.items_and_sets_scanner_service.override(
-			providers.Factory(ItemsAndSetsScannerService)
-		)
-
-		self._container.spells_scanner_service.override(
-			providers.Factory(SpellsScannerService)
-		)
-
-		self._container.units_scanner_service.override(
-			providers.Factory(UnitsScannerService)
-		)
-
-		self._container.atom_map_scanner_service.override(
-			providers.Factory(AtomMapScannerService)
-		)
-
-		self._container.schema_management_service.override(
-			providers.Factory(SchemaManagementService)
-		)
+		self._container.game_service.override(providers.Factory(GameService))
+		self._container.profile_service.override(providers.Factory(ProfileService))
+		self._container.profile_data_syncer_service.override(providers.Factory(ProfileGameDataSyncerService))
+		self._container.save_file_service.override(providers.Factory(SaveFileService))
+		self._container.scanner_service.override(providers.Factory(ScannerService))
+		self._container.item_service.override(providers.Factory(ItemService))
+		self._container.localization_scanner_service.override(providers.Factory(LocalizationScannerService))
+		self._container.items_and_sets_scanner_service.override(providers.Factory(ItemsAndSetsScannerService))
+		self._container.spells_scanner_service.override(providers.Factory(SpellsScannerService))
+		self._container.units_scanner_service.override(providers.Factory(UnitsScannerService))
+		self._container.atom_map_scanner_service.override(providers.Factory(AtomMapScannerService))
+		self._container.schema_management_service.override(providers.Factory(SchemaManagementService))
 
 	def _install_game_resource_processors(self):
-		self._container.kfs_extractor.override(
-			providers.Singleton(KFSExtractor)
-		)
-		self._container.kfs_reader.override(
-			providers.Singleton(KFSReader)
-		)
-		self._container.kfs_localization_parser.override(
-			providers.Singleton(KFSLocalizationParser)
-		)
-		self._container.kfs_items_parser.override(
-			providers.Singleton(KFSItemsParser)
-		)
-		self._container.kfs_unit_parser.override(
-			providers.Singleton(KFSUnitParser)
-		)
-		self._container.kfs_atoms_map_info_parser.override(
-			providers.Singleton(KFSAtomsMapInfoParser)
-		)
-		self._container.kfs_spells_parser.override(
-			providers.Singleton(KFSSpellsParser)
-		)
-		self._container.loc_factory.override(
-			providers.Singleton(LocFactory)
-		)
-		self._container.spell_factory.override(
-			providers.Singleton(SpellFactory)
-		)
-		self._container.unit_factory.override(
-			providers.Singleton(UnitFactory)
-		)
+		self._container.kfs_extractor.override(providers.Singleton(KFSExtractor))
+		self._container.kfs_reader.override(providers.Singleton(KFSReader))
+		self._container.kfs_localization_parser.override(providers.Singleton(KFSLocalizationParser))
+		self._container.kfs_items_parser.override(providers.Singleton(KFSItemsParser))
+		self._container.kfs_unit_parser.override(providers.Singleton(KFSUnitParser))
+		self._container.kfs_atoms_map_info_parser.override(providers.Singleton(KFSAtomsMapInfoParser))
+		self._container.kfs_spells_parser.override(providers.Singleton(KFSSpellsParser))
+		self._container.loc_factory.override(providers.Singleton(LocFactory))
+		self._container.spell_factory.override(providers.Singleton(SpellFactory))
+		self._container.unit_factory.override(providers.Singleton(UnitFactory))
 
 	def _install_save_file_parsers(self):
-		self._container.save_file_decompressor.override(
-			providers.Singleton(SaveFileDecompressor)
-		)
-		self._container.shop_inventory_parser.override(
-			providers.Singleton(ShopInventoryParser)
-		)
-		self._container.hero_save_parser.override(
-			providers.Singleton(HeroSaveParser)
-		)
+		self._container.save_file_decompressor.override(providers.Singleton(SaveFileDecompressor))
+		self._container.shop_inventory_parser.override(providers.Singleton(ShopInventoryParser))
+		self._container.hero_save_parser.override(providers.Singleton(HeroSaveParser))
 
 	def _install_repositories(self):
-		self._container.game_repository.override(
-			providers.Singleton(GameRepository)
-		)
-
-		self._container.item_repository.override(
-			providers.Singleton(ItemRepository)
-		)
-
-		self._container.item_set_repository.override(
-			providers.Singleton(ItemSetRepository)
-		)
-
-		self._container.localization_repository.override(
-			providers.Singleton(LocalizationRepository)
-		)
-
-		self._container.atom_map_repository.override(
-			providers.Singleton(AtomMapRepository)
-		)
-
-		self._container.shop_inventory_repository.override(
-			providers.Singleton(ShopInventoryRepository)
-		)
-
-		self._container.profile_repository.override(
-			providers.Singleton(ProfilePostgresRepository)
-		)
-
-		self._container.spell_repository.override(
-			providers.Singleton(SpellRepository)
-		)
-
-		self._container.unit_repository.override(
-			providers.Singleton(UnitRepository)
-		)
+		self._container.game_repository.override(providers.Singleton(GameRepository))
+		self._container.item_repository.override(providers.Singleton(ItemRepository))
+		self._container.item_set_repository.override(providers.Singleton(ItemSetRepository))
+		self._container.localization_repository.override(providers.Singleton(LocalizationRepository))
+		self._container.atom_map_repository.override(providers.Singleton(AtomMapRepository))
+		self._container.shop_inventory_repository.override(providers.Singleton(ShopInventoryRepository))
+		self._container.profile_repository.override(providers.Singleton(ProfilePostgresRepository))
+		self._container.spell_repository.override(providers.Singleton(SpellRepository))
+		self._container.unit_repository.override(providers.Singleton(UnitRepository))

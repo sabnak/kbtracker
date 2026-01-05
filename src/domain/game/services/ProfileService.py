@@ -1,32 +1,34 @@
-from datetime import datetime
 import hashlib
+from datetime import datetime
 from pathlib import Path
+from typing import Any
 
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import Provide
 
-from src.core.Container import Container
 from src.core.Config import Config
+from src.core.Container import Container
+from src.domain.exceptions import EntityNotFoundException
 from src.domain.game.IProfileRepository import IProfileRepository
 from src.domain.game.IProfileService import IProfileService
 from src.domain.game.entities.ProfileEntity import ProfileEntity
-from src.domain.exceptions import EntityNotFoundException
-from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
 from src.utils.parsers.save_data.IHeroSaveParser import IHeroSaveParser
+from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
 
 
 class ProfileService(IProfileService):
 
-	@inject
 	def __init__(
 		self,
 		profile_repository: IProfileRepository = Provide[Container.profile_repository],
 		shop_parser: IShopInventoryParser = Provide[Container.shop_inventory_parser],
 		hero_parser: IHeroSaveParser = Provide[Container.hero_save_parser],
+		data_syncer: Any = Provide[Container.profile_data_syncer_service],
 		config: Config = Provide[Container.config]
 	):
 		self._profile_repository = profile_repository
 		self._shop_parser = shop_parser
 		self._hero_parser = hero_parser
+		self._data_syncer = data_syncer
 		self._config = config
 
 	def create_profile(
@@ -124,7 +126,7 @@ class ProfileService(IProfileService):
 
 		matching_save = self._find_matching_save(profile)
 		shop_data = self._shop_parser.parse(matching_save)
-		counts = self._shop_parser.sync(shop_data, profile_id)
+		counts = self._data_syncer.sync(shop_data, profile_id)
 
 		return counts
 
@@ -157,3 +159,4 @@ class ProfileService(IProfileService):
 				continue
 
 		raise FileNotFoundError(f"No matching save found for profile {profile.id}")
+
