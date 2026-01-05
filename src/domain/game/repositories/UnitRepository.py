@@ -180,6 +180,28 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			).all()
 			return [self._mapper_to_entity(mapper) for mapper in mappers]
 
+	def get_by_ids(self, ids: list[int]) -> dict[int, Unit]:
+		"""
+		Batch fetch units by IDs
+
+		:param ids:
+			List of unit IDs
+		:return:
+			Dictionary mapping ID to Unit
+		"""
+		if not ids:
+			return {}
+
+		with self._get_session() as session:
+			mappers = session.query(UnitMapper).filter(UnitMapper.id.in_(ids)).all()
+
+			result = {}
+			for mapper in mappers:
+				unit = self._mapper_to_entity(mapper)
+				result[unit.id] = unit
+
+			return result
+
 	def create_batch(self, units: list[Unit]) -> list[Unit]:
 		"""
 		Create multiple units

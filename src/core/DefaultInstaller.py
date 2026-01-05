@@ -29,6 +29,7 @@ from src.domain.game.services.AtomMapScannerService import AtomMapScannerService
 from src.domain.game.services.GameService import GameService
 from src.domain.game.services.ItemsAndSetsScannerService import ItemsAndSetsScannerService
 from src.domain.game.services.ItemService import ItemService
+from src.domain.game.services.ShopInventoryService import ShopInventoryService
 from src.domain.game.services.LocalizationScannerService import LocalizationScannerService
 from src.domain.game.services.ScannerService import ScannerService
 from src.domain.game.services.SchemaManagementService import SchemaManagementService
@@ -79,6 +80,7 @@ class DefaultInstaller:
 		self._container.save_file_service.override(providers.Factory(SaveFileService))
 		self._container.scanner_service.override(providers.Factory(ScannerService))
 		self._container.item_service.override(providers.Factory(ItemService))
+		self._container.shop_inventory_service.override(providers.Factory(ShopInventoryService))
 		self._container.localization_scanner_service.override(providers.Factory(LocalizationScannerService))
 		self._container.items_and_sets_scanner_service.override(providers.Factory(ItemsAndSetsScannerService))
 		self._container.spells_scanner_service.override(providers.Factory(SpellsScannerService))

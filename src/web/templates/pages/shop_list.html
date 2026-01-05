@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Shops - King's Bounty Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<h1 class="mb-4">Shops for {{ game.name }}</h1>
+
+		<!-- Profile Filter -->
+		{% if profiles %}
+		<div class="card mb-4">
+			<div class="card-body">
+				<form method="GET" action="/games/{{ game.id }}/shops">
+					<div class="row">
+						<div class="col-md-4">
+							<label for="profile_id" class="form-label">Profile</label>
+							<select
+								class="form-select"
+								id="profile_id"
+								name="profile_id"
+								onchange="this.form.submit()">
+								{% for profile in profiles %}
+								<option
+									value="{{ profile.id }}"
+									{% if selected_profile_id == profile.id %}selected{% endif %}>
+									{{ profile.name }}
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		{% endif %}
+
+		<!-- Shops by Location -->
+		{% if locations %}
+			{% for location_kb_id, location_data in locations.items() %}
+			<div class="location-section mb-5">
+				<h2 class="mb-3">{{ location_data['name'] }} <small class="text-muted" style="font-size: 0.5em;">{{ location_kb_id }}</small></h2>
+
+				<!-- Shop Grid (3 per row) -->
+				<div class="row">
+					{% for shop in location_data['shops'] %}
+					<div class="col-md-4 mb-4">
+						<div class="card shop-card">
+							<div class="card-header d-flex justify-content-between align-items-center">
+								<strong>
+									{% if shop['shop_loc'] and shop['shop_loc'].name %}
+										{{ shop['shop_loc'].name }}
+									{% elif shop['shop_loc'] and shop['shop_loc'].hint %}
+										{{ shop['shop_loc'].hint | format_text | safe }}
+									{% else %}
+										{{ shop['shop_kb_id'] }}
+									{% endif %}
+								</strong>
+								<small class="text-muted">{{ shop['shop_kb_id'] }}</small>
+							</div>
+							<div class="card-body p-0">
+								<table class="table table-sm mb-0">
+									<thead>
+										<tr>
+											<th class="shop-col-3">Items</th>
+											<th class="shop-col-3">Spells</th>
+											<th class="shop-col-3">Units</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<!-- Items Column -->
+											<td class="shop-col-3">
+												{% if shop['items'] %}
+												<div class="shop-inventory-list {% if shop['items']|length > 10 %}scrollable{% endif %}">
+													<ul class="list-unstyled mb-0">
+														{% for item in shop['items'] %}
+														<li class="shop-item">
+															{{ item['name'] }}
+															{% if item['count'] > 1 %}
+															<strong>{{ item['count'] }}</strong>
+															{% endif %}
+														</li>
+														{% endfor %}
+													</ul>
+												</div>
+												{% else %}
+												<span class="text-muted">-</span>
+												{% endif %}
+											</td>
+
+											<!-- Spells Column -->
+											<td class="shop-col-3">
+												{% if shop['spells'] %}
+												<div class="shop-inventory-list {% if shop['spells']|length > 10 %}scrollable{% endif %}">
+													<ul class="list-unstyled mb-0">
+														{% for spell in shop['spells'] %}
+														<li class="shop-item">
+															{{ spell['name'] }}
+															{% if spell['count'] > 1 %}
+															<strong>{{ spell['count'] }}</strong>
+															{% endif %}
+														</li>
+														{% endfor %}
+													</ul>
+												</div>
+												{% else %}
+												<span class="text-muted">-</span>
+												{% endif %}
+											</td>
+
+											<!-- Units Column -->
+											<td class="shop-col-3">
+												{% if shop['units'] %}
+												<div class="shop-inventory-list {% if shop['units']|length > 10 %}scrollable{% endif %}">
+													<ul class="list-unstyled mb-0">
+														{% for unit in shop['units'] %}
+														<li class="shop-item">
+															{{ unit['name'] }}
+															{% if unit['count'] > 1 %}
+															<strong>{{ unit['count'] }}</strong>
+															{% endif %}
+														</li>
+														{% endfor %}
+													</ul>
+												</div>
+												{% else %}
+												<span class="text-muted">-</span>
+												{% endif %}
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								{% if shop['garrison'] %}
+								<div class="shop-garrison">
+									<strong>Garrison:</strong>
+									{% for unit in shop['garrison'] %}
+										{{ unit['name'] }}{% if unit['count'] > 1 %} <strong>{{ unit['count'] }}</strong>{% endif %}{% if not loop.last %}, {% endif %}
+									{% endfor %}
+								</div>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+			{% endfor %}
+		{% else %}
+			{% if profiles %}
+			<div class="alert alert-info">
+				No shop inventory found for this profile.
+			</div>
+			{% else %}
+			<div class="alert alert-info">
+				No profiles found. Create a profile first to track shop inventory.
+			</div>
+			{% endif %}
+		{% endif %}
+
+		<div class="mt-3">
+			<a href="/games" class="btn btn-secondary">Back to Games</a>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -86,3 +86,15 @@ class IUnitRepository(ABC):
 			List of matching units
 		"""
 		pass
+
+	@abstractmethod
+	def get_by_ids(self, ids: list[int]) -> dict[int, Unit]:
+		"""
+		Batch fetch units by IDs
+
+		:param ids:
+			List of unit IDs
+		:return:
+			Dictionary mapping ID to Unit
+		"""
+		pass

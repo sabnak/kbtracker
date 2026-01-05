@@ -300,6 +300,29 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			levels = session.query(ItemMapper.level).distinct().order_by(ItemMapper.level).all()
 			return [level[0] for level in levels]
 
+	def get_by_ids(self, ids: list[int]) -> dict[int, Item]:
+		"""
+		Batch fetch items by IDs
+
+		:param ids:
+			List of item IDs
+		:return:
+			Dictionary mapping ID to Item
+		"""
+		if not ids:
+			return {}
+
+		with self._get_session() as session:
+			query, *_ = self._build_query_with_localization(session)
+			rows = query.filter(ItemMapper.id.in_(ids)).all()
+
+			result = {}
+			for row in rows:
+				item = self._row_to_entity(row)
+				result[item.id] = item
+
+			return result
+
 	def _convert_propbits_to_enum(self, propbits: list[str]) -> list[Propbit]:
 		"""
 		Convert list of propbit strings to Propbit enums

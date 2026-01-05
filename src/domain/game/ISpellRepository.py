@@ -74,3 +74,15 @@ class ISpellRepository(ABC):
 			List of all spells (filtered and sorted)
 		"""
 		pass
+
+	@abstractmethod
+	def get_by_ids(self, ids: list[int]) -> dict[int, Spell]:
+		"""
+		Batch fetch spells by IDs
+
+		:param ids:
+			List of spell IDs
+		:return:
+			Dictionary mapping ID to Spell
+		"""
+		pass

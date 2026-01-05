@@ -143,3 +143,15 @@ class IItemRepository(ABC):
 			Sorted list of distinct levels
 		"""
 		pass
+
+	@abstractmethod
+	def get_by_ids(self, ids: list[int]) -> dict[int, Item]:
+		"""
+		Batch fetch items by IDs
+
+		:param ids:
+			List of item IDs
+		:return:
+			Dictionary mapping ID to Item
+		"""
+		pass

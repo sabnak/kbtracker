@@ -190,6 +190,28 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 
 			return spells
 
+	def get_by_ids(self, ids: list[int]) -> dict[int, Spell]:
+		"""
+		Batch fetch spells by IDs
+
+		:param ids:
+			List of spell IDs
+		:return:
+			Dictionary mapping ID to Spell
+		"""
+		if not ids:
+			return {}
+
+		with self._get_session() as session:
+			mappers = session.query(SpellMapper).filter(SpellMapper.id.in_(ids)).all()
+
+			result = {}
+			for mapper in mappers:
+				spell = self._mapper_to_entity(mapper)
+				result[spell.id] = spell
+
+			return result
+
 	def _apply_sorting(self, query, sort_by: str, sort_order: str):
 		"""
 		Apply ORDER BY clause to query

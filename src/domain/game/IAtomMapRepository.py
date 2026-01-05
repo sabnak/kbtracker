@@ -24,3 +24,15 @@ class IAtomMapRepository(ABC):
 	@abstractmethod
 	def list_all(self) -> list[AtomMap]:
 		pass
+
+	@abstractmethod
+	def get_by_ids(self, ids: list[int]) -> dict[int, AtomMap]:
+		"""
+		Batch fetch atom maps by IDs
+
+		:param ids:
+			List of atom map IDs
+		:return:
+			Dictionary mapping ID to AtomMap
+		"""
+		pass

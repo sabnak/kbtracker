@@ -67,6 +67,28 @@ class AtomMapRepository(CrudRepository[AtomMap, AtomMapMapper], IAtomMapReposito
 			mappers = session.query(AtomMapMapper).all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
+	def get_by_ids(self, ids: list[int]) -> dict[int, AtomMap]:
+		"""
+		Batch fetch atom maps by IDs
+
+		:param ids:
+			List of atom map IDs
+		:return:
+			Dictionary mapping ID to AtomMap
+		"""
+		if not ids:
+			return {}
+
+		with self._get_session() as session:
+			mappers = session.query(AtomMapMapper).filter(AtomMapMapper.id.in_(ids)).all()
+
+			result = {}
+			for mapper in mappers:
+				atom_map = self._mapper_to_entity(mapper)
+				result[atom_map.id] = atom_map
+
+			return result
+
 	def _fetch_loc(self, kb_id: str) -> LocStrings | None:
 		pattern = f"itext\\_{kb_id}\\_%"
 		localizations = self._localization_repository.search_by_kb_id(pattern, use_regex=False)

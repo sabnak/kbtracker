@@ -45,6 +45,7 @@ class Container(containers.DeclarativeContainer):
 	save_file_service = providers.AbstractFactory(ISaveFileService)
 	scanner_service = providers.AbstractFactory()
 	item_service = providers.AbstractFactory()
+	shop_inventory_service = providers.AbstractFactory()
 	localization_scanner_service = providers.AbstractFactory()
 	items_and_sets_scanner_service = providers.AbstractFactory()
 	spells_scanner_service = providers.AbstractFactory()

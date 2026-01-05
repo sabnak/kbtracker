@@ -266,3 +266,82 @@ footer {
 	margin-bottom: 0.25rem;
 }
 
+
+/* Shop List Styles */
+.location-section {
+	border-bottom: 2px solid #dee2e6;
+	padding-bottom: 1rem;
+}
+
+.location-section:last-child {
+	border-bottom: none;
+}
+
+.shop-card {
+	height: 100%;
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.shop-card .card-header {
+	background-color: #f8f9fa;
+	font-size: 0.95rem;
+	padding: 0.5rem 0.75rem;
+}
+
+.shop-col-3 {
+	width: 33.33%;
+	vertical-align: top;
+	padding: 0.5rem;
+	font-size: 0.85rem;
+}
+
+.shop-inventory-list {
+	max-height: none;
+}
+
+.shop-inventory-list.scrollable {
+	max-height: 300px;
+	overflow-y: auto;
+	padding-right: 0.25rem;
+}
+
+.shop-inventory-list::-webkit-scrollbar {
+	width: 6px;
+}
+
+.shop-inventory-list::-webkit-scrollbar-track {
+	background: #f1f1f1;
+	border-radius: 3px;
+}
+
+.shop-inventory-list::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 3px;
+}
+
+.shop-inventory-list::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
+.shop-item {
+	padding: 0.25rem 0;
+	border-bottom: 1px solid #f0f0f0;
+	font-size: 0.85rem;
+}
+
+.shop-item:last-child {
+	border-bottom: none;
+}
+
+.shop-item .badge {
+	font-size: 0.7rem;
+	margin-left: 0.25rem;
+}
+
+.shop-garrison {
+	padding: 0.75rem;
+	border-top: 1px solid #dee2e6;
+	font-size: 0.85rem;
+	background-color: #f8f9fa;
+}
+

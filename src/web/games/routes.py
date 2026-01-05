@@ -10,10 +10,12 @@ from fastapi.templating import Jinja2Templates
 from src.domain.exceptions import DuplicateEntityException, DatabaseOperationException, InvalidRegexException
 from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.IGameService import IGameService
+from src.domain.game.IProfileRepository import IProfileRepository
 from src.domain.game.IProfileService import IProfileService
 from src.domain.game.ISpellRepository import ISpellRepository
 from src.domain.game.IUnitRepository import IUnitRepository
 from src.domain.game.entities.UnitClass import UnitClass
+from src.domain.game.services.ShopInventoryService import ShopInventoryService
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
 from src.domain.game.repositories.CrudRepository import _game_context
@@ -487,6 +489,61 @@ async def list_spells(
 			"spells": spells,
 			"sort_by": sort_field,
 			"sort_order": sort_direction
+		}
+	)
+
+
+@router.get("/games/{game_id}/shops", response_class=HTMLResponse)
+@inject
+async def list_shops(
+	request: Request,
+	game_id: int,
+	profile_id: int | None = Query(default=None),
+	game_context: GameContext = Depends(get_game_context),
+	shop_inventory_service: ShopInventoryService = Depends(Provide["shop_inventory_service"]),
+	profile_repository: IProfileRepository = Depends(Provide["profile_repository"]),
+	game_service: IGameService = Depends(Provide["game_service"])
+):
+	"""
+	List all shops grouped by location for a game with profile filter
+	"""
+	_game_context.set(game_context)
+
+	game = game_service.get_game(game_id)
+	if not game:
+		return RedirectResponse(url="/games", status_code=303)
+
+	profiles = profile_repository.list_all()
+
+	if profile_id is None:
+		if not profiles:
+			return templates.TemplateResponse(
+				"pages/shop_list.html",
+				{
+					"request": request,
+					"game": game,
+					"profiles": [],
+					"selected_profile_id": None,
+					"locations": {}
+				}
+			)
+		selected_profile_id = profiles[0].id
+	else:
+		selected_profile = next((p for p in profiles if p.id == profile_id), None)
+		if not selected_profile:
+			return RedirectResponse(url=f"/games/{game_id}/shops", status_code=303)
+		selected_profile_id = profile_id
+
+	locations = shop_inventory_service.get_shops_by_location(selected_profile_id)
+
+	return templates.TemplateResponse(
+		"pages/shop_list.html",
+		{
+			"request": request,
+			"game": game,
+			"profiles": profiles,
+			"selected_profile_id": selected_profile_id,
+			"locations": locations
 		}
 	)
 
