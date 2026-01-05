@@ -14,7 +14,8 @@ class ShopInventoryParser(IShopInventoryParser):
 
 	METADATA_KEYWORDS: set[str] = {
 		'count', 'flags', 'lvars', 'slruck', 'id', 'strg', 'bmd', 'ugid',
-		'temp', 'hint', 'label', 'name', 'image', 'text', 's', 'h', 'moral'
+		'temp', 'hint', 'label', 'name', 'image', 'text', 's', 'h', 'moral',
+		'mana', 'limit'
 	}
 
 	SECTION_MARKERS: set[bytes] = {
@@ -360,6 +361,38 @@ class ShopInventoryParser(IShopInventoryParser):
 
 		return sorted(spells_dict.items())
 
+	def _section_belongs_to_shop(
+		self,
+		data: bytes,
+		section_pos: int,
+		shop_pos: int
+	) -> bool:
+		"""
+		Verify that no other shop ID exists between section and shop
+
+		Prevents attributing sections to wrong shop when searching backwards
+		across shop boundaries.
+
+		:param data:
+			Save file data
+		:param section_pos:
+			Section position
+		:param shop_pos:
+			Shop ID position
+		:return:
+			True if section belongs to this shop
+		"""
+		chunk = data[section_pos:shop_pos]
+
+		try:
+			text = chunk.decode('utf-16-le', errors='ignore')
+			if re.search(r'itext_[-\w]+_\d+', text):
+				return False
+		except:
+			pass
+
+		return True
+
 	def _parse_shop(self, data: bytes, shop_id: str, shop_pos: int) -> dict:
 		"""
 		Parse complete shop with all 4 sections
@@ -381,27 +414,44 @@ class ShopInventoryParser(IShopInventoryParser):
 			'spells': []
 		}
 
-		garrison_pos = self._find_preceding_section(data, b'.garrison', shop_pos, 5000)
-		items_pos = self._find_preceding_section(data, b'.items', shop_pos, 5000)
-		units_pos = self._find_preceding_section(data, b'.shopunits', shop_pos, 5000)
-		spells_pos = self._find_preceding_section(data, b'.spells', shop_pos, 5000)
+		sections = {}
+		for marker, key in [
+			(b'.garrison', 'garrison'),
+			(b'.items', 'items'),
+			(b'.shopunits', 'units'),
+			(b'.spells', 'spells')
+		]:
+			pos = self._find_preceding_section(data, marker, shop_pos, 5000)
+			if pos and self._section_belongs_to_shop(data, pos, shop_pos):
+				sections[key] = {'marker': marker, 'pos': pos}
 
-		if garrison_pos and items_pos:
-			result['garrison'] = self._parse_slash_separated(data, garrison_pos, items_pos)
+		sorted_sections = sorted(sections.items(), key=lambda x: x[1]['pos'])
 
-		if items_pos:
-			next_pos = units_pos if units_pos else (spells_pos if spells_pos else shop_pos)
-			actual_end = self._find_section_end(data, items_pos, next_pos)
-			result['items'] = self._parse_items_section(data, items_pos, actual_end)
+		for i, (key, section_info) in enumerate(sorted_sections):
+			section_pos = section_info['pos']
+			marker = section_info['marker']
 
-		if units_pos:
-			next_pos = spells_pos if spells_pos else shop_pos
-			actual_end = self._find_section_end(data, units_pos, next_pos)
-			result['units'] = self._parse_slash_separated(data, units_pos, actual_end)
+			if i + 1 < len(sorted_sections):
+				next_boundary = sorted_sections[i + 1][1]['pos']
+			else:
+				next_boundary = shop_pos
 
-		if spells_pos:
-			actual_end = self._find_section_end(data, spells_pos, shop_pos)
-			result['spells'] = self._parse_spells_section(data, spells_pos, actual_end)
+			actual_end = self._find_section_end(data, section_pos, next_boundary)
+
+			if marker == b'.garrison':
+				if i + 1 < len(sorted_sections):
+					next_section_pos = sorted_sections[i + 1][1]['pos']
+					result['garrison'] = self._parse_slash_separated(
+						data,
+						section_pos,
+						next_section_pos
+					)
+			elif marker == b'.items':
+				result['items'] = self._parse_items_section(data, section_pos, actual_end)
+			elif marker == b'.shopunits':
+				result['units'] = self._parse_slash_separated(data, section_pos, actual_end)
+			elif marker == b'.spells':
+				result['spells'] = self._parse_spells_section(data, section_pos, actual_end)
 
 		return result
 
