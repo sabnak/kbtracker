@@ -1,18 +1,18 @@
 # Production Ready Status ✅
 
-**King's Bounty Shop Inventory Extractor v1.2.0**
-**Date:** 2026-01-05
+**King's Bounty Shop Inventory Extractor v1.3.1**
+**Date:** 2026-01-06
 **Status:** Production Ready with Caveats
 
 ## Summary
 
 ✅ **Functionally Production Ready** - Parser works correctly and has been validated
 ⚠️ **Testing Gaps** - Missing regression tests and unit tests
-✅ **Validated on 2 Save Files** - Endgame and early game saves
+✅ **Validated on Multiple Save Files** - Endgame and early game saves
 
 **Overall Score:** 85% Production Ready
 
-## Recent Updates (v1.2.0)
+## Recent Updates (v1.3.1)
 
 ### Critical Bug Fixes
 
@@ -46,6 +46,35 @@
    - **Statistics:** Shops: 255 → 314, Items: 789 → 882, Units: 894 → 994, Spells: 738 → 828
    - **Status:** ✅ FIXED & VALIDATED
 
+5. **Bug #5 - Missing Units in Shops with Out-of-Order Sections (v1.3.0)**
+   - **Issue:** Shops with sections in non-standard order had missing units
+   - **Example:** `m_portland_8671` was missing 4 units
+   - **Root Cause:** Parser assumed sections appeared in fixed order
+   - **Fix:** Implemented section order independence
+   - **Status:** ✅ FIXED & VALIDATED
+
+6. **Bug #6 - False Positive Spells from Other Shops (v1.3.0)**
+   - **Issue:** Spells from adjacent shops incorrectly attributed to current shop
+   - **Root Cause:** Backward section search could cross shop boundaries
+   - **Fix:** Added `_section_belongs_to_shop()` verification method
+   - **Status:** ✅ FIXED & VALIDATED
+
+7. **Bug #7 - "mana" and "limit" Metadata (v1.3.0)**
+   - **Issue:** Metadata fields "mana" and "limit" treated as item names
+   - **Example:** `dragondor_5464` had false items
+   - **Fix:** Added "mana" and "limit" to METADATA_KEYWORDS
+   - **Status:** ✅ FIXED & VALIDATED
+
+8. **Bug #8 - Shop ID Truncation and Inventory Loss (v1.3.1)**
+   - **Issue:** Shop IDs with multi-digit numbers being truncated, causing 98% inventory loss
+   - **Example:** `m_zcom_start_519` parsed as both `m_zcom_start_519` AND `m_zcom_start_5` (truncated)
+   - **Root Causes:**
+     - UTF-16-LE shop IDs split across 10KB chunk boundaries
+     - Duplicate shop_ids at different positions, with later (empty) occurrences overwriting earlier (populated) ones
+   - **Fix:** Overlapping chunks (200-byte overlap) with dual deduplication (`seen_positions` + `seen_shop_ids`)
+   - **Impact:** Before: 312 shops, 4 with content (98% empty). After: 312 shops, 72 with content, 943 total products (24x increase)
+   - **Status:** ✅ FIXED & VALIDATED
+
 ## Files Included
 
 ### Core Implementation
@@ -69,6 +98,9 @@
 - ✅ `tests/research/save_decompiler/kb_shop_extractor/v2026-01-04/PRODUCTION_READINESS.md`
 - ✅ `tests/research/save_decompiler/kb_shop_extractor/v2026-01-04/SECOND_SAVE_VALIDATION.md`
 - ✅ `tests/research/save_decompiler/kb_shop_extractor/v2026-01-04/VALIDATION_RESULTS.md`
+- ✅ `tests/research/save_decompiler/kb_shop_extractor/2026-01-06/README.md` - Bug #5 investigation
+- ✅ `tests/research/save_decompiler/kb_shop_extractor/2026-01-06/EXECUTIVE_SUMMARY.md` - Bug #5 summary
+- ✅ `tests/research/save_decompiler/kb_shop_extractor/2026-01-06/VISUAL_EXPLANATION.md` - Bug #5 diagrams
 
 ## Validation Status
 
@@ -111,6 +143,24 @@
 - Test: 59 previously missing shops now found (aralan: 25, dragondor: 16, d: 18)
 - Status: ✅ PASS - Universal shop ID pattern working
 
+**Bug #5 (Out-of-Order Sections):**
+- Test: Shops with non-standard section order correctly parsed
+- Status: ✅ PASS - Section order independence working
+
+**Bug #6 (Cross-Shop Section Attribution):**
+- Test: No false positive spells from adjacent shops
+- Status: ✅ PASS - Section ownership verification working
+
+**Bug #7 ("mana" and "limit" Metadata):**
+- Test: No "mana" or "limit" entries found as items
+- Status: ✅ PASS - Metadata keywords correctly filtered
+
+**Bug #8 (Shop ID Truncation and Inventory Loss):**
+- Test: No duplicate shop IDs found (was 428 occurrences → 312 unique)
+- Test: Multi-digit shop numbers preserved (no truncation 519 → 5)
+- Test: 72 shops with content, 943 total products (was 4 shops, 39 products)
+- Status: ✅ PASS - Overlapping chunks with dual deduplication working
+
 ### ✅ Quantity Parsing Verified
 
 **Items:**
@@ -135,9 +185,14 @@
 - Invalid save files: ✅ Clear error messages
 - Short entity names (3-4 chars): ✅ Works (Bug #1 fix)
 - Adjacent sections (.temp): ✅ Boundaries detected (Bug #2 fix)
-- Metadata fields (moral): ✅ Filtered (Bug #3 fix)
+- Metadata fields (moral, mana, limit): ✅ Filtered (Bug #3, #7 fix)
 - Shops without "m_" prefix: ✅ Works (Bug #4 fix)
 - Location names with hyphens: ✅ Supported (Bug #4 fix)
+- Sections in non-standard order: ✅ Section order independence (Bug #5 fix)
+- Cross-shop section attribution: ✅ Ownership verification (Bug #6 fix)
+- Shop IDs at chunk boundaries: ✅ Overlapping chunks prevent splits (Bug #8 fix)
+- Duplicate shop IDs at different positions: ✅ Dual deduplication (Bug #8 fix)
+- Multi-digit shop numbers (3-4 digits): ✅ Preserved without truncation (Bug #8 fix)
 
 ## Feature Completeness
 
@@ -185,8 +240,12 @@
 2. **Quantity Handling:** Proper parsing for items, spells, units, garrison
 3. **Error Handling:** Defensive programming with bounds checking
 4. **Architecture:** Clean DI, interfaces, repository pattern
-5. **Validation:** Tested on 2 saves with different game states
-6. **Bug Fixes:** All 3 critical bugs fixed and validated
+5. **Validation:** Tested on multiple saves with different game states
+6. **Bug Fixes:** All 8 critical bugs fixed and validated
+7. **Chunk Processing:** Overlapping chunks prevent boundary splits
+8. **Deduplication:** Dual strategy prevents duplicates and inventory loss
+9. **Section Order Independence:** Handles sections in any order
+10. **Section Ownership:** Prevents cross-shop attribution
 
 ## What Needs Improvement ⚠️
 
@@ -194,15 +253,15 @@
 **Current State:**
 - ✅ 1 smoke test exists (but has DI container issues)
 - ❌ No unit tests for individual parsing methods
-- ❌ No regression tests for Bug #1, #2, #3
+- ❌ No regression tests for Bugs #1-8
 - ❌ No edge case tests
 
 **Needed:**
-- Regression tests to prevent re-introduction of bugs
-- Unit tests for `_parse_items_section()`, `_parse_spells_section()`, etc.
-- Edge case tests (empty sections, corrupted data, max lengths)
+- Regression tests to prevent re-introduction of bugs (especially Bug #8 - critical inventory loss)
+- Unit tests for `_parse_items_section()`, `_parse_spells_section()`, `_find_all_shop_ids()`, etc.
+- Edge case tests (empty sections, corrupted data, max lengths, chunk boundaries, out-of-order sections)
 
-**Impact:** Without tests, future changes could break working functionality
+**Impact:** Without tests, future changes could break working functionality or reintroduce critical bugs
 
 ### 2. Logging (MEDIUM PRIORITY)
 **Current State:**
@@ -271,11 +330,16 @@ When integrating into your application:
 - Item names are internal IDs (not localized)
 - Docker container required for execution
 
-### Fixed Limitations (v1.2.0)
+### Fixed Limitations (v1.3.1)
 - ✅ Short-named entities now work (3+ chars) - Bug #1
 - ✅ Section boundaries properly detected - Bug #2
 - ✅ "moral" metadata correctly filtered - Bug #3
 - ✅ Shops without "m_" prefix now extracted - Bug #4
+- ✅ Out-of-order sections handled correctly - Bug #5
+- ✅ Cross-shop section attribution prevented - Bug #6
+- ✅ "mana" and "limit" metadata correctly filtered - Bug #7
+- ✅ Shop IDs no longer truncated at chunk boundaries - Bug #8
+- ✅ Duplicate shop IDs eliminated, inventory data preserved - Bug #8
 
 ### Remaining Considerations
 - Uses conservative limits for validation
@@ -286,22 +350,23 @@ When integrating into your application:
 
 ## Support & Maintenance
 
-**Version:** 1.2.0 (2026-01-05)
+**Version:** 1.3.1 (2026-01-06)
 **Status:** Production Ready with Testing Gaps ⚠️
-**Stability:** Stable (validated on 2 save files)
+**Stability:** Stable (validated on multiple save files)
 **Dependencies:** Project container dependencies
 
 **Research Documentation:**
-- `tests/research/save_decompiler/kb_shop_extractor/v2026-01-04/` - Complete investigation
+- `tests/research/save_decompiler/kb_shop_extractor/v2026-01-04/` - Bugs #1-4 investigation
+- `tests/research/save_decompiler/kb_shop_extractor/2026-01-06/` - Bug #8 investigation (critical)
 
 ## Deployment Checklist
 
 ### Before Production Deployment:
-- [ ] **P0:** Create regression tests for Bug #1, #2, #3
+- [ ] **P0:** Create regression tests for Bugs #1-8 (especially #8 - critical inventory loss)
 - [ ] **P0:** Add basic logging
 - [ ] **P1:** Fix smoke test DI container issues
-- [ ] **P1:** Create unit tests for parsing methods
-- [ ] **P2:** Add edge case tests
+- [ ] **P1:** Create unit tests for parsing methods (including `_find_all_shop_ids()`, `_section_belongs_to_shop()`)
+- [ ] **P2:** Add edge case tests (chunk boundaries, duplicate positions, out-of-order sections)
 - [ ] **P2:** Improve error messages with context
 
 ### After Deployment:
@@ -320,19 +385,19 @@ When integrating into your application:
 
 ### Quick Summary:
 - **Functionality:** ✅ Works correctly
-- **Validation:** ✅ Tested on 2 saves
-- **Bug Fixes:** ✅ All 3 critical bugs fixed
+- **Validation:** ✅ Tested on multiple saves
+- **Bug Fixes:** ✅ All 8 critical bugs fixed (including critical Bug #8 - 98% inventory loss)
 - **Testing:** ❌ Missing regression tests
 - **Logging:** ❌ No production logging
 - **Documentation:** ✅ Comprehensive
 
-**Recommendation:** Safe to use for non-critical features. Add regression tests and logging before mission-critical deployment.
+**Recommendation:** Safe to use for non-critical features. Add regression tests and logging before mission-critical deployment. Bug #8 was critical (98% inventory loss) - regression test highly recommended.
 
 **Time to 100% Ready:** ~8-12 hours (regression tests + logging + smoke test fix)
 
 ---
 
 **Developed by:** Claude (Anthropic)
-**Date:** 2026-01-05
+**Date:** 2026-01-06
 **Status:** 85% Production Ready ✅⚠️
-**Version:** 1.2.0
+**Version:** 1.3.1

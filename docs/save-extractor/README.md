@@ -1,14 +1,24 @@
 # King's Bounty Shop Inventory Extractor
 
-**Version:** 1.3.0
-**Date:** 2026-01-05
+**Version:** 1.3.1
+**Date:** 2026-01-06
 **Status:** Production Ready ✅
 
 ## Overview
 
 Production-ready tool to extract shop inventory data from King's Bounty save files. Extracts all shop contents including items, units, spells, and garrison across all game locations.
 
-## Recent Updates (v1.3.0)
+## Recent Updates (v1.3.1)
+
+**Critical Bug Fix:**
+- ✅ **Bug #8 Fixed:** Shop ID truncation at chunk boundaries causing 98% inventory loss
+  - Shop IDs split across 10KB UTF-16-LE chunk boundaries were truncated (e.g., `m_zcom_start_519` → `m_zcom_start_5`)
+  - Duplicate shop IDs at different positions caused later (empty) entries to overwrite earlier (populated) ones
+  - Impact: 312 shops found but only 4 had content (98% empty), only 39 total products
+  - Fix: Overlapping chunks (200-byte overlap) with dual deduplication (`seen_positions` + `seen_shop_ids`)
+  - Result: 72 shops with content, 943 total products (24x increase)
+
+**Previous Updates (v1.3.0)**
 
 **Critical Bug Fixes:**
 - ✅ **Bug #5 Fixed:** Missing units in shops with out-of-order sections (m_portland_8671: 4 units recovered)

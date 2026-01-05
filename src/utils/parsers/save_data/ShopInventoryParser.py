@@ -78,21 +78,27 @@ class ShopInventoryParser(IShopInventoryParser):
 		  Examples: "m_portland", "aralan", "some-location"
 		- id: numeric shop identifier
 
+		Uses overlapping chunks to prevent shop IDs from being split
+		across chunk boundaries. Deduplicates using both position and
+		shop_id to prevent multiple occurrences of the same shop.
+
 		:param data:
 			Decompressed save file data
 		:return:
 			List of (shop_id, position) tuples sorted by position
 		"""
 		shops = []
+		seen_positions = set()
+		seen_shop_ids = set()
 		pos = 0
+		chunk_size = 10000
+		overlap = 200
 
 		while pos < len(data):
-			chunk_size = 10000
-			if pos + chunk_size > len(data):
-				chunk_size = len(data) - pos
+			current_chunk_size = min(chunk_size, len(data) - pos)
 
 			try:
-				text = data[pos:pos+chunk_size].decode('utf-16-le', errors='ignore')
+				text = data[pos:pos+current_chunk_size].decode('utf-16-le', errors='ignore')
 				matches = re.finditer(r'itext_([-\w]+)_(\d+)', text)
 
 				for match in matches:
@@ -101,13 +107,15 @@ class ShopInventoryParser(IShopInventoryParser):
 					shop_num = match.group(2)
 					shop_id = location + '_' + shop_num
 					shop_bytes = shop_id_full.encode('utf-16-le')
-					actual_pos = data.find(shop_bytes, pos, pos+chunk_size)
-					if actual_pos != -1 and shop_id not in [s[0] for s in shops]:
+					actual_pos = data.find(shop_bytes, pos, pos+current_chunk_size)
+					if actual_pos != -1 and actual_pos not in seen_positions and shop_id not in seen_shop_ids:
 						shops.append((shop_id, actual_pos))
+						seen_positions.add(actual_pos)
+						seen_shop_ids.add(shop_id)
 			except:
 				pass
 
-			pos += chunk_size
+			pos += chunk_size - overlap
 
 		return sorted(shops, key=lambda x: x[1])
 
