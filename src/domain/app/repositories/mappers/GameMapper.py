@@ -1,4 +1,3 @@
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import Column, Integer, String, DateTime
 
 from src.domain.base.repositories.mappers.base import Base
