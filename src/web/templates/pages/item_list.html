@@ -21,6 +21,7 @@
 								id="profile_id"
 								name="profile_id"
 								onchange="this.form.submit()">
+								<option value="0" {% if selected_profile_id is none %}selected{% endif %}>All Profiles</option>
 								{% for profile in profiles %}
 								<option
 									value="{{ profile.id }}"

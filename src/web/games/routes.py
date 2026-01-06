@@ -340,10 +340,13 @@ async def list_items(
 	profiles = profile_repository.list_all()
 
 	# Determine selected profile (default to first if none selected)
+	# profile_id = 0 means "All Profiles" (no filter)
 	selected_profile_id = None
 	if profiles:
 		if profile_id is None:
 			selected_profile_id = profiles[0].id
+		elif profile_id == 0:
+			selected_profile_id = None
 		else:
 			selected_profile = next((p for p in profiles if p.id == profile_id), None)
 			if selected_profile:
