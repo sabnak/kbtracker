@@ -1,122 +1,111 @@
-#!/usr/bin/env python3
-"""
-King's Bounty Shop Extractor CLI
-
-CLI wrapper for ShopInventoryParser.
-Extracts shop inventory data from King's Bounty save files and exports to JSON.
-
-Author: Claude (Anthropic)
-Date: December 31, 2025
-Version: 2.0.0
-"""
-import sys
-import json
 import argparse
+import json
+import sys
 from pathlib import Path
 
-from src.core.Container import Container
-from src.core.DefaultInstaller import DefaultInstaller
-from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
+import pydantic
+
+from src.tools.CLITool import CLITool, T
 
 
-def print_statistics(shops: dict) -> None:
-	"""
-	Print extraction statistics
+class LaunchParams(pydantic.BaseModel):
 
-	:param shops:
-		Dictionary of shop data
-	"""
-	total_garrison = sum(len(s['garrison']) for s in shops.values())
-	total_items = sum(len(s['items']) for s in shops.values())
-	total_units = sum(len(s['units']) for s in shops.values())
-	total_spells = sum(len(s['spells']) for s in shops.values())
-	total_products = total_garrison + total_items + total_units + total_spells
-
-	shops_with_garrison = sum(1 for s in shops.values() if s['garrison'])
-	shops_with_items = sum(1 for s in shops.values() if s['items'])
-	shops_with_units = sum(1 for s in shops.values() if s['units'])
-	shops_with_spells = sum(1 for s in shops.values() if s['spells'])
-	shops_with_any = sum(1 for s in shops.values() if s['garrison'] or s['items'] or s['units'] or s['spells'])
-
-	print()
-	print("="*78)
-	print("EXTRACTION STATISTICS")
-	print("="*78)
-	print()
-	print(f"Total shops:           {len(shops)}")
-	print(f"Shops with content:    {shops_with_any}")
-	print(f"  - With garrison:     {shops_with_garrison}")
-	print(f"  - With items:        {shops_with_items}")
-	print(f"  - With units:        {shops_with_units}")
-	print(f"  - With spells:       {shops_with_spells}")
-	print()
-	print(f"Total products:        {total_products}")
-	print(f"  - Garrison units:    {total_garrison}")
-	print(f"  - Items:             {total_items}")
-	print(f"  - Units:             {total_units}")
-	print(f"  - Spells:            {total_spells}")
+	save_directory: Path
 
 
-def main():
-	"""Main entry point"""
-	p = argparse.ArgumentParser(description='King\'s Bounty Shop Extractor')
-	p.add_argument('save_directory', type=Path, help='Path to King\'s Bounty save directory')
-	args = p.parse_args()
+class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 
-	save_dir = args.save_directory
+	_shops: dict
+	_boundary = "=" * 78
 
-	if not save_dir.exists():
-		print(f"Error: Save directory not found: {save_dir}")
-		sys.exit(1)
+	def _build_params(self) -> T:
+		p = argparse.ArgumentParser(description='King\'s Bounty Shop Extractor')
+		p.add_argument('save_directory', type=Path, help='Path to King\'s Bounty save directory')
+		args = p.parse_args()
+		return LaunchParams(save_directory=args.save_directory)
 
-	if not save_dir.is_dir():
-		print(f"Error: Path is not a directory: {save_dir}")
-		sys.exit(1)
+	def _run(self):
+		self._shops = dict()
+		parser = self._container.shop_inventory_parser()
 
-	save_data_path = save_dir / 'data'
-	if not save_data_path.exists():
-		print(f"Error: Save 'data' file not found in: {save_dir}")
-		sys.exit(1)
+		if not self._launch_params.save_directory.exists():
+			print(f"Error: Save directory not found: {self._launch_params.save_directory}")
+			sys.exit(1)
 
-	save_name = save_dir.name
-	output_dir = Path('/tmp/save_export')
-	output_dir.mkdir(parents=True, exist_ok=True)
-	output_path = output_dir / f'{save_name}.json'
+		if not self._launch_params.save_directory.is_dir():
+			print(f"Error: Path is not a directory: {self._launch_params.save_directory}")
+			sys.exit(1)
 
-	try:
-		container = Container()
-		installer = DefaultInstaller(container)
-		installer.install()
-		container.wire(modules=[__name__])
+		save_data_path = self._launch_params.save_directory / 'data'
+		if not save_data_path.exists():
+			print(f"Error: Save 'data' file not found in: {self._launch_params.save_directory}")
+			sys.exit(1)
 
-		print("="*78)
-		print("KING'S BOUNTY SHOP EXTRACTOR")
-		print("="*78)
-		print()
-		print(f"Input:  {save_dir}")
-		print(f"Output: {output_path}")
-		print()
+		save_name = self._launch_params.save_directory.name
+		output_dir = Path('/tmp/save_export')
+		output_dir.mkdir(parents=True, exist_ok=True)
+		output_path = output_dir / f'{save_name}.json'
 
-		print("Extracting shop data...")
-		parser: IShopInventoryParser = container.shop_inventory_parser()
-		shops = parser.parse(save_data_path)
+		print(
+			self._boundary,
+			"KING'S BOUNTY SHOP EXTRACTOR",
+			self._boundary,
+			f"Input:  {self._launch_params.save_directory}",
+			f"Output: {output_path}\n",
+			"Extracting shop data...",
+			sep="\n"
+		)
 
-		print()
-		print("Saving to JSON...")
+		self._shops = parser.parse(save_data_path)
+
+		print("\nSaving to JSON...")
 		with open(output_path, 'w', encoding='utf-8') as f:
-			json.dump(shops, f, indent=2, ensure_ascii=False)
+			json.dump(self._shops, f, indent=2, ensure_ascii=False)
 
-		print_statistics(shops)
+		self._print_statistics()
 
-		print()
-		print("="*78)
-		print(f"SUCCESS: Extracted {len(shops)} shops to {output_path}")
-		print("="*78)
+		print(
+			"",
+			self._boundary,
+			f"SUCCESS: Extracted {len(self._shops)} shops to {output_path}",
+			self._boundary,
+			sep="\n"
+		)
 
-	except Exception as e:
-		print(f"Error: {e}")
-		sys.exit(1)
+	def _print_statistics(self) -> None:
+		total_garrison = sum(len(s['garrison']) for s in self._shops.values())
+		total_items = sum(len(s['items']) for s in self._shops.values())
+		total_units = sum(len(s['units']) for s in self._shops.values())
+		total_spells = sum(len(s['spells']) for s in self._shops.values())
+		total_products = total_garrison + total_items + total_units + total_spells
+
+		shops_with_garrison = sum(1 for s in self._shops.values() if s['garrison'])
+		shops_with_items = sum(1 for s in self._shops.values() if s['items'])
+		shops_with_units = sum(1 for s in self._shops.values() if s['units'])
+		shops_with_spells = sum(1 for s in self._shops.values() if s['spells'])
+		shops_with_any = sum(1 for s in self._shops.values() if s['garrison'] or s['items'] or s['units'] or s['spells'])
+
+		print(
+			"\n",
+			"="*78,
+			"EXTRACTION STATISTICS",
+			"="*78,
+			"",
+			f"Total shops:           {len(self._shops)}",
+			f"Shops with content:    {shops_with_any}",
+			f"  - With garrison:     {shops_with_garrison}",
+			f"  - With items:        {shops_with_items}",
+			f"  - With units:        {shops_with_units}",
+			f"  - With spells:       {shops_with_spells}",
+			"",
+			f"Total products:        {total_products}",
+			f"  - Garrison units:    {total_garrison}",
+			f"  - Items:             {total_items}",
+			f"  - Units:             {total_units}",
+			f"  - Spells:            {total_spells}",
+			sep="\n"
+		)
 
 
 if __name__ == '__main__':
-	main()
+	KBShopSaveExtractorCLI().run()

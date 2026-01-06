@@ -18,9 +18,6 @@ from src.domain.exceptions import KBTrackerException
 
 
 def create_app() -> FastAPI:
-	# Setup logging FIRST (before any other initialization)
-	setup_logging()
-
 	container = Container()
 
 	installer = DefaultInstaller(container)

@@ -52,7 +52,7 @@ class JsonFormatter(logging.Formatter):
 		return json.dumps(log_data)
 
 
-def setup_logging() -> None:
+def setup_logging() -> logging.Logger:
 	"""
 	Configure application logging with JSON formatter
 
@@ -90,6 +90,7 @@ def setup_logging() -> None:
 	# Configure application logger
 	app_logger = logging.getLogger("kbtracker")
 	app_logger.setLevel(logging.INFO)
+	return app_logger
 
 
 def get_logger(name: str) -> logging.Logger:

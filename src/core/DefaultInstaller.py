@@ -5,6 +5,7 @@ from sqlalchemy.orm import sessionmaker
 
 from src.core.Config import Config
 from src.core.Container import Container
+from src.core.logging_config import setup_logging
 from src.domain.filesystem.services.GamePathService import GamePathService
 from src.domain.game.services.ProfileGameDataSyncerService import ProfileGameDataSyncerService
 from src.utils.parsers.game_data.KFSExtractor import KFSExtractor
@@ -50,6 +51,7 @@ class DefaultInstaller:
 		self._container = container
 
 	def install(self):
+		self._container.logger.override(providers.Singleton(setup_logging))
 		self._container.config.override(providers.Singleton(Config))
 		self._install_db()
 		self._install_repositories()

@@ -1,0 +1,34 @@
+import abc
+import typing
+
+import pydantic
+
+from src.core.Container import Container
+from src.core.DefaultInstaller import DefaultInstaller
+
+T = typing.TypeVar("T", bound=pydantic.BaseModel)
+
+
+class CLITool(typing.Generic[T], abc.ABC):
+
+	_launch_params: T = None
+	_container: Container = None
+
+	def __init__(self):
+		self._launch_params = self._build_params()
+		self._container = Container()
+		installer = DefaultInstaller(self._container)
+		installer.install()
+
+	def run(self):
+		self._run()
+
+	@abc.abstractmethod
+	def _build_params(self) -> T:
+		...
+
+	@abc.abstractmethod
+	def _run(self):
+		...
+
+
