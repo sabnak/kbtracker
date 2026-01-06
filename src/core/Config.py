@@ -25,7 +25,7 @@ class Config(BaseSettings):
 		"{game_path}/sessions/*/loc_ses*.kfs"
 	]
 
-	localization_config: ['LocalizationConfig'] = [
+	localization_config: list[LocalizationConfig] = [
 		LocalizationConfig(file="items", tag="items"),
 		LocalizationConfig(file="units", tag="units"),
 		LocalizationConfig(file="units_features", tag="units_features"),
