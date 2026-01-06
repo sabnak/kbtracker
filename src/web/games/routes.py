@@ -321,9 +321,11 @@ async def list_items(
 	id_str: str = Query(default="", alias="id"),
 	sort_by: str = Query(default="name"),
 	sort_order: str = Query(default="asc"),
+	profile_id: int | None = Query(default=None),
 	game_context: GameContext = Depends(get_game_context),
 	item_tracking_service: ItemService = Depends(Provide["item_service"]),
-	game_service: IGameService = Depends(Provide["game_service"])
+	game_service: IGameService = Depends(Provide["game_service"]),
+	profile_repository: IProfileRepository = Depends(Provide["profile_repository"])
 ):
 	"""
 	List all items for a game with set information and advanced filters
@@ -333,6 +335,21 @@ async def list_items(
 	game = game_service.get_game(game_id)
 	if not game:
 		return RedirectResponse(url="/games", status_code=303)
+
+	# Fetch profiles for filter dropdown
+	profiles = profile_repository.list_all()
+
+	# Determine selected profile (default to first if none selected)
+	selected_profile_id = None
+	if profiles:
+		if profile_id is None:
+			selected_profile_id = profiles[0].id
+		else:
+			selected_profile = next((p for p in profiles if p.id == profile_id), None)
+			if selected_profile:
+				selected_profile_id = profile_id
+			else:
+				return RedirectResponse(url=f"/games/{game_id}/items", status_code=303)
 
 	# Convert string parameters to proper types
 	level = int(level_str) if level_str else None
@@ -367,7 +384,8 @@ async def list_items(
 			item_set_id=item_set_id,
 			item_id=item_id,
 			sort_by=sort_field,
-			sort_order=sort_direction
+			sort_order=sort_direction,
+			profile_id=selected_profile_id
 		)
 	except InvalidRegexException as e:
 		error_message = f"Invalid regex pattern: {e.message}"
@@ -393,6 +411,9 @@ async def list_items(
 			"available_levels": available_levels,
 			"available_propbits": available_propbits,
 			"available_sets": available_sets,
+			# Profile filter
+			"profiles": profiles,
+			"selected_profile_id": selected_profile_id,
 			# Error handling
 			"error": error_message
 		}

@@ -41,7 +41,8 @@ class ItemService:
 		item_set_id: int | None = None,
 		item_id: int | None = None,
 		sort_by: str = "name",
-		sort_order: str = "asc"
+		sort_order: str = "asc",
+		profile_id: int | None = None
 	) -> list[dict]:
 		"""
 		Get items with their set information using multiple filters
@@ -62,6 +63,8 @@ class ItemService:
 			Field to sort by (name, price, level)
 		:param sort_order:
 			Sort direction (asc, desc)
+		:param profile_id:
+			Optional profile ID filter (shows only items in shop inventory for profile)
 		:return:
 			List of dictionaries with item and set data
 		"""
@@ -72,7 +75,8 @@ class ItemService:
 			hint_regex,
 			propbit,
 			item_set_id is not None,
-			item_id is not None
+			item_id is not None,
+			profile_id is not None
 		])
 
 		# Get items - use advanced search if filters, otherwise all items
@@ -86,7 +90,8 @@ class ItemService:
 					item_set_id=item_set_id,
 					item_id=item_id,
 					sort_by=sort_by,
-					sort_order=sort_order
+					sort_order=sort_order,
+					profile_id=profile_id
 				)
 			else:
 				items = self._item_repository.list_all(

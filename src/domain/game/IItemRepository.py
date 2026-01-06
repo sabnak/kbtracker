@@ -108,7 +108,8 @@ class IItemRepository(ABC):
 		item_set_id: int | None = None,
 		item_id: int | None = None,
 		sort_by: str = "name",
-		sort_order: str = "asc"
+		sort_order: str = "asc",
+		profile_id: int | None = None
 	) -> list[Item]:
 		"""
 		Search items with multiple filter criteria using AND logic
@@ -129,6 +130,8 @@ class IItemRepository(ABC):
 			Field to sort by (name, price, level)
 		:param sort_order:
 			Sort direction (asc, desc)
+		:param profile_id:
+			Optional profile ID filter (shows only items in shop inventory for profile)
 		:return:
 			List of items matching all provided criteria
 		"""
