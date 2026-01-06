@@ -1,10 +1,9 @@
 from datetime import datetime
 
-from src.domain.app.entities.Settings import Settings
-from src.domain.base.repositories.CrudRepository import CrudRepository
-from src.domain.app.interfaces.IGameRepository import IGameRepository
 from src.domain.app.entities.Game import Game
+from src.domain.app.interfaces.IGameRepository import IGameRepository
 from src.domain.app.repositories.mappers.GameMapper import GameMapper
+from src.domain.base.repositories.CrudRepository import CrudRepository
 
 
 class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
@@ -21,8 +20,7 @@ class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
 		return GameMapper(
 			name=entity.name,
 			path=entity.path,
-			settings=entity.settings,
-			last_scan_time=entity.last_scan_time,
+			last_scan_time=entity.last_scan_time
 		)
 
 	def _get_entity_type_name(self) -> str:
@@ -116,6 +114,5 @@ class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
 			id=mapper.id,
 			name=mapper.name,
 			path=mapper.path,
-			last_scan_time=mapper.last_scan_time,
-			settings=Settings(**mapper.settings)
+			last_scan_time=mapper.last_scan_time
 		)

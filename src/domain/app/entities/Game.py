@@ -11,4 +11,3 @@ class Game(pydantic.BaseModel):
 	name: str
 	path: str
 	last_scan_time: datetime | None
-	settings: Settings | None
