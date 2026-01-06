@@ -78,18 +78,10 @@ class KFSItemsParser(IKFSItemsParser):
 		:return:
 			List of dictionaries containing item data
 		"""
-		config_blocks = {
-			'params', 'actions', 'mods', 'atoms', 'use', 'fight',
-			'filter', 'troops', 'setbonus', 'army', 'trap', 'shield'
-		}
-
 		parsed = atom.loads(content)
 		items = []
 
 		for kb_id, block_data in parsed.items():
-			if kb_id in config_blocks:
-				continue
-
 			if not isinstance(block_data, dict):
 				continue
 

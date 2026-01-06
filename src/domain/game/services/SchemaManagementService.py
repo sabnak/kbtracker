@@ -47,7 +47,9 @@ class SchemaManagementService(ISchemaManagementService):
 					hash VARCHAR(32),
 					full_name VARCHAR(255),
 					save_dir VARCHAR(255),
-					created_at TIMESTAMP DEFAULT NOW()
+					created_at TIMESTAMP DEFAULT NOW(),
+					last_scan_time TIMESTAMP DEFAULT NULL,
+					last_corrupted_data JSONB DEFAULT NULL
 				)
 			"""))
 
