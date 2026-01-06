@@ -3,7 +3,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session, sessionmaker
 
 from src.core.Container import Container
-from src.domain.game.ISchemaManagementService import ISchemaManagementService
+from src.domain.game.interfaces.ISchemaManagementService import ISchemaManagementService
 
 
 class SchemaManagementService(ISchemaManagementService):

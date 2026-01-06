@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, Session
-from src.domain.game.repositories.mappers.base import Base
+from src.domain.base.repositories.mappers.base import Base
 
 
 def create_db_engine(database_url: str):

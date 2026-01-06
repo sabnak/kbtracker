@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum
+from sqlalchemy import Column, Integer, ForeignKey, Enum
 from sqlalchemy.orm import relationship
-from src.domain.game.repositories.mappers.base import Base
+from src.domain.base.repositories.mappers.base import Base
 from src.domain.game.entities.ShopInventoryType import ShopInventoryType
 
 

@@ -1,27 +1,27 @@
 from dependency_injector import containers, providers
 
 from src.domain.filesystem.IGamePathService import IGamePathService
-from src.domain.game.IAtomMapRepository import IAtomMapRepository
-from src.domain.game.IGameRepository import IGameRepository
-from src.domain.game.IGameService import IGameService
-from src.domain.game.IItemRepository import IItemRepository
-from src.domain.game.IItemSetRepository import IItemSetRepository
-from src.domain.game.ILocalizationRepository import ILocalizationRepository
-from src.domain.game.IProfileGameDataSyncerService import IProfileGameDataSyncerService
-from src.domain.game.IProfileRepository import IProfileRepository
-from src.domain.game.IProfileService import IProfileService
-from src.domain.game.ISaveFileService import ISaveFileService
-from src.domain.game.ISchemaManagementService import ISchemaManagementService
-from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
-from src.domain.game.ISpellRepository import ISpellRepository
-from src.domain.game.IUnitRepository import IUnitRepository
+from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
+from src.domain.app.interfaces.IGameRepository import IGameRepository
+from src.domain.app.interfaces.IGameService import IGameService
+from src.domain.game.interfaces.IItemRepository import IItemRepository
+from src.domain.game.interfaces.IItemSetRepository import IItemSetRepository
+from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
+from src.domain.game.interfaces.IProfileGameDataSyncerService import IProfileGameDataSyncerService
+from src.domain.game.interfaces.IProfileRepository import IProfileRepository
+from src.domain.game.interfaces.IProfileService import IProfileService
+from src.domain.game.interfaces.ISaveFileService import ISaveFileService
+from src.domain.game.interfaces.ISchemaManagementService import ISchemaManagementService
+from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
+from src.domain.game.interfaces.ISpellRepository import ISpellRepository
+from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 
 
 class Container(containers.DeclarativeContainer):
 
 	wiring_config = containers.WiringConfiguration(
 		packages=[
-			"src.domain.game",
+			"src.domain",
 			"src.web",
 			"src.utils",
 			"src.tools"

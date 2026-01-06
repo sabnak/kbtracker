@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime
 
-from src.domain.game.repositories.mappers.base import Base
+from src.domain.base.repositories.mappers.base import Base
 
 
 class GameMapper(Base):

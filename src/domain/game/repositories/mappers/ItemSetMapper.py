@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Text
-from src.domain.game.repositories.mappers.base import Base
+from sqlalchemy import Column, Integer, String
+from src.domain.base.repositories.mappers.base import Base
 
 
 class ItemSetMapper(Base):

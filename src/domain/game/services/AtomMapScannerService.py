@@ -2,8 +2,8 @@ from dependency_injector.wiring import Provide, inject
 
 from src.core.Container import Container
 from src.domain.game.entities.AtomMap import AtomMap
-from src.domain.game.IAtomMapRepository import IAtomMapRepository
-from src.domain.game.IAtomMapScannerService import IAtomMapScannerService
+from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
+from src.domain.game.interfaces.IAtomMapScannerService import IAtomMapScannerService
 from src.utils.parsers.game_data.IKFSAtomsMapInfoParser import IKFSAtomsMapInfoParser
 
 

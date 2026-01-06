@@ -5,7 +5,7 @@ from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.exceptions import InvalidPropbitException, LocalizationNotFoundException
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Propbit import Propbit
-from src.domain.game.IItemRepository import IItemRepository
+from src.domain.game.interfaces.IItemRepository import IItemRepository
 from src.domain.game.repositories.mappers.ItemMapper import ItemMapper
 from src.domain.game.repositories.mappers.LocalizationMapper import LocalizationMapper
 

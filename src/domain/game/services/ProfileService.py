@@ -8,9 +8,9 @@ from dependency_injector.wiring import Provide
 from src.core.Config import Config
 from src.core.Container import Container
 from src.domain.exceptions import EntityNotFoundException
-from src.domain.game.IProfileRepository import IProfileRepository
-from src.domain.game.IProfileService import IProfileService
-from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
+from src.domain.game.interfaces.IProfileRepository import IProfileRepository
+from src.domain.game.interfaces.IProfileService import IProfileService
+from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
 from src.domain.game.entities.ProfileEntity import ProfileEntity
 from src.utils.parsers.save_data.IHeroSaveParser import IHeroSaveParser

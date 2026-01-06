@@ -2,12 +2,12 @@ import re
 from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
-from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
-from src.domain.game.IAtomMapRepository import IAtomMapRepository
-from src.domain.game.ILocalizationRepository import ILocalizationRepository
-from src.domain.game.IItemRepository import IItemRepository
-from src.domain.game.IUnitRepository import IUnitRepository
-from src.domain.game.ISpellRepository import ISpellRepository
+from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
+from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
+from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
+from src.domain.game.interfaces.IItemRepository import IItemRepository
+from src.domain.game.interfaces.IUnitRepository import IUnitRepository
+from src.domain.game.interfaces.ISpellRepository import ISpellRepository
 from src.domain.game.entities.ShopInventoryType import ShopInventoryType
 
 

@@ -2,7 +2,7 @@ from dependency_injector.wiring import Provide, inject
 
 from src.core.Container import Container
 from src.domain.game.entities.UnitClass import UnitClass
-from src.domain.game.ILocalizationRepository import ILocalizationRepository
+from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
 from src.utils.parsers import atom
 from src.utils.parsers.game_data.IKFSReader import IKFSReader
 from src.utils.parsers.game_data.IKFSUnitParser import IKFSUnitParser

@@ -2,10 +2,10 @@ from dependency_injector.wiring import Provide, inject
 
 from src.core.Config import Config
 from src.core.Container import Container
-from src.domain.game.IGameRepository import IGameRepository
-from src.domain.game.IUnitRepository import IUnitRepository
-from src.domain.game.IUnitFactory import IUnitFactory
-from src.domain.game.IUnitsScannerService import IUnitsScannerService
+from src.domain.app.interfaces.IGameRepository import IGameRepository
+from src.domain.game.interfaces.IUnitRepository import IUnitRepository
+from src.domain.game.interfaces.IUnitFactory import IUnitFactory
+from src.domain.game.interfaces.IUnitsScannerService import IUnitsScannerService
 from src.domain.game.entities.Unit import Unit
 from src.utils.parsers.game_data.IKFSUnitParser import IKFSUnitParser
 

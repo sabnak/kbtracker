@@ -3,10 +3,10 @@ from dependency_injector.wiring import Provide, inject
 from src.core.Config import Config
 from src.core.Container import Container
 from src.domain.game.entities.Spell import Spell
-from src.domain.game.IGameRepository import IGameRepository
-from src.domain.game.ISpellFactory import ISpellFactory
-from src.domain.game.ISpellRepository import ISpellRepository
-from src.domain.game.ISpellsScannerService import ISpellsScannerService
+from src.domain.app.interfaces.IGameRepository import IGameRepository
+from src.domain.game.interfaces.ISpellFactory import ISpellFactory
+from src.domain.game.interfaces.ISpellRepository import ISpellRepository
+from src.domain.game.interfaces.ISpellsScannerService import ISpellsScannerService
 from src.utils.parsers.game_data.IKFSSpellsParser import IKFSSpellsParser
 
 

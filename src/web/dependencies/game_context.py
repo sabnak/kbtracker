@@ -2,7 +2,7 @@ from fastapi import Depends, Path
 from dependency_injector.wiring import Provide, inject
 
 from src.core.Container import Container
-from src.domain.game.ISchemaManagementService import ISchemaManagementService
+from src.domain.game.interfaces.ISchemaManagementService import ISchemaManagementService
 
 
 class GameContext:

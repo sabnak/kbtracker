@@ -15,7 +15,7 @@ from src.utils.parsers.game_data.KFSLocalizationParser import KFSLocalizationPar
 from src.utils.parsers.game_data.KFSSpellsParser import KFSSpellsParser
 from src.utils.parsers.game_data.KFSUnitParser import KFSUnitParser
 from src.utils.parsers.game_data.KFSAtomsMapInfoParser import KFSAtomsMapInfoParser
-from src.domain.game.repositories.GameRepository import GameRepository
+from src.domain.app.repositories.GameRepository import GameRepository
 from src.domain.game.repositories.AtomMapRepository import AtomMapRepository
 from src.domain.game.repositories.ItemRepository import ItemRepository
 from src.domain.game.repositories.ItemSetRepository import ItemSetRepository
@@ -27,7 +27,7 @@ from src.domain.game.factories.LocFactory import LocFactory
 from src.domain.game.factories.SpellFactory import SpellFactory
 from src.domain.game.factories.UnitFactory import UnitFactory
 from src.domain.game.services.AtomMapScannerService import AtomMapScannerService
-from src.domain.game.services.GameService import GameService
+from src.domain.app.services.GameService import GameService
 from src.domain.game.services.ItemsAndSetsScannerService import ItemsAndSetsScannerService
 from src.domain.game.services.ItemService import ItemService
 from src.domain.game.services.ShopInventoryService import ShopInventoryService

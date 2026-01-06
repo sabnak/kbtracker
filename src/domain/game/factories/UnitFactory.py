@@ -3,8 +3,8 @@ from dependency_injector.wiring import Provide, inject
 from src.core.Container import Container
 from src.domain.game.entities.Unit import Unit
 from src.domain.game.entities.UnitMovetype import UnitMovetype
-from src.domain.game.ILocalizationRepository import ILocalizationRepository
-from src.domain.game.IUnitFactory import IUnitFactory
+from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
+from src.domain.game.interfaces.IUnitFactory import IUnitFactory
 from src.domain.game.factories.UnitAttacksProcessor import UnitAttacksProcessor
 from src.domain.game.factories.UnitFeaturesProcessor import UnitFeaturesProcessor
 

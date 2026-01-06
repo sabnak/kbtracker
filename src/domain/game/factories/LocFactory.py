@@ -2,7 +2,7 @@ import re
 
 from src.domain.game.entities.LocStrings import LocStrings
 from src.domain.game.entities.Localization import Localization
-from src.domain.game.ILocFactory import ILocFactory
+from src.domain.game.interfaces.ILocFactory import ILocFactory
 
 
 class LocFactory(ILocFactory):

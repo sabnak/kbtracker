@@ -4,7 +4,7 @@ from sqlalchemy.orm import aliased
 from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.exceptions import LocalizationNotFoundException
 from src.domain.game.entities.ItemSet import ItemSet
-from src.domain.game.IItemSetRepository import IItemSetRepository
+from src.domain.game.interfaces.IItemSetRepository import IItemSetRepository
 from src.domain.game.repositories.mappers.ItemSetMapper import ItemSetMapper
 from src.domain.game.repositories.mappers.LocalizationMapper import LocalizationMapper
 

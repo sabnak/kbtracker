@@ -4,8 +4,8 @@ from src.core.Container import Container
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.ItemSet import ItemSet
 from src.domain.game.entities.Propbit import Propbit
-from src.domain.game.IItemRepository import IItemRepository
-from src.domain.game.IItemSetRepository import IItemSetRepository
+from src.domain.game.interfaces.IItemRepository import IItemRepository
+from src.domain.game.interfaces.IItemSetRepository import IItemSetRepository
 from src.domain.exceptions import InvalidRegexException
 
 

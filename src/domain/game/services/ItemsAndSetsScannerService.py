@@ -2,10 +2,10 @@ from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
-from src.domain.game.IGameRepository import IGameRepository
-from src.domain.game.IItemRepository import IItemRepository
-from src.domain.game.IItemSetRepository import IItemSetRepository
-from src.domain.game.IItemsAndSetsScannerService import IItemsAndSetsScannerService
+from src.domain.app.interfaces.IGameRepository import IGameRepository
+from src.domain.game.interfaces.IItemRepository import IItemRepository
+from src.domain.game.interfaces.IItemSetRepository import IItemSetRepository
+from src.domain.game.interfaces.IItemsAndSetsScannerService import IItemsAndSetsScannerService
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.ItemSet import ItemSet
 from src.utils.parsers.game_data import IKFSItemsParser

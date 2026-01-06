@@ -3,9 +3,9 @@ from dependency_injector.wiring import Provide, inject
 from src.core.Container import Container
 from src.domain.game.entities.AtomMap import AtomMap
 from src.domain.game.entities.LocStrings import LocStrings
-from src.domain.game.IAtomMapRepository import IAtomMapRepository
-from src.domain.game.ILocFactory import ILocFactory
-from src.domain.game.ILocalizationRepository import ILocalizationRepository
+from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
+from src.domain.game.interfaces.ILocFactory import ILocFactory
+from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
 from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.repositories.mappers.AtomMapMapper import AtomMapMapper
 

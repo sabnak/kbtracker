@@ -1,4 +1,4 @@
-from src.domain.game.ILocalizationRepository import ILocalizationRepository
+from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
 
 
 class UnitFeaturesProcessor:

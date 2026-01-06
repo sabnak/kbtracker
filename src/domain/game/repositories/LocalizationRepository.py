@@ -1,6 +1,6 @@
 from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.entities.Localization import Localization
-from src.domain.game.ILocalizationRepository import ILocalizationRepository
+from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.repositories.mappers.LocalizationMapper import LocalizationMapper
 
 

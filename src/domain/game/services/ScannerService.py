@@ -5,12 +5,12 @@ from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
-from src.domain.game.IAtomMapScannerService import IAtomMapScannerService
-from src.domain.game.IGameRepository import IGameRepository
-from src.domain.game.IItemsAndSetsScannerService import IItemsAndSetsScannerService
-from src.domain.game.ILocalizationScannerService import ILocalizationScannerService
-from src.domain.game.ISpellsScannerService import ISpellsScannerService
-from src.domain.game.IUnitsScannerService import IUnitsScannerService
+from src.domain.game.interfaces.IAtomMapScannerService import IAtomMapScannerService
+from src.domain.app.interfaces.IGameRepository import IGameRepository
+from src.domain.game.interfaces.IItemsAndSetsScannerService import IItemsAndSetsScannerService
+from src.domain.game.interfaces.ILocalizationScannerService import ILocalizationScannerService
+from src.domain.game.interfaces.ISpellsScannerService import ISpellsScannerService
+from src.domain.game.interfaces.IUnitsScannerService import IUnitsScannerService
 from src.domain.game.dto.ScanResults import ScanResults
 from src.domain.game.events.ResourceType import ResourceType
 from src.domain.game.events.ScanEventType import ScanEventType

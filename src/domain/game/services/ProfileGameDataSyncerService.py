@@ -4,13 +4,12 @@ from typing import Any
 from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
-from src.domain.exceptions import EntityNotFoundException
-from src.domain.game.IAtomMapRepository import IAtomMapRepository
-from src.domain.game.IItemRepository import IItemRepository
-from src.domain.game.IProfileGameDataSyncerService import IProfileGameDataSyncerService
-from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
-from src.domain.game.ISpellRepository import ISpellRepository
-from src.domain.game.IUnitRepository import IUnitRepository
+from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
+from src.domain.game.interfaces.IItemRepository import IItemRepository
+from src.domain.game.interfaces.IProfileGameDataSyncerService import IProfileGameDataSyncerService
+from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
+from src.domain.game.interfaces.ISpellRepository import ISpellRepository
+from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
 from src.domain.game.entities.CorruptedProfileData import CorruptedProfileData
 from src.domain.game.entities.ShopInventory import ShopInventory

@@ -2,7 +2,7 @@ from typing import Any
 
 from src.domain.game.entities.Spell import Spell
 from src.domain.game.entities.SpellSchool import SpellSchool
-from src.domain.game.ISpellFactory import ISpellFactory
+from src.domain.game.interfaces.ISpellFactory import ISpellFactory
 
 
 class SpellFactory(ISpellFactory):

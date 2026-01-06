@@ -3,8 +3,8 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from dependency_injector.wiring import inject, Provide
 from src.web.profiles.forms import ProfileCreateForm
-from src.domain.game.IGameService import IGameService
-from src.domain.game.IProfileService import IProfileService
+from src.domain.app.interfaces.IGameService import IGameService
+from src.domain.game.interfaces.IProfileService import IProfileService
 from src.web.dependencies.game_context import get_game_context, GameContext
 from src.domain.base.repositories.CrudRepository import _game_context
 

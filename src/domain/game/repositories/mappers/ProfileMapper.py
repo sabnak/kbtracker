@@ -1,10 +1,10 @@
 from datetime import datetime
 
-from sqlalchemy import Column, String, Integer, DateTime, ForeignKey
+from sqlalchemy import Column, String, Integer, DateTime
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
-from src.domain.game.repositories.mappers.base import Base
+from src.domain.base.repositories.mappers.base import Base
 
 
 class ProfileMapper(Base):

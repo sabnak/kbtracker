@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
-from src.domain.game.repositories.mappers.base import Base
+from src.domain.base.repositories.mappers.base import Base
 from src.domain.game.entities.ShopInventoryType import ShopInventoryType
 
 

@@ -5,7 +5,7 @@ from dependency_injector.wiring import Provide, inject
 from src.core.Container import Container
 from src.domain.game.entities.AtomMap import AtomMap
 from src.domain.game.entities.Localization import Localization
-from src.domain.game.ILocalizationRepository import ILocalizationRepository
+from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
 from src.utils.parsers.game_data.IKFSAtomsMapInfoParser import IKFSAtomsMapInfoParser
 
 

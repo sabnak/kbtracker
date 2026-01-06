@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from dependency_injector.wiring import inject, Provide
 
-from src.domain.game.IProfileService import IProfileService
-from src.domain.game.ISaveFileService import ISaveFileService
-from src.domain.game.IGameService import IGameService
+from src.domain.game.interfaces.IProfileService import IProfileService
+from src.domain.game.interfaces.ISaveFileService import ISaveFileService
+from src.domain.app.interfaces.IGameService import IGameService
 from src.web.dependencies.game_context import get_game_context, GameContext
 from src.domain.base.repositories.CrudRepository import _game_context
 from src.domain.exceptions import InvalidKbIdException

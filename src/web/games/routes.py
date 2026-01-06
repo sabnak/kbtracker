@@ -9,11 +9,11 @@ from fastapi.templating import Jinja2Templates
 
 from src.domain.exceptions import DuplicateEntityException, DatabaseOperationException, InvalidRegexException
 from src.domain.filesystem.IGamePathService import IGamePathService
-from src.domain.game.IGameService import IGameService
-from src.domain.game.IProfileRepository import IProfileRepository
-from src.domain.game.IProfileService import IProfileService
-from src.domain.game.ISpellRepository import ISpellRepository
-from src.domain.game.IUnitRepository import IUnitRepository
+from src.domain.app.interfaces.IGameService import IGameService
+from src.domain.game.interfaces.IProfileRepository import IProfileRepository
+from src.domain.game.interfaces.IProfileService import IProfileService
+from src.domain.game.interfaces.ISpellRepository import ISpellRepository
+from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.services.ShopInventoryService import ShopInventoryService
 from src.domain.game.events.ScanEventType import ScanEventType

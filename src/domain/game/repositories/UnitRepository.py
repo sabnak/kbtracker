@@ -4,7 +4,7 @@ from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.entities.Unit import Unit
 from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.entities.UnitMovetype import UnitMovetype
-from src.domain.game.IUnitRepository import IUnitRepository
+from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 from src.domain.game.repositories.mappers.UnitMapper import UnitMapper
 
 

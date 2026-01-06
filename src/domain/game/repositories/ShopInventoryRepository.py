@@ -1,7 +1,7 @@
 from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.entities.ShopInventory import ShopInventory
 from src.domain.game.entities.ShopInventoryType import ShopInventoryType
-from src.domain.game.IShopInventoryRepository import IShopInventoryRepository
+from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.repositories.mappers.ShopInventoryMapper import ShopInventoryMapper
 
 

@@ -3,7 +3,7 @@ from dependency_injector.wiring import inject, Provide
 
 from src.core.Container import Container
 from src.core.Config import Config
-from src.domain.game.ISaveFileService import ISaveFileService
+from src.domain.game.interfaces.ISaveFileService import ISaveFileService
 from src.utils.parsers.save_data.IHeroSaveParser import IHeroSaveParser
 
 
