@@ -6,7 +6,7 @@ from src.web.profiles.forms import ProfileCreateForm
 from src.domain.game.IGameService import IGameService
 from src.domain.game.IProfileService import IProfileService
 from src.web.dependencies.game_context import get_game_context, GameContext
-from src.domain.game.repositories.CrudRepository import _game_context
+from src.domain.base.repositories.CrudRepository import _game_context
 
 
 router = APIRouter(tags=["profiles"])

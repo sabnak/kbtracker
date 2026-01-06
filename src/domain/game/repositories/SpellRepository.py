@@ -7,7 +7,7 @@ from src.domain.game.entities.SpellSchool import SpellSchool
 from src.domain.game.ILocFactory import ILocFactory
 from src.domain.game.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.ISpellRepository import ISpellRepository
-from src.domain.game.repositories.CrudRepository import CrudRepository
+from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.repositories.mappers.SpellMapper import SpellMapper
 
 

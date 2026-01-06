@@ -18,7 +18,7 @@ from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.services.ShopInventoryService import ShopInventoryService
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
-from src.domain.game.repositories.CrudRepository import _game_context
+from src.domain.base.repositories.CrudRepository import _game_context
 from src.domain.game.services.ItemService import ItemService
 from src.domain.game.services.ScannerService import ScannerService
 from src.web.dependencies.game_context import get_game_context, GameContext

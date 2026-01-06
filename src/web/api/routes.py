@@ -6,8 +6,8 @@ from src.domain.game.IProfileService import IProfileService
 from src.domain.game.ISaveFileService import ISaveFileService
 from src.domain.game.IGameService import IGameService
 from src.web.dependencies.game_context import get_game_context, GameContext
-from src.domain.game.repositories.CrudRepository import _game_context
-from src.domain.exceptions import EntityNotFoundException, InvalidKbIdException
+from src.domain.base.repositories.CrudRepository import _game_context
+from src.domain.exceptions import InvalidKbIdException
 
 
 router = APIRouter(prefix="/api", tags=["api"])

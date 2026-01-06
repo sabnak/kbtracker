@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from src.domain.game.repositories.CrudRepository import CrudRepository
+from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.IGameRepository import IGameRepository
 from src.domain.game.entities.Game import Game
 from src.domain.game.repositories.mappers.GameMapper import GameMapper

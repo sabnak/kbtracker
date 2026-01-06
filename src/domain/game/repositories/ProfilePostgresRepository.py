@@ -1,5 +1,5 @@
 from src.domain.exceptions import EntityNotFoundException
-from src.domain.game.repositories.CrudRepository import CrudRepository
+from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.IProfileRepository import IProfileRepository
 from src.domain.game.entities.ProfileEntity import ProfileEntity
 from src.domain.game.entities.CorruptedProfileData import CorruptedProfileData
