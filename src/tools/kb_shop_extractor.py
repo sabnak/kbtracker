@@ -59,9 +59,9 @@ def print_statistics(shops: dict) -> None:
 
 def main():
 	"""Main entry point"""
-	parser = argparse.ArgumentParser(description='King\'s Bounty Shop Extractor')
-	parser.add_argument('save_directory', type=Path, help='Path to King\'s Bounty save directory')
-	args = parser.parse_args()
+	p = argparse.ArgumentParser(description='King\'s Bounty Shop Extractor')
+	p.add_argument('save_directory', type=Path, help='Path to King\'s Bounty save directory')
+	args = p.parse_args()
 
 	save_dir = args.save_directory
 
