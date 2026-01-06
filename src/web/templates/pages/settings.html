@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Application Settings{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+	<div class="col-md-6">
+		<div class="card">
+			<div class="card-body">
+				<h2 class="card-title">Application Settings</h2>
+				<form method="POST" action="/settings">
+					<div class="mb-3">
+						<div class="row align-items-center">
+							<div class="col-md-4">
+								<label for="sync_frequency" class="form-label mb-0">Sync Frequency (minutes)</label>
+							</div>
+							<div class="col-md-8">
+								<input
+									type="number"
+									class="form-control {% if errors.get('sync_frequency') %}is-invalid{% endif %}"
+									id="sync_frequency"
+									name="sync_frequency"
+									value="{{ settings.sync_frequency }}"
+									min="1"
+									max="60"
+									required>
+								{% if errors.get('sync_frequency') %}
+								<div class="invalid-feedback">{{ errors.get('sync_frequency') }}</div>
+								{% endif %}
+								<div class="form-text">How often to sync game data (1-60 minutes)</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<div class="row align-items-center">
+							<div class="col-md-4">
+								<label for="saves_limit" class="form-label mb-0">Saves Limit</label>
+							</div>
+							<div class="col-md-8">
+								<input
+									type="number"
+									class="form-control {% if errors.get('saves_limit') %}is-invalid{% endif %}"
+									id="saves_limit"
+									name="saves_limit"
+									value="{{ settings.saves_limit }}"
+									min="1"
+									max="100"
+									required>
+								{% if errors.get('saves_limit') %}
+								<div class="invalid-feedback">{{ errors.get('saves_limit') }}</div>
+								{% endif %}
+								<div class="form-text">Maximum number of saves to track (1-100)</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-8 offset-md-4">
+							<div class="d-flex gap-2">
+								<button type="submit" class="btn btn-primary">Save Settings</button>
+								<a href="/games" class="btn btn-secondary">Cancel</a>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

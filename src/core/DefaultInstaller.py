@@ -16,6 +16,7 @@ from src.utils.parsers.game_data.KFSSpellsParser import KFSSpellsParser
 from src.utils.parsers.game_data.KFSUnitParser import KFSUnitParser
 from src.utils.parsers.game_data.KFSAtomsMapInfoParser import KFSAtomsMapInfoParser
 from src.domain.app.repositories.GameRepository import GameRepository
+from src.domain.app.repositories.MetaRepository import MetaRepository
 from src.domain.game.repositories.AtomMapRepository import AtomMapRepository
 from src.domain.game.repositories.ItemRepository import ItemRepository
 from src.domain.game.repositories.ItemSetRepository import ItemSetRepository
@@ -28,6 +29,7 @@ from src.domain.game.factories.SpellFactory import SpellFactory
 from src.domain.game.factories.UnitFactory import UnitFactory
 from src.domain.game.services.AtomMapScannerService import AtomMapScannerService
 from src.domain.app.services.GameService import GameService
+from src.domain.app.services.SettingsService import SettingsService
 from src.domain.game.services.ItemsAndSetsScannerService import ItemsAndSetsScannerService
 from src.domain.game.services.ItemService import ItemService
 from src.domain.game.services.ShopInventoryService import ShopInventoryService
@@ -77,6 +79,7 @@ class DefaultInstaller:
 		)
 
 		self._container.game_service.override(providers.Factory(GameService))
+		self._container.settings_service.override(providers.Factory(SettingsService))
 		self._container.profile_service.override(providers.Factory(ProfileService))
 		self._container.profile_data_syncer_service.override(providers.Factory(ProfileGameDataSyncerService))
 		self._container.save_file_service.override(providers.Factory(SaveFileService))
@@ -109,6 +112,7 @@ class DefaultInstaller:
 
 	def _install_repositories(self):
 		self._container.game_repository.override(providers.Singleton(GameRepository))
+		self._container.meta_repository.override(providers.Singleton(MetaRepository))
 		self._container.item_repository.override(providers.Singleton(ItemRepository))
 		self._container.item_set_repository.override(providers.Singleton(ItemSetRepository))
 		self._container.localization_repository.override(providers.Singleton(LocalizationRepository))

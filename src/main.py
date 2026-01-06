@@ -40,10 +40,12 @@ def create_app() -> FastAPI:
 	from src.web.profiles.routes import router as profiles_router
 	from src.web.games.routes import router as games_router
 	from src.web.api.routes import router as api_router
+	from src.web.settings.routes import router as settings_router
 
 	app.include_router(profiles_router)
 	app.include_router(games_router)
 	app.include_router(api_router)
+	app.include_router(settings_router)
 
 	return app
 

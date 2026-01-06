@@ -7,6 +7,7 @@ from src.domain.app.entities.Settings import Settings
 from src.domain.app.interfaces.IMetaRepository import IMetaRepository, T
 from src.domain.app.repositories.mappers.MetaMapper import MetaMapper
 from src.domain.base.repositories.CrudRepository import CrudRepository, TEntity, TMapper
+from src.domain.exceptions import MetadataNotFoundException
 
 
 class MetaRepository(CrudRepository[pydantic.BaseModel, MetaMapper], IMetaRepository):
@@ -21,7 +22,27 @@ class MetaRepository(CrudRepository[pydantic.BaseModel, MetaMapper], IMetaReposi
 			mapper = session.query(MetaMapper).filter(
 				MetaMapper.name == name.value
 			).one_or_none()
-			return entity_type(**mapper)
+
+			if mapper is None:
+				raise MetadataNotFoundException(name=name.value)
+
+			return entity_type(**mapper.value)
+
+	def save(self, name: MetaName, entity: T) -> None:
+		with self._session_factory() as session:
+			mapper = session.query(MetaMapper).filter(
+				MetaMapper.name == name.value
+			).one_or_none()
+
+			entity_dict = entity.model_dump()
+
+			if mapper:
+				mapper.value = entity_dict
+			else:
+				mapper = MetaMapper(name=name.value, value=entity_dict)
+				session.add(mapper)
+
+			session.commit()
 
 	def _entity_to_mapper(self, entity: TEntity) -> TMapper:
 		raise NotImplementedError

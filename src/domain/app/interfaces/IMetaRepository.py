@@ -13,3 +13,7 @@ class IMetaRepository(abc.ABC):
 	@abc.abstractmethod
 	def get(self, name: MetaName) -> T:
 		...
+
+	@abc.abstractmethod
+	def save(self, name: MetaName, entity: T) -> None:
+		...

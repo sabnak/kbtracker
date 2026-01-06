@@ -4,6 +4,8 @@ from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
 from src.domain.app.interfaces.IGameRepository import IGameRepository
 from src.domain.app.interfaces.IGameService import IGameService
+from src.domain.app.interfaces.IMetaRepository import IMetaRepository
+from src.domain.app.interfaces.ISettingsService import ISettingsService
 from src.domain.game.interfaces.IItemRepository import IItemRepository
 from src.domain.game.interfaces.IItemSetRepository import IItemSetRepository
 from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
@@ -33,6 +35,7 @@ class Container(containers.DeclarativeContainer):
 	db_session_factory = providers.AbstractFactory()
 
 	game_repository = providers.AbstractSingleton(IGameRepository)
+	meta_repository = providers.AbstractSingleton(IMetaRepository)
 	item_repository = providers.AbstractSingleton(IItemRepository)
 	item_set_repository = providers.AbstractSingleton(IItemSetRepository)
 	atom_map_repository = providers.AbstractSingleton(IAtomMapRepository)
@@ -45,6 +48,7 @@ class Container(containers.DeclarativeContainer):
 	# Services
 	game_path_service = providers.AbstractFactory(IGamePathService)
 	game_service = providers.AbstractFactory(IGameService)
+	settings_service = providers.AbstractFactory(ISettingsService)
 	profile_service = providers.AbstractFactory(IProfileService)
 	profile_data_syncer_service = providers.AbstractFactory(IProfileGameDataSyncerService)
 	save_file_service = providers.AbstractFactory(ISaveFileService)

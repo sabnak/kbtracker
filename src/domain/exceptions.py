@@ -265,3 +265,22 @@ class LocalizationNotFoundException(RepositoryException):
 	@property
 	def localization_key(self) -> str:
 		return self._localization_key
+
+
+class MetadataNotFoundException(RepositoryException):
+	"""
+	Raised when metadata is not found in the meta table
+	"""
+
+	def __init__(
+		self,
+		name: str,
+		original_exception: Exception | None = None
+	):
+		self._name = name
+		message = f"Metadata with name '{name}' not found"
+		super().__init__(message, original_exception)
+
+	@property
+	def name(self) -> str:
+		return self._name
