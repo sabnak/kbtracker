@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.domain.game.entities.Game import Game
+from src.domain.app.entities.Game import Game
 
 
 class IGameService(ABC):

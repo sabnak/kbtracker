@@ -2,7 +2,7 @@ from datetime import datetime
 
 from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.app.interfaces.IGameRepository import IGameRepository
-from src.domain.game.entities.Game import Game
+from src.domain.app.entities.Game import Game
 from src.domain.app.repositories.mappers.GameMapper import GameMapper
 
 

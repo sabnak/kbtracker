@@ -4,7 +4,7 @@ from src.core.Container import Container
 from src.domain.app.interfaces.IGameRepository import IGameRepository
 from src.domain.app.interfaces.IGameService import IGameService
 from src.domain.game.interfaces.ISchemaManagementService import ISchemaManagementService
-from src.domain.game.entities.Game import Game
+from src.domain.app.entities.Game import Game
 
 
 class GameService(IGameService):
