@@ -194,7 +194,7 @@ class ProfileAutoScannerDaemon(CLITool[LaunchParams]):
 		:return:
 		"""
 		timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-		print(f"[{timestamp}] [DAEMON] {message}")
+		self._logger.info(f"[{timestamp}] [DAEMON] {message}")
 
 	def _log_error(self, message: str) -> None:
 		"""
@@ -205,7 +205,7 @@ class ProfileAutoScannerDaemon(CLITool[LaunchParams]):
 		:return:
 		"""
 		timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-		print(f"[{timestamp}] [DAEMON] ERROR: {message}", file=sys.stderr)
+		self._logger.error(f"[{timestamp}] [DAEMON] ERROR: {message}")
 
 
 if __name__ == '__main__':

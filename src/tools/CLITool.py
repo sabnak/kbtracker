@@ -1,4 +1,5 @@
 import abc
+import logging
 import typing
 
 import pydantic
@@ -13,12 +14,14 @@ class CLITool(typing.Generic[T], abc.ABC):
 
 	_launch_params: T = None
 	_container: Container = None
+	_logger: logging.Logger = None
 
 	def __init__(self):
 		self._launch_params = self._build_params()
 		self._container = Container()
 		installer = DefaultInstaller(self._container)
 		installer.install()
+		self._logger = self._container.logger()
 
 	def run(self):
 		self._run()
