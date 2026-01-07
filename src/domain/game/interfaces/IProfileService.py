@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
 from src.domain.game.entities.ProfileEntity import ProfileEntity
@@ -75,6 +76,17 @@ class IProfileService(ABC):
 			If profile not found
 		"""
 		pass
+
+	@abstractmethod
+	def scan_save(self, profile: ProfileEntity, save_path: Path) -> ProfileSyncResult:
+		"""
+		Scan save file and sync shop inventories
+
+		:param profile:
+		:param save_path:
+		:return:
+		"""
+		...
 
 	@abstractmethod
 	def scan_most_recent_save(self, profile_id: int) -> ProfileSyncResult:

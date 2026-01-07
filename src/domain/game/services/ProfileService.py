@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 
 from dependency_injector.wiring import Provide
 
@@ -129,11 +130,14 @@ class ProfileService(IProfileService):
 		if not profile:
 			raise EntityNotFoundException("Profile", profile_id)
 
-		self.clear_profile(profile_id)
-
 		save_path = self._save_file_service.find_profile_most_recent_save(profile)
+		return self.scan_save(profile, save_path)
+
+	def scan_save(self, profile: ProfileEntity, save_path: Path) -> ProfileSyncResult:
+		self.clear_profile(profile.id)
+
 		shop_data = self._save_file_service.scan_shop_inventory(save_path)
-		result = self._data_syncer.sync(shop_data, profile_id)
+		result = self._data_syncer.sync(shop_data, profile.id)
 
 		save_timestamp = int(save_path.stat().st_mtime)
 
