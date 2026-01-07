@@ -11,13 +11,13 @@ from src.domain.exceptions import (
 	DatabaseOperationException
 )
 from src.utils.db import create_schema_session
-
+from src.web.dependencies.game_context import GameContext
 
 TEntity = TypeVar("TEntity")
 TMapper = TypeVar("TMapper")
 
 # Module-level context variable for game context
-_game_context: ContextVar[Optional['GameContext']] = ContextVar('game_context', default=None)
+GAME_CONTEXT: ContextVar[Optional['GameContext']] = ContextVar('game_context', default=None)
 
 
 class CrudRepository(ABC, Generic[TEntity, TMapper]):
@@ -36,7 +36,7 @@ class CrudRepository(ABC, Generic[TEntity, TMapper]):
 		:return:
 			Session or SchemaContextSession
 		"""
-		context = _game_context.get()
+		context = GAME_CONTEXT.get()
 		if context:
 			return create_schema_session(self._session_factory, context.schema_name)
 		return self._session_factory()

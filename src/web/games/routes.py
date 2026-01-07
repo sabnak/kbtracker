@@ -18,7 +18,7 @@ from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.services.ShopInventoryService import ShopInventoryService
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
-from src.domain.base.repositories.CrudRepository import _game_context
+from src.domain.base.repositories.CrudRepository import GAME_CONTEXT
 from src.domain.game.services.ItemService import ItemService
 from src.domain.game.services.ScannerService import ScannerService
 from src.web.dependencies.game_context import get_game_context, GameContext
@@ -133,7 +133,7 @@ async def scan_game_files(
 	"""
 	Execute game file scan
 	"""
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	game = game_service.get_game(game_id)
 	if not game:
@@ -224,7 +224,7 @@ async def scan_game_files_stream(
 	:return:
 		StreamingResponse with text/event-stream content type
 	"""
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	game = game_service.get_game(game_id)
 	if not game:
@@ -330,7 +330,7 @@ async def list_items(
 	"""
 	List all items for a game with set information and advanced filters
 	"""
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	game = game_service.get_game(game_id)
 	if not game:
@@ -437,7 +437,7 @@ async def list_units(
 	"""
 	List all chesspiece units for a game
 	"""
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	game = game_service.get_game(game_id)
 	if not game:
@@ -483,7 +483,7 @@ async def list_spells(
 	"""
 	List all spells for a game (excluding hidden spells)
 	"""
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	game = game_service.get_game(game_id)
 	if not game:
@@ -531,7 +531,7 @@ async def list_shops(
 	"""
 	List all shops grouped by location for a game with profile filter
 	"""
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	game = game_service.get_game(game_id)
 	if not game:
@@ -591,7 +591,7 @@ async def get_profiles_by_game(
 	:return:
 		List of profile objects with id and name
 	"""
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	profiles = profile_service.list_profiles()
 	return [{"id": p.id, "name": p.name} for p in profiles]

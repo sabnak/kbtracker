@@ -6,7 +6,7 @@ from src.web.profiles.forms import ProfileCreateForm
 from src.domain.app.interfaces.IGameService import IGameService
 from src.domain.game.interfaces.IProfileService import IProfileService
 from src.web.dependencies.game_context import get_game_context, GameContext
-from src.domain.base.repositories.CrudRepository import _game_context
+from src.domain.base.repositories.CrudRepository import GAME_CONTEXT
 
 
 router = APIRouter(tags=["profiles"])
@@ -33,7 +33,7 @@ async def list_game_profiles(
 	"""
 	List all profiles for a specific game
 	"""
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	game = game_service.get_game(game_id)
 	if not game:
@@ -59,7 +59,7 @@ async def create_profile_form(
 	game_context: GameContext = Depends(get_game_context),
 	game_service: IGameService = Depends(Provide["game_service"])
 ):
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	game = game_service.get_game(game_id)
 	if not game:
@@ -84,7 +84,7 @@ async def create_profile(
 	game_context: GameContext = Depends(get_game_context),
 	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	form_data = ProfileCreateForm(name=name, game_id=game_id)
 	profile_service.create_profile(
@@ -103,7 +103,7 @@ async def delete_profile(
 	game_context: GameContext = Depends(get_game_context),
 	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	profile_service.delete_profile(profile_id)
 	return RedirectResponse(url=f"/games/{game_id}/profiles", status_code=303)
@@ -117,7 +117,7 @@ async def clear_profile(
 	game_context: GameContext = Depends(get_game_context),
 	profile_service: IProfileService = Depends(Provide["profile_service"])
 ):
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	profile_service.clear_profile(profile_id)
 	return RedirectResponse(url=f"/games/{game_id}/profiles", status_code=303)

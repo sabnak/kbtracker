@@ -7,7 +7,7 @@ from src.domain.game.interfaces.ISaveFileService import ISaveFileService
 from src.domain.app.interfaces.IGameService import IGameService
 from src.domain.game.interfaces.IProfileRepository import IProfileRepository
 from src.web.dependencies.game_context import get_game_context, GameContext
-from src.domain.base.repositories.CrudRepository import _game_context
+from src.domain.base.repositories.CrudRepository import GAME_CONTEXT
 from src.domain.exceptions import InvalidKbIdException
 from dataclasses import replace
 
@@ -37,7 +37,7 @@ async def list_save_directories(
 	:return:
 		Save directories grouped by game name
 	"""
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	game = game_service.get_game(game_id)
 	if not game:
@@ -75,7 +75,7 @@ async def scan_hero(
 	:return:
 		Campaign data
 	"""
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	game = game_service.get_game(game_id)
 	if not game:
@@ -120,7 +120,7 @@ async def scan_shops(
 	"""
 	import traceback
 
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	try:
 		result = profile_service.scan_most_recent_save(profile_id)
@@ -191,7 +191,7 @@ async def update_profile_auto_scan(
 	:return:
 		JSON response with updated state
 	"""
-	_game_context.set(game_context)
+	GAME_CONTEXT.set(game_context)
 
 	try:
 		profile = profile_repository.get_by_id(profile_id)
