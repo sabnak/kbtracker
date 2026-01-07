@@ -49,7 +49,8 @@ class SchemaManagementService(ISchemaManagementService):
 					save_dir VARCHAR(255),
 					created_at TIMESTAMP DEFAULT NOW(),
 					last_scan_time TIMESTAMP DEFAULT NULL,
-					last_corrupted_data JSONB DEFAULT NULL
+					last_corrupted_data JSONB DEFAULT NULL,
+					is_auto_scan_enabled BOOLEAN DEFAULT FALSE
 				)
 			"""))
 
@@ -204,5 +205,33 @@ class SchemaManagementService(ISchemaManagementService):
 				session.execute(text(
 					f"DROP TABLE IF EXISTS {schema_name}.{table_name} CASCADE"
 				))
+
+			session.commit()
+
+	def add_profile_auto_scan_column(self) -> None:
+		"""
+		Add is_auto_scan_enabled column to existing profile tables
+
+		:return:
+		"""
+		with self._session_factory() as session:
+			# Get all game schemas
+			result = session.execute(text("""
+				SELECT schema_name
+				FROM information_schema.schemata
+				WHERE schema_name LIKE 'game_%'
+			"""))
+
+			schemas = [row[0] for row in result]
+
+			# Add column to each schema's profile table
+			for schema in schemas:
+				try:
+					session.execute(text(f"""
+						ALTER TABLE {schema}.profile
+						ADD COLUMN IF NOT EXISTS is_auto_scan_enabled BOOLEAN NOT NULL DEFAULT FALSE
+					"""))
+				except Exception as e:
+					print(f"Error adding column to {schema}: {e}")
 
 			session.commit()

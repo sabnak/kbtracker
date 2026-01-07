@@ -5,9 +5,11 @@ from dependency_injector.wiring import inject, Provide
 from src.domain.game.interfaces.IProfileService import IProfileService
 from src.domain.game.interfaces.ISaveFileService import ISaveFileService
 from src.domain.app.interfaces.IGameService import IGameService
+from src.domain.game.interfaces.IProfileRepository import IProfileRepository
 from src.web.dependencies.game_context import get_game_context, GameContext
 from src.domain.base.repositories.CrudRepository import _game_context
 from src.domain.exceptions import InvalidKbIdException
+from dataclasses import replace
 
 
 router = APIRouter(prefix="/api", tags=["api"])
@@ -162,3 +164,51 @@ async def scan_profile_save(
 				}
 			}
 		)
+
+
+@router.patch("/games/{game_id}/profiles/{profile_id}/auto-scan")
+@inject
+async def update_profile_auto_scan(
+	game_id: int,
+	profile_id: int,
+	is_enabled: bool,
+	game_context: GameContext = Depends(get_game_context),
+	profile_repository: IProfileRepository = Depends(Provide["profile_repository"])
+) -> JSONResponse:
+	"""
+	Toggle auto-scan setting for a profile
+
+	:param game_id:
+		Game ID
+	:param profile_id:
+		Profile ID to update
+	:param is_enabled:
+		New auto-scan state
+	:param game_context:
+		Game context
+	:param profile_repository:
+		Profile repository
+	:return:
+		JSON response with updated state
+	"""
+	_game_context.set(game_context)
+
+	try:
+		profile = profile_repository.get_by_id(profile_id)
+		if not profile:
+			raise HTTPException(status_code=404, detail="Profile not found")
+
+		# Create updated entity with new auto_scan value
+		updated_profile = replace(profile, is_auto_scan_enabled=is_enabled)
+
+		# Update in repository
+		profile_repository.update(updated_profile)
+
+		return JSONResponse(
+			status_code=200,
+			content={"id": profile_id, "is_auto_scan_enabled": is_enabled}
+		)
+	except HTTPException:
+		raise
+	except Exception as e:
+		raise HTTPException(status_code=500, detail=str(e))

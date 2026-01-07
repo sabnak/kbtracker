@@ -63,7 +63,23 @@
 			<div class="col-md-4 mb-3">
 				<div class="card">
 					<div class="card-body">
-						<h5 class="card-title">{{ profile.name }}</h5>
+						<div class="d-flex justify-content-between align-items-center mb-2">
+							<h5 class="mb-0">{{ profile.name }}</h5>
+							<div class="form-check form-switch">
+								<input
+									class="form-check-input auto-scan-toggle"
+									type="checkbox"
+									role="switch"
+									id="autoScan{{ profile.id }}"
+									data-profile-id="{{ profile.id }}"
+									data-game-id="{{ game.id }}"
+									{% if profile.is_auto_scan_enabled %}checked{% endif %}
+									data-bs-toggle="tooltip"
+									data-bs-placement="left"
+									title="{% if profile.is_auto_scan_enabled %}Auto-scan enabled - Profile will be scanned automatically{% else %}Auto-scan disabled - Click to enable{% endif %}"
+								>
+							</div>
+						</div>
 						<p class="card-text">
 							<strong>Created:</strong> {{ profile.created_at.strftime('%Y-%m-%d %H:%M') }}
 						</p>
@@ -114,4 +130,5 @@
 </div>
 
 <script src="/static/js/profile-scan.js"></script>
+<script src="/static/js/profile-auto-scan.js"></script>
 {% endblock %}

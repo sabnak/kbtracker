@@ -28,7 +28,8 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 			save_dir=entity.save_dir,
 			created_at=entity.created_at,
 			last_scan_time=entity.last_scan_time,
-			last_corrupted_data=corrupted_data_json
+			last_corrupted_data=corrupted_data_json,
+			is_auto_scan_enabled=entity.is_auto_scan_enabled
 		)
 
 	def _get_entity_type_name(self) -> str:
@@ -84,6 +85,7 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 			mapper.full_name = profile.full_name
 			mapper.save_dir = profile.save_dir
 			mapper.last_scan_time = profile.last_scan_time
+			mapper.is_auto_scan_enabled = profile.is_auto_scan_enabled
 
 			if profile.last_corrupted_data:
 				mapper.last_corrupted_data = profile.last_corrupted_data.model_dump()
@@ -136,5 +138,6 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 			"save_dir": mapper.save_dir,
 			"created_at": mapper.created_at,
 			"last_scan_time": mapper.last_scan_time,
-			"last_corrupted_data": corrupted_data
+			"last_corrupted_data": corrupted_data,
+			"is_auto_scan_enabled": mapper.is_auto_scan_enabled
 		})
