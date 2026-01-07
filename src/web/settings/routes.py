@@ -32,13 +32,13 @@ async def get_settings(
 @inject
 async def save_settings(
 	request: Request,
-	sync_frequency: int = Form(...),
+	scan_frequency: int = Form(...),
 	saves_limit: int = Form(...),
 	settings_service: ISettingsService = Depends(Provide["settings_service"])
 ):
 	try:
 		form = SettingsForm(
-			sync_frequency=sync_frequency,
+			scan_frequency=scan_frequency,
 			saves_limit=saves_limit
 		)
 		settings_service.save_settings(form)
