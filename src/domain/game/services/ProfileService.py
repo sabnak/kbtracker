@@ -135,7 +135,10 @@ class ProfileService(IProfileService):
 		shop_data = self._save_file_service.scan_shop_inventory(save_path)
 		result = self._data_syncer.sync(shop_data, profile_id)
 
+		save_timestamp = int(save_path.stat().st_mtime)
+
 		profile.last_scan_time = datetime.now()
+		profile.last_save_timestamp = save_timestamp
 		profile.last_corrupted_data = result.corrupted_data
 		self._profile_repository.update(profile)
 

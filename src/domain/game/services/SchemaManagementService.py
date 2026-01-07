@@ -49,6 +49,7 @@ class SchemaManagementService(ISchemaManagementService):
 					save_dir VARCHAR(255),
 					created_at TIMESTAMP DEFAULT NOW(),
 					last_scan_time TIMESTAMP DEFAULT NULL,
+					last_save_timestamp INTEGER DEFAULT NULL,
 					last_corrupted_data JSONB DEFAULT NULL,
 					is_auto_scan_enabled BOOLEAN DEFAULT FALSE
 				)

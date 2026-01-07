@@ -13,5 +13,6 @@ class ProfileEntity:
 	full_name: str | None = None
 	save_dir: str | None = None
 	last_scan_time: datetime | None = None
+	last_save_timestamp: int | None = None
 	last_corrupted_data: CorruptedProfileData | None = None
 	is_auto_scan_enabled: bool = True

@@ -17,6 +17,7 @@ class ProfileMapper(Base):
 	save_dir = Column(String(255), nullable=True)
 	created_at = Column(DateTime, nullable=False, default=datetime.now())
 	last_scan_time = Column(DateTime, nullable=True)
+	last_save_timestamp = Column(Integer, nullable=True)
 	last_corrupted_data = Column(JSONB, nullable=True)
 	is_auto_scan_enabled = Column(Boolean, nullable=False, default=False)
 
