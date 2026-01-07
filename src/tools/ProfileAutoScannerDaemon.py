@@ -1,14 +1,14 @@
-import time
 import sched
 import subprocess
 import sys
-from pathlib import Path
+import time
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import pydantic
 
-from src.tools.CLITool import CLITool, T
 from src.domain.app.interfaces.ISettingsService import ISettingsService
+from src.tools.CLITool import CLITool
 
 
 class LaunchParams(pydantic.BaseModel):
@@ -193,8 +193,7 @@ class ProfileAutoScannerDaemon(CLITool[LaunchParams]):
 			Message to log
 		:return:
 		"""
-		timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-		self._logger.info(f"[{timestamp}] [DAEMON] {message}")
+		self._logger.info(f"[DAEMON] {message}")
 
 	def _log_error(self, message: str) -> None:
 		"""
@@ -204,8 +203,7 @@ class ProfileAutoScannerDaemon(CLITool[LaunchParams]):
 			Error message to log
 		:return:
 		"""
-		timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-		self._logger.error(f"[{timestamp}] [DAEMON] ERROR: {message}")
+		self._logger.error(f"[DAEMON] ERROR: {message}")
 
 
 if __name__ == '__main__':
