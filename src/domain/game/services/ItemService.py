@@ -37,7 +37,7 @@ class ItemService:
 		name_query: str | None = None,
 		level: int | None = None,
 		hint_regex: str | None = None,
-		propbit: str | None = None,
+		propbits: list[str] | None = None,
 		item_set_id: int | None = None,
 		item_id: int | None = None,
 		sort_by: str = "name",
@@ -53,8 +53,8 @@ class ItemService:
 			Optional level filter
 		:param hint_regex:
 			Optional regex pattern for hint
-		:param propbit:
-			Optional propbit type filter
+		:param propbits:
+			Optional list of propbit types (OR logic - matches items with ANY of the propbits)
 		:param item_set_id:
 			Optional item set ID filter
 		:param item_id:
@@ -73,7 +73,7 @@ class ItemService:
 			name_query,
 			level is not None,
 			hint_regex,
-			propbit,
+			propbits,
 			item_set_id is not None,
 			item_id is not None,
 			profile_id is not None
@@ -86,7 +86,7 @@ class ItemService:
 					name_query=name_query,
 					level=level,
 					hint_regex=hint_regex,
-					propbit=propbit,
+					propbits=propbits,
 					item_set_id=item_set_id,
 					item_id=item_id,
 					sort_by=sort_by,

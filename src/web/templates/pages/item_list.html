@@ -60,15 +60,24 @@
 
 						<!-- Type (Propbit) Filter -->
 						<div class="col-md-2">
-							<label for="propbit" class="form-label">Type</label>
-							<select class="form-select" id="propbit" name="propbit">
-								<option value="">All Types</option>
-								{% for pb in available_propbits %}
-								<option value="{{ pb }}" {% if selected_propbit == pb %}selected{% endif %}>
-									{{ pb|capitalize }}
-								</option>
-								{% endfor %}
-							</select>
+							<label class="form-label">Type</label>
+							<div class="dropdown w-100">
+								<button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="propbitDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+									<span id="propbitButtonText">All Types</span>
+								</button>
+								<div class="dropdown-menu w-100" aria-labelledby="propbitDropdown" style="max-height: 900px; overflow-y: auto;">
+									<div class="px-3 py-2">
+										{% for pb in available_propbits %}
+										<div class="form-check">
+											<input class="form-check-input propbit-checkbox" type="checkbox" name="propbit" value="{{ pb }}" id="propbit_{{ pb }}" {% if pb in selected_propbits %}checked{% endif %}>
+											<label class="form-check-label" for="propbit_{{ pb }}">
+												{{ pb|capitalize }}
+											</label>
+										</div>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
 						</div>
 
 						<!-- Hint Regex Search -->
@@ -111,7 +120,7 @@
 		{% if items_with_sets %}
 		<div class="alert alert-info">
 			<strong>Found {{ items_with_sets|length }} item(s)</strong>
-			{% if query or selected_level or hint_regex or selected_propbit or selected_set_id or selected_profile_id %}
+			{% if query or selected_level or hint_regex or selected_propbits or selected_set_id or selected_profile_id %}
 				matching your filter criteria.
 			{% endif %}
 		</div>
@@ -240,7 +249,7 @@
 		{% else %}
 		<div class="alert alert-info">
 			No items found.
-			{% if query or selected_level or hint_regex or selected_propbit or selected_set_id or selected_profile_id %}
+			{% if query or selected_level or hint_regex or selected_propbits or selected_set_id or selected_profile_id %}
 				Try adjusting your filter criteria.
 			{% else %}
 				Scan game files first to populate the database.
@@ -286,6 +295,35 @@
 				window.location.href = currentUrl.toString();
 			});
 		});
+	});
+</script>
+
+<script>
+	// Propbit multi-select dropdown functionality
+	document.addEventListener('DOMContentLoaded', function() {
+		const checkboxes = document.querySelectorAll('.propbit-checkbox');
+		const buttonText = document.getElementById('propbitButtonText');
+
+		function updateButtonText() {
+			const checkedCount = document.querySelectorAll('.propbit-checkbox:checked').length;
+			if (checkedCount === 0) {
+				buttonText.textContent = 'All Types';
+			} else if (checkedCount === 1) {
+				const checkedBox = document.querySelector('.propbit-checkbox:checked');
+				const label = document.querySelector(`label[for="${checkedBox.id}"]`);
+				buttonText.textContent = label.textContent.trim();
+			} else {
+				buttonText.textContent = `${checkedCount} types selected`;
+			}
+		}
+
+		// Update button text when checkboxes change
+		checkboxes.forEach(checkbox => {
+			checkbox.addEventListener('change', updateButtonText);
+		});
+
+		// Initialize button text on page load
+		updateButtonText();
 	});
 </script>
 {% endblock %}

@@ -206,7 +206,7 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		name_query: str | None = None,
 		level: int | None = None,
 		hint_regex: str | None = None,
-		propbit: str | None = None,
+		propbits: list[str] | None = None,
 		item_set_id: int | None = None,
 		item_id: int | None = None,
 		sort_by: str = "name",
@@ -222,8 +222,8 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			Optional level filter (exact match)
 		:param hint_regex:
 			Optional PostgreSQL regex pattern for hint field
-		:param propbit:
-			Optional propbit value (matches if ANY propbit matches)
+		:param propbits:
+			Optional list of propbit values (OR logic - matches items with ANY of the specified propbits)
 		:param item_set_id:
 			Optional item set ID filter
 		:param item_id:
@@ -263,8 +263,10 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 			if hint_regex:
 				query = query.filter(HintLocalization.text.op('~*')(hint_regex))
 
-			if propbit:
-				query = query.filter(ItemMapper.propbits.any(propbit))
+			if propbits:
+				from sqlalchemy import or_
+				propbit_conditions = [ItemMapper.propbits.any(pb) for pb in propbits]
+				query = query.filter(or_(*propbit_conditions))
 
 			if item_set_id is not None:
 				query = query.filter(ItemMapper.item_set_id == item_set_id)

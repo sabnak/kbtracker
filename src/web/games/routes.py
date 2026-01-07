@@ -316,7 +316,7 @@ async def list_items(
 	query: str = Query(default=""),
 	level_str: str = Query(default="", alias="level"),
 	hint_regex: str = Query(default=""),
-	propbit: str = Query(default=""),
+	propbits: list[str] = Query(default=[], alias="propbit"),
 	item_set_id_str: str = Query(default="", alias="item_set_id"),
 	id_str: str = Query(default="", alias="id"),
 	sort_by: str = Query(default="name"),
@@ -362,7 +362,7 @@ async def list_items(
 	# Normalize empty strings to None for optional filters
 	name_query = query.strip() if query.strip() else None
 	hint_query = hint_regex.strip() if hint_regex.strip() else None
-	propbit_query = propbit.strip() if propbit.strip() else None
+	propbits_query = [pb.strip() for pb in propbits if pb.strip()] if propbits else None
 
 	# Validate sort parameters
 	allowed_sort_fields = ["name", "price", "level"]
@@ -383,7 +383,7 @@ async def list_items(
 			name_query=name_query,
 			level=level,
 			hint_regex=hint_query,
-			propbit=propbit_query,
+			propbits=propbits_query,
 			item_set_id=item_set_id,
 			item_id=item_id,
 			sort_by=sort_field,
@@ -404,7 +404,7 @@ async def list_items(
 			"query": query,
 			"selected_level": level,
 			"hint_regex": hint_regex,
-			"selected_propbit": propbit,
+			"selected_propbits": propbits,
 			"selected_set_id": item_set_id,
 			"selected_id": id_str,
 			# Sort state
