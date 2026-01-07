@@ -50,9 +50,9 @@ async def list_save_directories(
 		raise HTTPException(status_code=500, detail=f"Failed to list saves: {str(e)}")
 
 
-@router.post("/games/{game_id}/scan-save")
+@router.post("/games/{game_id}/scan-hero")
 @inject
-async def scan_save_file(
+async def scan_hero(
 	game_id: int,
 	request_data: dict,
 	game_context: GameContext = Depends(get_game_context),
@@ -86,7 +86,7 @@ async def scan_save_file(
 		raise HTTPException(status_code=400, detail="save_dir is required")
 
 	try:
-		campaign_data = save_file_service.scan_save_file(game.path, save_dir)
+		campaign_data = save_file_service.scan_hero_data(game.path, save_dir)
 		return campaign_data
 	except FileNotFoundError as e:
 		raise HTTPException(status_code=404, detail=str(e))
@@ -98,7 +98,7 @@ async def scan_save_file(
 
 @router.post("/games/{game_id}/profiles/{profile_id}/scan")
 @inject
-async def scan_profile_save(
+async def scan_shops(
 	game_id: int,
 	profile_id: int,
 	game_context: GameContext = Depends(get_game_context),

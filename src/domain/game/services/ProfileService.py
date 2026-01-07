@@ -1,20 +1,17 @@
-import hashlib
 from datetime import datetime
-from pathlib import Path
-from typing import Any
 
 from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
 from src.domain.exceptions import EntityNotFoundException
-from src.domain.game.interfaces.IProfileRepository import IProfileRepository
-from src.domain.game.interfaces.IProfileService import IProfileService
-from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
 from src.domain.game.entities.ProfileEntity import ProfileEntity
-from src.utils.parsers.save_data.IHeroSaveParser import IHeroSaveParser
-from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
+from src.domain.game.interfaces.IProfileGameDataSyncerService import IProfileGameDataSyncerService
+from src.domain.game.interfaces.IProfileRepository import IProfileRepository
+from src.domain.game.interfaces.IProfileService import IProfileService
+from src.domain.game.interfaces.ISaveFileService import ISaveFileService
+from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
 
 
 class ProfileService(IProfileService):
@@ -22,16 +19,14 @@ class ProfileService(IProfileService):
 	def __init__(
 		self,
 		profile_repository: IProfileRepository = Provide[Container.profile_repository],
-		shop_parser: IShopInventoryParser = Provide[Container.shop_inventory_parser],
-		hero_parser: IHeroSaveParser = Provide[Container.hero_save_parser],
-		data_syncer: Any = Provide[Container.profile_data_syncer_service],
+		data_syncer: IProfileGameDataSyncerService = Provide[Container.profile_data_syncer_service],
+		save_file_service: ISaveFileService = Provide[Container.save_file_service],
 		config: Config = Provide[Container.config],
 		shop_inventory_repository: IShopInventoryRepository = Provide[Container.shop_inventory_repository]
 	):
 		self._profile_repository = profile_repository
-		self._shop_parser = shop_parser
-		self._hero_parser = hero_parser
 		self._data_syncer = data_syncer
+		self._save_file_service = save_file_service
 		self._config = config
 		self._shop_inventory_repository = shop_inventory_repository
 
@@ -58,7 +53,7 @@ class ProfileService(IProfileService):
 		"""
 		# Compute hash from full_name if not provided
 		if full_name and not hash:
-			hash = self._compute_hash(full_name)
+			hash = self._save_file_service.compute_hash(full_name)
 
 		profile = ProfileEntity(
 			id=0,
@@ -66,20 +61,10 @@ class ProfileService(IProfileService):
 			hash=hash,
 			full_name=full_name,
 			save_dir=save_dir,
-			created_at=datetime.now()
+			created_at=datetime.now(),
+			is_auto_scan_enabled=True
 		)
 		return self._profile_repository.create(profile)
-
-	def _compute_hash(self, full_name: str) -> str:
-		"""
-		Compute hash from hero full name
-
-		:param full_name:
-			Hero's full name
-		:return:
-			Hash as MD5 hex string
-		"""
-		return hashlib.md5(full_name.encode('utf-8')).hexdigest()
 
 	def list_profiles(self) -> list[ProfileEntity]:
 		"""
@@ -146,8 +131,8 @@ class ProfileService(IProfileService):
 
 		self.clear_profile(profile_id)
 
-		matching_save = self._find_matching_save(profile)
-		shop_data = self._shop_parser.parse(matching_save)
+		save_path = self._save_file_service.find_profile_most_recent_save(profile)
+		shop_data = self._save_file_service.scan_shop_inventory(save_path)
 		result = self._data_syncer.sync(shop_data, profile_id)
 
 		profile.last_scan_time = datetime.now()
@@ -155,34 +140,3 @@ class ProfileService(IProfileService):
 		self._profile_repository.update(profile)
 
 		return result
-
-	def _find_matching_save(self, profile: ProfileEntity) -> Path:
-		"""
-		Find most recent save file matching profile hash
-
-		:param profile:
-			Profile entity
-		:return:
-			Path to matching save file
-		:raises FileNotFoundError:
-			If no matching save found
-		"""
-		game_dir = profile.save_dir.split('/')[0]
-		save_path = Path(self._config.game_save_path) / game_dir
-
-		lif_files = list(save_path.glob("*/data"))
-		lif_files = sorted(lif_files, key=lambda p: p.stat().st_mtime, reverse=True)[:5]
-
-		for lif_file in lif_files:
-			try:
-				hero_data = self._hero_parser.parse(lif_file)
-				full_name = f"{hero_data['first_name']} {hero_data['second_name']}"
-				computed_hash = self._compute_hash(full_name)
-
-				if computed_hash == profile.hash:
-					return lif_file
-			except Exception:
-				continue
-
-		raise FileNotFoundError(f"No matching save found for profile {profile.id}")
-

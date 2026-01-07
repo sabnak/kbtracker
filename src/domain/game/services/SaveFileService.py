@@ -1,22 +1,28 @@
+import hashlib
 from pathlib import Path
+from typing import Any
+
 from dependency_injector.wiring import inject, Provide
 
 from src.core.Container import Container
 from src.core.Config import Config
+from src.domain import ProfileEntity
 from src.domain.game.interfaces.ISaveFileService import ISaveFileService
 from src.utils.parsers.save_data.IHeroSaveParser import IHeroSaveParser
+from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
 
 
 class SaveFileService(ISaveFileService):
 
-	@inject
 	def __init__(
 		self,
 		config: Config = Provide[Container.config],
+		shop_parser: IShopInventoryParser = Provide[Container.shop_inventory_parser],
 		hero_parser: IHeroSaveParser = Provide[Container.hero_save_parser]
 	):
 		self._config = config
 		self._hero_parser = hero_parser
+		self._shop_parser = shop_parser
 
 	def list_save_directories(
 		self,
@@ -55,7 +61,7 @@ class SaveFileService(ISaveFileService):
 			game_path: saves[:limit]
 		}
 
-	def scan_save_file(
+	def scan_hero_data(
 		self,
 		game_path: str,
 		save_dir_name: str
@@ -84,3 +90,37 @@ class SaveFileService(ISaveFileService):
 		hero_data['full_name'] = f"{first_name} {second_name}".strip()
 
 		return hero_data
+
+	def scan_shop_inventory(self, save_path: Path) -> dict[str, dict[str, list[dict[str, Any]]]]:
+		return self._shop_parser.parse(save_path)
+
+	def find_profile_most_recent_save(self, profile: ProfileEntity) -> Path:
+		game_dir = profile.save_dir.split('/')[0]
+		save_path = Path(self._config.game_save_path) / game_dir
+
+		lif_files = list(save_path.glob("*/data"))
+		lif_files = sorted(lif_files, key=lambda p: p.stat().st_mtime, reverse=True)[:5]
+
+		for lif_file in lif_files:
+			try:
+				hero_data = self._hero_parser.parse(lif_file)
+				full_name = f"{hero_data['first_name']} {hero_data['second_name']}"
+				computed_hash = self.compute_hash(full_name)
+
+				if computed_hash == profile.hash:
+					return lif_file
+			except Exception:
+				continue
+
+		raise FileNotFoundError(f"No matching save found for profile {profile.id}")
+
+	def compute_hash(self, full_name: str) -> str:
+		"""
+		Compute hash from hero full name
+
+		:param full_name:
+			Hero's full name
+		:return:
+			Hash as MD5 hex string
+		"""
+		return hashlib.md5(full_name.encode('utf-8')).hexdigest()

@@ -1,4 +1,8 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
+from typing import Any
+
+from src.domain import ProfileEntity
 
 
 class ISaveFileService(ABC):
@@ -22,7 +26,7 @@ class ISaveFileService(ABC):
 		pass
 
 	@abstractmethod
-	def scan_save_file(
+	def scan_hero_data(
 		self,
 		game_path: str,
 		save_dir_name: str
@@ -38,3 +42,33 @@ class ISaveFileService(ABC):
 			Campaign data dictionary with campaign_id, full_name, etc.
 		"""
 		pass
+
+	@abstractmethod
+	def find_profile_most_recent_save(self, profile: ProfileEntity) -> Path:
+		"""
+		Find most recent save file matching profile hash
+
+		:param profile:
+			Profile entity
+		:return:
+			Path to matching save file
+		:raises FileNotFoundError:
+			If no matching save found
+		"""
+		...
+
+	@abstractmethod
+	def scan_shop_inventory(self, save_path: Path) -> dict[str, dict[str, list[dict[str, Any]]]]:
+		...
+
+	@abstractmethod
+	def compute_hash(self, full_name: str) -> str:
+		"""
+		Compute hash from hero full name
+
+		:param full_name:
+			Hero's full name
+		:return:
+			Hash as MD5 hex string
+		"""
+		...

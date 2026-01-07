@@ -116,7 +116,7 @@ class ProfileSaveScanner {
 
 		try {
 			const response = await fetch(
-				`/api/games/${this.gameId}/scan-save`,
+				`/api/games/${this.gameId}/scan-hero`,
 				{
 					method: 'POST',
 					headers: {
