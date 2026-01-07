@@ -11,17 +11,18 @@
 			<div class="card-body">
 				<form method="GET" action="/games/{{ game.id }}/items">
 					<input type="hidden" name="id" value="{{ selected_id or '' }}">
-					<div class="row g-3">
-						<!-- Profile Filter -->
-						{% if profiles %}
-						<div class="col-md-3">
+
+					<!-- Profile Filter Row -->
+					{% if profiles %}
+					<div class="row g-3 mb-3">
+						<div class="col-md-4">
 							<label for="profile_id" class="form-label">Profile</label>
 							<select
 								class="form-select"
 								id="profile_id"
 								name="profile_id"
 								onchange="this.form.submit()">
-								<option value="0" {% if selected_profile_id is none %}selected{% endif %}>All Profiles</option>
+								<option value="0" {% if not selected_profile_id or selected_profile_id == 0 %}selected{% endif %}>All Profiles</option>
 								{% for profile in profiles %}
 								<option
 									value="{{ profile.id }}"
@@ -31,8 +32,10 @@
 								{% endfor %}
 							</select>
 						</div>
-						{% endif %}
+					</div>
+					{% endif %}
 
+					<div class="row g-3">
 						<!-- Name Search -->
 						<div class="col-md-5">
 							<label for="query" class="form-label">Item Name</label>
@@ -109,7 +112,7 @@
 						<!-- Buttons -->
 						<div class="col-12">
 							<button class="btn btn-primary" type="submit">Apply Filters</button>
-							<a href="/games/{{ game.id }}/items" class="btn btn-secondary">Clear All</a>
+							<a href="/games/{{ game.id }}/items{% if selected_profile_id %}?profile_id={{ selected_profile_id }}{% endif %}" class="btn btn-secondary">Clear All</a>
 						</div>
 					</div>
 				</form>

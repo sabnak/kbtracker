@@ -339,20 +339,15 @@ async def list_items(
 	# Fetch profiles for filter dropdown
 	profiles = profile_repository.list_all()
 
-	# Determine selected profile (default to first if none selected)
-	# profile_id = 0 means "All Profiles" (no filter)
+	# Determine selected profile (default to "All Profiles")
+	# profile_id = None or 0 means "All Profiles" (no filter)
 	selected_profile_id = None
-	if profiles:
-		if profile_id is None:
-			selected_profile_id = profiles[0].id
-		elif profile_id == 0:
-			selected_profile_id = None
+	if profiles and profile_id is not None and profile_id != 0:
+		selected_profile = next((p for p in profiles if p.id == profile_id), None)
+		if selected_profile:
+			selected_profile_id = profile_id
 		else:
-			selected_profile = next((p for p in profiles if p.id == profile_id), None)
-			if selected_profile:
-				selected_profile_id = profile_id
-			else:
-				return RedirectResponse(url=f"/games/{game_id}/items", status_code=303)
+			return RedirectResponse(url=f"/games/{game_id}/items", status_code=303)
 
 	# Convert string parameters to proper types
 	level = int(level_str) if level_str else None

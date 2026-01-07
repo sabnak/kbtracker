@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pydantic
 
+from src.domain.app.entities.Game import Game
 from src.tools.CLITool import CLITool, T
 from src.domain.game.entities.ProfileEntity import ProfileEntity
 from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
@@ -38,6 +39,7 @@ class ProfileAutoScannerCLI(CLITool[LaunchParams]):
 
 		:return:
 		"""
+		self._log("Starting...")
 		game_service = self._container.game_service()
 		schema_mgmt = self._container.schema_management_service()
 		profile_service = self._container.profile_service()
@@ -46,7 +48,7 @@ class ProfileAutoScannerCLI(CLITool[LaunchParams]):
 		all_games = game_service.list_games()
 
 		if not all_games:
-			print("No games found.")
+			self._log("No games found.")
 			return
 
 		for game in all_games:
@@ -54,21 +56,21 @@ class ProfileAutoScannerCLI(CLITool[LaunchParams]):
 			game_context = GameContext(game.id, schema_name)
 			GAME_CONTEXT.set(game_context)
 
-			print(f"\n=== Processing Game: {game.name} (ID: {game.id}, Schema: {schema_name}) ===")
-
 			all_profiles = profile_service.list_profiles()
 			auto_scan_profiles = [p for p in all_profiles if p.is_auto_scan_enabled]
 
 			if not auto_scan_profiles:
-				print(f"No profiles with auto-scan enabled found for game '{game.name}'.")
+				self._log(f"No profiles with auto-scan enabled found.", game=game)
 				continue
+			self._log(f"{len(auto_scan_profiles)} profiles with auto-scan enabled found.", game=game)
 
 			for profile in auto_scan_profiles:
-				self._process_profile(profile, profile_service, save_file_service)
+				self._process_profile(profile, game, profile_service, save_file_service)
 
 	def _process_profile(
 		self,
 		profile: ProfileEntity,
+		game: Game,
 		profile_service: IProfileService,
 		save_file_service: ISaveFileService
 	) -> None:
@@ -86,37 +88,25 @@ class ProfileAutoScannerCLI(CLITool[LaunchParams]):
 		try:
 			save_path = save_file_service.find_profile_most_recent_save(profile)
 		except FileNotFoundError:
-			print(f"Profile {profile.name}<{profile.id}> save error: no save file found")
+			self._log(f"Profile save error: no save file found", game=game, profile=profile)
 			return
 
 		save_mtime = int(save_path.stat().st_mtime)
 		last_timestamp = profile.last_save_timestamp or 0
 
-		if save_mtime > last_timestamp:
-			result = profile_service.scan_save(profile, save_path)
-			self._print_scan_result(profile, "scanned", result)
-		else:
-			print(f"Profile {profile.name}<{profile.id}> save skipped (outdated). Result: No scan performed")
+		if save_mtime <= last_timestamp:
+			self._log(f"Profile save skipped (outdated). Result: No scan performed", game=game, profile=profile)
 
-	def _print_scan_result(
-		self,
-		profile: ProfileEntity,
-		status: str,
-		result: ProfileSyncResult
-	) -> None:
-		"""
-		Print scan result for a profile
-
-		:param profile:
-			Profile that was scanned
-		:param status:
-			Scan status (scanned, skipped, etc.)
-		:param result:
-			ProfileSyncResult with counts
-		:return:
-		"""
+		result = profile_service.scan_save(profile, save_path)
 		result_str = f"items={result.items}, spells={result.spells}, units={result.units}, garrison={result.garrison}"
-		print(f"Profile {profile.name}<{profile.id}> save {status}. Result: {result_str}")
+		self._log(f"Profile saved scanned. Result: {result_str}", game=game, profile=profile)
+
+	def _log(self, msg: str, game: Game = None, profile: ProfileEntity = None):
+		self._logger.info(
+			f"[Scanner] {f'Game: {game.name}' if game else ''} "
+			f"{f'Profile: {profile.name}<{profile.id}>' if profile else ''} "
+			f"- {msg}"
+		)
 
 
 if __name__ == '__main__':
