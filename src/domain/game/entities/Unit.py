@@ -1,18 +1,17 @@
-from dataclasses import dataclass
+from typing import Any
 
+from src.domain.game.entities.BaseEntity import BaseEntity
 from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.entities.UnitMovetype import UnitMovetype
 
 
-@dataclass
-class Unit:
+class Unit(BaseEntity):
 
-	id: int
 	kb_id: str
 	name: str
 	unit_class: UnitClass
-	main: dict[str, any]
-	params: dict[str, any]
+	main: dict[str, Any]
+	params: dict[str, Any]
 	cost: int | None = None
 	krit: int | None = None
 	race: str | None = None
@@ -28,4 +27,4 @@ class Unit:
 	leadership: int | None = None
 	resistance: dict[str, int] | None = None
 	features: dict[str, dict[str, str]] | None = None
-	attacks: dict[str, dict[str, any]] | None = None
+	attacks: dict[str, dict[str, Any]] | None = None

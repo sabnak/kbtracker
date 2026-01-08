@@ -7,9 +7,11 @@ from src.core.Container import Container
 from src.domain.game.dto.ShopsGroupBy import ShopsGroupBy
 from src.domain.game.entities.Shop import Shop
 from src.domain.game.entities.ShopProductType import ShopProductType
-from src.domain.game.interfaces.ILocationShopFactory import ILocationShopFactory
+from src.domain.game.interfaces.IShopFactory import IShopFactory
 from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.interfaces.IShopInventoryService import IShopInventoryService
+from src.domain.game.groupers.LocationShopGrouper import LocationShopGrouper
+from src.domain.game.groupers.ProductShopGrouper import ProductShopGrouper
 
 
 class ShopInventoryService(IShopInventoryService):
@@ -17,28 +19,52 @@ class ShopInventoryService(IShopInventoryService):
 	def __init__(
 		self,
 		shop_inventory_repository: IShopInventoryRepository = Provide[Container.shop_inventory_repository],
-		location_shop_factory: Factory[ILocationShopFactory] = Provide[Container.location_shop_factory.provider]
+		shop_factory: Factory[IShopFactory] = Provide[Container.shop_factory.provider]
 	):
 		self._shop_inventory_repository = shop_inventory_repository
-		self._location_shop_factory = location_shop_factory
+		self._shop_factory = shop_factory
 
 	def get_shops_by_location(
 		self,
 		profile_id: int,
 		group_by: ShopsGroupBy = ShopsGroupBy.LOCATION,
 		types: typing.Iterable[ShopProductType] = None
-	) -> dict[str, dict[str, list[Shop]]]:
+	) -> dict[int | str, list[Shop]]:
 		"""
-		Get all shops grouped by location with enriched inventory data
+		Get all shops grouped by specified criteria
 
 		:param profile_id:
 			Profile ID to filter inventory
-		:param types:
-			Types to select
 		:param group_by:
-			Group by given key
+			Group by strategy
+		:param types:
+			Types to select (reserved for future use)
 		:return:
-			Dictionary mapping location_kb_id to location data with shops
+			Dictionary mapping group keys to lists of shops
 		"""
 		all_inventory = self._shop_inventory_repository.get_by_profile(profile_id, None)
-		return self._location_shop_factory(products=all_inventory).produce(group_by=group_by)
+		shops = self._shop_factory(products=all_inventory).produce()
+
+		grouper = self._select_grouper(group_by)
+
+		return grouper.group(shops)
+
+	def _select_grouper(self, group_by: ShopsGroupBy):
+		"""
+		Select appropriate grouper based on group_by parameter
+
+		:param group_by:
+			Grouping strategy to use
+		:return:
+			Grouper instance
+		"""
+		if group_by == ShopsGroupBy.LOCATION:
+			return LocationShopGrouper()
+		elif group_by == ShopsGroupBy.ITEM:
+			return ProductShopGrouper(ShopProductType.ITEM)
+		elif group_by == ShopsGroupBy.SPELL:
+			return ProductShopGrouper(ShopProductType.SPELL)
+		elif group_by == ShopsGroupBy.UNIT:
+			return ProductShopGrouper(ShopProductType.UNIT)
+		else:
+			raise ValueError(f"Unsupported group_by value: {group_by}")

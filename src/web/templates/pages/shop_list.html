@@ -37,13 +37,13 @@
 
 		<!-- Shops by Location -->
 		{% if locations %}
-			{% for location_kb_id, location_data in locations.items() %}
+			{% for location_name, shops in locations.items() %}
 			<div class="location-section mb-5">
-				<h2 class="mb-3">{{ location_data['name'] }} <small class="text-muted" style="font-size: 0.5em;">{{ location_kb_id }}</small></h2>
+				<h2 class="mb-3">{{ location_name }}</h2>
 
 				<!-- Shop Grid (2 per row) -->
 				<div class="row">
-					{% for shop in location_data['shops'] %}
+					{% for shop in shops %}
 					<div class="col-md-6 mb-4">
 						<div class="card shop-card">
 							<div class="card-header d-flex justify-content-between align-items-center">

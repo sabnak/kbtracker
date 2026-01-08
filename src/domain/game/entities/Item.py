@@ -1,11 +1,9 @@
-from dataclasses import dataclass
+from src.domain.game.entities.BaseEntity import BaseEntity
 from src.domain.game.entities.Propbit import Propbit
 
 
-@dataclass
-class Item:
+class Item(BaseEntity):
 
-	id: int
 	item_set_id: int | None
 	kb_id: str
 	name: str

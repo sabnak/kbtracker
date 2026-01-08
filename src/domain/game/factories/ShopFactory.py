@@ -1,10 +1,9 @@
 import re
-import typing
+from typing import Any
 
 from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
-from src.domain.game.dto.ShopsGroupBy import ShopsGroupBy
 from src.domain.game.entities.Shop import Shop
 from src.domain.game.entities.ShopInventory import ShopInventory
 from src.domain.game.entities.ShopItem import ShopItem
@@ -15,12 +14,12 @@ from src.domain.game.entities.ShopUnit import ShopUnit
 from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
 from src.domain.game.interfaces.IItemRepository import IItemRepository
 from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
-from src.domain.game.interfaces.ILocationShopFactory import ILocationShopFactory
+from src.domain.game.interfaces.IShopFactory import IShopFactory
 from src.domain.game.interfaces.ISpellRepository import ISpellRepository
 from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 
 
-class LocationShopFactory(ILocationShopFactory):
+class ShopFactory(IShopFactory):
 
 	def __init__(
 		self,
@@ -38,30 +37,25 @@ class LocationShopFactory(ILocationShopFactory):
 		self._spell_repository = spell_repository
 		self._unit_repository = unit_repository
 
-	def produce(
-		self,
-		group_by: ShopsGroupBy = ShopsGroupBy.LOCATION
-	) -> dict[str, dict[str, list[Shop]]]:
+	def produce(self) -> list[Shop]:
 		"""
-		Transform products into shops grouped by location
+		Transform products into a flat list of shops
 
 		:return:
-			Dictionary mapping location_kb_id to location data with shops
+			List of Shop entities
 		"""
 		if not self._products:
-			return {}
+			return []
 
 		atom_maps_dict = self._fetch_atom_maps()
 		location_names_dict = self._fetch_location_names(atom_maps_dict)
 		entities = self._fetch_entities()
 		shops_by_atom_map = self._group_products_by_shop()
 		shops = self._create_shops(shops_by_atom_map, atom_maps_dict, location_names_dict, entities)
-		grouped_by_location = self._group_shops_by_location(shops)
-		self._sort_shops_within_locations(grouped_by_location)
 
-		return dict(sorted(grouped_by_location.items(), key=lambda x: x[1]["name"]))
+		return shops
 
-	def _fetch_atom_maps(self) -> dict[int, any]:
+	def _fetch_atom_maps(self) -> dict[int, Any]:
 		"""
 		Fetch atom maps for all products
 
@@ -217,45 +211,6 @@ class LocationShopFactory(ILocationShopFactory):
 			garrison=garrison_units
 		)
 
-	def _group_shops_by_location(self, shops: list[Shop]) -> dict[str, dict[str, list[Shop]]]:
-		"""
-		Group shops by location
-
-		:param shops:
-			List of Shop entities
-		:return:
-			Dictionary mapping location_kb_id to location data with shops
-		"""
-		grouped_by_location = {}
-		for shop in shops:
-			location_kb_id = shop.location_kb_id
-			location_name = shop.location_name
-
-			if location_kb_id not in grouped_by_location:
-				grouped_by_location[location_kb_id] = {
-					"name": location_name,
-					"shops": []
-				}
-			grouped_by_location[location_kb_id]["shops"].append(shop)
-
-		return grouped_by_location
-
-	def _sort_shops_within_locations(self, grouped_by_location: dict) -> None:
-		"""
-		Sort shops within each location
-
-		:param grouped_by_location:
-			Dictionary of grouped shops (modified in place)
-		"""
-		for location_kb_id in grouped_by_location:
-			grouped_by_location[location_kb_id]["shops"].sort(
-				key=lambda s: (
-					s.shop_loc.name if s.shop_loc and s.shop_loc.name
-					else s.shop_loc.hint if s.shop_loc and s.shop_loc.hint
-					else s.shop_kb_id
-				)
-			)
-
 	def _extract_location_kb_id(self, atom_map_kb_id: str) -> str:
 		"""
 		Extract location kb_id from atom_map kb_id
@@ -269,3 +224,4 @@ class LocationShopFactory(ILocationShopFactory):
 		if match:
 			return match.group(1)
 		return atom_map_kb_id
+

@@ -14,5 +14,5 @@ class IShopInventoryService(abc.ABC):
 		profile_id: int,
 		group_by: ShopsGroupBy = ShopsGroupBy.LOCATION,
 		types: typing.Iterable[ShopProductType] = None
-	) -> dict[str, dict[str, list[Shop]]]:
+	) -> dict[int | str, list[Shop]]:
 		...

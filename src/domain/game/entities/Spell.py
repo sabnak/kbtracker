@@ -1,14 +1,12 @@
-from dataclasses import dataclass
 from typing import Any
 
+from src.domain.game.entities.BaseEntity import BaseEntity
 from src.domain.game.entities.LocStrings import LocStrings
 from src.domain.game.entities.SpellSchool import SpellSchool
 
 
-@dataclass
-class Spell:
+class Spell(BaseEntity):
 
-	id: int
 	kb_id: str
 	profit: int
 	price: int
