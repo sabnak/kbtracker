@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from src.domain.base.repositories.mappers.base import Base
-from src.domain.game.entities.ShopInventoryType import ShopInventoryType
+from src.domain.game.entities.ShopProductType import ShopProductType
 
 
 class UnitMapper(Base):
@@ -35,13 +35,13 @@ class UnitMapper(Base):
 	shop_inventory_sale = relationship(
 		"ShopInventoryMapper",
 		foreign_keys="[ShopInventoryMapper.entity_id]",
-		primaryjoin=f"and_(UnitMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == '{ShopInventoryType.UNIT.value}')",
+		primaryjoin=f"and_(UnitMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == '{ShopProductType.UNIT.value}')",
 		viewonly=True
 	)
 
 	shop_inventory_garrison = relationship(
 		"ShopInventoryMapper",
 		foreign_keys="[ShopInventoryMapper.entity_id]",
-		primaryjoin=f"and_(UnitMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == '{ShopInventoryType.GARRISON.value}')",
+		primaryjoin=f"and_(UnitMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == '{ShopProductType.GARRISON.value}')",
 		viewonly=True
 	)

@@ -48,15 +48,15 @@
 						<div class="card shop-card">
 							<div class="card-header d-flex justify-content-between align-items-center">
 								<strong>
-									{% if shop['shop_loc'] and shop['shop_loc'].name %}
-										{{ shop['shop_loc'].name }}
-									{% elif shop['shop_loc'] and shop['shop_loc'].hint %}
-										{{ shop['shop_loc'].hint | format_text | safe }}
+									{% if shop.shop_loc and shop.shop_loc.name %}
+										{{ shop.shop_loc.name }}
+									{% elif shop.shop_loc and shop.shop_loc.hint %}
+										{{ shop.shop_loc.hint | format_text | safe }}
 									{% else %}
-										{{ shop['shop_kb_id'] }}
+										{{ shop.shop_kb_id }}
 									{% endif %}
 								</strong>
-								<small class="text-muted">{{ shop['shop_kb_id'] }}</small>
+								<small class="text-muted">{{ shop.shop_kb_id }}</small>
 							</div>
 							<div class="card-body p-0">
 								<table class="table table-sm mb-0">
@@ -71,18 +71,18 @@
 										<tr>
 											<!-- Items Column -->
 											<td class="shop-col-3">
-												{% if shop['items'] %}
-												<div class="shop-inventory-list {% if shop['items']|length > 10 %}scrollable{% endif %}">
+												{% if shop.inventory.items %}
+												<div class="shop-inventory-list {% if shop.inventory.items|length > 10 %}scrollable{% endif %}">
 													<ul class="list-unstyled mb-0">
-														{% for item in shop['items'] %}
+														{% for shop_item in shop.inventory.items %}
 														<li class="shop-item" style="display: flex; justify-content: space-between;">
 															<span>
-																<a href="/games/{{ game.id }}/items?id={{ item['id'] }}">{{ item['name'] }}</a>
-																{% if item['count'] > 1 %}
-																<strong>{{ item['count'] }}</strong>
+																<a href="/games/{{ game.id }}/items?id={{ shop_item.item.id }}">{{ shop_item.item.name }}</a>
+																{% if shop_item.count > 1 %}
+																<strong>{{ shop_item.count }}</strong>
 																{% endif %}
 															</span>
-															<span class="shop-cost">{{ item['price']|format_price }}</span>
+															<span class="shop-cost">{{ shop_item.item.price|format_price }}</span>
 														</li>
 														{% endfor %}
 													</ul>
@@ -94,18 +94,18 @@
 
 											<!-- Spells Column -->
 											<td class="shop-col-3">
-												{% if shop['spells'] %}
-												<div class="shop-inventory-list {% if shop['spells']|length > 10 %}scrollable{% endif %}">
+												{% if shop.inventory.spells %}
+												<div class="shop-inventory-list {% if shop.inventory.spells|length > 10 %}scrollable{% endif %}">
 													<ul class="list-unstyled mb-0">
-														{% for spell in shop['spells'] %}
+														{% for shop_spell in shop.inventory.spells %}
 														<li class="shop-item" style="display: flex; justify-content: space-between;">
 															<span>
-																{{ spell['name'] }}
-																{% if spell['count'] > 1 %}
-																<strong>{{ spell['count'] }}</strong>
+																{{ shop_spell.spell.loc.name }}
+																{% if shop_spell.count > 1 %}
+																<strong>{{ shop_spell.count }}</strong>
 																{% endif %}
 															</span>
-															<span class="shop-cost">{{ spell['price']|format_price }}</span>
+															<span class="shop-cost">{{ shop_spell.spell.price|format_price }}</span>
 														</li>
 														{% endfor %}
 													</ul>
@@ -117,18 +117,18 @@
 
 											<!-- Units Column -->
 											<td class="shop-col-3">
-												{% if shop['units'] %}
-												<div class="shop-inventory-list {% if shop['units']|length > 10 %}scrollable{% endif %}">
+												{% if shop.inventory.units %}
+												<div class="shop-inventory-list {% if shop.inventory.units|length > 10 %}scrollable{% endif %}">
 													<ul class="list-unstyled mb-0">
-														{% for unit in shop['units'] %}
+														{% for shop_unit in shop.inventory.units %}
 														<li class="shop-item" style="display: flex; justify-content: space-between;">
 															<span>
-																{{ unit['name'] }}
-																{% if unit['count'] > 1 %}
-																<strong>{{ unit['count'] }}</strong>
+																{{ shop_unit.unit.name }}
+																{% if shop_unit.count > 1 %}
+																<strong>{{ shop_unit.count }}</strong>
 																{% endif %}
 															</span>
-															<span class="shop-cost">{{ unit['cost']|format_price }}</span>
+															<span class="shop-cost">{{ shop_unit.unit.cost|format_price }}</span>
 														</li>
 														{% endfor %}
 													</ul>
@@ -140,19 +140,19 @@
 										</tr>
 									</tbody>
 								</table>
-								{% if shop['garrison'] %}
+								{% if shop.inventory.garrison %}
 								<div class="shop-garrison">
 									<strong>Garrison:</strong>
 									<ul class="list-unstyled mb-0" style="margin-left: 0; padding-left: 0;">
-										{% for unit in shop['garrison'] %}
+										{% for garrison_unit in shop.inventory.garrison %}
 										<li style="display: flex; justify-content: space-between;">
 											<span>
-												{{ unit['name'] }}
-												{% if unit['count'] > 1 %}
-												<strong>{{ unit['count'] }}</strong>
+												{{ garrison_unit.unit.name }}
+												{% if garrison_unit.count > 1 %}
+												<strong>{{ garrison_unit.count }}</strong>
 												{% endif %}
 											</span>
-											<span class="shop-cost">{{ unit['cost']|format_price }}</span>
+											<span class="shop-cost">{{ garrison_unit.unit.cost|format_price }}</span>
 										</li>
 										{% endfor %}
 									</ul>

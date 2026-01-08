@@ -1,9 +1,9 @@
 from enum import Enum
 
 
-class ShopInventoryType(Enum):
+class ShopProductType(Enum):
 	"""
-	Types of shop inventory entities
+	Types of shop product entities
 	"""
 	GARRISON = "garrison"
 	ITEM = "item"

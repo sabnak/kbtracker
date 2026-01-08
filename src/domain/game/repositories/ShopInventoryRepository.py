@@ -1,18 +1,18 @@
 from src.domain.base.repositories.CrudRepository import CrudRepository
-from src.domain.game.entities.ShopInventory import ShopInventory
-from src.domain.game.entities.ShopInventoryType import ShopInventoryType
+from src.domain.game.entities.ShopProduct import ShopProduct
+from src.domain.game.entities.ShopProductType import ShopProductType
 from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.repositories.mappers.ShopInventoryMapper import ShopInventoryMapper
 
 
-class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper], IShopInventoryRepository):
+class ShopInventoryRepository(CrudRepository[ShopProduct, ShopInventoryMapper], IShopInventoryRepository):
 
-	def _entity_to_mapper(self, entity: ShopInventory) -> ShopInventoryMapper:
+	def _entity_to_mapper(self, entity: ShopProduct) -> ShopInventoryMapper:
 		"""
-		Convert ShopInventory entity to ShopInventoryMapper
+		Convert ShopProduct entity to ShopInventoryMapper
 
 		:param entity:
-			ShopInventory entity to convert
+			ShopProduct entity to convert
 		:return:
 			ShopInventoryMapper instance
 		"""
@@ -31,25 +31,25 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 		:return:
 			Entity type name
 		"""
-		return "ShopInventory"
+		return "ShopProduct"
 
-	def _get_duplicate_identifier(self, entity: ShopInventory) -> str:
+	def _get_duplicate_identifier(self, entity: ShopProduct) -> str:
 		"""
-		Get duplicate identifier for ShopInventory
+		Get duplicate identifier for ShopProduct
 
 		:param entity:
-			ShopInventory entity
+			ShopProduct entity
 		:return:
 			Identifier string
 		"""
 		return f"entity_id={entity.entity_id}, type={entity.type.value}, atom_map_id={entity.atom_map_id}, profile_id={entity.profile_id}"
 
-	def create(self, inventory: ShopInventory) -> ShopInventory:
+	def create(self, inventory: ShopProduct) -> ShopProduct:
 		"""
 		Create new shop inventory entry
 
 		:param inventory:
-			ShopInventory entity to create
+			ShopProduct entity to create
 		:return:
 			Created inventory entry
 		"""
@@ -58,8 +58,8 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 	def get_by_profile(
 		self,
 		profile_id: int,
-		type: ShopInventoryType | None = None
-	) -> list[ShopInventory]:
+		type: ShopProductType | None = None
+	) -> list[ShopProduct]:
 		"""
 		Get all inventory entries for a profile, optionally filtered by type
 
@@ -82,9 +82,9 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 	def get_by_entity(
 		self,
 		entity_id: int,
-		type: ShopInventoryType,
+		type: ShopProductType,
 		profile_id: int
-	) -> list[ShopInventory]:
+	) -> list[ShopProduct]:
 		"""
 		Get all shops where an entity is found for a profile
 
@@ -108,7 +108,7 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 	def delete(
 		self,
 		entity_id: int,
-		type: ShopInventoryType,
+		type: ShopProductType,
 		atom_map_id: int,
 		profile_id: int
 	) -> None:
@@ -151,11 +151,11 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 	def update_count(
 		self,
 		entity_id: int,
-		type: ShopInventoryType,
+		type: ShopProductType,
 		atom_map_id: int,
 		profile_id: int,
 		new_count: int
-	) -> ShopInventory:
+	) -> ShopProduct:
 		"""
 		Update count for shop inventory entry
 
@@ -192,16 +192,16 @@ class ShopInventoryRepository(CrudRepository[ShopInventory, ShopInventoryMapper]
 
 			return self._mapper_to_entity(mapper)
 
-	def _mapper_to_entity(self, mapper: ShopInventoryMapper) -> ShopInventory:
+	def _mapper_to_entity(self, mapper: ShopInventoryMapper) -> ShopProduct:
 		"""
-		Convert ShopInventoryMapper to ShopInventory entity
+		Convert ShopInventoryMapper to ShopProduct entity
 
 		:param mapper:
 			ShopInventoryMapper instance to convert
 		:return:
-			ShopInventory entity
+			ShopProduct entity
 		"""
-		return ShopInventory(
+		return ShopProduct(
 			entity_id=mapper.entity_id,
 			type=mapper.type,
 			atom_map_id=mapper.atom_map_id,

@@ -12,8 +12,8 @@ from src.domain.game.interfaces.ISpellRepository import ISpellRepository
 from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
 from src.domain.game.entities.CorruptedProfileData import CorruptedProfileData
-from src.domain.game.entities.ShopInventory import ShopInventory
-from src.domain.game.entities.ShopInventoryType import ShopInventoryType
+from src.domain.game.entities.ShopProduct import ShopProduct
+from src.domain.game.entities.ShopProductType import ShopProductType
 
 
 @dataclass
@@ -126,11 +126,11 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 				missing_kb_ids.append(kb_id)
 				continue
 
-			inventory = ShopInventory(
+			inventory = ShopProduct(
 				entity_id=item.id,
 				atom_map_id=atom_map_id,
 				profile_id=profile_id,
-				type=ShopInventoryType.ITEM,
+				type=ShopProductType.ITEM,
 				count=item_data['quantity']
 			)
 			self._shop_inventory_repository.create(inventory)
@@ -170,11 +170,11 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 				missing_kb_ids.append(kb_id)
 				continue
 
-			inventory = ShopInventory(
+			inventory = ShopProduct(
 				entity_id=spell.id,
 				atom_map_id=atom_map_id,
 				profile_id=profile_id,
-				type=ShopInventoryType.SPELL,
+				type=ShopProductType.SPELL,
 				count=spell_data['quantity']
 			)
 			self._shop_inventory_repository.create(inventory)
@@ -214,11 +214,11 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 				missing_kb_ids.append(kb_id)
 				continue
 
-			inventory = ShopInventory(
+			inventory = ShopProduct(
 				entity_id=unit.id,
 				atom_map_id=atom_map_id,
 				profile_id=profile_id,
-				type=ShopInventoryType.UNIT,
+				type=ShopProductType.UNIT,
 				count=unit_data['quantity']
 			)
 			self._shop_inventory_repository.create(inventory)
@@ -258,11 +258,11 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 				missing_kb_ids.append(kb_id)
 				continue
 
-			inventory = ShopInventory(
+			inventory = ShopProduct(
 				entity_id=unit.id,
 				atom_map_id=atom_map_id,
 				profile_id=profile_id,
-				type=ShopInventoryType.GARRISON,
+				type=ShopProductType.GARRISON,
 				count=unit_data['quantity']
 			)
 			self._shop_inventory_repository.create(inventory)

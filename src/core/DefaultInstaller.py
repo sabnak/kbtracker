@@ -27,6 +27,7 @@ from src.domain.game.repositories.SpellRepository import SpellRepository
 from src.domain.game.factories.LocFactory import LocFactory
 from src.domain.game.factories.SpellFactory import SpellFactory
 from src.domain.game.factories.UnitFactory import UnitFactory
+from src.domain.game.factories.LocationShopFactory import LocationShopFactory
 from src.domain.game.services.AtomMapScannerService import AtomMapScannerService
 from src.domain.app.services.GameService import GameService
 from src.domain.app.services.SettingsService import SettingsService
@@ -104,6 +105,7 @@ class DefaultInstaller:
 		self._container.loc_factory.override(providers.Singleton(LocFactory))
 		self._container.spell_factory.override(providers.Singleton(SpellFactory))
 		self._container.unit_factory.override(providers.Singleton(UnitFactory))
+		self._container.location_shop_factory.override(providers.Factory(LocationShopFactory))
 
 	def _install_save_file_parsers(self):
 		self._container.save_file_decompressor.override(providers.Singleton(SaveFileDecompressor))

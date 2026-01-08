@@ -242,12 +242,12 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 
 			if profile_id is not None:
 				from src.domain.game.repositories.mappers.ShopInventoryMapper import ShopInventoryMapper
-				from src.domain.game.entities.ShopInventoryType import ShopInventoryType
+				from src.domain.game.entities.ShopProductType import ShopProductType
 
 				query = query.join(
 					ShopInventoryMapper,
 					(ShopInventoryMapper.entity_id == ItemMapper.id) &
-					(ShopInventoryMapper.type == ShopInventoryType.ITEM) &
+					(ShopInventoryMapper.type == ShopProductType.ITEM) &
 					(ShopInventoryMapper.profile_id == profile_id)
 				).distinct()
 

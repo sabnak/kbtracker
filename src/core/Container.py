@@ -8,6 +8,7 @@ from src.domain.app.interfaces.IMetaRepository import IMetaRepository
 from src.domain.app.interfaces.ISettingsService import ISettingsService
 from src.domain.game.interfaces.IItemRepository import IItemRepository
 from src.domain.game.interfaces.IItemSetRepository import IItemSetRepository
+from src.domain.game.interfaces.ILocationShopFactory import ILocationShopFactory
 from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.interfaces.IProfileGameDataSyncerService import IProfileGameDataSyncerService
 from src.domain.game.interfaces.IProfileRepository import IProfileRepository
@@ -75,6 +76,7 @@ class Container(containers.DeclarativeContainer):
 	loc_factory = providers.AbstractSingleton()
 	spell_factory = providers.AbstractSingleton()
 	unit_factory = providers.AbstractSingleton()
+	location_shop_factory = providers.AbstractFactory(ILocationShopFactory)
 
 	# Save file parsers
 	save_file_decompressor = providers.AbstractSingleton()

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from src.domain.base.repositories.mappers.base import Base
-from src.domain.game.entities.ShopInventoryType import ShopInventoryType
+from src.domain.game.entities.ShopProductType import ShopProductType
 
 
 class ShopInventoryMapper(Base):
@@ -10,7 +10,7 @@ class ShopInventoryMapper(Base):
 	entity_id = Column(Integer, primary_key=True)
 	atom_map_id = Column(Integer, ForeignKey("atom_map.id"), primary_key=True)
 	profile_id = Column(Integer, ForeignKey("profile.id"), primary_key=True)
-	type = Column(Enum(ShopInventoryType), primary_key=True, nullable=False)
+	type = Column(Enum(ShopProductType), primary_key=True, nullable=False)
 	count = Column(Integer, nullable=False, default=1)
 
 	atom_map = relationship("AtomMapMapper")

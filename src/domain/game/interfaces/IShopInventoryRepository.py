@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from src.domain.game.entities.ShopInventory import ShopInventory
-from src.domain.game.entities.ShopInventoryType import ShopInventoryType
+from src.domain.game.entities.ShopProduct import ShopProduct
+from src.domain.game.entities.ShopProductType import ShopProductType
 
 
 class IShopInventoryRepository(ABC):
 
 	@abstractmethod
-	def create(self, inventory: ShopInventory) -> ShopInventory:
+	def create(self, inventory: ShopProduct) -> ShopProduct:
 		"""
 		Create new shop inventory entry
 
@@ -21,8 +21,8 @@ class IShopInventoryRepository(ABC):
 	def get_by_profile(
 		self,
 		profile_id: int,
-		type: ShopInventoryType | None = None
-	) -> list[ShopInventory]:
+		type: ShopProductType | None = None
+	) -> list[ShopProduct]:
 		"""
 		Get all inventory entries for a profile, optionally filtered by type
 
@@ -39,9 +39,9 @@ class IShopInventoryRepository(ABC):
 	def get_by_entity(
 		self,
 		entity_id: int,
-		type: ShopInventoryType,
+		type: ShopProductType,
 		profile_id: int
-	) -> list[ShopInventory]:
+	) -> list[ShopProduct]:
 		"""
 		Get all shops where an entity is found for a profile
 
@@ -60,7 +60,7 @@ class IShopInventoryRepository(ABC):
 	def delete(
 		self,
 		entity_id: int,
-		type: ShopInventoryType,
+		type: ShopProductType,
 		atom_map_id: int,
 		profile_id: int
 	) -> None:
@@ -94,11 +94,11 @@ class IShopInventoryRepository(ABC):
 	def update_count(
 		self,
 		entity_id: int,
-		type: ShopInventoryType,
+		type: ShopProductType,
 		atom_map_id: int,
 		profile_id: int,
 		new_count: int
-	) -> ShopInventory:
+	) -> ShopProduct:
 		"""
 		Update count for shop inventory entry
 
