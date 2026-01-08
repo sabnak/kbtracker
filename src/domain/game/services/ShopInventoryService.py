@@ -41,7 +41,4 @@ class ShopInventoryService(IShopInventoryService):
 			Dictionary mapping location_kb_id to location data with shops
 		"""
 		all_inventory = self._shop_inventory_repository.get_by_profile(profile_id, None)
-		return self._location_shop_factory(products=all_inventory).produce(
-			group_by=group_by,
-			types=types
-		)
+		return self._location_shop_factory(products=all_inventory).produce(group_by=group_by)

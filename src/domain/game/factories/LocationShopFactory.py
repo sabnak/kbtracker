@@ -40,8 +40,7 @@ class LocationShopFactory(ILocationShopFactory):
 
 	def produce(
 		self,
-		group_by: ShopsGroupBy = ShopsGroupBy.LOCATION,
-		types: typing.Iterable[ShopProductType] = None
+		group_by: ShopsGroupBy = ShopsGroupBy.LOCATION
 	) -> dict[str, dict[str, list[Shop]]]:
 		"""
 		Transform products into shops grouped by location
