@@ -1,7 +1,10 @@
 import re
-from dependency_injector.wiring import inject, Provide
+import typing
+
+from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
+from src.domain.game.dto.ShopsGroupBy import ShopsGroupBy
 from src.domain.game.entities.Shop import Shop
 from src.domain.game.entities.ShopInventory import ShopInventory
 from src.domain.game.entities.ShopItem import ShopItem
@@ -11,15 +14,14 @@ from src.domain.game.entities.ShopSpell import ShopSpell
 from src.domain.game.entities.ShopUnit import ShopUnit
 from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
 from src.domain.game.interfaces.IItemRepository import IItemRepository
-from src.domain.game.interfaces.ILocationShopFactory import ILocationShopFactory
 from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
+from src.domain.game.interfaces.ILocationShopFactory import ILocationShopFactory
 from src.domain.game.interfaces.ISpellRepository import ISpellRepository
 from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 
 
 class LocationShopFactory(ILocationShopFactory):
 
-	@inject
 	def __init__(
 		self,
 		products: list[ShopProduct],
@@ -36,7 +38,11 @@ class LocationShopFactory(ILocationShopFactory):
 		self._spell_repository = spell_repository
 		self._unit_repository = unit_repository
 
-	def produce(self) -> dict[str, dict]:
+	def produce(
+		self,
+		group_by: ShopsGroupBy = ShopsGroupBy.LOCATION,
+		types: typing.Iterable[ShopProductType] = None
+	) -> dict[str, dict[str, list[Shop]]]:
 		"""
 		Transform products into shops grouped by location
 
@@ -212,7 +218,7 @@ class LocationShopFactory(ILocationShopFactory):
 			garrison=garrison_units
 		)
 
-	def _group_shops_by_location(self, shops: list[Shop]) -> dict[str, dict]:
+	def _group_shops_by_location(self, shops: list[Shop]) -> dict[str, dict[str, list[Shop]]]:
 		"""
 		Group shops by location
 

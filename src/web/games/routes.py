@@ -15,7 +15,7 @@ from src.domain.game.interfaces.IProfileService import IProfileService
 from src.domain.game.interfaces.ISpellRepository import ISpellRepository
 from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 from src.domain.game.entities.UnitClass import UnitClass
-from src.domain.game.services.ShopInventoryService import ShopInventoryService
+from src.domain.game.interfaces.IShopInventoryService import IShopInventoryService
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
 from src.domain.base.repositories.CrudRepository import GAME_CONTEXT
@@ -519,7 +519,7 @@ async def list_shops(
 	game_id: int,
 	profile_id: int | None = Query(default=None),
 	game_context: GameContext = Depends(get_game_context),
-	shop_inventory_service: ShopInventoryService = Depends(Provide["shop_inventory_service"]),
+	shop_inventory_service: IShopInventoryService = Depends(Provide["shop_inventory_service"]),
 	profile_repository: IProfileRepository = Depends(Provide["profile_repository"]),
 	game_service: IGameService = Depends(Provide["game_service"])
 ):
