@@ -96,6 +96,7 @@ class ProfileAutoScannerCLI(CLITool[LaunchParams]):
 
 		if save_mtime <= last_timestamp:
 			self._log(f"Profile save skipped (outdated). Result: No scan performed", game=game, profile=profile)
+			return
 
 		result = profile_service.scan_save(profile, save_path)
 		result_str = f"items={result.items}, spells={result.spells}, units={result.units}, garrison={result.garrison}"
