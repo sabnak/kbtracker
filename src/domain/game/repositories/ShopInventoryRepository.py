@@ -1,3 +1,5 @@
+import typing
+
 from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.entities.ShopProduct import ShopProduct
 from src.domain.game.entities.ShopProductType import ShopProductType
@@ -58,14 +60,14 @@ class ShopInventoryRepository(CrudRepository[ShopProduct, ShopInventoryMapper], 
 	def get_by_profile(
 		self,
 		profile_id: int,
-		type: ShopProductType | None = None
+		types: typing.Iterable[ShopProductType] = None
 	) -> list[ShopProduct]:
 		"""
 		Get all inventory entries for a profile, optionally filtered by type
 
 		:param profile_id:
 			Profile ID
-		:param type:
+		:param types:
 			Optional inventory type filter
 		:return:
 			List of inventory entries
@@ -74,8 +76,8 @@ class ShopInventoryRepository(CrudRepository[ShopProduct, ShopInventoryMapper], 
 			query = session.query(ShopInventoryMapper).filter(
 				ShopInventoryMapper.profile_id == profile_id
 			)
-			if type:
-				query = query.filter(ShopInventoryMapper.type == type)
+			if types:
+				query = query.filter(ShopInventoryMapper.type.in_(types))
 			mappers = query.all()
 			return [self._mapper_to_entity(m) for m in mappers]
 

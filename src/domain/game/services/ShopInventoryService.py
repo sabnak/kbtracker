@@ -42,7 +42,7 @@ class ShopInventoryService(IShopInventoryService):
 		:return:
 			Dictionary mapping group keys to lists of shops
 		"""
-		all_inventory = self._shop_inventory_repository.get_by_profile(profile_id, None)
+		all_inventory = self._shop_inventory_repository.get_by_profile(profile_id, types)
 		shops = self._shop_factory(products=all_inventory).produce()
 
 		grouper = self._select_grouper(group_by)

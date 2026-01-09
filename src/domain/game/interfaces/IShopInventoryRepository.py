@@ -1,3 +1,4 @@
+import typing
 from abc import ABC, abstractmethod
 from src.domain.game.entities.ShopProduct import ShopProduct
 from src.domain.game.entities.ShopProductType import ShopProductType
@@ -21,15 +22,15 @@ class IShopInventoryRepository(ABC):
 	def get_by_profile(
 		self,
 		profile_id: int,
-		type: ShopProductType | None = None
+		types: typing.Iterable[ShopProductType] = None
 	) -> list[ShopProduct]:
 		"""
 		Get all inventory entries for a profile, optionally filtered by type
 
 		:param profile_id:
 			Profile ID
-		:param type:
-			Optional inventory type filter
+		:param types:
+			Optional inventory types filter
 		:return:
 			List of inventory entries
 		"""
