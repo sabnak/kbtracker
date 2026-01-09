@@ -24,7 +24,7 @@ class ShopInventoryService(IShopInventoryService):
 		self._shop_inventory_repository = shop_inventory_repository
 		self._shop_factory = shop_factory
 
-	def get_shops_by_location(
+	def get_shops(
 		self,
 		profile_id: int,
 		group_by: ShopsGroupBy = ShopsGroupBy.LOCATION,
@@ -49,7 +49,8 @@ class ShopInventoryService(IShopInventoryService):
 
 		return grouper.group(shops)
 
-	def _select_grouper(self, group_by: ShopsGroupBy):
+	@staticmethod
+	def _select_grouper(group_by: ShopsGroupBy):
 		"""
 		Select appropriate grouper based on group_by parameter
 

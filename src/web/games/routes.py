@@ -553,7 +553,7 @@ async def list_shops(
 			return RedirectResponse(url=f"/games/{game_id}/shops", status_code=303)
 		selected_profile_id = profile_id
 
-	locations = shop_inventory_service.get_shops_by_location(selected_profile_id)
+	locations = shop_inventory_service.get_shops(selected_profile_id)
 
 	return templates.TemplateResponse(
 		"pages/shop_list.html",

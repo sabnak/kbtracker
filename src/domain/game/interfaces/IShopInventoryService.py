@@ -9,7 +9,7 @@ from src.domain.game.entities.ShopProductType import ShopProductType
 class IShopInventoryService(abc.ABC):
 
 	@abc.abstractmethod
-	def get_shops_by_location(
+	def get_shops(
 		self,
 		profile_id: int,
 		group_by: ShopsGroupBy = ShopsGroupBy.LOCATION,
