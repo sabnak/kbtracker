@@ -16,6 +16,8 @@ from src.domain.game.interfaces.ISpellRepository import ISpellRepository
 from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.interfaces.IShopInventoryService import IShopInventoryService
+from src.domain.game.dto.ShopsGroupBy import ShopsGroupBy
+from src.domain.game.entities.ShopProductType import ShopProductType
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
 from src.domain.base.repositories.CrudRepository import GAME_CONTEXT
@@ -325,7 +327,8 @@ async def list_items(
 	game_context: GameContext = Depends(get_game_context),
 	item_tracking_service: ItemService = Depends(Provide["item_service"]),
 	game_service: IGameService = Depends(Provide["game_service"]),
-	profile_repository: IProfileRepository = Depends(Provide["profile_repository"])
+	profile_repository: IProfileRepository = Depends(Provide["profile_repository"]),
+	shop_inventory_service: IShopInventoryService = Depends(Provide["shop_inventory_service"])
 ):
 	"""
 	List all items for a game with set information and advanced filters
@@ -348,6 +351,15 @@ async def list_items(
 			selected_profile_id = profile_id
 		else:
 			return RedirectResponse(url=f"/games/{game_id}/items", status_code=303)
+
+	# Fetch shop data for items (only when profile selected)
+	shops_by_item = {}
+	if selected_profile_id:
+		shops_by_item = shop_inventory_service.get_shops(
+			profile_id=selected_profile_id,
+			group_by=ShopsGroupBy.ITEM,
+			types=(ShopProductType.ITEM,)
+		)
 
 	# Convert string parameters to proper types
 	level = int(level_str) if level_str else None
@@ -412,6 +424,8 @@ async def list_items(
 			# Profile filter
 			"profiles": profiles,
 			"selected_profile_id": selected_profile_id,
+			# Shop data
+			"shops_by_item": shops_by_item,
 			# Error handling
 			"error": error_message
 		}

@@ -174,6 +174,7 @@
 							</span>
 						</th>
 						<th style="max-width: 100px;">Type</th>
+						<th>Shops</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -242,6 +243,30 @@
 							<small>{{ ', '.join(item.propbits[:3]) }}</small>
 							{% else %}
 							-
+							{% endif %}
+						</td>
+						<td>
+							{% if selected_profile_id %}
+								{% set item_shops = shops_by_item.get(item.id, []) %}
+								{% if item_shops %}
+									<small>
+										{% for shop in item_shops %}
+											{% set shop_item = shop.inventory.get_item(item.id) %}
+											{{ shop.location_name }}
+											{% if shop.shop_loc and shop.shop_loc.name %}
+												/ {{ shop.shop_loc.name }}
+											{% elif shop.shop_kb_id %}
+												/ {{ shop.shop_kb_id }}
+											{% endif %}
+											{% if shop_item.count > 1 %} <strong>{{ shop_item.count }}</strong>{% endif %}
+											{% if not loop.last %}<br>{% endif %}
+										{% endfor %}
+									</small>
+								{% else %}
+									<small class="text-muted">-</small>
+								{% endif %}
+							{% else %}
+								<small class="text-muted">Select profile</small>
 							{% endif %}
 						</td>
 					</tr>
