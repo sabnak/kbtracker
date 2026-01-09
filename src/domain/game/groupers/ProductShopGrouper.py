@@ -57,9 +57,9 @@ class ProductShopGrouper(IShopGrouper):
 			for shop_unit in shop.inventory.units:
 				product_ids.add(shop_unit.unit.id)
 
-		elif self._product_type == ShopProductType.GARRISON:
 			for garrison_unit in shop.inventory.garrison:
-				product_ids.add(garrison_unit.unit.id)
+				if garrison_unit.unit.id not in product_ids:
+					product_ids.add(garrison_unit.unit.id)
 
 		return product_ids
 

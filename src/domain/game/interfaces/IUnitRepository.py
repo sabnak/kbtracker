@@ -98,3 +98,33 @@ class IUnitRepository(ABC):
 			Dictionary mapping ID to Unit
 		"""
 		pass
+
+	@abstractmethod
+	def search_with_filters(
+		self,
+		unit_class: UnitClass | None = None,
+		sort_by: str = "name",
+		sort_order: str = "asc",
+		profile_id: int | None = None,
+		min_cost: int | None = None,
+		max_cost: int | None = None
+	) -> list[Unit]:
+		"""
+		Search units with filter criteria
+
+		:param unit_class:
+			Optional unit class filter
+		:param sort_by:
+			Field to sort by
+		:param sort_order:
+			Sort direction (asc, desc)
+		:param profile_id:
+			Optional profile ID filter (shows only units in shop inventory for profile)
+		:param min_cost:
+			Optional minimum cost filter
+		:param max_cost:
+			Optional maximum cost filter
+		:return:
+			List of units matching all provided criteria
+		"""
+		pass

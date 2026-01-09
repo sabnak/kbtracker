@@ -25,7 +25,7 @@ from src.domain.base.repositories.CrudRepository import GAME_CONTEXT
 from src.domain.game.services.ItemService import ItemService
 from src.domain.game.services.ScannerService import ScannerService
 from src.web.dependencies.game_context import get_game_context, GameContext
-from src.web.games.forms import GameCreateForm, ScanForm
+from src.web.games.forms import GameCreateForm, ScanForm, UnitFilterForm
 from src.web.template_filters import register_filters
 
 router = APIRouter(tags=["games"])
@@ -440,18 +440,33 @@ async def list_units(
 	game_id: int,
 	sort_by: str = Query(default="name"),
 	sort_order: str = Query(default="asc"),
+	filters: UnitFilterForm = Depends(),
 	game_context: GameContext = Depends(get_game_context),
 	unit_repository: IUnitRepository = Depends(Provide["unit_repository"]),
-	game_service: IGameService = Depends(Provide["game_service"])
+	game_service: IGameService = Depends(Provide["game_service"]),
+	profile_repository: IProfileRepository = Depends(Provide["profile_repository"]),
+	shop_inventory_service: IShopInventoryService = Depends(Provide["shop_inventory_service"])
 ):
 	"""
-	List all chesspiece units for a game
+	List all chesspiece units for a game with optional profile and cost filters
 	"""
 	GAME_CONTEXT.set(game_context)
 
 	game = game_service.get_game(game_id)
 	if not game:
 		return RedirectResponse(url="/games", status_code=303)
+
+	# Fetch profiles
+	profiles = profile_repository.list_all()
+
+	# Validate profile_id
+	selected_profile_id = None
+	if filters.profile_id:
+		selected_profile = next((p for p in profiles if p.id == filters.profile_id), None)
+		if selected_profile:
+			selected_profile_id = filters.profile_id
+		else:
+			return RedirectResponse(url=f"/games/{game_id}/units", status_code=303)
 
 	# Validate sort parameters
 	allowed_sort_fields = ["name", "level", "race", "cost", "leadership", "attack", "defense", "speed", "initiative"]
@@ -460,12 +475,30 @@ async def list_units(
 	allowed_sort_orders = ["asc", "desc"]
 	sort_direction = sort_order.lower() if sort_order.lower() in allowed_sort_orders else "asc"
 
-	# Fetch chesspiece units only
-	units = unit_repository.list_all(
+	# Fetch units with filters
+	units = unit_repository.search_with_filters(
+		unit_class=UnitClass.CHESSPIECE,
 		sort_by=sort_field,
 		sort_order=sort_direction,
-		unit_class=UnitClass.CHESSPIECE
+		profile_id=selected_profile_id,
+		min_cost=filters.min_cost,
+		max_cost=filters.max_cost
 	)
+
+	# Fetch shop data (only when profile selected)
+	shops_for_sale = {}
+	shops_garrison = {}
+	if selected_profile_id:
+		shops_for_sale = shop_inventory_service.get_shops(
+			profile_id=selected_profile_id,
+			group_by=ShopsGroupBy.UNIT,
+			types=(ShopProductType.UNIT,)
+		)
+		shops_garrison = shop_inventory_service.get_shops(
+			profile_id=selected_profile_id,
+			group_by=ShopsGroupBy.UNIT,
+			types=(ShopProductType.GARRISON,)
+		)
 
 	return templates.TemplateResponse(
 		"pages/unit_list.html",
@@ -474,7 +507,13 @@ async def list_units(
 			"game": game,
 			"units": units,
 			"sort_by": sort_field,
-			"sort_order": sort_direction
+			"sort_order": sort_direction,
+			"profiles": profiles,
+			"selected_profile_id": selected_profile_id,
+			"shops_for_sale": shops_for_sale,
+			"shops_garrison": shops_garrison,
+			"min_cost": filters.min_cost,
+			"max_cost": filters.max_cost
 		}
 	)
 

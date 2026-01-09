@@ -7,6 +7,68 @@
 	<div class="col-md-12">
 		<h1 class="mb-4">Units for {{ game.name }}</h1>
 
+		<!-- Profile and Cost Filter Row -->
+		{% if profiles %}
+		<div class="card mb-4">
+			<div class="card-body">
+				<form method="GET" action="/games/{{ game.id }}/units">
+					<!-- Preserve sort parameters -->
+					<input type="hidden" name="sort_by" value="{{ sort_by }}">
+					<input type="hidden" name="sort_order" value="{{ sort_order }}">
+
+					<div class="row g-3">
+						<div class="col-md-3">
+							<label for="profile_id" class="form-label">Profile</label>
+							<select
+								class="form-select"
+								id="profile_id"
+								name="profile_id"
+								onchange="this.form.submit()">
+								<option value="0" {% if not selected_profile_id or selected_profile_id == 0 %}selected{% endif %}>All Profiles</option>
+								{% for profile in profiles %}
+								<option
+									value="{{ profile.id }}"
+									{% if selected_profile_id == profile.id %}selected{% endif %}>
+									{{ profile.name }}
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+
+						<div class="col-md-3">
+							<label for="min_cost" class="form-label">Min Cost</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_cost"
+								name="min_cost"
+								min="0"
+								placeholder="Min"
+								value="{{ min_cost if min_cost else '' }}">
+						</div>
+
+						<div class="col-md-3">
+							<label for="max_cost" class="form-label">Max Cost</label>
+							<input
+								type="number"
+								class="form-control"
+								id="max_cost"
+								name="max_cost"
+								min="0"
+								placeholder="Max"
+								value="{{ max_cost if max_cost else '' }}">
+						</div>
+
+						<div class="col-md-3 d-flex align-items-end">
+							<button class="btn btn-primary me-2" type="submit">Apply</button>
+							<a href="/games/{{ game.id }}/units{% if selected_profile_id %}?profile_id={{ selected_profile_id }}{% endif %}" class="btn btn-secondary">Clear</a>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		{% endif %}
+
 		<!-- Units Count Info -->
 		{% if units %}
 		<div class="alert alert-info">
@@ -75,6 +137,7 @@
 							</span>
 						</th>
 						<th>Attributes</th>
+						<th>Shops</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -159,6 +222,58 @@
 								{% endif %}
 							</div>
 						</td>
+						<td>
+							{% if selected_profile_id %}
+								<!-- For Sale Section -->
+								{% set unit_for_sale_shops = shops_for_sale.get(unit.id, []) %}
+								{% if unit_for_sale_shops %}
+									<div class="mb-2">
+										<strong class="text-muted" style="font-size: 0.85em;">For Sale:</strong><br>
+										<small>
+											{% for shop in unit_for_sale_shops %}
+												{% set shop_unit = shop.inventory.get_unit(unit.id) %}
+												{{ shop.location_name }}
+												{% if shop.shop_loc and shop.shop_loc.name %}
+													/ {{ shop.shop_loc.name }}
+												{% elif shop.shop_kb_id %}
+													/ {{ shop.shop_kb_id }}
+												{% endif %}
+												{% if shop_unit.count > 1 %} <strong>x{{ shop_unit.count }}</strong>{% endif %}
+												{% if not loop.last %}<br>{% endif %}
+											{% endfor %}
+										</small>
+									</div>
+								{% endif %}
+
+								<!-- Garrison Section -->
+								{% set unit_garrison_shops = shops_garrison.get(unit.id, []) %}
+								{% if unit_garrison_shops %}
+									<div>
+										<strong class="text-muted" style="font-size: 0.85em;">Garrison:</strong><br>
+										<small>
+											{% for shop in unit_garrison_shops %}
+												{% set garrison_unit = shop.inventory.get_garrison_unit(unit.id) %}
+												{{ shop.location_name }}
+												{% if shop.shop_loc and shop.shop_loc.name %}
+													/ {{ shop.shop_loc.name }}
+												{% elif shop.shop_kb_id %}
+													/ {{ shop.shop_kb_id }}
+												{% endif %}
+												{% if garrison_unit.count > 1 %} <strong>x{{ garrison_unit.count }}</strong>{% endif %}
+												{% if not loop.last %}<br>{% endif %}
+											{% endfor %}
+										</small>
+									</div>
+								{% endif %}
+
+								<!-- Show dash only if both sections are empty -->
+								{% if not unit_for_sale_shops and not unit_garrison_shops %}
+									<small class="text-muted">-</small>
+								{% endif %}
+							{% else %}
+								<small class="text-muted">Select profile</small>
+							{% endif %}
+						</td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -207,6 +322,14 @@
 				// Update URL parameters
 				currentUrl.searchParams.set('sort_by', sortField);
 				currentUrl.searchParams.set('sort_order', newSortOrder);
+
+				// Preserve filter parameters
+				const profileId = currentUrl.searchParams.get('profile_id');
+				const minCost = currentUrl.searchParams.get('min_cost');
+				const maxCost = currentUrl.searchParams.get('max_cost');
+				if (profileId) currentUrl.searchParams.set('profile_id', profileId);
+				if (minCost) currentUrl.searchParams.set('min_cost', minCost);
+				if (maxCost) currentUrl.searchParams.set('max_cost', maxCost);
 
 				// Navigate to new URL
 				window.location.href = currentUrl.toString();

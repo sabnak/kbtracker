@@ -177,6 +177,64 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			).all()
 			return [self._mapper_to_entity(mapper) for mapper in mappers]
 
+	def search_with_filters(
+		self,
+		unit_class: UnitClass | None = None,
+		sort_by: str = "name",
+		sort_order: str = "asc",
+		profile_id: int | None = None,
+		min_cost: int | None = None,
+		max_cost: int | None = None
+	) -> list[Unit]:
+		"""
+		Search units with filter criteria
+
+		:param unit_class:
+			Optional unit class filter
+		:param sort_by:
+			Field to sort by
+		:param sort_order:
+			Sort direction (asc, desc)
+		:param profile_id:
+			Optional profile ID filter (shows only units in shop inventory for profile)
+		:param min_cost:
+			Optional minimum cost filter
+		:param max_cost:
+			Optional maximum cost filter
+		:return:
+			List of units matching all provided criteria
+		"""
+		with self._get_session() as session:
+			query = session.query(UnitMapper)
+
+			# Filter by profile_id (JOIN with shop inventory)
+			if profile_id is not None:
+				from src.domain.game.repositories.mappers.ShopInventoryMapper import ShopInventoryMapper
+				from src.domain.game.entities.ShopProductType import ShopProductType
+
+				query = query.join(
+					ShopInventoryMapper,
+					(ShopInventoryMapper.entity_id == UnitMapper.id) &
+					(ShopInventoryMapper.type.in_([ShopProductType.UNIT, ShopProductType.GARRISON])) &
+					(ShopInventoryMapper.profile_id == profile_id)
+				).distinct()
+
+			# Filter by unit class
+			if unit_class:
+				query = query.filter(UnitMapper.unit_class == unit_class.value)
+
+			# Filter by cost range
+			if min_cost is not None:
+				query = query.filter(UnitMapper.cost >= min_cost)
+			if max_cost is not None:
+				query = query.filter(UnitMapper.cost <= max_cost)
+
+			# Apply sorting
+			query = self._apply_sorting(query, sort_by, sort_order)
+
+			mappers = query.all()
+			return [self._mapper_to_entity(mapper) for mapper in mappers]
+
 	def get_by_ids(self, ids: list[int]) -> dict[int, Unit]:
 		"""
 		Batch fetch units by IDs
