@@ -212,6 +212,62 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 
 			return result
 
+	def search_with_filters(
+		self,
+		school: SpellSchool | None = None,
+		sort_by: str = "name",
+		sort_order: str = "asc",
+		profile_id: int | None = None
+	) -> list[Spell]:
+		"""
+		Search spells with filter criteria
+
+		:param school:
+			Optional spell school filter
+		:param sort_by:
+			Field to sort by (name, school, mana, crystal)
+		:param sort_order:
+			Sort direction (asc, desc)
+		:param profile_id:
+			Optional profile ID filter (shows only spells in shop inventory for profile)
+		:return:
+			List of spells matching all provided criteria
+		"""
+		with self._get_session() as session:
+			query = session.query(SpellMapper)
+
+			# Filter by profile_id (JOIN with shop inventory)
+			if profile_id is not None:
+				from src.domain.game.repositories.mappers.ShopInventoryMapper import ShopInventoryMapper
+				from src.domain.game.entities.ShopProductType import ShopProductType
+
+				query = query.join(
+					ShopInventoryMapper,
+					(ShopInventoryMapper.entity_id == SpellMapper.id) &
+					(ShopInventoryMapper.type == ShopProductType.SPELL) &
+					(ShopInventoryMapper.profile_id == profile_id)
+				).distinct()
+
+			# Filter by school
+			if school:
+				query = query.filter(SpellMapper.school == school.value)
+
+			# For name sorting, sort in Python after fetching localizations
+			if sort_by != "name":
+				query = self._apply_sorting(query, sort_by, sort_order)
+
+			mappers = query.all()
+			spells = [self._mapper_to_entity(m) for m in mappers]
+
+			# Sort by localized name in Python if requested
+			if sort_by == "name":
+				spells.sort(
+					key=lambda s: (s.loc.name.lower() if s.loc and s.loc.name else ""),
+					reverse=(sort_order.lower() == "desc")
+				)
+
+			return spells
+
 	def _apply_sorting(self, query, sort_by: str, sort_order: str):
 		"""
 		Apply ORDER BY clause to query

@@ -86,3 +86,27 @@ class ISpellRepository(ABC):
 			Dictionary mapping ID to Spell
 		"""
 		pass
+
+	@abstractmethod
+	def search_with_filters(
+		self,
+		school: SpellSchool | None = None,
+		sort_by: str = "name",
+		sort_order: str = "asc",
+		profile_id: int | None = None
+	) -> list[Spell]:
+		"""
+		Search spells with filter criteria
+
+		:param school:
+			Optional spell school filter
+		:param sort_by:
+			Field to sort by (name, school, mana, crystal)
+		:param sort_order:
+			Sort direction (asc, desc)
+		:param profile_id:
+			Optional profile ID filter (shows only spells in shop inventory for profile)
+		:return:
+			List of spells matching all provided criteria
+		"""
+		pass

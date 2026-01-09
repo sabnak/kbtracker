@@ -7,6 +7,58 @@
 	<div class="col-md-12">
 		<h1 class="mb-4">Spells for {{ game.name }}</h1>
 
+		<!-- Profile and School Filter Row -->
+		{% if profiles %}
+		<div class="card mb-4">
+			<div class="card-body">
+				<form method="GET" action="/games/{{ game.id }}/spells">
+					<!-- Preserve sort parameters -->
+					<input type="hidden" name="sort_by" value="{{ sort_by }}">
+					<input type="hidden" name="sort_order" value="{{ sort_order }}">
+
+					<div class="row g-3">
+						<div class="col-md-4">
+							<label for="profile_id" class="form-label">Profile</label>
+							<select
+								class="form-select"
+								id="profile_id"
+								name="profile_id"
+								onchange="this.form.submit()">
+								<option value="0" {% if not selected_profile_id or selected_profile_id == 0 %}selected{% endif %}>All Profiles</option>
+								{% for profile in profiles %}
+								<option
+									value="{{ profile.id }}"
+									{% if selected_profile_id == profile.id %}selected{% endif %}>
+									{{ profile.name }}
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+
+						<div class="col-md-4">
+							<label for="school" class="form-label">School</label>
+							<select class="form-select" id="school" name="school">
+								<option value="">All Schools</option>
+								{% for school_enum in all_schools %}
+								<option
+									value="{{ school_enum.name }}"
+									{% if selected_school == school_enum %}selected{% endif %}>
+									{{ school_enum.name|replace('_', ' ')|title }}
+								</option>
+								{% endfor %}
+							</select>
+						</div>
+
+						<div class="col-md-4 d-flex align-items-end">
+							<button class="btn btn-primary me-2" type="submit">Apply</button>
+							<a href="/games/{{ game.id }}/spells{% if selected_profile_id %}?profile_id={{ selected_profile_id }}{% endif %}" class="btn btn-secondary">Clear</a>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		{% endif %}
+
 		<!-- Spells Count Info -->
 		{% if spells %}
 		<div class="alert alert-info">
@@ -64,6 +116,7 @@
 							</span>
 						</th>
 						<th>Effect</th>
+						<th>Shops</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -118,6 +171,30 @@
 								{% endif %}
 							{% else %}
 								<span class="text-muted">No description available</span>
+							{% endif %}
+						</td>
+						<td>
+							{% if selected_profile_id %}
+								{% set spell_shops = shops_by_spell.get(spell.id, []) %}
+								{% if spell_shops %}
+									<small>
+										{% for shop in spell_shops %}
+											{% set shop_spell = shop.inventory.get_spell(spell.id) %}
+											{{ shop.location_name }}
+											{% if shop.shop_loc and shop.shop_loc.name %}
+												/ {{ shop.shop_loc.name }}
+											{% elif shop.shop_kb_id %}
+												/ {{ shop.shop_kb_id }}
+											{% endif %}
+											{% if shop_spell.count > 1 %} <strong>{{ shop_spell.count }}</strong>{% endif %}
+											{% if not loop.last %}<br>{% endif %}
+										{% endfor %}
+									</small>
+								{% else %}
+									<small class="text-muted">-</small>
+								{% endif %}
+							{% else %}
+								<small class="text-muted">Select profile</small>
 							{% endif %}
 						</td>
 					</tr>

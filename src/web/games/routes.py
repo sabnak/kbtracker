@@ -15,6 +15,7 @@ from src.domain.game.interfaces.IProfileService import IProfileService
 from src.domain.game.interfaces.ISpellRepository import ISpellRepository
 from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 from src.domain.game.entities.UnitClass import UnitClass
+from src.domain.game.entities.SpellSchool import SpellSchool
 from src.domain.game.interfaces.IShopInventoryService import IShopInventoryService
 from src.domain.game.dto.ShopsGroupBy import ShopsGroupBy
 from src.domain.game.entities.ShopProductType import ShopProductType
@@ -485,9 +486,13 @@ async def list_spells(
 	game_id: int,
 	sort_by: str = Query(default="name"),
 	sort_order: str = Query(default="asc"),
+	profile_id: int | None = Query(default=None),
+	school: str = Query(default=""),
 	game_context: GameContext = Depends(get_game_context),
 	spell_repository: ISpellRepository = Depends(Provide["spell_repository"]),
-	game_service: IGameService = Depends(Provide["game_service"])
+	game_service: IGameService = Depends(Provide["game_service"]),
+	profile_repository: IProfileRepository = Depends(Provide["profile_repository"]),
+	shop_inventory_service: IShopInventoryService = Depends(Provide["shop_inventory_service"])
 ):
 	"""
 	List all spells for a game (excluding hidden spells)
@@ -498,6 +503,19 @@ async def list_spells(
 	if not game:
 		return RedirectResponse(url="/games", status_code=303)
 
+	# Fetch profiles for filter dropdown
+	profiles = profile_repository.list_all()
+
+	# Determine selected profile (default to "All Profiles")
+	# profile_id = None or 0 means "All Profiles" (no filter)
+	selected_profile_id = None
+	if profiles and profile_id is not None and profile_id != 0:
+		selected_profile = next((p for p in profiles if p.id == profile_id), None)
+		if selected_profile:
+			selected_profile_id = profile_id
+		else:
+			return RedirectResponse(url=f"/games/{game_id}/spells", status_code=303)
+
 	# Validate sort parameters
 	allowed_sort_fields = ["name", "school", "mana", "crystal"]
 	sort_field = sort_by if sort_by in allowed_sort_fields else "name"
@@ -505,14 +523,34 @@ async def list_spells(
 	allowed_sort_orders = ["asc", "desc"]
 	sort_direction = sort_order.lower() if sort_order.lower() in allowed_sort_orders else "asc"
 
-	# Fetch all spells with sorting
-	all_spells = spell_repository.list_all(
+	# Parse school filter
+	selected_school = None
+	if school:
+		try:
+			selected_school = SpellSchool[school.upper()]
+		except KeyError:
+			# Invalid school name, ignore filter
+			pass
+
+	# Fetch spells with filters
+	all_spells = spell_repository.search_with_filters(
+		school=selected_school,
 		sort_by=sort_field,
-		sort_order=sort_direction
+		sort_order=sort_direction,
+		profile_id=selected_profile_id
 	)
 
 	# Filter hidden spells
 	spells = [spell for spell in all_spells if spell.hide == 0]
+
+	# Fetch shop data for spells (only when profile selected)
+	shops_by_spell = {}
+	if selected_profile_id:
+		shops_by_spell = shop_inventory_service.get_shops(
+			profile_id=selected_profile_id,
+			group_by=ShopsGroupBy.SPELL,
+			types=(ShopProductType.SPELL,)
+		)
 
 	return templates.TemplateResponse(
 		"pages/spells.html",
@@ -521,7 +559,12 @@ async def list_spells(
 			"game": game,
 			"spells": spells,
 			"sort_by": sort_field,
-			"sort_order": sort_direction
+			"sort_order": sort_direction,
+			"profiles": profiles,
+			"selected_profile_id": selected_profile_id,
+			"shops_by_spell": shops_by_spell,
+			"all_schools": list(SpellSchool),
+			"selected_school": selected_school
 		}
 	)
 
