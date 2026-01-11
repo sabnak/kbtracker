@@ -253,11 +253,7 @@
 										{% for shop in item_shops %}
 											{% set shop_item = shop.inventory.get_item(item.id) %}
 											{{ shop.location_name }}
-											{% if shop.shop_loc and shop.shop_loc.name %}
-												/ {{ shop.shop_loc.name }}
-											{% elif shop.shop_kb_id %}
-												/ {{ shop.shop_kb_id }}
-											{% endif %}
+											/ {{ shop.shop_loc.name or shop.shop_loc.hint|format_text|safe }}
 											{% if shop_item.count > 1 %} <strong>{{ shop_item.count }}</strong>{% endif %}
 											{% if not loop.last %}<br>{% endif %}
 										{% endfor %}
