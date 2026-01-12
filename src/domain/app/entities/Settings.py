@@ -7,4 +7,4 @@ class Settings(pydantic.BaseModel):
 
 	scan_frequency: int = 5
 	saves_limit: int = 10
-	language: AppLanguage = AppLanguage.ENGLISH
+	language: AppLanguage = AppLanguage.RUSSIAN
