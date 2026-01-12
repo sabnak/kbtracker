@@ -1,0 +1,54 @@
+services:
+  app:
+    image: ghcr.io/sabnak/kbtracker:latest
+    container_name: kbtracker_app
+    environment:
+      DATABASE_URL: postgresql://kbtracker:kbtracker@postgres:5432/kbtracker
+      GAME_DATA_PATH: /data
+      TZ: Europe/Moscow
+    volumes:
+      # REQUIRED: Edit these paths to match your system
+      # Windows example: - C:/Games/Kings Bounty Darkside:/data/Darkside:ro
+      # Linux example:   - /home/user/games/darkside:/data/Darkside:ro
+      #
+      # Game installation directory (read-only):
+      - /path/to/your/game/Darkside:/data/Darkside:ro
+      #
+      # Save files directory (read-only):
+      # Windows: Usually in "Documents/my games/Kings Bounty The Dark Side/$$save/base/darkside"
+      # Linux: Check game documentation
+      - /path/to/your/saves/Darkside:/saves/Darkside:ro
+    ports:
+      - "9333:80"
+    networks:
+      - kbtracker-network
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16
+    container_name: kbtracker_postgres
+    environment:
+      POSTGRES_USER: kbtracker
+      POSTGRES_PASSWORD: kbtracker
+      POSTGRES_DB: kbtracker
+      TZ: Europe/Moscow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - kbtracker-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kbtracker"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  kbtracker-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
