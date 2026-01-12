@@ -231,10 +231,10 @@ msgid "ui.item.all_sets_no_set"
 msgstr "Все наборы / Без набора"
 
 msgid "ui.item.apply_filters"
-msgstr "Применить фильтры"
+msgstr "Применить"
 
 msgid "ui.item.clear_all"
-msgstr "Очистить всё"
+msgstr "Очистить"
 
 msgid "ui.item.found_items_count"
 msgstr "Найдено %(count)d предмет(ов)"
