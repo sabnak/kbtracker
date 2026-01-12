@@ -107,6 +107,18 @@ Universal parser for King's Bounty `.atom` file format. Covers:
 
 **Use this when**: You need to parse `.atom` files or `.txt` files containing atom-formatted data (items, spells, effects, medals, units, etc.) into Python dictionaries and lists.
 
+### [TRANSLATION_WORKFLOW.md](TRANSLATION_WORKFLOW.md)
+Application internationalization (i18n) workflow using Babel. Covers:
+- Translation file structure (.pot, .po, .mo)
+- Workflow commands (extract, update, compile)
+- Adding new translatable strings
+- Translation key conventions (ui.*, game.*)
+- Git rules (what to commit, what to ignore)
+- Automatic compilation on container startup
+- Language configuration
+
+**Use this when**: You need to add new UI translations, update existing translations, or understand the i18n workflow for the application.
+
 ## Quick Reference
 
 | Resource Type | Archive Pattern | Database Table | Documentation |

@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import HTTPException, RequestValidationError
@@ -23,7 +25,25 @@ def create_app() -> FastAPI:
 	installer = DefaultInstaller(container)
 	installer.install()
 
-	app = FastAPI(title="King's Bounty Tracker", version="1.0.0")
+	@asynccontextmanager
+	async def lifespan(app: FastAPI):
+		from src.web.profiles.routes import templates as profiles_templates
+		from src.web.games.routes import templates as games_templates
+		from src.web.settings.routes import templates as settings_templates
+		from src.web.template_filters import install_translations
+
+		translation_service = container.translation_service()
+
+		for templates in [games_templates, settings_templates, profiles_templates]:
+			install_translations(templates, translation_service)
+
+		yield
+
+	app = FastAPI(
+		title="King's Bounty Tracker",
+		version="1.0.0",
+		lifespan=lifespan
+	)
 	app.container = container
 
 	# Add request context middleware

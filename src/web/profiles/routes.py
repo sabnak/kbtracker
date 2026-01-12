@@ -7,10 +7,12 @@ from src.domain.app.interfaces.IGameService import IGameService
 from src.domain.game.interfaces.IProfileService import IProfileService
 from src.web.dependencies.game_context import get_game_context, GameContext
 from src.domain.base.repositories.CrudRepository import GAME_CONTEXT
+from src.web.template_filters import register_filters
 
 
 router = APIRouter(tags=["profiles"])
 templates = Jinja2Templates(directory="src/web/templates")
+register_filters(templates)
 
 
 @router.get("/", response_class=HTMLResponse)

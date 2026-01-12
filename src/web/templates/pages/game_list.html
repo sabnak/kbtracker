@@ -6,8 +6,8 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="d-flex justify-content-between align-items-center mb-4">
-			<h1>Games</h1>
-			<a href="/games/create" class="btn btn-primary">Create New Game</a>
+			<h1>{{ _('ui.games') }}</h1>
+			<a href="/games/create" class="btn btn-primary">{{ _('ui.create_new_game') }}</a>
 		</div>
 
 		{% if games %}
@@ -18,31 +18,31 @@
 					<div class="card-body">
 						<h5 class="card-title">{{ game.name }}</h5>
 						<p class="card-text">
-							<strong>Path:</strong> {{ game.path }}
+							<strong>{{ _('ui.path') }}:</strong> {{ game.path }}
 						</p>
 						{% if game.last_scan_time %}
 						<p class="card-text">
 							<small class="text-muted">
-								Last scanned: {{ game.last_scan_time.strftime('%Y-%m-%d %H:%M') }}
+								{{ _('ui.last_scanned') }}: {{ game.last_scan_time.strftime('%Y-%m-%d %H:%M') }}
 							</small>
 						</p>
 						{% endif %}
 						<div class="btn-group w-100 mb-2" role="group">
-							<a href="/games/{{ game.id }}/items" class="btn btn-sm btn-outline-secondary">Items</a>
-							<a href="/games/{{ game.id }}/units" class="btn btn-sm btn-outline-secondary">Units</a>
-							<a href="/games/{{ game.id }}/spells" class="btn btn-sm btn-outline-secondary">Spells</a>
-							<a href="/games/{{ game.id }}/shops" class="btn btn-sm btn-outline-secondary">Shops</a>
+							<a href="/games/{{ game.id }}/items" class="btn btn-sm btn-outline-secondary">{{ _('ui.items') }}</a>
+							<a href="/games/{{ game.id }}/units" class="btn btn-sm btn-outline-secondary">{{ _('ui.units') }}</a>
+							<a href="/games/{{ game.id }}/spells" class="btn btn-sm btn-outline-secondary">{{ _('ui.spells') }}</a>
+							<a href="/games/{{ game.id }}/shops" class="btn btn-sm btn-outline-secondary">{{ _('ui.shops') }}</a>
 						</div>
 						<div class="btn-group w-100 mb-2" role="group">
 							{% if game.last_scan_time is none %}
-							<a href="/games/{{ game.id }}/scan" class="btn btn-sm btn-outline-primary">Scan</a>
+							<a href="/games/{{ game.id }}/scan" class="btn btn-sm btn-outline-primary">{{ _('ui.scan') }}</a>
 							{% else %}
-							<a href="/games/{{ game.id }}/scan" class="btn btn-sm btn-outline-warning">Rescan</a>
+							<a href="/games/{{ game.id }}/scan" class="btn btn-sm btn-outline-warning">{{ _('ui.rescan') }}</a>
 							{% endif %}
-							<a href="/games/{{ game.id }}/profiles" class="btn btn-sm btn-outline-info">Profiles</a>
+							<a href="/games/{{ game.id }}/profiles" class="btn btn-sm btn-outline-info">{{ _('ui.profiles') }}</a>
 						</div>
-						<form method="POST" action="/games/{{ game.id }}/delete" onsubmit="return confirm('Are you sure? This will delete all profiles and data for this game!');">
-							<button type="submit" class="btn btn-sm btn-danger w-100">Delete</button>
+						<form method="POST" action="/games/{{ game.id }}/delete" onsubmit="return confirm('{{ _('ui.delete_game_confirmation') }}');">
+							<button type="submit" class="btn btn-sm btn-danger w-100">{{ _('ui.delete') }}</button>
 						</form>
 					</div>
 				</div>
@@ -51,7 +51,7 @@
 		</div>
 		{% else %}
 		<div class="alert alert-info">
-			No games found. Create your first game to get started!
+			{{ _('ui.no_games_found') }}
 		</div>
 		{% endif %}
 	</div>

@@ -31,6 +31,7 @@ from src.domain.game.factories.ShopFactory import ShopFactory
 from src.domain.game.services.AtomMapScannerService import AtomMapScannerService
 from src.domain.app.services.GameService import GameService
 from src.domain.app.services.SettingsService import SettingsService
+from src.domain.app.services.TranslationService import TranslationService
 from src.domain.game.services.ItemsAndSetsScannerService import ItemsAndSetsScannerService
 from src.domain.game.services.ItemService import ItemService
 from src.domain.game.services.ShopInventoryService import ShopInventoryService
@@ -81,6 +82,7 @@ class DefaultInstaller:
 
 		self._container.game_service.override(providers.Factory(GameService))
 		self._container.settings_service.override(providers.Factory(SettingsService))
+		self._container.translation_service.override(providers.Factory(TranslationService))
 		self._container.profile_service.override(providers.Factory(ProfileService))
 		self._container.profile_data_syncer_service.override(providers.Factory(ProfileGameDataSyncerService))
 		self._container.save_file_service.override(providers.Factory(SaveFileService))

@@ -2,6 +2,8 @@ import re
 
 from fastapi.templating import Jinja2Templates
 
+from src.domain.app.interfaces.ITranslationService import ITranslationService
+
 
 def format_price(value: int | None) -> str:
 	"""
@@ -101,3 +103,24 @@ def register_filters(templates: Jinja2Templates) -> None:
 	"""
 	templates.env.filters["format_price"] = format_price
 	templates.env.filters["format_text"] = format_text
+
+
+def install_translations(
+	templates: Jinja2Templates,
+	translation_service: ITranslationService
+) -> None:
+	"""
+	Install translation functions in Jinja2 environment
+
+	:param templates:
+		Jinja2Templates instance
+	:param translation_service:
+		Translation service for i18n
+	:return:
+	"""
+	templates.env.add_extension('jinja2.ext.i18n')
+	templates.env.install_gettext_callables(
+		gettext=translation_service.gettext,
+		ngettext=lambda s, p, n: translation_service.gettext(s if n == 1 else p),
+		newstyle=True
+	)

@@ -28,3 +28,7 @@ docker-compose.override.yml
 
 # Temporary files
 tmp/
+
+# Translations
+*.mo
+*.pot

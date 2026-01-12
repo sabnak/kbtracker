@@ -8,9 +8,11 @@ from src.domain.app.entities.AppLanguage import AppLanguage
 from src.domain.app.entities.Settings import Settings
 from src.domain.app.interfaces.ISettingsService import ISettingsService
 from src.web.settings.forms import SettingsForm
+from src.web.template_filters import register_filters
 
 router = APIRouter()
 templates = Jinja2Templates(directory="src/web/templates")
+register_filters(templates)
 
 
 @router.get("/settings", response_class=HTMLResponse)

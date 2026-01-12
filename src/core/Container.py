@@ -6,6 +6,7 @@ from src.domain.app.interfaces.IGameRepository import IGameRepository
 from src.domain.app.interfaces.IGameService import IGameService
 from src.domain.app.interfaces.IMetaRepository import IMetaRepository
 from src.domain.app.interfaces.ISettingsService import ISettingsService
+from src.domain.app.interfaces.ITranslationService import ITranslationService
 from src.domain.game.interfaces.IItemRepository import IItemRepository
 from src.domain.game.interfaces.IItemSetRepository import IItemSetRepository
 from src.domain.game.interfaces.IShopFactory import IShopFactory
@@ -50,6 +51,7 @@ class Container(containers.DeclarativeContainer):
 	game_path_service = providers.AbstractFactory(IGamePathService)
 	game_service = providers.AbstractFactory(IGameService)
 	settings_service = providers.AbstractFactory(ISettingsService)
+	translation_service = providers.AbstractFactory(ITranslationService)
 	profile_service = providers.AbstractFactory(IProfileService)
 	profile_data_syncer_service = providers.AbstractFactory(IProfileGameDataSyncerService)
 	save_file_service = providers.AbstractFactory(ISaveFileService)

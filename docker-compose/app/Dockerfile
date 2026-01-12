@@ -17,4 +17,7 @@ COPY docker-compose/app/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker-compose/app/s /usr/local/bin/s
 RUN chmod +x /usr/local/bin/s
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+COPY docker-compose/app/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+CMD ["/entrypoint.sh"]
