@@ -44,6 +44,7 @@ from src.domain.game.repositories.ProfilePostgresRepository import ProfilePostgr
 from src.domain.game.services.ProfileService import ProfileService
 from src.domain.game.services.SaveFileService import SaveFileService
 from src.utils.db import create_db_engine
+from src.domain.base.repositories.mappers.base import Base
 from src.utils.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
 from src.utils.parsers.save_data.ShopInventoryParser import ShopInventoryParser
 from src.utils.parsers.save_data.HeroSaveParser import HeroSaveParser
@@ -67,9 +68,26 @@ class DefaultInstaller:
 		database_url = os.getenv("DATABASE_URL")
 
 		db_engine = create_db_engine(database_url)
+
+		self._init_public_schema_tables(db_engine)
+
 		self._container.db_session_factory.override(
 			providers.Factory(sessionmaker, autocommit=False, autoflush=False, bind=db_engine)
 		)
+
+	def _init_public_schema_tables(self, engine) -> None:
+		"""
+		Initialize public schema tables (game and meta)
+
+		:param engine:
+			SQLAlchemy engine
+		:return:
+		"""
+		from src.domain.app.repositories.mappers.GameMapper import GameMapper
+		from src.domain.app.repositories.mappers.MetaMapper import MetaMapper
+
+		tables = [GameMapper.__table__, MetaMapper.__table__]
+		Base.metadata.create_all(bind=engine, tables=tables)
 
 	def _install_services(self):
 

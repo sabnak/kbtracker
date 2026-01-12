@@ -15,15 +15,14 @@ def create_db_engine(database_url: str):
 	return create_engine(database_url, echo=False)
 
 
-def init_db(database_url: str) -> None:
+def init_db(engine) -> None:
 	"""
 	Initialize database and create all tables
 
-	:param database_url:
-		Database connection URL
+	:param engine:
+		Database engine
 	:return:
 	"""
-	engine = create_db_engine(database_url)
 	Base.metadata.create_all(bind=engine)
 
 
