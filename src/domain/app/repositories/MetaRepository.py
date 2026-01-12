@@ -34,7 +34,7 @@ class MetaRepository(CrudRepository[pydantic.BaseModel, MetaMapper], IMetaReposi
 				MetaMapper.name == name.value
 			).one_or_none()
 
-			entity_dict = entity.model_dump()
+			entity_dict = entity.model_dump(mode='json')
 
 			if mapper:
 				mapper.value = entity_dict

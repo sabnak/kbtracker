@@ -55,6 +55,32 @@
 						</div>
 					</div>
 
+					<div class="mb-3">
+						<div class="row align-items-center">
+							<div class="col-md-4">
+								<label for="language" class="form-label mb-0">Language</label>
+							</div>
+							<div class="col-md-8">
+								<select
+									class="form-select {% if errors.get('language') %}is-invalid{% endif %}"
+									id="language"
+									name="language"
+									required>
+									{% for lang in AppLanguage %}
+									<option value="{{ lang.name }}"
+										{% if lang == settings.language %}selected{% endif %}>
+										{{ lang.value }}
+									</option>
+									{% endfor %}
+								</select>
+								{% if errors.get('language') %}
+								<div class="invalid-feedback">{{ errors.get('language') }}</div>
+								{% endif %}
+								<div class="form-text">Application display language</div>
+							</div>
+						</div>
+					</div>
+
 					<div class="row">
 						<div class="col-md-8 offset-md-4">
 							<div class="d-flex gap-2">
