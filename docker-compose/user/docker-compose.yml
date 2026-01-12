@@ -8,15 +8,14 @@ services:
       TZ: Europe/Moscow
     volumes:
       # REQUIRED: Edit these paths to match your system
-      # Windows example: - C:/Games/Kings Bounty Darkside:/data/Darkside:ro
-      # Linux example:   - /home/user/games/darkside:/data/Darkside:ro
+      # Every path on new line! Every line starts with "- "!
       #
       # Game installation directory (read-only):
+      # Example: - C:/Games/Kings Bounty Darkside:/data/Darkside:ro
       - /path/to/your/game/Darkside:/data/Darkside:ro
       #
       # Save files directory (read-only):
-      # Windows: Usually in "Documents/my games/Kings Bounty The Dark Side/$$save/base/darkside"
-      # Linux: Check game documentation
+      # Usually in "C:/users/<USER_NAME>/Documents/my games/Kings Bounty The Dark Side/$$save/base/darkside"
       - /path/to/your/saves/Darkside:/saves/Darkside:ro
     ports:
       - "9333:80"
