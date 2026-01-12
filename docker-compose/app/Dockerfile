@@ -1,3 +1,6 @@
+# Declare MODE argument for multi-stage build selection
+ARG MODE=prod
+
 # Base stage: Common setup for both dev and prod
 FROM python:3.14-slim AS base
 
@@ -37,7 +40,6 @@ FROM base AS prod
 COPY src/ ./src/
 
 # Final stage: Select dev or prod based on MODE build argument
-ARG MODE=prod
 FROM ${MODE} AS final
 
 EXPOSE 80
