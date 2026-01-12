@@ -10,7 +10,7 @@
 
 ### Шаг 1: Скачайте docker-compose.yml
 
-Скачайте файл: [docker-compose.yml](https://raw.githubusercontent.com/sabnak/kbtracker/main/docker-compose.user.yml)
+Скачайте файл: [docker-compose.yml](https://raw.githubusercontent.com/sabnak/kbtracker/main/docker-compose/user/docker-compose.yml)
 
 Сохраните в папку на вашем компьютере (например, `C:\KBTracker\`)
 
@@ -118,7 +118,7 @@ You only need **Docker Desktop for Windows**: [Download Docker Desktop](https://
 
 ### Step 1: Download docker-compose.yml
 
-Download this file: [docker-compose.yml](https://raw.githubusercontent.com/sabnak/kbtracker/main/docker-compose.user.yml)
+Download this file: [docker-compose.yml](https://raw.githubusercontent.com/sabnak/kbtracker/main/docker-compose/user/docker-compose.yml)
 
 Save it to a folder on your computer (e.g., `C:\KBTracker\`)
 
