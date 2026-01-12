@@ -198,6 +198,8 @@ docker-compose down -v
 
 ## Поддержка
 
+ТГ автора: https://t.me/yithiann (ник: yithian)
+ТГ группы, где можно меня найти: https://t.me/KB_chat2 (ник: yithian)
 Сообщайте о проблемах: https://github.com/sabnak/kbtracker/issues
 
 ---
