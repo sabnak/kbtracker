@@ -57,7 +57,7 @@ King's Bounty Tracker помогает игрокам отслеживать м�
 
 Скачайте файл: [docker-compose.yml](https://raw.githubusercontent.com/sabnak/kbtracker/main/docker-compose/user/docker-compose.yml)
 
-Сохраните в папку на вашем компьютере (например, `C:\KBTracker\`)
+Сохраните в папку на вашем компьютере (например, `C:/Games/KBTracker`)
 
 ### Шаг 2: Укажите пути к игре
 
@@ -74,13 +74,22 @@ King's Bounty Tracker помогает игрокам отслеживать м�
 #### Пример:
 ```yaml
 - C:/Program Files (x86)/Steam/steamapps/common/Darkside:/data/Darkside:ro
-- C:/Users/BORIS/Documents/my games/Kings Bounty The Dark Side/$$$$save/base/darkside:/saves/Darkside:ro
+- C:/Users/BORIS/Documents/my games/Kings Bounty The Dark Side/$$save/base/darkside:/saves/Darkside:ro
 ```
 
 **Важно:**
 - Используйте прямые слэши `/` (не обратные `\`)
 - Сохраните `:ro` в конце (это делает папки доступными только для чтения)
-- **Знак доллара `$` нужно удваивать:** если в пути есть `$save`, пишите `$$save` → `$$$$save` в docker-compose.yml
+- **Знак доллара `$` нужно удваивать:** если в пути есть `$save` пишите `$$save` в docker-compose.yml
+- Путь к сохранениям должен вести к самим директориям, которые содержат сохранения игры.
+  - Для Dark Side: `.../Documents/my gamesKings Bounty The Dark Side/$$save/base/darkside`
+  - Для Crossworlds: `.../Documents/my games/Kings Bounty Crossworlds/$$save`
+- Если в пути есть пробелы, возьмите весь путь в одинарные кавычки
+- Можно добавлять несколько путей к играм и сохранениям. Формат всегда один:
+```
+- путь_на_вашем_компьютере:/data/название_игры:ro
+```
+  - "название_игры" при этом может быть любым, главное сохраните "/data/" в начале. Позднее вы сможете выбрать нужную игру в интерфейсе
 
 ### Шаг 3: Запустите приложение
 
@@ -217,7 +226,7 @@ You only need **Docker Desktop for Windows**: [Download Docker Desktop](https://
 
 Download this file: [docker-compose.yml](https://raw.githubusercontent.com/sabnak/kbtracker/main/docker-compose/user/docker-compose.yml)
 
-Save it to a folder on your computer (e.g., `C:\KBTracker\`)
+Save it to a folder on your computer (e.g., `C:/Games/KBTracker`)
 
 ### Step 2: Edit Volume Paths
 
@@ -234,13 +243,13 @@ Find these lines:
 #### Example:
 ```yaml
 - C:/Program Files (x86)/Steam/steamapps/common/Darkside:/data/Darkside:ro
-- C:/Users/BORIS/Documents/my games/Kings Bounty The Dark Side/$$$$save/base/darkside:/saves/Darkside:ro
+- C:/Users/BORIS/Documents/my games/Kings Bounty The Dark Side/$$save/base/darkside:/saves/Darkside:ro
 ```
 
 **Important:**
 - Use forward slashes `/` (not backslashes `\`)
 - Keep `:ro` at the end (makes volumes read-only)
-- **Dollar sign `$` must be doubled:** if path contains `$save`, write `$$save` → `$$$$save` in docker-compose.yml
+- **Dollar sign `$` must be doubled:** if path contains `$save` write `$$save` in docker-compose.yml
 
 ### Step 3: Start the Application
 
