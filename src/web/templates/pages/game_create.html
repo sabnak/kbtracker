@@ -1,39 +1,39 @@
 {% extends "base.html" %}
 
-{% block title %}Create Game - King's Bounty Tracker{% endblock %}
+{% block title %}{{ _('ui.game.create_new_game') }} - {{ _('ui.navigation.brand_name') }}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
 	<div class="col-md-6">
-		<h1 class="mb-4">Create New Game</h1>
+		<h1 class="mb-4">{{ _('ui.game.create_new_game') }}</h1>
 
 		<div class="card">
 			<div class="card-body">
 				<form method="POST" action="/games/create">
 					<div class="mb-3">
-						<label for="path" class="form-label">Game Path</label>
+						<label for="path" class="form-label">{{ _('ui.game.path') }}</label>
 						<select class="form-select" id="path" name="path" required onchange="updateNameField()">
-							<option value="">Select game path...</option>
+							<option value="">{{ _('ui.game.select_path_placeholder') }}</option>
 							{% if available_game_paths %}
 								{% for path in available_game_paths %}
 								<option value="{{ path }}">{{ path }}</option>
 								{% endfor %}
 							{% else %}
-								<option value="" disabled>No game paths found in /data directory</option>
+								<option value="" disabled>{{ _('ui.game.no_paths_found') }}</option>
 							{% endif %}
 						</select>
-						<div class="form-text">Select the game directory from /data</div>
+						<div class="form-text">{{ _('ui.game.path_help') }}</div>
 					</div>
 
 					<div class="mb-3">
-						<label for="name" class="form-label">Game Name</label>
+						<label for="name" class="form-label">{{ _('ui.game.name') }}</label>
 						<input type="text" class="form-control" id="name" name="name" required>
-						<div class="form-text">Display name for this game (defaults to path)</div>
+						<div class="form-text">{{ _('ui.game.name_help') }}</div>
 					</div>
 
 					<div class="d-grid gap-2">
-						<button type="submit" class="btn btn-primary">Create Game</button>
-						<a href="/games" class="btn btn-secondary">Cancel</a>
+						<button type="submit" class="btn btn-primary">{{ _('ui.game.create_button') }}</button>
+						<a href="/games" class="btn btn-secondary">{{ _('ui.common.cancel') }}</a>
 					</div>
 				</form>
 			</div>

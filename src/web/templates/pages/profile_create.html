@@ -1,29 +1,29 @@
 {% extends "base.html" %}
 
-{% block title %}Create Profile - King's Bounty Tracker{% endblock %}
+{% block title %}{{ _('ui.profile.create_profile_title') }} - {{ _('ui.navigation.brand_name') }}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
 	<div class="col-md-8" data-game-id="{{ game.id }}">
-		<h1 class="mb-4">Create New Profile</h1>
+		<h1 class="mb-4">{{ _('ui.profile.create_new_profile') }}</h1>
 
 		<div class="card">
 			<div class="card-body">
 				<!-- Save File Selection Section -->
 				<div class="mb-4">
-					<h5 class="card-title">1. Select Save File</h5>
+					<h5 class="card-title">{{ _('ui.profile.step_select_save_file') }}</h5>
 					<div class="row g-3">
 						<div class="col-md-8">
-							<label for="save-select" class="form-label">Save Directory</label>
+							<label for="save-select" class="form-label">{{ _('ui.profile.save_directory_label') }}</label>
 							<select id="save-select" class="form-select">
-								<option value="">-- Select a save file --</option>
+								<option value="">{{ _('ui.profile.select_save_placeholder') }}</option>
 							</select>
-							<div class="form-text">Select a save file to auto-populate campaign data</div>
+							<div class="form-text">{{ _('ui.profile.select_save_help') }}</div>
 						</div>
 						<div class="col-md-4">
 							<label class="form-label">&nbsp;</label>
 							<button type="button" id="scan-button" class="btn btn-primary w-100 d-block" disabled>
-								Scan Save File
+								{{ _('ui.profile.scan_save_file_button') }}
 							</button>
 						</div>
 					</div>
@@ -34,18 +34,18 @@
 
 				<!-- Profile Form -->
 				<form method="POST" action="/games/{{ game.id }}/profiles">
-					<h5 class="card-title mb-3">2. Profile Information</h5>
+					<h5 class="card-title mb-3">{{ _('ui.profile.step_profile_information') }}</h5>
 
 					<div class="mb-3">
-						<label for="game" class="form-label">Game</label>
+						<label for="game" class="form-label">{{ _('ui.profile.game_label') }}</label>
 						<input type="text" class="form-control" id="game" value="{{ game.name }} ({{ game.path }})" readonly>
-						<div class="form-text">Creating profile for this game</div>
+						<div class="form-text">{{ _('ui.profile.creating_profile_for_game') }}</div>
 					</div>
 
 					<div class="mb-3">
-						<label for="name" class="form-label">Profile Name</label>
+						<label for="name" class="form-label">{{ _('ui.profile.profile_name_label') }}</label>
 						<input type="text" class="form-control" id="name" name="name" required autofocus>
-						<div class="form-text">A friendly name for this game playthrough</div>
+						<div class="form-text">{{ _('ui.profile.profile_name_help') }}</div>
 					</div>
 
 					<!-- Hidden fields for campaign data -->
@@ -55,10 +55,10 @@
 					<div class="d-grid gap-2">
 						<span id="create-profile-wrapper" class="d-inline-block w-100"
 						      data-bs-toggle="tooltip" data-bs-placement="top"
-						      title="Please scan a save file first">
-							<button type="submit" id="create-profile-button" class="btn btn-success w-100" disabled>Create Profile</button>
+						      title="{{ _('ui.profile.scan_save_first_tooltip') }}">
+							<button type="submit" id="create-profile-button" class="btn btn-success w-100" disabled>{{ _('ui.profile.create_profile_button') }}</button>
 						</span>
-						<a href="/games/{{ game.id }}/profiles" class="btn btn-secondary">Cancel</a>
+						<a href="/games/{{ game.id }}/profiles" class="btn btn-secondary">{{ _('ui.common.cancel') }}</a>
 					</div>
 				</form>
 			</div>

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Items - King's Bounty Tracker{% endblock %}
+{% block title %}{{ _('ui.items') }} - {{ _('ui.navigation.brand_name') }}{% endblock %}
 
 {% block content %}
 <div class="row">
 	<div class="col-md-12" data-game-id="{{ game.id }}">
-		<h1 class="mb-4">Items for {{ game.name }}</h1>
+		<h1 class="mb-4">{{ _('ui.item.title_for') }} {{ game.name }}</h1>
 
 		<div class="card mb-4">
 			<div class="card-body">
@@ -16,13 +16,13 @@
 					{% if profiles %}
 					<div class="row g-3 mb-3">
 						<div class="col-md-4">
-							<label for="profile_id" class="form-label">Profile</label>
+							<label for="profile_id" class="form-label">{{ _('ui.item.profile_label') }}</label>
 							<select
 								class="form-select"
 								id="profile_id"
 								name="profile_id"
 								onchange="this.form.submit()">
-								<option value="0" {% if not selected_profile_id or selected_profile_id == 0 %}selected{% endif %}>All Profiles</option>
+								<option value="0" {% if not selected_profile_id or selected_profile_id == 0 %}selected{% endif %}>{{ _('ui.item.all_profiles') }}</option>
 								{% for profile in profiles %}
 								<option
 									value="{{ profile.id }}"
@@ -38,24 +38,24 @@
 					<div class="row g-3">
 						<!-- Name Search -->
 						<div class="col-md-5">
-							<label for="query" class="form-label">Item Name</label>
+							<label for="query" class="form-label">{{ _('ui.item.item_name_label') }}</label>
 							<input
 								type="text"
 								class="form-control"
 								id="query"
 								name="query"
-								placeholder="Search by name..."
+								placeholder="{{ _('ui.item.search_by_name') }}"
 								value="{{ query }}">
 						</div>
 
 						<!-- Level Filter -->
 						<div class="col-md-2">
-							<label for="level" class="form-label">Level</label>
+							<label for="level" class="form-label">{{ _('ui.item.level_label') }}</label>
 							<select class="form-select" id="level" name="level">
-								<option value="">All Levels</option>
+								<option value="">{{ _('ui.item.all_levels') }}</option>
 								{% for lvl in available_levels %}
 								<option value="{{ lvl }}" {% if selected_level == lvl %}selected{% endif %}>
-									Level {{ lvl }}
+									{{ _('ui.item.level_value') }} {{ lvl }}
 								</option>
 								{% endfor %}
 							</select>
@@ -63,10 +63,10 @@
 
 						<!-- Type (Propbit) Filter -->
 						<div class="col-md-2">
-							<label class="form-label">Type</label>
+							<label class="form-label">{{ _('ui.item.type_label') }}</label>
 							<div class="dropdown w-100">
 								<button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="propbitDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-									<span id="propbitButtonText">All Types</span>
+									<span id="propbitButtonText">{{ _('ui.item.all_types') }}</span>
 								</button>
 								<div class="dropdown-menu w-100" aria-labelledby="propbitDropdown" style="max-height: 900px; overflow-y: auto;">
 									<div class="px-3 py-2">
@@ -85,22 +85,22 @@
 
 						<!-- Hint Regex Search -->
 						<div class="col-md-6">
-							<label for="hint_regex" class="form-label">Description Pattern (Regex)</label>
+							<label for="hint_regex" class="form-label">{{ _('ui.item.description_pattern_label') }}</label>
 							<input
 								type="text"
 								class="form-control"
 								id="hint_regex"
 								name="hint_regex"
-								placeholder="e.g., .*magic.*|.*spell.*"
+								placeholder="{{ _('ui.item.regex_placeholder') }}"
 								value="{{ hint_regex }}">
-							<div class="form-text">PostgreSQL regex pattern (case-insensitive)</div>
+							<div class="form-text">{{ _('ui.item.regex_help') }}</div>
 						</div>
 
 						<!-- Item Set Filter -->
 						<div class="col-md-6">
-							<label for="item_set_id" class="form-label">Item Set</label>
+							<label for="item_set_id" class="form-label">{{ _('ui.item.item_set_label') }}</label>
 							<select class="form-select" id="item_set_id" name="item_set_id">
-								<option value="">All Sets / No Set</option>
+								<option value="">{{ _('ui.item.all_sets_no_set') }}</option>
 								{% for item_set in available_sets %}
 								<option value="{{ item_set.id }}" {% if selected_set_id == item_set.id %}selected{% endif %}>
 									{{ item_set.name }}
@@ -111,8 +111,8 @@
 
 						<!-- Buttons -->
 						<div class="col-12">
-							<button class="btn btn-primary" type="submit">Apply Filters</button>
-							<a href="/games/{{ game.id }}/items{% if selected_profile_id %}?profile_id={{ selected_profile_id }}{% endif %}" class="btn btn-secondary">Clear All</a>
+							<button class="btn btn-primary" type="submit">{{ _('ui.item.apply_filters') }}</button>
+							<a href="/games/{{ game.id }}/items{% if selected_profile_id %}?profile_id={{ selected_profile_id }}{% endif %}" class="btn btn-secondary">{{ _('ui.item.clear_all') }}</a>
 						</div>
 					</div>
 				</form>
@@ -122,16 +122,16 @@
 		<!-- Items Count Info -->
 		{% if items_with_sets %}
 		<div class="alert alert-info">
-			<strong>Found {{ items_with_sets|length }} item(s)</strong>
+			<strong>{{ _('ui.item.found_items_count', count=items_with_sets|length) }}</strong>
 			{% if query or selected_level or hint_regex or selected_propbits or selected_set_id or selected_profile_id %}
-				matching your filter criteria.
+				{{ _('ui.item.matching_filter_criteria') }}
 			{% endif %}
 		</div>
 		{% endif %}
 
 		{% if error %}
 		<div class="alert alert-danger">
-			<strong>Error:</strong> {{ error }}
+			<strong>{{ _('ui.item.error_label') }}:</strong> {{ error }}
 		</div>
 		{% endif %}
 
@@ -142,7 +142,7 @@
 					<tr>
 						<th class="sortable {% if sort_by == 'name' %}sorted sorted-{{ sort_order }}{% endif %}"
 							data-sort="name">
-							Name
+							{{ _('ui.item.name_header') }}
 							<span class="sort-indicator">
 								{% if sort_by == 'name' %}
 									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
@@ -153,7 +153,7 @@
 						</th>
 						<th class="sortable {% if sort_by == 'price' %}sorted sorted-{{ sort_order }}{% endif %}"
 							data-sort="price">
-							Price
+							{{ _('ui.item.price_header') }}
 							<span class="sort-indicator">
 								{% if sort_by == 'price' %}
 									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
@@ -164,7 +164,7 @@
 						</th>
 						<th class="sortable {% if sort_by == 'level' %}sorted sorted-{{ sort_order }}{% endif %}"
 							data-sort="level">
-							Level
+							{{ _('ui.item.level_header') }}
 							<span class="sort-indicator">
 								{% if sort_by == 'level' %}
 									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
@@ -173,8 +173,8 @@
 								{% endif %}
 							</span>
 						</th>
-						<th style="max-width: 100px;">Type</th>
-						<th>Shops</th>
+						<th style="max-width: 100px;">{{ _('ui.item.type_header') }}</th>
+						<th>{{ _('ui.shops') }}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -186,14 +186,14 @@
 							{% if item.hint %}
 							<small class="text-muted">{{ item.hint|format_text|safe }}</small>
 							{% else %}
-							<small class="text-muted">No description</small>
+							<small class="text-muted">{{ _('ui.item.no_description') }}</small>
 							{% endif %}
 
 							{% if item_data.item_set %}
 							<div class="set-info">
 								{% if item_data.item_set.hint %}
 								<div class="set-hint">
-									<strong>Set: {{ item_data.item_set.name }}</strong><br>
+									<strong>{{ _('ui.item.set_label') }}: {{ item_data.item_set.name }}</strong><br>
 									{{ item_data.item_set.hint|format_text|safe }}
 								</div>
 								{% endif %}
@@ -262,7 +262,7 @@
 									<small class="text-muted">-</small>
 								{% endif %}
 							{% else %}
-								<small class="text-muted">Select profile</small>
+								<small class="text-muted">{{ _('ui.item.select_profile') }}</small>
 							{% endif %}
 						</td>
 					</tr>
@@ -272,17 +272,17 @@
 		</div>
 		{% else %}
 		<div class="alert alert-info">
-			No items found.
+			{{ _('ui.item.no_items_found') }}
 			{% if query or selected_level or hint_regex or selected_propbits or selected_set_id or selected_profile_id %}
-				Try adjusting your filter criteria.
+				{{ _('ui.item.try_adjust_filters') }}
 			{% else %}
-				Scan game files first to populate the database.
+				{{ _('ui.item.scan_first') }}
 			{% endif %}
 		</div>
 		{% endif %}
 
 		<div class="mt-3">
-			<a href="/games" class="btn btn-secondary">Back to Games</a>
+			<a href="/games" class="btn btn-secondary">{{ _('ui.common.back_to_games') }}</a>
 		</div>
 	</div>
 </div>

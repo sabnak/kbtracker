@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Units - King's Bounty Tracker{% endblock %}
+{% block title %}{{ _('ui.units') }} - {{ _('ui.navigation.brand_name') }}{% endblock %}
 
 {% block content %}
 <div class="row">
 	<div class="col-md-12">
-		<h1 class="mb-4">Units for {{ game.name }}</h1>
+		<h1 class="mb-4">{{ _('ui.unit.title_for') }} {{ game.name }}</h1>
 
 		<!-- Profile and Cost Filter Row -->
 		{% if profiles %}
@@ -18,13 +18,13 @@
 
 					<div class="row g-3">
 						<div class="col-md-3">
-							<label for="profile_id" class="form-label">Profile</label>
+							<label for="profile_id" class="form-label">{{ _('ui.item.profile_label') }}</label>
 							<select
 								class="form-select"
 								id="profile_id"
 								name="profile_id"
 								onchange="this.form.submit()">
-								<option value="0" {% if not selected_profile_id or selected_profile_id == 0 %}selected{% endif %}>All Profiles</option>
+								<option value="0" {% if not selected_profile_id or selected_profile_id == 0 %}selected{% endif %}>{{ _('ui.item.all_profiles') }}</option>
 								{% for profile in profiles %}
 								<option
 									value="{{ profile.id }}"
@@ -36,32 +36,32 @@
 						</div>
 
 						<div class="col-md-3">
-							<label for="min_cost" class="form-label">Min Cost</label>
+							<label for="min_cost" class="form-label">{{ _('ui.unit.min_cost_label') }}</label>
 							<input
 								type="number"
 								class="form-control"
 								id="min_cost"
 								name="min_cost"
 								min="0"
-								placeholder="Min"
+								placeholder="{{ _('ui.unit.min_placeholder') }}"
 								value="{{ min_cost if min_cost else '' }}">
 						</div>
 
 						<div class="col-md-3">
-							<label for="max_cost" class="form-label">Max Cost</label>
+							<label for="max_cost" class="form-label">{{ _('ui.unit.max_cost_label') }}</label>
 							<input
 								type="number"
 								class="form-control"
 								id="max_cost"
 								name="max_cost"
 								min="0"
-								placeholder="Max"
+								placeholder="{{ _('ui.unit.max_placeholder') }}"
 								value="{{ max_cost if max_cost else '' }}">
 						</div>
 
 						<div class="col-md-3 d-flex align-items-end">
-							<button class="btn btn-primary me-2" type="submit">Apply</button>
-							<a href="/games/{{ game.id }}/units{% if selected_profile_id %}?profile_id={{ selected_profile_id }}{% endif %}" class="btn btn-secondary">Clear</a>
+							<button class="btn btn-primary me-2" type="submit">{{ _('ui.item.apply_filters') }}</button>
+							<a href="/games/{{ game.id }}/units{% if selected_profile_id %}?profile_id={{ selected_profile_id }}{% endif %}" class="btn btn-secondary">{{ _('ui.item.clear_all') }}</a>
 						</div>
 					</div>
 				</form>
@@ -72,7 +72,7 @@
 		<!-- Units Count Info -->
 		{% if units %}
 		<div class="alert alert-info">
-			<strong>Found {{ units|length }} unit(s)</strong>
+			<strong>{{ _('ui.unit.found_units_count', count=units|length) }}</strong>
 		</div>
 		{% endif %}
 
@@ -83,7 +83,7 @@
 					<tr>
 						<th class="sortable {% if sort_by == 'name' %}sorted sorted-{{ sort_order }}{% endif %}"
 							data-sort="name">
-							Name
+							{{ _('ui.item.name_header') }}
 							<span class="sort-indicator">
 								{% if sort_by == 'name' %}
 									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
@@ -94,7 +94,7 @@
 						</th>
 						<th class="sortable {% if sort_by == 'race' %}sorted sorted-{{ sort_order }}{% endif %}"
 							data-sort="race">
-							Race
+							{{ _('ui.unit.race_header') }}
 							<span class="sort-indicator">
 								{% if sort_by == 'race' %}
 									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
@@ -105,7 +105,7 @@
 						</th>
 						<th class="sortable {% if sort_by == 'level' %}sorted sorted-{{ sort_order }}{% endif %}"
 							data-sort="level">
-							Level
+							{{ _('ui.item.level_header') }}
 							<span class="sort-indicator">
 								{% if sort_by == 'level' %}
 									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
@@ -116,7 +116,7 @@
 						</th>
 						<th class="sortable {% if sort_by == 'cost' %}sorted sorted-{{ sort_order }}{% endif %}"
 							data-sort="cost">
-							Cost
+							{{ _('ui.unit.cost_header') }}
 							<span class="sort-indicator">
 								{% if sort_by == 'cost' %}
 									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
@@ -127,7 +127,7 @@
 						</th>
 						<th class="sortable {% if sort_by == 'leadership' %}sorted sorted-{{ sort_order }}{% endif %}"
 							data-sort="leadership">
-							Leadership
+							{{ _('ui.unit.leadership_header') }}
 							<span class="sort-indicator">
 								{% if sort_by == 'leadership' %}
 									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
@@ -136,8 +136,8 @@
 								{% endif %}
 							</span>
 						</th>
-						<th>Attributes</th>
-						<th>Shops</th>
+						<th>{{ _('ui.unit.attributes_header') }}</th>
+						<th>{{ _('ui.shops') }}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -159,10 +159,10 @@
 						<td style="white-space: nowrap;">{{ unit.leadership|format_price if unit.leadership else 'N/A' }}</td>
 						<td>
 							<div class="unit-common-params">
-								<div>HP: {{ unit.hitpoint if unit.hitpoint else 'N/A' }}</div>
-								<div>Defense: {{ unit.defense if unit.defense else 'N/A' }}</div>
+								<div>{{ _('ui.unit.hp_label') }} {{ unit.hitpoint if unit.hitpoint else 'N/A' }}</div>
+								<div>{{ _('ui.unit.defense_label') }} {{ unit.defense if unit.defense else 'N/A' }}</div>
 								<div class="resistance-list">
-									Resistances:
+									{{ _('ui.unit.resistances_label') }}
 									{% if unit.resistance %}
 										{% for res_type, res_value in unit.resistance.items() %}
 										<div class="resistance-item ms-2">
@@ -170,21 +170,21 @@
 										</div>
 										{% endfor %}
 									{% else %}
-										<span class="text-muted ms-2">None</span>
+										<span class="text-muted ms-2">{{ _('ui.common.none') }}</span>
 									{% endif %}
 								</div>
-								<div>Attack: {{ unit.attack if unit.attack else 'N/A' }}</div>
-								<div>Crit: {{ unit.krit if unit.krit else 'N/A' }}%</div>
-								<div>Speed: {{ unit.speed if unit.speed else 'N/A' }}</div>
+								<div>{{ _('ui.unit.attack_label') }} {{ unit.attack if unit.attack else 'N/A' }}</div>
+								<div>{{ _('ui.unit.crit_label') }} {{ unit.krit if unit.krit else 'N/A' }}%</div>
+								<div>{{ _('ui.unit.speed_label') }} {{ unit.speed if unit.speed else 'N/A' }}</div>
 								<div>
-									Movetype:
+									{{ _('ui.unit.movetype_label') }}
 									{% if unit.movetype %}
 										{{ unit.movetype.name|replace('_', ' ')|title }}
 									{% else %}
 										N/A
 									{% endif %}
 								</div>
-								<div>Initiative: {{ unit.initiative if unit.initiative else 'N/A' }}</div>
+								<div>{{ _('ui.unit.initiative_label') }} {{ unit.initiative if unit.initiative else 'N/A' }}</div>
 							</div>
 
 							<div class="unit-features mt-2">
@@ -200,12 +200,12 @@
 										</span>{% if not loop.last %}, {% endif %}
 									{% endfor %}
 								{% else %}
-									<span class="text-muted">None</span>
+									<span class="text-muted">{{ _('ui.common.none') }}</span>
 								{% endif %}
 							</div>
 
 							<div class="unit-attacks mt-2">
-								<strong>Actions:</strong>
+								<strong>{{ _('ui.unit.actions_label') }}</strong>
 								{% if unit.attacks %}
 									{% for attack_id, attack_data in unit.attacks.items() %}
 										<span
@@ -218,7 +218,7 @@
 										</span>{% if not loop.last %}, {% endif %}
 									{% endfor %}
 								{% else %}
-									<span class="text-muted">None</span>
+									<span class="text-muted">{{ _('ui.common.none') }}</span>
 								{% endif %}
 							</div>
 						</td>
@@ -228,7 +228,7 @@
 								{% set unit_for_sale_shops = shops_for_sale.get(unit.id, []) %}
 								{% if unit_for_sale_shops %}
 									<div class="mb-2">
-										<strong class="text-muted" style="font-size: 0.85em;">For Sale:</strong><br>
+										<strong class="text-muted" style="font-size: 0.85em;">{{ _('ui.unit.for_sale_label') }}</strong><br>
 										<small>
 											{% for shop in unit_for_sale_shops %}
 												{% set shop_unit = shop.inventory.get_unit(unit.id) %}
@@ -249,7 +249,7 @@
 								{% set unit_garrison_shops = shops_garrison.get(unit.id, []) %}
 								{% if unit_garrison_shops %}
 									<div>
-										<strong class="text-muted" style="font-size: 0.85em;">Garrison:</strong><br>
+										<strong class="text-muted" style="font-size: 0.85em;">{{ _('ui.shop.garrison_label') }}</strong><br>
 										<small>
 											{% for shop in unit_garrison_shops %}
 												{% set garrison_unit = shop.inventory.get_garrison_unit(unit.id) %}
@@ -271,7 +271,7 @@
 									<small class="text-muted">-</small>
 								{% endif %}
 							{% else %}
-								<small class="text-muted">Select profile</small>
+								<small class="text-muted">{{ _('ui.item.select_profile') }}</small>
 							{% endif %}
 						</td>
 					</tr>
@@ -281,12 +281,12 @@
 		</div>
 		{% else %}
 		<div class="alert alert-info">
-			No units found. Scan game files first to populate the database.
+			{{ _('ui.unit.no_units_found') }}
 		</div>
 		{% endif %}
 
 		<div class="mt-3">
-			<a href="/games" class="btn btn-secondary">Back to Games</a>
+			<a href="/games" class="btn btn-secondary">{{ _('ui.common.back_to_games') }}</a>
 		</div>
 	</div>
 </div>

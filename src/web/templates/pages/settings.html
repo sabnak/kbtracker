@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Application Settings{% endblock %}
+{% block title %}{{ _('ui.settings.title') }} - {{ _('ui.navigation.brand_name') }}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
 	<div class="col-md-6">
 		<div class="card">
 			<div class="card-body">
-				<h2 class="card-title">Application Settings</h2>
+				<h2 class="card-title">{{ _('ui.settings.title') }}</h2>
 				<form method="POST" action="/settings">
 					<div class="mb-3">
 						<div class="row align-items-center">
 							<div class="col-md-4">
-								<label for="scan_frequency" class="form-label mb-0">Sync Frequency (minutes)</label>
+								<label for="scan_frequency" class="form-label mb-0">{{ _('ui.settings.sync_frequency_label') }}</label>
 							</div>
 							<div class="col-md-8">
 								<input
@@ -27,7 +27,7 @@
 								{% if errors.get('scan_frequency') %}
 								<div class="invalid-feedback">{{ errors.get('scan_frequency') }}</div>
 								{% endif %}
-								<div class="form-text">How often to sync game data (1-60 minutes)</div>
+								<div class="form-text">{{ _('ui.settings.sync_frequency_help') }}</div>
 							</div>
 						</div>
 					</div>
@@ -35,7 +35,7 @@
 					<div class="mb-3">
 						<div class="row align-items-center">
 							<div class="col-md-4">
-								<label for="saves_limit" class="form-label mb-0">Saves Limit</label>
+								<label for="saves_limit" class="form-label mb-0">{{ _('ui.settings.saves_limit_label') }}</label>
 							</div>
 							<div class="col-md-8">
 								<input
@@ -50,7 +50,7 @@
 								{% if errors.get('saves_limit') %}
 								<div class="invalid-feedback">{{ errors.get('saves_limit') }}</div>
 								{% endif %}
-								<div class="form-text">Maximum number of saves to track (1-100)</div>
+								<div class="form-text">{{ _('ui.settings.saves_limit_help') }}</div>
 							</div>
 						</div>
 					</div>
@@ -58,7 +58,7 @@
 					<div class="mb-3">
 						<div class="row align-items-center">
 							<div class="col-md-4">
-								<label for="language" class="form-label mb-0">Language</label>
+								<label for="language" class="form-label mb-0">{{ _('ui.settings.language_label') }}</label>
 							</div>
 							<div class="col-md-8">
 								<select
@@ -76,7 +76,7 @@
 								{% if errors.get('language') %}
 								<div class="invalid-feedback">{{ errors.get('language') }}</div>
 								{% endif %}
-								<div class="form-text">Application display language</div>
+								<div class="form-text">{{ _('ui.settings.language_help') }}</div>
 							</div>
 						</div>
 					</div>
@@ -84,8 +84,8 @@
 					<div class="row">
 						<div class="col-md-8 offset-md-4">
 							<div class="d-flex gap-2">
-								<button type="submit" class="btn btn-primary">Save Settings</button>
-								<a href="/games" class="btn btn-secondary">Cancel</a>
+								<button type="submit" class="btn btn-primary">{{ _('ui.settings.save_button') }}</button>
+								<a href="/games" class="btn btn-secondary">{{ _('ui.common.cancel') }}</a>
 							</div>
 						</div>
 					</div>

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Spells - King's Bounty Tracker{% endblock %}
+{% block title %}{{ _('ui.spells') }} - {{ _('ui.navigation.brand_name') }}{% endblock %}
 
 {% block content %}
 <div class="row">
 	<div class="col-md-12">
-		<h1 class="mb-4">Spells for {{ game.name }}</h1>
+		<h1 class="mb-4">{{ _('ui.spell.title_for') }} {{ game.name }}</h1>
 
 		<!-- Profile and School Filter Row -->
 		{% if profiles %}
@@ -18,13 +18,13 @@
 
 					<div class="row g-3">
 						<div class="col-md-4">
-							<label for="profile_id" class="form-label">Profile</label>
+							<label for="profile_id" class="form-label">{{ _('ui.item.profile_label') }}</label>
 							<select
 								class="form-select"
 								id="profile_id"
 								name="profile_id"
 								onchange="this.form.submit()">
-								<option value="0" {% if not selected_profile_id or selected_profile_id == 0 %}selected{% endif %}>All Profiles</option>
+								<option value="0" {% if not selected_profile_id or selected_profile_id == 0 %}selected{% endif %}>{{ _('ui.item.all_profiles') }}</option>
 								{% for profile in profiles %}
 								<option
 									value="{{ profile.id }}"
@@ -36,9 +36,9 @@
 						</div>
 
 						<div class="col-md-4">
-							<label for="school" class="form-label">School</label>
+							<label for="school" class="form-label">{{ _('ui.spell.school_label') }}</label>
 							<select class="form-select" id="school" name="school">
-								<option value="">All Schools</option>
+								<option value="">{{ _('ui.spell.all_schools') }}</option>
 								{% for school_enum in all_schools %}
 								<option
 									value="{{ school_enum.name }}"
@@ -50,8 +50,8 @@
 						</div>
 
 						<div class="col-md-4 d-flex align-items-end">
-							<button class="btn btn-primary me-2" type="submit">Apply</button>
-							<a href="/games/{{ game.id }}/spells{% if selected_profile_id %}?profile_id={{ selected_profile_id }}{% endif %}" class="btn btn-secondary">Clear</a>
+							<button class="btn btn-primary me-2" type="submit">{{ _('ui.item.apply_filters') }}</button>
+							<a href="/games/{{ game.id }}/spells{% if selected_profile_id %}?profile_id={{ selected_profile_id }}{% endif %}" class="btn btn-secondary">{{ _('ui.item.clear_all') }}</a>
 						</div>
 					</div>
 				</form>
@@ -62,7 +62,7 @@
 		<!-- Spells Count Info -->
 		{% if spells %}
 		<div class="alert alert-info">
-			<strong>Found {{ spells|length }} spell(s)</strong>
+			<strong>{{ _('ui.spell.found_spells_count', count=spells|length) }}</strong>
 		</div>
 		{% endif %}
 
@@ -73,7 +73,7 @@
 					<tr>
 						<th class="sortable {% if sort_by == 'name' %}sorted sorted-{{ sort_order }}{% endif %}"
 							data-sort="name" style="white-space: nowrap;">
-							Name
+							{{ _('ui.item.name_header') }}
 							<span class="sort-indicator">
 								{% if sort_by == 'name' %}
 									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
@@ -84,7 +84,7 @@
 						</th>
 						<th class="sortable {% if sort_by == 'school' %}sorted sorted-{{ sort_order }}{% endif %}"
 							data-sort="school" style="white-space: nowrap;">
-							School
+							{{ _('ui.spell.school_header') }}
 							<span class="sort-indicator">
 								{% if sort_by == 'school' %}
 									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
@@ -95,7 +95,7 @@
 						</th>
 						<th class="sortable {% if sort_by == 'mana' %}sorted sorted-{{ sort_order }}{% endif %}"
 							data-sort="mana" style="white-space: nowrap;">
-							Mana
+							{{ _('ui.spell.mana_header') }}
 							<span class="sort-indicator">
 								{% if sort_by == 'mana' %}
 									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
@@ -106,7 +106,7 @@
 						</th>
 						<th class="sortable {% if sort_by == 'crystal' %}sorted sorted-{{ sort_order }}{% endif %}"
 							data-sort="crystal" style="white-space: nowrap;">
-							Crystal
+							{{ _('ui.spell.crystal_header') }}
 							<span class="sort-indicator">
 								{% if sort_by == 'crystal' %}
 									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
@@ -115,8 +115,8 @@
 								{% endif %}
 							</span>
 						</th>
-						<th>Effect</th>
-						<th>Shops</th>
+						<th>{{ _('ui.spell.effect_header') }}</th>
+						<th>{{ _('ui.shops') }}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -170,7 +170,7 @@
 									{% endfor %}
 								{% endif %}
 							{% else %}
-								<span class="text-muted">No description available</span>
+								<span class="text-muted">{{ _('ui.spell.no_description') }}</span>
 							{% endif %}
 						</td>
 						<td>
@@ -194,7 +194,7 @@
 									<small class="text-muted">-</small>
 								{% endif %}
 							{% else %}
-								<small class="text-muted">Select profile</small>
+								<small class="text-muted">{{ _('ui.item.select_profile') }}</small>
 							{% endif %}
 						</td>
 					</tr>
@@ -204,12 +204,12 @@
 		</div>
 		{% else %}
 		<div class="alert alert-info">
-			No spells found. Scan game files first to populate the database.
+			{{ _('ui.spell.no_spells_found') }}
 		</div>
 		{% endif %}
 
 		<div class="mt-3">
-			<a href="/games" class="btn btn-secondary">Back to Games</a>
+			<a href="/games" class="btn btn-secondary">{{ _('ui.common.back_to_games') }}</a>
 		</div>
 	</div>
 </div>

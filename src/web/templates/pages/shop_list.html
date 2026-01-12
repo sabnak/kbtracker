@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Shops - King's Bounty Tracker{% endblock %}
+{% block title %}{{ _('ui.shops') }} - {{ _('ui.navigation.brand_name') }}{% endblock %}
 
 {% block content %}
 <div class="row">
 	<div class="col-md-12">
-		<h1 class="mb-4">Shops for {{ game.name }}</h1>
+		<h1 class="mb-4">{{ _('ui.shop.title_for') }} {{ game.name }}</h1>
 
 		<!-- Profile Filter -->
 		{% if profiles %}
@@ -14,7 +14,7 @@
 				<form method="GET" action="/games/{{ game.id }}/shops">
 					<div class="row">
 						<div class="col-md-4">
-							<label for="profile_id" class="form-label">Profile</label>
+							<label for="profile_id" class="form-label">{{ _('ui.shop.profile_label') }}</label>
 							<select
 								class="form-select"
 								id="profile_id"
@@ -62,9 +62,9 @@
 								<table class="table table-sm mb-0">
 									<thead>
 										<tr>
-											<th class="shop-col-3">Items</th>
-											<th class="shop-col-3">Spells</th>
-											<th class="shop-col-3">Units</th>
+											<th class="shop-col-3">{{ _('ui.items') }}</th>
+											<th class="shop-col-3">{{ _('ui.spells') }}</th>
+											<th class="shop-col-3">{{ _('ui.units') }}</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -142,7 +142,7 @@
 								</table>
 								{% if shop.inventory.garrison %}
 								<div class="shop-garrison">
-									<strong>Garrison:</strong>
+									<strong>{{ _('ui.shop.garrison_label') }}:</strong>
 									<ul class="list-unstyled mb-0" style="margin-left: 0; padding-left: 0;">
 										{% for garrison_unit in shop.inventory.garrison %}
 										<li style="display: flex; justify-content: space-between;">
@@ -168,17 +168,17 @@
 		{% else %}
 			{% if profiles %}
 			<div class="alert alert-info">
-				No shop inventory found for this profile.
+				{{ _('ui.shop.no_inventory_found') }}
 			</div>
 			{% else %}
 			<div class="alert alert-info">
-				No profiles found. Create a profile first to track shop inventory.
+				{{ _('ui.shop.no_profiles_create_first') }}
 			</div>
 			{% endif %}
 		{% endif %}
 
 		<div class="mt-3">
-			<a href="/games" class="btn btn-secondary">Back to Games</a>
+			<a href="/games" class="btn btn-secondary">{{ _('ui.common.back_to_games') }}</a>
 		</div>
 	</div>
 </div>
