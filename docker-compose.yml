@@ -30,7 +30,6 @@ services:
       TZ: Europe/Moscow
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./docker-compose/postgres/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
     ports:
       - "${DB_LOCAL_PORT}:5432"
     restart: unless-stopped
