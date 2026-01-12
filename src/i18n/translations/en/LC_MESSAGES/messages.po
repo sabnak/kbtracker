@@ -39,8 +39,8 @@ msgstr "Go Back"
 msgid "ui.error.go_home"
 msgstr "Go to Home"
 
-msgid "ui.game.create_new_game"
-msgstr "Create New Game"
+msgid "ui.game.add_game"
+msgstr "Add Game"
 
 msgid "ui.game.path"
 msgstr "Game Path"
@@ -60,17 +60,14 @@ msgstr "Game Name"
 msgid "ui.game.name_help"
 msgstr "Display name for this game (defaults to path)"
 
-msgid "ui.game.create_button"
-msgstr "Create Game"
+msgid "ui.game.add_button"
+msgstr "Add Game"
 
 msgid "ui.common.cancel"
 msgstr "Cancel"
 
 msgid "ui.games"
 msgstr "Games"
-
-msgid "ui.create_new_game"
-msgstr "Create New Game"
 
 msgid "ui.path"
 msgstr "Path"

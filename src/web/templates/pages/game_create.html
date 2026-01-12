@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}{{ _('ui.game.create_new_game') }} - {{ _('ui.navigation.brand_name') }}{% endblock %}
+{% block title %}{{ _('ui.game.add_game') }} - {{ _('ui.navigation.brand_name') }}{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
 	<div class="col-md-6">
-		<h1 class="mb-4">{{ _('ui.game.create_new_game') }}</h1>
+		<h1 class="mb-4">{{ _('ui.game.add_game') }}</h1>
 
 		<div class="card">
 			<div class="card-body">
@@ -32,7 +32,7 @@
 					</div>
 
 					<div class="d-grid gap-2">
-						<button type="submit" class="btn btn-primary">{{ _('ui.game.create_button') }}</button>
+						<button type="submit" class="btn btn-primary">{{ _('ui.game.add_button') }}</button>
 						<a href="/games" class="btn btn-secondary">{{ _('ui.common.cancel') }}</a>
 					</div>
 				</form>

@@ -40,8 +40,8 @@ msgstr "Вернуться"
 msgid "ui.error.go_home"
 msgstr "Перейти на главную"
 
-msgid "ui.game.create_new_game"
-msgstr "Создать новую игру"
+msgid "ui.game.add_game"
+msgstr "Добавить игру"
 
 msgid "ui.game.path"
 msgstr "Путь к игре"
@@ -61,17 +61,14 @@ msgstr "Название игры"
 msgid "ui.game.name_help"
 msgstr "Отображаемое название игры (по умолчанию путь)"
 
-msgid "ui.game.create_button"
-msgstr "Создать игру"
+msgid "ui.game.add_button"
+msgstr "Добавить игру"
 
 msgid "ui.common.cancel"
 msgstr "Отмена"
 
 msgid "ui.games"
 msgstr "Игры"
-
-msgid "ui.create_new_game"
-msgstr "Создать новую игру"
 
 msgid "ui.path"
 msgstr "Путь"
