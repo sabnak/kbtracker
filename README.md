@@ -6,8 +6,7 @@
 
 ---
 
-![Screenshot](docs/images/example-items-1.png) ![Screenshot](docs/images/example-shops-1.png)
-![Screenshot](docs/images/example-units-1.png) ![Screenshot](docs/images/example-scan-1.png)
+![Screenshot](docs/images/example-complex-1.gif)
 
 ## Ключевые возможности
 
