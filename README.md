@@ -51,11 +51,13 @@ King's Bounty Tracker помогает игрокам отслеживать м�
 
 ### Требования
 
-Вам нужен только **Docker Desktop для Windows**: [Скачать Docker Desktop](https://www.docker.com/products/docker-desktop)
+Вам нужен только **Docker Desktop**: [Скачать Docker Desktop](https://www.docker.com/products/docker-desktop)
 
 ### Шаг 1: Скачайте docker-compose.yml
 
 Скачайте файл: [docker-compose.yml](https://raw.githubusercontent.com/sabnak/kbtracker/main/docker-compose/user/docker-compose.yml)
+
+**Важно: обратите внимание, расширение файла должно быть ".yml"!**
 
 Сохраните в папку на вашем компьютере (например, `C:/Games/KBTracker`)
 
@@ -249,7 +251,7 @@ King's Bounty Tracker helps players track the location of items, spells, and uni
 
 ### Prerequisites
 
-You only need **Docker Desktop for Windows**: [Download Docker Desktop](https://www.docker.com/products/docker-desktop)
+You only need **Docker Desktop**: [Download Docker Desktop](https://www.docker.com/products/docker-desktop)
 
 ### Step 1: Download docker-compose.yml
 
