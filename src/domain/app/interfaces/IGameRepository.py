@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 from src.domain.app.entities.Game import Game
 
@@ -61,3 +62,11 @@ class IGameRepository(ABC):
 		:return:
 		"""
 		pass
+
+	@abstractmethod
+	def update_last_scan_time(
+		self,
+		game_id: int,
+		scan_time: datetime
+	) -> None:
+		...
