@@ -1,31 +1,27 @@
-from dependency_injector.wiring import Provide, inject
+from logging import Logger
+
+from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
 from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
 from src.utils.parsers import atom
+from src.utils.parsers.atom import AtomSyntaxError
 from src.utils.parsers.game_data.IKFSReader import IKFSReader
 from src.utils.parsers.game_data.IKFSUnitParser import IKFSUnitParser
 
 
 class KFSUnitParser(IKFSUnitParser):
 
-	@inject
 	def __init__(
 		self,
 		reader: IKFSReader = Provide[Container.kfs_reader],
-		localization_repository: ILocalizationRepository = Provide[Container.localization_repository]
+		localization_repository: ILocalizationRepository = Provide[Container.localization_repository],
+		logger: Logger = Provide[Container.logger]
 	):
-		"""
-		Initialize KFS unit parser
-
-		:param reader:
-			KFS file reader
-		:param localization_repository:
-			Localization repository
-		"""
 		self._reader = reader
 		self._localization_repository = localization_repository
+		self._logger = logger
 
 	def parse(
 		self,
@@ -117,15 +113,21 @@ class KFSUnitParser(IKFSUnitParser):
 		try:
 			contents = self._reader.read_data_files(game_name, [atom_filename])
 		except FileNotFoundError as e:
-			raise FileNotFoundError(
-				f"Unit atom file not found: {atom_filename} for unit {kb_id}"
-			) from e
+			self._logger.info(f"Atom file not found: {atom_filename}")
+			return None
+			# raise FileNotFoundError(
+			# 	f"Unit atom file not found: {atom_filename} for unit {kb_id}"
+			# ) from e
 
 		if not contents:
 			raise ValueError(f"Unit atom file '{atom_filename}' returned empty content")
 
 		content = contents[0]
-		parsed = atom.loads(content)
+		try:
+			parsed = atom.loads(content)
+		except AtomSyntaxError as e:
+			self._logger.info(content)
+			raise ValueError(f"Unit '{kb_id}': atom syntax error: {e}. Atom file name: {atom_filename}")
 
 		if 'main' not in parsed:
 			raise ValueError(f"Unit '{kb_id}': atom file missing 'main' section")
