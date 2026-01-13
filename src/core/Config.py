@@ -3,19 +3,13 @@ import re
 
 from pydantic_settings import BaseSettings
 
+from src.core.GameConfig import GameConfig, GameCampaignConfig
+
 
 class LocalizationConfig(BaseSettings):
 	file: str
 	tag: str | None = None
 	pattern: re.Pattern | None = None
-
-
-class GameConfig(BaseSettings):
-
-	name: str
-	core_session_path: str
-	campaigns: list['GameConfig'] | None = None
-	save_path_pattern: str | None = None
 
 
 class Config(BaseSettings):
@@ -46,52 +40,55 @@ class Config(BaseSettings):
 	supported_games: list[GameConfig] = [
 		GameConfig(
 			name="Легенда / The Legend",
-			core_session_path="data"
+			session="data",
+			saves_pattern=os.path.join("Kings Bounty Legend", "$save", "*.sav"),
 		),
 		GameConfig(
 			name="Принцесса в доспехах / Armored Princess",
-			core_session_path="addon"
+			session="addon",
+			saves_pattern=os.path.join("Kings Bounty Armored Princess", "$save", "*.sav"),
 		),
 		GameConfig(
 			name="Перекрёстки миров / Crossworlds",
-			core_session_path="addon",
-			save_path_pattern=os.path.join("Kings Bounty Crossworlds", "$save", "{campaign_name}_*.sav"),
+			session="addon",
+			saves_pattern=os.path.join("Kings Bounty Crossworlds", "$save", "{campaign_session}_*.sav"),
 			campaigns=[
-				GameConfig(
+				GameCampaignConfig(
 					name="Принцесса в доспехах / Armored Princess",
-					core_session_path="addon"
+					session="addon"
 				),
-				GameConfig(
+				GameCampaignConfig(
 					name="Чемпион арены / Champion of the Arena",
-					core_session_path="champion"
+					session="champion"
 				),
-				GameConfig(
+				GameCampaignConfig(
 					name="Защитник короны / Defender of the Crown",
-					core_session_path="defender"
+					session="defender"
 				),
-				GameConfig(
+				GameCampaignConfig(
 					name="Поход орков / Orcs on the March",
-					core_session_path="orcs"
+					session="orcs"
 				),
-				GameConfig(
+				GameCampaignConfig(
 					name="Красные пески / Red Sands",
-					core_session_path="red_sands"
+					session="red_sands"
 				)
 			]
 		),
 		GameConfig(
 			name="Воин Севера / Warriors of the North",
-			core_session_path="addon",
+			session="addon",
+			saves_pattern=os.path.join("Kings Bounty Warriors of the North", "$save", "{campaign_session}_*.sav"),
 			campaigns=[
-				GameConfig(
+				GameCampaignConfig(
 					name="Лёд и пламя / Ice and Fire",
-					core_session_path="ice_and_fire"
+					session="ice_and_fire"
 				)
 			]
 		),
 		GameConfig(
 			name="Тёмная сторона / Dark side",
-			core_session_path="darkside",
-			save_path_pattern=os.path.join("Kings Bounty The Dark Side", "$save", "base", "darkside", "*")
+			session="darkside",
+			saves_pattern=os.path.join("Kings Bounty The Dark Side", "$save", "base", "darkside", "*")
 		)
 	]
