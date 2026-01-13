@@ -28,6 +28,7 @@ docker-compose.override.yml
 
 # Temporary files
 tmp/
+tmpclaude-*-cwd
 
 # Translations
 *.mo
