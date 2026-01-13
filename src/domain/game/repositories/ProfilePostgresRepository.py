@@ -4,6 +4,7 @@ from src.domain.game.interfaces.IProfileRepository import IProfileRepository
 from src.domain.game.entities.ProfileEntity import ProfileEntity
 from src.domain.game.entities.CorruptedProfileData import CorruptedProfileData
 from src.domain.game.repositories.mappers.ProfileMapper import ProfileMapper
+from src.domain.app.repositories.GameRepository import GameRepository
 
 
 class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IProfileRepository):
@@ -21,6 +22,8 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 		if entity.last_corrupted_data:
 			corrupted_data_json = entity.last_corrupted_data.model_dump()
 
+		game_id = entity.game.id if entity.game else None
+
 		return ProfileMapper(
 			name=entity.name,
 			hash=entity.hash,
@@ -30,7 +33,8 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 			last_scan_time=entity.last_scan_time,
 			last_save_timestamp=entity.last_save_timestamp,
 			last_corrupted_data=corrupted_data_json,
-			is_auto_scan_enabled=entity.is_auto_scan_enabled
+			is_auto_scan_enabled=entity.is_auto_scan_enabled,
+			game_id=game_id
 		)
 
 	def _get_entity_type_name(self) -> str:
@@ -88,6 +92,7 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 			mapper.last_scan_time = profile.last_scan_time
 			mapper.last_save_timestamp = profile.last_save_timestamp
 			mapper.is_auto_scan_enabled = profile.is_auto_scan_enabled
+			mapper.game_id = profile.game.id if profile.game else mapper.game_id
 
 			if profile.last_corrupted_data:
 				mapper.last_corrupted_data = profile.last_corrupted_data.model_dump()
@@ -132,6 +137,10 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 		if mapper.last_corrupted_data:
 			corrupted_data = CorruptedProfileData(**mapper.last_corrupted_data)
 
+		game = None
+		if mapper.game:
+			game = GameRepository.mapper_to_entity(mapper.game)
+
 		return ProfileEntity(**{
 			"id": mapper.id,
 			"name": mapper.name,
@@ -142,5 +151,6 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 			"last_scan_time": mapper.last_scan_time,
 			"last_save_timestamp": mapper.last_save_timestamp,
 			"last_corrupted_data": corrupted_data,
-			"is_auto_scan_enabled": mapper.is_auto_scan_enabled
+			"is_auto_scan_enabled": mapper.is_auto_scan_enabled,
+			"game": game
 		})

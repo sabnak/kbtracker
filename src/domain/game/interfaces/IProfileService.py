@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
+from src.domain.app.entities.Game import Game
 from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
 from src.domain.game.entities.ProfileEntity import ProfileEntity
 
@@ -11,6 +12,7 @@ class IProfileService(ABC):
 	def create_profile(
 		self,
 		name: str,
+		game: Game,
 		hash: str | None = None,
 		full_name: str | None = None,
 		save_dir: str | None = None
@@ -20,6 +22,8 @@ class IProfileService(ABC):
 
 		:param name:
 			Profile name
+		:param game:
+			Game entity this profile belongs to
 		:param hash:
 			Hash (MD5)
 		:param full_name:

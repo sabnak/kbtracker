@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Any
 
 from src.domain import ProfileEntity
+from src.domain.app.entities.Game import Game
 
 
 class ISaveFileService(ABC):
@@ -10,14 +11,14 @@ class ISaveFileService(ABC):
 	@abstractmethod
 	def list_save_directories(
 		self,
-		game_path: str,
+		game: Game,
 		limit: int = 100
 	) -> dict[str, list[dict]]:
 		"""
 		List save directories grouped by game name
 
-		:param game_path:
-			Game path (e.g., "Darkside")
+		:param game:
+			Game entity containing saves_pattern
 		:param limit:
 			Maximum number of saves to return per game
 		:return:
@@ -28,18 +29,18 @@ class ISaveFileService(ABC):
 	@abstractmethod
 	def scan_hero_data(
 		self,
-		game_path: str,
-		save_dir_name: str
+		game: Game,
+		save_identifier: str
 	) -> dict[str, str]:
 		"""
-		Scan save file and extract campaign data
+		Scan save file and extract hero data
 
-		:param game_path:
-			Game path (e.g., "Darkside")
-		:param save_dir_name:
-			Save directory name (timestamp like "1707047253")
+		:param game:
+			Game entity containing saves_pattern
+		:param save_identifier:
+			Save identifier to match against wildcard in pattern
 		:return:
-			Campaign data dictionary with campaign_id, full_name, etc.
+			Hero data dictionary with first_name, second_name, full_name
 		"""
 		pass
 

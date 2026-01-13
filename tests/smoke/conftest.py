@@ -26,9 +26,9 @@ def test_save_1707047253_path(test_saves_path: str) -> Path:
 	:param test_saves_path:
 		Base saves directory path
 	:return:
-		Absolute path to save data file
+		Absolute path to save directory
 	"""
-	return Path(test_saves_path) / "1707047253" / "data"
+	return Path(test_saves_path) / "1707047253"
 
 
 @pytest.fixture(scope="module")

@@ -1,7 +1,11 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from src.domain.game.entities.CorruptedProfileData import CorruptedProfileData
+
+if TYPE_CHECKING:
+	from src.domain.app.entities.Game import Game
 
 
 @dataclass
@@ -16,3 +20,4 @@ class ProfileEntity:
 	last_save_timestamp: int | None = None
 	last_corrupted_data: CorruptedProfileData | None = None
 	is_auto_scan_enabled: bool = True
+	game: 'Game | None' = None

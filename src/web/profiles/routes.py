@@ -84,13 +84,19 @@ async def create_profile(
 	full_name: str = Form(None),
 	save_dir: str = Form(None),
 	game_context: GameContext = Depends(get_game_context),
-	profile_service: IProfileService = Depends(Provide["profile_service"])
+	profile_service: IProfileService = Depends(Provide["profile_service"]),
+	game_service: IGameService = Depends(Provide["game_service"])
 ):
 	GAME_CONTEXT.set(game_context)
+
+	game = game_service.get_game(game_id)
+	if not game:
+		return RedirectResponse(url="/games", status_code=303)
 
 	form_data = ProfileCreateForm(name=name, game_id=game_id)
 	profile_service.create_profile(
 		name=form_data.name,
+		game=game,
 		full_name=full_name,
 		save_dir=save_dir
 	)

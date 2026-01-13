@@ -34,6 +34,7 @@ class ProfileService(IProfileService):
 	def create_profile(
 		self,
 		name: str,
+		game: 'Game',
 		hash: str | None = None,
 		full_name: str | None = None,
 		save_dir: str | None = None
@@ -43,6 +44,8 @@ class ProfileService(IProfileService):
 
 		:param name:
 			Profile name
+		:param game:
+			Game entity this profile belongs to
 		:param hash:
 			Hash (computed if full_name provided)
 		:param full_name:
@@ -63,7 +66,8 @@ class ProfileService(IProfileService):
 			full_name=full_name,
 			save_dir=save_dir,
 			created_at=datetime.now(),
-			is_auto_scan_enabled=True
+			is_auto_scan_enabled=True,
+			game=game
 		)
 		return self._profile_repository.create(profile)
 

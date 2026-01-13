@@ -1,6 +1,9 @@
 from pathlib import Path
 import struct
 import zlib
+import zipfile
+import tempfile
+import shutil
 
 from src.utils.parsers.save_data.ISaveFileDecompressor import ISaveFileDecompressor
 
@@ -21,7 +24,7 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 		- N bytes: zlib compressed data
 
 		:param save_path:
-			Path to save 'data' file
+			Path to save (directory containing 'data' file or .sav archive)
 		:return:
 			Decompressed binary data
 		:raises ValueError:
@@ -29,10 +32,7 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 		:raises FileNotFoundError:
 			If save file doesn't exist
 		"""
-		self._validate_file_exists(save_path)
-
-		with open(save_path, 'rb') as f:
-			data = f.read()
+		data = self._extract_data_file(save_path)
 
 		magic = data[0:4]
 		self._validate_magic_header(magic)
@@ -46,6 +46,88 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 		self._validate_decompressed_size(decompressed_data, decompressed_size)
 
 		return decompressed_data
+
+	def _extract_data_file(self, save_path: Path) -> bytes:
+		"""
+		Extract 'data' file from save (directory or .sav archive)
+
+		:param save_path:
+			Path to save (directory or .sav file)
+		:return:
+			Raw bytes of 'data' file
+		:raises FileNotFoundError:
+			If save path or 'data' file doesn't exist
+		:raises ValueError:
+			If .sav archive is invalid or too large
+		"""
+		if not save_path.exists():
+			raise FileNotFoundError(f"Save path not found: {save_path}")
+
+		if save_path.suffix == '.sav':
+			return self._extract_from_archive(save_path)
+		else:
+			return self._extract_from_directory(save_path)
+
+	@staticmethod
+	def _extract_from_directory(save_dir: Path) -> bytes:
+		"""
+		Extract 'data' file from save directory
+
+		:param save_dir:
+			Path to directory containing 'data' file
+		:return:
+			Raw bytes of 'data' file
+		:raises FileNotFoundError:
+			If 'data' file doesn't exist
+		"""
+		data_file = save_dir / 'data'
+		if not data_file.exists():
+			raise FileNotFoundError(f"Data file not found in save directory: {data_file}")
+
+		with open(data_file, 'rb') as f:
+			return f.read()
+
+	@staticmethod
+	def _extract_from_archive(archive_path: Path) -> bytes:
+		"""
+		Extract 'data' file from .sav ZIP archive
+
+		:param archive_path:
+			Path to .sav archive file
+		:return:
+			Raw bytes of 'data' file
+		:raises FileNotFoundError:
+			If 'data' file not found in archive
+		:raises ValueError:
+			If archive is invalid or too large
+		"""
+		temp_dir = None
+		try:
+			if not zipfile.is_zipfile(archive_path):
+				raise ValueError(f"Invalid ZIP archive: {archive_path}")
+
+			temp_dir = tempfile.mkdtemp(prefix='kbsave_')
+			temp_path = Path(temp_dir)
+
+			with zipfile.ZipFile(archive_path, 'r') as zip_file:
+				total_size = sum(info.file_size for info in zip_file.infolist())
+				max_size = 10 * 1024 * 1024
+
+				if total_size > max_size:
+					raise ValueError(f"Archive too large: {total_size} bytes (max {max_size})")
+
+				zip_file.extractall(temp_path)
+
+			data_file = temp_path / 'data'
+			if not data_file.exists():
+				raise FileNotFoundError(f"'data' file not found in archive: {archive_path}")
+
+			with open(data_file, 'rb') as f:
+				return f.read()
+
+		finally:
+			if temp_dir and Path(temp_dir).exists():
+				shutil.rmtree(temp_dir, ignore_errors=True)
 
 	@staticmethod
 	def _validate_file_exists(save_path: Path) -> None:

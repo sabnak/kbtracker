@@ -16,11 +16,7 @@ class TestProfileServiceScan:
 		return Mock()
 
 	@pytest.fixture
-	def mock_shop_parser(self):
-		return Mock()
-
-	@pytest.fixture
-	def mock_hero_parser(self):
+	def mock_save_file_service(self):
 		return Mock()
 
 	@pytest.fixture
@@ -41,16 +37,14 @@ class TestProfileServiceScan:
 	def service(
 		self,
 		mock_profile_repo,
-		mock_shop_parser,
-		mock_hero_parser,
+		mock_save_file_service,
 		mock_config,
 		mock_data_syncer,
 		mock_shop_inventory_repo
 	):
 		return ProfileService(
 			profile_repository=mock_profile_repo,
-			shop_parser=mock_shop_parser,
-			hero_parser=mock_hero_parser,
+			save_file_service=mock_save_file_service,
 			config=mock_config,
 			data_syncer=mock_data_syncer,
 			shop_inventory_repository=mock_shop_inventory_repo
@@ -71,8 +65,7 @@ class TestProfileServiceScan:
 		self,
 		service,
 		mock_profile_repo,
-		mock_hero_parser,
-		mock_shop_parser,
+		mock_save_file_service,
 		mock_data_syncer,
 		sample_profile,
 		mock_config,
@@ -87,12 +80,8 @@ class TestProfileServiceScan:
 		save_file = save_dir / "data"
 		save_file.write_text("test save data")
 
-		mock_hero_parser.parse.return_value = {
-			'first_name': 'Test',
-			'second_name': 'Hero'
-		}
-
-		mock_shop_parser.parse.return_value = {
+		mock_save_file_service.find_profile_most_recent_save.return_value = save_file
+		mock_save_file_service.scan_shop_inventory.return_value = {
 			'm_zcom_1422': {
 				'items': [{'name': 'sword', 'quantity': 1}],
 				'spells': [{'name': 'fireball', 'quantity': 2}],
@@ -134,7 +123,7 @@ class TestProfileServiceScan:
 		self,
 		service,
 		mock_profile_repo,
-		mock_hero_parser,
+		mock_save_file_service,
 		sample_profile,
 		mock_config,
 		tmp_path
@@ -148,10 +137,7 @@ class TestProfileServiceScan:
 		save_file = save_dir / "data"
 		save_file.write_text("test save data")
 
-		mock_hero_parser.parse.return_value = {
-			'first_name': 'Different',
-			'second_name': 'Hero'
-		}
+		mock_save_file_service.find_profile_most_recent_save.side_effect = FileNotFoundError("No matching save found")
 
 		with pytest.raises(FileNotFoundError):
 			service.scan_most_recent_save(1)
@@ -160,8 +146,7 @@ class TestProfileServiceScan:
 		self,
 		service,
 		mock_profile_repo,
-		mock_hero_parser,
-		mock_shop_parser,
+		mock_save_file_service,
 		mock_data_syncer,
 		sample_profile,
 		mock_config,
@@ -176,12 +161,8 @@ class TestProfileServiceScan:
 		save_file = save_dir / "data"
 		save_file.write_text("test save data")
 
-		mock_hero_parser.parse.return_value = {
-			'first_name': 'Test',
-			'second_name': 'Hero'
-		}
-
-		mock_shop_parser.parse.return_value = {}
+		mock_save_file_service.find_profile_most_recent_save.return_value = save_file
+		mock_save_file_service.scan_shop_inventory.return_value = {}
 		mock_data_syncer.sync.side_effect = InvalidKbIdException('invalid_item', 'shop_1422')
 
 		with pytest.raises(InvalidKbIdException) as exc:
@@ -193,8 +174,7 @@ class TestProfileServiceScan:
 		self,
 		service,
 		mock_profile_repo,
-		mock_hero_parser,
-		mock_shop_parser,
+		mock_save_file_service,
 		mock_data_syncer,
 		sample_profile,
 		mock_config,
@@ -209,12 +189,8 @@ class TestProfileServiceScan:
 		save_file = save_dir / "data"
 		save_file.write_text("test save data")
 
-		mock_hero_parser.parse.return_value = {
-			'first_name': 'Test',
-			'second_name': 'Hero'
-		}
-
-		mock_shop_parser.parse.return_value = {
+		mock_save_file_service.find_profile_most_recent_save.return_value = save_file
+		mock_save_file_service.scan_shop_inventory.return_value = {
 			'm_zcom_1422': {
 				'items': [],
 				'spells': [],
@@ -244,8 +220,7 @@ class TestProfileServiceScan:
 		self,
 		service,
 		mock_profile_repo,
-		mock_hero_parser,
-		mock_shop_parser,
+		mock_save_file_service,
 		sample_profile,
 		mock_config,
 		tmp_path
@@ -269,20 +244,10 @@ class TestProfileServiceScan:
 		save2.parent.mkdir()
 		save2.write_text("new save")
 
-		mock_hero_parser.parse.return_value = {
-			'first_name': 'Test',
-			'second_name': 'Hero'
-		}
-
-		mock_shop_parser.parse.return_value = {}
-		mock_shop_parser.sync.return_value = {
-			'items': 0,
-			'spells': 0,
-			'units': 0,
-			'garrison': 0
-		}
+		mock_save_file_service.find_profile_most_recent_save.return_value = save2
+		mock_save_file_service.scan_shop_inventory.return_value = {}
 
 		result = service.scan_most_recent_save(1)
 
-		assert mock_hero_parser.parse.call_count == 1
-		mock_shop_parser.parse.assert_called_once_with(save2)
+		mock_save_file_service.find_profile_most_recent_save.assert_called_once_with(sample_profile)
+		mock_save_file_service.scan_shop_inventory.assert_called_once_with(save2)

@@ -44,7 +44,7 @@ async def list_save_directories(
 		raise HTTPException(status_code=404, detail="Game not found")
 
 	try:
-		save_dirs = save_file_service.list_save_directories(game.path, limit=100)
+		save_dirs = save_file_service.list_save_directories(game, limit=100)
 		return save_dirs
 	except Exception as e:
 		raise HTTPException(status_code=500, detail=f"Failed to list saves: {str(e)}")
@@ -86,7 +86,7 @@ async def scan_hero(
 		raise HTTPException(status_code=400, detail="save_dir is required")
 
 	try:
-		campaign_data = save_file_service.scan_hero_data(game.path, save_dir)
+		campaign_data = save_file_service.scan_hero_data(game, save_dir)
 		return campaign_data
 	except FileNotFoundError as e:
 		raise HTTPException(status_code=404, detail=str(e))

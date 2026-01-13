@@ -51,7 +51,8 @@ class SchemaManagementService(ISchemaManagementService):
 					last_scan_time TIMESTAMP DEFAULT NULL,
 					last_save_timestamp INTEGER DEFAULT NULL,
 					last_corrupted_data JSONB DEFAULT NULL,
-					is_auto_scan_enabled BOOLEAN DEFAULT FALSE
+					is_auto_scan_enabled BOOLEAN DEFAULT FALSE,
+					game_id INTEGER NOT NULL REFERENCES public.game(id)
 				)
 			"""))
 

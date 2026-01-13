@@ -112,6 +112,18 @@ class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
 			session.commit()
 
 	def _mapper_to_entity(self, mapper: GameMapper) -> Game:
+		return self.mapper_to_entity(mapper)
+
+	@staticmethod
+	def mapper_to_entity(mapper: GameMapper) -> Game:
+		"""
+		Convert GameMapper to Game entity
+
+		:param mapper:
+			GameMapper to convert
+		:return:
+			Game entity
+		"""
 		return Game(
 			id=mapper.id,
 			name=mapper.name,

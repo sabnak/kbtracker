@@ -10,7 +10,7 @@ class ISaveFileDecompressor(abc.ABC):
 		Decompress King's Bounty save data file
 
 		:param save_path:
-			Path to save 'data' file
+			Path to save (directory containing 'data' file or .sav archive)
 		:return:
 			Decompressed binary data
 		:raises ValueError:
