@@ -30,11 +30,12 @@ def create_app() -> FastAPI:
 		from src.web.profiles.routes import templates as profiles_templates
 		from src.web.games.routes import templates as games_templates
 		from src.web.settings.routes import templates as settings_templates
+		from src.web.exception_handlers import templates as error_templates
 		from src.web.template_filters import install_translations
 
 		translation_service = container.translation_service()
 
-		for templates in [games_templates, settings_templates, profiles_templates]:
+		for templates in [games_templates, settings_templates, profiles_templates, error_templates]:
 			install_translations(templates, translation_service)
 
 		yield

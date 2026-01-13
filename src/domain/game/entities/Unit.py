@@ -1,6 +1,6 @@
 from typing import Any
 
-from src.domain.game.entities.BaseEntity import BaseEntity
+from src.domain.base.entities.BaseEntity import BaseEntity
 from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.entities.UnitMovetype import UnitMovetype
 

@@ -1,3 +1,4 @@
+from src.domain.base.factories.PydanticEntityFactory import PydanticEntityFactory
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.interfaces.IProfileRepository import IProfileRepository
@@ -137,20 +138,8 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 		if mapper.last_corrupted_data:
 			corrupted_data = CorruptedProfileData(**mapper.last_corrupted_data)
 
-		game = None
-		if mapper.game:
-			game = GameRepository.mapper_to_entity(mapper.game)
-
-		return ProfileEntity(**{
-			"id": mapper.id,
-			"name": mapper.name,
-			"hash": mapper.hash,
-			"full_name": mapper.full_name,
-			"save_dir": mapper.save_dir,
-			"created_at": mapper.created_at,
-			"last_scan_time": mapper.last_scan_time,
-			"last_save_timestamp": mapper.last_save_timestamp,
-			"last_corrupted_data": corrupted_data,
-			"is_auto_scan_enabled": mapper.is_auto_scan_enabled,
-			"game": game
-		})
+		return PydanticEntityFactory.create_entity(
+			ProfileEntity,
+			mapper,
+			last_corrupted_data=corrupted_data
+		)

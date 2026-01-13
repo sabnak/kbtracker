@@ -1,8 +1,7 @@
-from dataclasses import dataclass
+from src.domain.base.entities.BaseEntity import BaseEntity
 
 
-@dataclass
-class ItemSet:
+class ItemSet(BaseEntity):
 	id: int
 	kb_id: str
 	name: str | None = None

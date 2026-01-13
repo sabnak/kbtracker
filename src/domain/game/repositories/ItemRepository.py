@@ -1,6 +1,7 @@
 from sqlalchemy import func
 from sqlalchemy.orm import aliased
 
+from src.domain.base.factories.PydanticEntityFactory import PydanticEntityFactory
 from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.exceptions import InvalidPropbitException, LocalizationNotFoundException
 from src.domain.game.entities.Item import Item
@@ -104,16 +105,12 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		if mapper.propbits is not None:
 			propbits_enum = self._convert_propbits_to_enum(mapper.propbits)
 
-		return Item(
-			id=mapper.id,
-			item_set_id=mapper.item_set_id,
-			kb_id=mapper.kb_id,
+		return PydanticEntityFactory.create_entity(
+			Item,
+			mapper,
 			name=name,
-			price=mapper.price,
 			hint=hint,
-			propbits=propbits_enum,
-			tiers=mapper.tiers,
-			level=mapper.level
+			propbits=propbits_enum
 		)
 
 	def create(self, item: Item) -> Item:

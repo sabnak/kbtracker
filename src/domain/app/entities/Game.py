@@ -1,10 +1,9 @@
 from datetime import datetime
 
-import pydantic
+from src.domain.base.entities.BaseEntity import BaseEntity
 
 
-class Game(pydantic.BaseModel):
-	id: int
+class Game(BaseEntity):
 	name: str
 	path: str
 	last_scan_time: datetime | None

@@ -57,7 +57,7 @@ class EntityNotFoundException(RepositoryException):
 	def __init__(
 		self,
 		entity_type: str,
-		identifier: str | int,
+		identifier: str | int = None,
 		original_exception: Exception | None = None,
 		atom_kb_id: str = None
 	):

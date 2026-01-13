@@ -1,9 +1,7 @@
-from dataclasses import dataclass
+import pydantic
 
 
-@dataclass
-class LocStrings:
-
+class LocStrings(pydantic.BaseModel):
 	name: str | None = None
 	hint: str | None = None
 	desc: str | None = None

@@ -1,3 +1,4 @@
+from src.domain.base.factories.PydanticEntityFactory import PydanticEntityFactory
 from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.entities.Localization import Localization
 from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
@@ -34,13 +35,7 @@ class LocalizationRepository(
 		:return:
 			Localization entity
 		"""
-		return Localization(
-			id=mapper.id,
-			kb_id=mapper.kb_id,
-			text=mapper.text,
-			source=mapper.source,
-			tag=mapper.tag
-		)
+		return PydanticEntityFactory.create_entity(Localization, mapper)
 
 	def _get_entity_type_name(self) -> str:
 		"""

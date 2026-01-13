@@ -1,4 +1,4 @@
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
 from src.domain.game.entities.AtomMap import AtomMap
@@ -12,7 +12,6 @@ from src.domain.game.repositories.mappers.AtomMapMapper import AtomMapMapper
 
 class AtomMapRepository(CrudRepository[AtomMap, AtomMapMapper], IAtomMapRepository):
 
-	@inject
 	def __init__(
 		self,
 		loc_factory: ILocFactory = Provide[Container.loc_factory],

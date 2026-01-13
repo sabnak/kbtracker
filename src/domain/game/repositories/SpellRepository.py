@@ -1,6 +1,7 @@
 from dependency_injector.wiring import Provide, inject
 
 from src.core.Container import Container
+from src.domain.base.factories.PydanticEntityFactory import PydanticEntityFactory
 from src.domain.game.entities.LocStrings import LocStrings
 from src.domain.game.entities.Spell import Spell
 from src.domain.game.entities.SpellSchool import SpellSchool
@@ -62,19 +63,10 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 		:return:
 			Spell entity with populated loc field
 		"""
-		loc = self._fetch_loc(mapper.kb_id)
-
-		return Spell(
-			id=mapper.id,
-			kb_id=mapper.kb_id,
-			profit=mapper.profit,
-			price=mapper.price,
-			school=SpellSchool(mapper.school),
-			hide=mapper.hide,
-			mana_cost=mapper.mana_cost,
-			crystal_cost=mapper.crystal_cost,
-			data=mapper.data,
-			loc=loc
+		return PydanticEntityFactory.create_entity(
+			Spell,
+			mapper,
+			loc=self._fetch_loc(mapper.kb_id)
 		)
 
 	def _get_entity_type_name(self) -> str:

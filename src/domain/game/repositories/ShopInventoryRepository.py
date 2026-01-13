@@ -1,5 +1,6 @@
 import typing
 
+from src.domain.base.factories.PydanticEntityFactory import PydanticEntityFactory
 from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.entities.ShopProduct import ShopProduct
 from src.domain.game.entities.ShopProductType import ShopProductType
@@ -203,10 +204,4 @@ class ShopInventoryRepository(CrudRepository[ShopProduct, ShopInventoryMapper], 
 		:return:
 			ShopProduct entity
 		"""
-		return ShopProduct(
-			entity_id=mapper.entity_id,
-			type=mapper.type,
-			atom_map_id=mapper.atom_map_id,
-			profile_id=mapper.profile_id,
-			count=mapper.count
-		)
+		return PydanticEntityFactory.create_entity(ShopProduct, mapper)

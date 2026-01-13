@@ -3,6 +3,7 @@ from datetime import datetime
 from src.domain.app.entities.Game import Game
 from src.domain.app.interfaces.IGameRepository import IGameRepository
 from src.domain.app.repositories.mappers.GameMapper import GameMapper
+from src.domain.base.factories.PydanticEntityFactory import PydanticEntityFactory
 from src.domain.base.repositories.CrudRepository import CrudRepository
 
 
@@ -112,23 +113,6 @@ class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
 			session.commit()
 
 	def _mapper_to_entity(self, mapper: GameMapper) -> Game:
-		return self.mapper_to_entity(mapper)
-
-	@staticmethod
-	def mapper_to_entity(mapper: GameMapper) -> Game:
-		"""
-		Convert GameMapper to Game entity
-
-		:param mapper:
-			GameMapper to convert
-		:return:
-			Game entity
-		"""
-		return Game(
-			id=mapper.id,
-			name=mapper.name,
-			path=mapper.path,
-			last_scan_time=mapper.last_scan_time,
-			sessions=mapper.sessions,
-			saves_pattern=mapper.saves_pattern
+		return PydanticEntityFactory.create_entity(
+			Game, mapper
 		)

@@ -1,9 +1,8 @@
-from dataclasses import dataclass
+import pydantic
 
 from src.domain.game.entities.Unit import Unit
 
 
-@dataclass
-class ShopUnit:
+class ShopUnit(pydantic.BaseModel):
 	unit: Unit
 	count: int

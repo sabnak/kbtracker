@@ -1,10 +1,7 @@
-from dataclasses import dataclass
+from src.domain.base.entities.BaseEntity import BaseEntity
 
 
-@dataclass
-class Localization:
-
-	id: int
+class Localization(BaseEntity):
 	kb_id: str
 	text: str
 	source: str | None

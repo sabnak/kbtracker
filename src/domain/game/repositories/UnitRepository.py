@@ -1,5 +1,6 @@
 from sqlalchemy import desc, asc
 
+from src.domain.base.factories.PydanticEntityFactory import PydanticEntityFactory
 from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.entities.Unit import Unit
 from src.domain.game.entities.UnitClass import UnitClass
@@ -72,29 +73,11 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 		:return:
 			Unit entity
 		"""
-		return Unit(
-			id=mapper.id,
-			kb_id=mapper.kb_id,
-			name=mapper.name,
+		return PydanticEntityFactory.create_entity(
+			Unit,
+			mapper,
 			unit_class=UnitClass(mapper.unit_class),
-			params=mapper.params,
-			main=mapper.main,
-			cost=mapper.cost,
-			krit=mapper.krit,
-			race=mapper.race,
-			level=mapper.level,
-			speed=mapper.speed,
-			attack=mapper.attack,
-			defense=mapper.defense,
-			hitback=mapper.hitback,
-			hitpoint=mapper.hitpoint,
-			movetype=UnitMovetype(mapper.movetype) if mapper.movetype is not None else None,
-			defenseup=mapper.defenseup,
-			initiative=mapper.initiative,
-			leadership=mapper.leadership,
-			resistance=mapper.resistance,
-			features=mapper.features,
-			attacks=mapper.attacks
+			movetype=UnitMovetype(mapper.movetype) if mapper.movetype else None
 		)
 
 	def create(self, unit: Unit) -> Unit:

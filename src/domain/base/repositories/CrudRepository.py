@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from src.core.Container import Container
+from src.domain.base.repositories.mappers.base import Base
 from src.domain.exceptions import (
 	DuplicateEntityException,
 	DatabaseOperationException
@@ -14,7 +15,7 @@ from src.utils.db import create_schema_session
 from src.web.dependencies.game_context import GameContext
 
 TEntity = TypeVar("TEntity")
-TMapper = TypeVar("TMapper")
+TMapper = TypeVar("TMapper", bound=Base)
 
 # Module-level context variable for game context
 GAME_CONTEXT: ContextVar[Optional['GameContext']] = ContextVar('game_context', default=None)
@@ -53,7 +54,6 @@ class CrudRepository(ABC, Generic[TEntity, TMapper]):
 		"""
 		pass
 
-	@abstractmethod
 	def _mapper_to_entity(self, mapper: TMapper) -> TEntity:
 		"""
 		Convert mapper to entity
