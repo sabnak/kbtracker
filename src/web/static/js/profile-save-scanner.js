@@ -67,7 +67,7 @@ class ProfileSaveScanner {
 				option.value = `${gameName}/${save.name}`;
 				option.textContent = this.formatTimestamp(save.timestamp);
 				option.dataset.gameName = gameName;
-				option.dataset.saveDir = save.name;
+				option.dataset.saveDir = save.path;
 				optgroup.appendChild(option);
 			});
 

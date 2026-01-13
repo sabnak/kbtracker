@@ -1,5 +1,6 @@
 import hashlib
 from glob import glob
+from logging import Logger
 from pathlib import Path
 from typing import Any
 
@@ -21,11 +22,13 @@ class SaveFileService(ISaveFileService):
 		self,
 		config: Config = Provide[Container.config],
 		shop_parser: IShopInventoryParser = Provide[Container.shop_inventory_parser],
-		hero_parser: IHeroSaveParser = Provide[Container.hero_save_parser]
+		hero_parser: IHeroSaveParser = Provide[Container.hero_save_parser],
+		logger: Logger = Provide[Container.logger]
 	):
 		self._config = config
 		self._hero_parser = hero_parser
 		self._shop_parser = shop_parser
+		self._logger = logger
 
 	def list_save_directories(
 		self,
@@ -72,21 +75,19 @@ class SaveFileService(ISaveFileService):
 	def scan_hero_data(
 		self,
 		game: Game,
-		save_identifier: str
+		save_path: str
 	) -> dict[str, str]:
 		"""
 		Scan save file and extract hero data
 
 		:param game:
 			Game entity containing saves_pattern
-		:param save_identifier:
-			Save identifier to match against wildcard in pattern
+		:param save_path:
+			Absolute save path
 		:return:
 			Hero data dictionary with first_name, second_name, and full_name
 		"""
-		save_base = Path(self._config.game_save_path)
-		pattern = game.saves_pattern.replace('*', save_identifier)
-		save_path = save_base / pattern
+		save_path = Path(save_path)
 
 		if not save_path.exists():
 			raise FileNotFoundError(f"Save not found: {save_path}")
@@ -122,6 +123,8 @@ class SaveFileService(ISaveFileService):
 
 		matching_paths = glob(pattern_str)
 		matching_paths = sorted(matching_paths, key=lambda p: Path(p).stat().st_mtime, reverse=True)[:5]
+
+		self._logger.info(f"Scanning saves by pattern: {pattern_str}")
 
 		for save_path_str in matching_paths:
 			try:

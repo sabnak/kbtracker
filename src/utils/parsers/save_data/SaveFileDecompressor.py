@@ -118,12 +118,13 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 
 				zip_file.extractall(temp_path)
 
-			data_file = temp_path / 'data'
-			if not data_file.exists():
-				raise FileNotFoundError(f"'data' file not found in archive: {archive_path}")
-
-			with open(data_file, 'rb') as f:
-				return f.read()
+			data_files = [temp_path / 'data', temp_path / 'savedata']
+			for data_file in data_files:
+				if not data_file.exists():
+					continue
+				with open(data_file, 'rb') as f:
+					return f.read()
+			raise FileNotFoundError(f"'data' file not found in archive: {archive_path}")
 
 		finally:
 			if temp_dir and Path(temp_dir).exists():
