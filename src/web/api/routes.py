@@ -198,11 +198,8 @@ async def update_profile_auto_scan(
 		if not profile:
 			raise HTTPException(status_code=404, detail="Profile not found")
 
-		# Create updated entity with new auto_scan value
-		updated_profile = replace(profile, is_auto_scan_enabled=is_enabled)
-
-		# Update in repository
-		profile_repository.update(updated_profile)
+		profile.is_auto_scan_enabled = is_enabled
+		profile_repository.update(profile)
 
 		return JSONResponse(
 			status_code=200,
