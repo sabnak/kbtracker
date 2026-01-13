@@ -284,3 +284,17 @@ class MetadataNotFoundException(RepositoryException):
 	@property
 	def name(self) -> str:
 		return self._name
+
+
+class UnitCreatingError(KBTrackerException):
+	"""
+	Raised when an error occurs while creating a unit
+	"""
+
+	def __init__(
+		self,
+		params: dict,
+		original_exception: Exception | None = None
+	):
+		message = f"Error while creating unit. Params: {params}"
+		super().__init__(message, original_exception)

@@ -3,7 +3,7 @@ from dependency_injector.wiring import Provide
 from src.core.Container import Container
 from src.domain.app.interfaces.IGameRepository import IGameRepository
 from src.domain.app.interfaces.IGameService import IGameService
-from src.domain.game.interfaces.ISchemaManagementService import ISchemaManagementService
+from src.domain.app.interfaces.ISchemaManagementService import ISchemaManagementService
 from src.domain.app.entities.Game import Game
 
 

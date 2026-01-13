@@ -38,7 +38,7 @@ from src.domain.game.services.ItemService import ItemService
 from src.domain.game.services.ShopInventoryService import ShopInventoryService
 from src.domain.game.services.LocalizationScannerService import LocalizationScannerService
 from src.domain.game.services.ScannerService import ScannerService
-from src.domain.game.services.SchemaManagementService import SchemaManagementService
+from src.domain.app.services.SchemaManagementService import SchemaManagementService
 from src.domain.game.services.SpellsScannerService import SpellsScannerService
 from src.domain.game.services.UnitsScannerService import UnitsScannerService
 from src.domain.game.repositories.ProfilePostgresRepository import ProfilePostgresRepository

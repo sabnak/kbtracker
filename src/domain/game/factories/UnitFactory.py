@@ -1,6 +1,7 @@
 from dependency_injector.wiring import Provide, inject
 
 from src.core.Container import Container
+from src.domain.exceptions import UnitCreatingError
 from src.domain.game.entities.Unit import Unit
 from src.domain.game.entities.UnitMovetype import UnitMovetype
 from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
@@ -45,30 +46,33 @@ class UnitFactory(IUnitFactory):
 		features = self._features_processor.process(params)
 		movetype = UnitMovetype(params['movetype']) if params.get('movetype') is not None else None
 
-		return Unit(
-			id=0,
-			kb_id=kb_id,
-			name=name,
-			unit_class=unit_class,
-			main=main,
-			params=params,
-			cost=params.get('cost'),
-			krit=params.get('krit'),
-			race=params.get('race'),
-			level=params.get('level'),
-			speed=params.get('speed'),
-			attack=params.get('attack'),
-			defense=params.get('defense'),
-			hitback=params.get('hitback'),
-			hitpoint=params.get('hitpoint'),
-			movetype=movetype,
-			defenseup=params.get('defenseup'),
-			initiative=params.get('initiative'),
-			leadership=params.get('leadership'),
-			resistance=params.get('resistances'),
-			features=features,
-			attacks=attacks
-		)
+		try:
+			return Unit(
+				id=0,
+				kb_id=kb_id,
+				name=name,
+				unit_class=unit_class,
+				main=main,
+				params=params,
+				cost=params.get('cost'),
+				krit=params.get('krit'),
+				race=params.get('race'),
+				level=params.get('level'),
+				speed=params.get('speed'),
+				attack=params.get('attack'),
+				defense=params.get('defense'),
+				hitback=params.get('hitback'),
+				hitpoint=params.get('hitpoint'),
+				movetype=movetype,
+				defenseup=params.get('defenseup'),
+				initiative=params.get('initiative'),
+				leadership=params.get('leadership'),
+				resistance=params.get('resistances'),
+				features=features,
+				attacks=attacks
+			)
+		except Exception as e:
+			raise UnitCreatingError(params, e)
 
 	def create_batch_from_raw_data(
 		self,

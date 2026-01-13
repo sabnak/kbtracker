@@ -25,6 +25,6 @@ class Unit(BaseEntity):
 	defenseup: int | None = None
 	initiative: int | None = None
 	leadership: int | None = None
-	resistance: dict[str, int] | None = None
+	resistance: dict[str, float] | None = None
 	features: dict[str, dict[str, str]] | None = None
 	attacks: dict[str, dict[str, Any]] | None = None

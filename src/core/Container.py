@@ -16,7 +16,7 @@ from src.domain.game.interfaces.IProfileGameDataSyncerService import IProfileGam
 from src.domain.game.interfaces.IProfileRepository import IProfileRepository
 from src.domain.game.interfaces.IProfileService import IProfileService
 from src.domain.game.interfaces.ISaveFileService import ISaveFileService
-from src.domain.game.interfaces.ISchemaManagementService import ISchemaManagementService
+from src.domain.app.interfaces.ISchemaManagementService import ISchemaManagementService
 from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.interfaces.ISpellRepository import ISpellRepository
 from src.domain.game.interfaces.IUnitRepository import IUnitRepository

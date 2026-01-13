@@ -1,16 +1,12 @@
 import argparse
-from pathlib import Path
 
 import pydantic
 
 from src.domain.app.entities.Game import Game
 from src.tools.CLITool import CLITool, T
 from src.domain.game.entities.ProfileEntity import ProfileEntity
-from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
 from src.domain.game.interfaces.IProfileService import IProfileService
 from src.domain.game.interfaces.ISaveFileService import ISaveFileService
-from src.domain.app.interfaces.IGameService import IGameService
-from src.domain.game.interfaces.ISchemaManagementService import ISchemaManagementService
 from src.domain.base.repositories.CrudRepository import GAME_CONTEXT
 from src.web.dependencies.game_context import GameContext
 
