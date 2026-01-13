@@ -236,3 +236,17 @@ class SchemaManagementService(ISchemaManagementService):
 					print(f"Error adding column to {schema}: {e}")
 
 			session.commit()
+
+	def migrate_game_table_add_sessions_and_pattern(self) -> None:
+		"""
+		Add sessions and saves_pattern columns to public.game table
+
+		:return:
+		"""
+		with self._session_factory() as session:
+			session.execute(text("""
+				ALTER TABLE public.game
+				ADD COLUMN IF NOT EXISTS sessions VARCHAR(255)[] NOT NULL DEFAULT '{}',
+				ADD COLUMN IF NOT EXISTS saves_pattern VARCHAR(500) NOT NULL DEFAULT '';
+			"""))
+			session.commit()

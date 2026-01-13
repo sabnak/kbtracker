@@ -53,17 +53,35 @@ async def list_games(
 @inject
 async def create_game_form(
 	request: Request,
-	game_path_service: IGamePathService = Depends(Provide["game_path_service"])
+	game_path_service: IGamePathService = Depends(Provide["game_path_service"]),
+	game_config_service = Depends(Provide["game_config_service"])
 ):
 	"""
 	Show game creation form
 	"""
 	available_paths = game_path_service.get_available_game_paths()
+	supported_games = game_config_service.get_supported_games()
+
+	# Convert to JSON-serializable format
+	games_data = [
+		{
+			"name": game.name,
+			"session": game.session,
+			"saves_pattern": game.saves_pattern,
+			"campaigns": [
+				{"name": c.name, "session": c.session}
+				for c in (game.campaigns or [])
+			] if game.campaigns else []
+		}
+		for game in supported_games
+	]
+
 	return templates.TemplateResponse(
 		"pages/game_create.html",
 		{
 			"request": request,
-			"available_game_paths": available_paths
+			"available_game_paths": available_paths,
+			"supported_games": games_data
 		}
 	)
 
@@ -71,16 +89,213 @@ async def create_game_form(
 @router.post("/games/create")
 @inject
 async def create_game(
+	request: Request,
 	name: str = Form(...),
 	path: str = Form(...),
-	game_service: IGameService = Depends(Provide["game_service"])
+	game_type: str = Form(...),
+	campaign_name: str = Form(None),
+	custom_campaign_session: str = Form(None),
+	game_service: IGameService = Depends(Provide["game_service"]),
+	game_config_service = Depends(Provide["game_config_service"]),
+	game_path_service: IGamePathService = Depends(Provide["game_path_service"]),
+	config = Depends(Provide["config"])
 ):
 	"""
-	Create new game
+	Create new game with computed sessions and saves_pattern
 	"""
-	form_data = GameCreateForm(name=name, path=path)
-	game_service.create_game(form_data.name, form_data.path)
+	# Validate form data
+	form_data = GameCreateForm(
+		name=name,
+		path=path,
+		game_type=game_type,
+		campaign_name=campaign_name,
+		custom_campaign_session=custom_campaign_session
+	)
+
+	# Get game config
+	game_config = game_config_service.get_game_config_by_name(form_data.game_type)
+
+	if not game_config:
+		# Return error - invalid game type
+		available_paths = game_path_service.get_available_game_paths()
+		supported_games = game_config_service.get_supported_games()
+		games_data = [
+			{
+				"name": game.name,
+				"session": game.session,
+				"saves_pattern": game.saves_pattern,
+				"campaigns": [
+					{"name": c.name, "session": c.session}
+					for c in (game.campaigns or [])
+				] if game.campaigns else []
+			}
+			for game in supported_games
+		]
+
+		return templates.TemplateResponse(
+			"pages/game_create.html",
+			{
+				"request": request,
+				"available_game_paths": available_paths,
+				"supported_games": games_data,
+				"error": "Invalid game type selected"
+			}
+		)
+
+	# Validate campaign selection for games with campaigns
+	if game_config.campaigns and not form_data.campaign_name:
+		# Return error - campaign is required for this game
+		available_paths = game_path_service.get_available_game_paths()
+		supported_games = game_config_service.get_supported_games()
+		games_data = [
+			{
+				"name": game.name,
+				"session": game.session,
+				"saves_pattern": game.saves_pattern,
+				"campaigns": [
+					{"name": c.name, "session": c.session}
+					for c in (game.campaigns or [])
+				] if game.campaigns else []
+			}
+			for game in supported_games
+		]
+
+		return templates.TemplateResponse(
+			"pages/game_create.html",
+			{
+				"request": request,
+				"available_game_paths": available_paths,
+				"supported_games": games_data,
+				"error": "Campaign selection is required for this game"
+			}
+		)
+
+	# Determine campaign session
+	campaign_session = None
+	if form_data.campaign_name:
+		if form_data.campaign_name == "custom":
+			campaign_session = form_data.custom_campaign_session
+
+			if not campaign_session:
+				# Return error - custom campaign requires session
+				available_paths = game_path_service.get_available_game_paths()
+				supported_games = game_config_service.get_supported_games()
+				games_data = [
+					{
+						"name": game.name,
+						"session": game.session,
+						"saves_pattern": game.saves_pattern,
+						"campaigns": [
+							{"name": c.name, "session": c.session}
+							for c in (game.campaigns or [])
+						] if game.campaigns else []
+					}
+					for game in supported_games
+				]
+
+				return templates.TemplateResponse(
+					"pages/game_create.html",
+					{
+						"request": request,
+						"available_game_paths": available_paths,
+						"supported_games": games_data,
+						"error": "Custom campaign requires session name"
+					}
+				)
+
+			# Validate session exists
+			if not game_config_service.validate_campaign_session_exists(
+				form_data.path,
+				campaign_session,
+				config.game_data_path
+			):
+				# Return error - session directory not found
+				available_paths = game_path_service.get_available_game_paths()
+				supported_games = game_config_service.get_supported_games()
+				games_data = [
+					{
+						"name": game.name,
+						"session": game.session,
+						"saves_pattern": game.saves_pattern,
+						"campaigns": [
+							{"name": c.name, "session": c.session}
+							for c in (game.campaigns or [])
+						] if game.campaigns else []
+					}
+					for game in supported_games
+				]
+
+				return templates.TemplateResponse(
+					"pages/game_create.html",
+					{
+						"request": request,
+						"available_game_paths": available_paths,
+						"supported_games": games_data,
+						"error": f"Session directory not found: {campaign_session}"
+					}
+				)
+		else:
+			# Find predefined campaign
+			if game_config.campaigns:
+				for camp in game_config.campaigns:
+					if camp.name == form_data.campaign_name:
+						campaign_session = camp.session
+						break
+
+	# Compute values
+	sessions = game_config_service.compute_sessions(game_config, campaign_session)
+	saves_pattern = game_config_service.compute_saves_pattern(game_config, campaign_session)
+
+	# Create game
+	game_service.create_game(
+		name=form_data.name,
+		path=form_data.path,
+		sessions=sessions,
+		saves_pattern=saves_pattern
+	)
+
 	return RedirectResponse(url="/games", status_code=303)
+
+
+@router.get("/api/games/scan-sessions")
+@inject
+async def scan_sessions(
+	path: str = Query(...),
+	config = Depends(Provide["config"])
+):
+	"""
+	Scan sessions directory for available session folders
+
+	:param path:
+		Game path to scan
+	:param config:
+		Application config
+	:return:
+		JSON with list of session directories
+	"""
+	import os
+
+	sessions_dir = os.path.join(config.game_data_path, path, "sessions")
+
+	try:
+		if not os.path.exists(sessions_dir):
+			return {
+				"sessions": [],
+				"error": f"Sessions directory not found: {sessions_dir}"
+			}
+
+		entries = os.listdir(sessions_dir)
+		sessions = [
+			entry for entry in entries
+			if os.path.isdir(os.path.join(sessions_dir, entry))
+		]
+
+		return {"sessions": sorted(sessions)}
+	except (OSError, PermissionError) as e:
+		return {
+			"sessions": [],
+			"error": f"Error accessing {sessions_dir}: {str(e)}"
+		}
 
 
 @router.post("/games/{game_id}/delete")

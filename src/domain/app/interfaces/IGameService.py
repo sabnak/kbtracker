@@ -6,7 +6,13 @@ from src.domain.app.entities.Game import Game
 class IGameService(ABC):
 
 	@abstractmethod
-	def create_game(self, name: str, path: str) -> Game:
+	def create_game(
+		self,
+		name: str,
+		path: str,
+		sessions: list[str],
+		saves_pattern: str
+	) -> Game:
 		"""
 		Create new game
 
@@ -14,6 +20,10 @@ class IGameService(ABC):
 			Game display name
 		:param path:
 			Game path relative to /data directory
+		:param sessions:
+			List of session directories for this game
+		:param saves_pattern:
+			Resolved pattern for finding save files
 		:return:
 			Created game
 		"""

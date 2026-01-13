@@ -8,3 +8,5 @@ class Game(pydantic.BaseModel):
 	name: str
 	path: str
 	last_scan_time: datetime | None
+	sessions: list[str]
+	saves_pattern: str

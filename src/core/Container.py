@@ -2,6 +2,7 @@ from dependency_injector import containers, providers
 
 from src.domain.filesystem.IGamePathService import IGamePathService
 from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
+from src.domain.app.interfaces.IGameConfigService import IGameConfigService
 from src.domain.app.interfaces.IGameRepository import IGameRepository
 from src.domain.app.interfaces.IGameService import IGameService
 from src.domain.app.interfaces.IMetaRepository import IMetaRepository
@@ -49,6 +50,7 @@ class Container(containers.DeclarativeContainer):
 
 	# Services
 	game_path_service = providers.AbstractFactory(IGamePathService)
+	game_config_service = providers.AbstractFactory(IGameConfigService)
 	game_service = providers.AbstractFactory(IGameService)
 	settings_service = providers.AbstractFactory(ISettingsService)
 	translation_service = providers.AbstractFactory(ITranslationService)

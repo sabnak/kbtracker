@@ -17,7 +17,13 @@ class GameService(IGameService):
 		self._game_repository = game_repository
 		self._schema_mgmt = schema_mgmt
 
-	def create_game(self, name: str, path: str) -> Game:
+	def create_game(
+		self,
+		name: str,
+		path: str,
+		sessions: list[str],
+		saves_pattern: str
+	) -> Game:
 		"""
 		Create new game
 
@@ -25,10 +31,21 @@ class GameService(IGameService):
 			Game display name
 		:param path:
 			Game path relative to /data directory
+		:param sessions:
+			List of session directories for this game
+		:param saves_pattern:
+			Resolved pattern for finding save files
 		:return:
 			Created game
 		"""
-		game = Game(id=0, name=name, path=path, last_scan_time=None)
+		game = Game(
+			id=0,
+			name=name,
+			path=path,
+			last_scan_time=None,
+			sessions=sessions,
+			saves_pattern=saves_pattern
+		)
 		game = self._game_repository.create(game)
 
 		# Create schema for new game

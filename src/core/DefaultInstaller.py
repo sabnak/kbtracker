@@ -7,6 +7,7 @@ from src.core.Config import Config
 from src.core.Container import Container
 from src.core.logging_config import setup_logging
 from src.domain.filesystem.services.GamePathService import GamePathService
+from src.domain.app.services.GameConfigService import GameConfigService
 from src.domain.game.services.ProfileGameDataSyncerService import ProfileGameDataSyncerService
 from src.utils.parsers.game_data.KFSExtractor import KFSExtractor
 from src.utils.parsers.game_data.KFSReader import KFSReader
@@ -98,6 +99,7 @@ class DefaultInstaller:
 			)
 		)
 
+		self._container.game_config_service.override(providers.Factory(GameConfigService))
 		self._container.game_service.override(providers.Factory(GameService))
 		self._container.settings_service.override(providers.Factory(SettingsService))
 		self._container.translation_service.override(providers.Factory(TranslationService))

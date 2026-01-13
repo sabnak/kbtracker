@@ -20,7 +20,9 @@ class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
 		return GameMapper(
 			name=entity.name,
 			path=entity.path,
-			last_scan_time=entity.last_scan_time
+			last_scan_time=entity.last_scan_time,
+			sessions=entity.sessions,
+			saves_pattern=entity.saves_pattern
 		)
 
 	def _get_entity_type_name(self) -> str:
@@ -114,5 +116,7 @@ class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
 			id=mapper.id,
 			name=mapper.name,
 			path=mapper.path,
-			last_scan_time=mapper.last_scan_time
+			last_scan_time=mapper.last_scan_time,
+			sessions=mapper.sessions,
+			saves_pattern=mapper.saves_pattern
 		)
