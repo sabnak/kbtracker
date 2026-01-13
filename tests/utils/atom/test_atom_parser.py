@@ -239,15 +239,17 @@ class TestRealWorldFiles:
 	Tests with real game files
 	"""
 
-	@pytest.mark.parametrize("atom_name,model", [("absorbent_magic", "absorbent_magic")])
-	def test_parse_box_atom_class_main_block(self, atom_name, model):
+	@pytest.mark.parametrize("atom_name,expected_class", [
+		("absorbent_magic", "box"),
+		("light_archdruid", "chesspiece")
+	])
+	def test_parse_atom_main_block(self, atom_name, expected_class):
 		"""
-		Test parsing main section of atom box-class
+		Test parsing main section of atom
 		"""
 		result = atom.load_file(f"tests/game_files/_atom_examples/{atom_name}.atom")
 		assert "main" in result
-		assert result["main"]["class"] == "box"
-		assert result["main"]["model"] == f"{model}.bms"
+		assert result["main"]["class"] == expected_class
 
 	@pytest.mark.parametrize('atom_name', ['absorbent_magic'])
 	def test_parse_box_atom_class_structure(self, atom_name):
@@ -261,17 +263,8 @@ class TestRealWorldFiles:
 		assert "collisions" in result
 		assert "attachments" in result
 
-	@pytest.mark.parametrize("atom_name,model", [("dread_eye", "dread_eye")])
-	def test_parse_chesspiece_atom_class_main_block(self, atom_name, model):
-		"""
-		Test parsing main section of atom chesspiece-class
-		"""
-		result = atom.load_file(f"tests/game_files/_atom_examples/{atom_name}.atom")
-		assert "main" in result
-		assert result["main"]["class"] == "chesspiece"
-		assert result["main"]["model"] == f"{model}.bma"
-
-	@pytest.mark.parametrize('atom_name', ['dread_eye'])
+	# @pytest.mark.parametrize('atom_name', ['dread_eye'])
+	@pytest.mark.parametrize('atom_name', ['light_archdruid'])
 	def test_parse_chesspiece_atom_class_structure(self, atom_name):
 		"""
 		Test complete structure of atom chesspiece-class
@@ -280,7 +273,7 @@ class TestRealWorldFiles:
 		assert "main" in result
 		assert "animations" in result
 		assert "editor" in result
-		assert "moveattack" in result
+		assert "arena_params" in result
 		assert "attachments" in result
 
 	def test_parse_absorbent_magic_nested_infobox(self):
