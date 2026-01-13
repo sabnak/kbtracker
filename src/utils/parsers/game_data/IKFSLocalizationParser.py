@@ -14,5 +14,5 @@ class IKFSLocalizationParser(abc.ABC):
 		kb_id_pattern: re.Pattern = None,
 		lang: str = 'rus',
 		tag: str | None = None
-	) -> list[Localization]:
+	) -> dict[str, Localization]:
 		...

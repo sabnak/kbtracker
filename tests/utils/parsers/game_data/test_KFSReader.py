@@ -167,3 +167,43 @@ class TestKFSReader:
 
 		assert results == []
 		assert isinstance(results, list)
+
+	def test_read_data_files_recursive_search(self, kfs_reader, test_game_name):
+		"""
+		Test that data files are found recursively across all session subdirectories
+		"""
+		filenames = ['items.txt']
+
+		results = kfs_reader.read_data_files(test_game_name, filenames)
+
+		# Should find items.txt from session subdirectories
+		assert len(results) == 1
+		assert isinstance(results[0], str)
+		assert len(results[0]) > 0
+
+	def test_read_loc_files_recursive_search(self, kfs_reader, test_game_name):
+		"""
+		Test that localization files are found recursively across all session subdirectories
+		"""
+		filenames = ['rus_items.lng']
+
+		results = kfs_reader.read_loc_files(test_game_name, filenames)
+
+		# Should find rus_items.lng from session subdirectories
+		assert len(results) == 1
+		assert isinstance(results[0], str)
+		assert len(results[0]) > 0
+
+	def test_read_data_files_with_glob_patterns(self, kfs_reader, test_game_name):
+		"""
+		Test that glob patterns work recursively
+		"""
+		filenames = ['items*.txt']
+
+		results = kfs_reader.read_data_files(test_game_name, filenames)
+
+		# Should find all files matching items*.txt from all session subdirectories
+		assert len(results) >= 1
+		for result in results:
+			assert isinstance(result, str)
+			assert len(result) > 0

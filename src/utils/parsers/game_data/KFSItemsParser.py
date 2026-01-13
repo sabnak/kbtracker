@@ -1,3 +1,6 @@
+import typing
+from logging import Logger
+
 from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
@@ -11,19 +14,25 @@ from src.utils.parsers.game_data.IKFSItemsParser import IKFSItemsParser
 
 class KFSItemsParser(IKFSItemsParser):
 
-	def __init__(self, reader: IKFSReader = Provide[Container.kfs_reader]):
+	def __init__(
+		self,
+		reader: IKFSReader = Provide[Container.kfs_reader],
+		logger: Logger = Provide[Container.logger]
+	):
 		"""
 		Initialize KFS items parser
 		"""
 
 		self._reader = reader
+		self._logger = logger
 
-	def parse(self, game_name: str) -> dict[str, dict[str, any]]:
+	def parse(self, game_name: str) -> dict[str, list[Item]]:
 		"""
 		Extract and parse item data and set data from game files
 
 		Reads all items*.txt files from extracted directories,
 		parses sets and items, groups items by their set membership.
+		Files are processed in order, with later files overwriting earlier ones.
 
 		:param game_name:
 			Game name (e.g., 'Darkside', 'Armored_Princess')
@@ -39,21 +48,30 @@ class KFSItemsParser(IKFSItemsParser):
 			sets_from_file = self._parse_set_definitions(items_content)
 			set_definitions.update(sets_from_file)
 
-		# Initialize results with all known sets
+		# Second pass: parse all items into flat dictionary (later files overwrite earlier)
+		all_items = {}
+		for items_content in items_contents:
+			items_data = self._parse_items_file(items_content)
+			for kb_id, item_data in items_data.items():
+				# Skip set definitions
+				if kb_id.startswith('set_'):
+					continue
+				all_items[kb_id] = item_data
+
+		# Third pass: build items and group by setref
 		results = {}
 		for set_kb_id in set_definitions.keys():
-			results[set_kb_id] = {"items": []}
-		results["setless"] = {"items": []}
+			results[set_kb_id] = []
+		results["setless"] = []
 
-		# Second pass: parse all items and group by setref
-		for items_content in items_contents:
-			items_by_set = self._parse_items_grouped_by_set(items_content)
-			for set_kb_id, items in items_by_set.items():
-				if set_kb_id in results:
-					results[set_kb_id]["items"].extend(items)
-				else:
-					results["setless"]["items"].extend(items)
+		for kb_id, item_data in all_items.items():
+			item = self._build_item(item_data)
+			if item is not None:
+				setref = item_data.get('setref', '')
+				key = setref if setref and setref in results else "setless"
+				results[key].append(item)
 
+		self._logger.info(results)
 		return results
 
 	def _extract_files(self, game_name: str) -> list[str]:
@@ -69,7 +87,7 @@ class KFSItemsParser(IKFSItemsParser):
 		"""
 		return self._reader.read_data_files(game_name, ['items*.txt'])
 
-	def _parse_items_file(self, content: str) -> list[dict[str, any]]:
+	def _parse_items_file(self, content: str) -> dict[str, typing.Any]:
 		"""
 		Parse items.txt into list of item dictionaries using AtomParser
 
@@ -79,7 +97,7 @@ class KFSItemsParser(IKFSItemsParser):
 			List of dictionaries containing item data
 		"""
 		parsed = atom.loads(content)
-		items = []
+		items = dict()
 
 		for kb_id, block_data in parsed.items():
 			if not isinstance(block_data, dict):
@@ -95,7 +113,7 @@ class KFSItemsParser(IKFSItemsParser):
 				if 'upgrade' in block_data['params']:
 					item_data['params_upgrade'] = block_data['params']['upgrade']
 
-			items.append(item_data)
+			items[kb_id] = item_data
 
 		return items
 
@@ -212,67 +230,3 @@ class KFSItemsParser(IKFSItemsParser):
 			i += 1
 
 		return sets
-
-	@staticmethod
-	def _parse_set_block(lines: list[str], start_idx: int) -> tuple[dict[str, str] | None, int]:
-		"""
-		Parse single set block from lines
-
-		:param lines:
-			All lines from items.txt
-		:param start_idx:
-			Index of line containing set identifier
-		:return:
-			Tuple of (set_data dict or None, end_index)
-		"""
-		set_data = {}
-		brace_level = 1
-		i = start_idx + 1
-
-		while i < len(lines) and brace_level > 0:
-			line = lines[i].strip()
-
-			brace_level += line.count('{')
-			brace_level -= line.count('}')
-
-			if brace_level == 1 and '=' in line and not line.startswith('//'):
-				key, value = line.split('=', 1)
-				key = key.strip()
-				value = value.strip()
-
-				if key in ['label', 'hint']:
-					set_data[key] = value
-
-			i += 1
-
-		return set_data, i
-
-	def _parse_items_grouped_by_set(self, content: str) -> dict[str, list[Item]]:
-		"""
-		Parse items from content and group by setref
-
-		:param content:
-			Raw items.txt file content
-		:return:
-			Dictionary mapping set KB IDs to lists of items
-		"""
-		items_by_set = {}
-		item_data_list = self._parse_items_file(content)
-
-		for item_data in item_data_list:
-			# Skip set definitions
-			kb_id = item_data.get('kb_id', '')
-			if kb_id.startswith('set_'):
-				continue
-
-			item = self._build_item(item_data)
-			if item is not None:
-				setref = item_data.get('setref', '')
-				set_key = setref if setref else 'setless'
-
-				if set_key not in items_by_set:
-					items_by_set[set_key] = []
-
-				items_by_set[set_key].append(item)
-
-		return items_by_set

@@ -25,6 +25,7 @@ class Config(BaseSettings):
 	localization_config: list[LocalizationConfig] = [
 		LocalizationConfig(file="items", tag="items"),
 		LocalizationConfig(file="units", tag="units"),
+		LocalizationConfig(file="orcs_rage", tag="units"),
 		LocalizationConfig(file="units_features", tag="units_features"),
 		LocalizationConfig(file="units_specials", tag="units_specials"),
 		LocalizationConfig(file="spells", tag="spells"),

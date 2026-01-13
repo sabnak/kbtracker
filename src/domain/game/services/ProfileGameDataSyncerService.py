@@ -76,7 +76,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 
 			unit_result = self._sync_units(inventories['units'], atom_map.id, profile_id, shop_kb_id)
 			counts["units"] += unit_result.count
-			missing_units.extend(unit_result.missing_kb_ids)
+			missing_units.extend(set(unit_result.missing_kb_ids))
 
 			garrison_result = self._sync_garrison(inventories['garrison'], atom_map.id, profile_id, shop_kb_id)
 			counts["garrison"] += garrison_result.count
@@ -295,8 +295,8 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			return None
 
 		return CorruptedProfileData(
-			shops=shops if shops else None,
-			items=items if items else None,
-			units=units if units else None,
-			garrison=garrison if garrison else None
+			shops=list(set(shops)) if shops else None,
+			items=list(set(items)) if items else None,
+			units=list(set(units)) if units else None,
+			garrison=list(set(garrison)) if garrison else None
 		)

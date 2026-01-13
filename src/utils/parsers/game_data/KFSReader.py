@@ -21,18 +21,18 @@ class KFSReader(IKFSReader):
 		encoding: str | None = None
 	) -> list[str]:
 		"""
-		Read data files from extracted data directory
+		Read data files from extracted data directory (searches recursively in all session subdirectories)
 
 		Supports glob patterns for dynamic file discovery.
 
 		:param game_name:
-			Game name (builds path as /tmp/<game_name>/data/)
+			Game name (builds path as /tmp/<game_name>/data/**, searches recursively)
 		:param patterns:
 			List of filenames or glob patterns (e.g., ['items*.txt', 'spells.txt'])
 		:param encoding:
 			Text encoding (default: None for auto-detection)
 		:return:
-			List of file contents as strings
+			List of file contents as strings from all matching files across all sessions
 		:raises FileNotFoundError:
 			If no files match pattern or directory not found
 		"""
@@ -46,22 +46,23 @@ class KFSReader(IKFSReader):
 		encoding: str = 'utf-16-le'
 	) -> list[str]:
 		"""
-		Read localization files from extracted loc directory
+		Read localization files from extracted loc directory (searches recursively in all session subdirectories)
 
 		Supports glob patterns for dynamic file discovery.
 
 		:param game_name:
-			Game name (builds path as /tmp/<game_name>/loc/)
+			Game name (builds path as /tmp/<game_name>/loc/**, searches recursively)
 		:param patterns:
 			List of filenames or glob patterns (e.g., ['rus_*.lng', 'eng_items.lng'])
 		:param encoding:
 			Text encoding (default: utf-16-le)
 		:return:
-			List of file contents as strings
+			List of file contents as strings from all matching files across all sessions
 		:raises FileNotFoundError:
 			If no files match pattern or directory not found
 		"""
 		loc_dir = os.path.join(self._config.tmp_dir, game_name, 'loc')
+		print(f"Loc dir: {loc_dir}, patterns: {patterns}")
 		return self._read_files_from_dir(loc_dir, patterns, encoding)
 
 	def _read_files_from_dir(
@@ -94,16 +95,16 @@ class KFSReader(IKFSReader):
 			raise FileNotFoundError(f"Directory not found: {directory}")
 
 		# Expand glob patterns to actual filenames
-		filenames = self._expand_patterns(directory, patterns)
+		paths = self._expand_patterns(directory, patterns)
 
-		if not filenames:
+		if not paths:
 			raise FileNotFoundError(
 				f"No files found matching patterns {patterns} in directory '{directory}'"
 			)
 
 		results = []
-		for filename in filenames:
-			content = self._read_file(directory, filename, encoding)
+		for path in paths:
+			content = self._read_file(path, encoding)
 			results.append(content)
 
 		return results
@@ -111,7 +112,7 @@ class KFSReader(IKFSReader):
 	@staticmethod
 	def _expand_patterns(directory: str, patterns: list[str]) -> list[str]:
 		"""
-		Expand glob patterns to actual filenames
+		Expand glob patterns to actual filenames (searches recursively in all subdirectories)
 
 		:param directory:
 			Directory path
@@ -120,35 +121,29 @@ class KFSReader(IKFSReader):
 		:return:
 			Sorted list of unique filenames (basenames only)
 		"""
-		all_files = set()
+		all_files = []
 
 		for pattern in patterns:
-			# Build full path pattern
-			full_pattern = os.path.join(directory, pattern)
+			# Build recursive pattern to search all subdirectories
+			full_pattern = os.path.join(directory, '**', pattern)
 
-			# Expand glob pattern
-			matched_paths = glob.glob(full_pattern)
+			# Expand glob pattern recursively
+			matched_paths = glob.glob(full_pattern, recursive=True)
+			print(f"Matched paths: {matched_paths}")
+			all_files += matched_paths
 
-			# Extract basenames and add to set
-			for path in matched_paths:
-				all_files.add(os.path.basename(path))
-
+		print(f"All files: {all_files}")
 		# Return sorted list
-		return sorted(all_files)
+		return sorted(set(all_files))
 
 	def _read_file(
 		self,
-		directory: str,
-		filename: str,
+		path: str,
 		encoding: str | None
 	) -> str:
 		"""
-		Read single file from directory
+		Read single file from directory (searches recursively if not found at root)
 
-		:param directory:
-			Directory path
-		:param filename:
-			Filename relative to directory
 		:param encoding:
 			Text encoding (None for auto-detection)
 		:return:
@@ -156,14 +151,9 @@ class KFSReader(IKFSReader):
 		:raises FileNotFoundError:
 			If file not found
 		"""
-		full_path = os.path.join(directory, filename)
+		# Try direct path first
 
-		if not os.path.exists(full_path):
-			raise FileNotFoundError(
-				f"File '{filename}' not found in directory '{directory}'"
-			)
-
-		with open(full_path, 'rb') as file:
+		with open(path, 'rb') as file:
 			content_bytes = file.read()
 
 		try:
@@ -174,7 +164,7 @@ class KFSReader(IKFSReader):
 				e.object,
 				e.start,
 				e.end,
-				f"Failed to decode file '{full_path}': {e.reason}"
+				f"Failed to decode file '{path}': {e.reason}"
 			) from e
 
 	@staticmethod

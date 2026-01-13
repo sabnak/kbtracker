@@ -5,6 +5,7 @@ from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
+from src.domain.app.entities.Game import Game
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
 from src.domain.game.entities.ProfileEntity import ProfileEntity

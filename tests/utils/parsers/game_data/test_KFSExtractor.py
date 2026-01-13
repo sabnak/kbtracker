@@ -23,7 +23,7 @@ class TestKFSExtractor:
 
 	def test_extract_archives_extracts_all_archives(self, kfs_extractor, test_game):
 		"""
-		Test that all archives are extracted to correct directories
+		Test that all archives are extracted to correct session subdirectories
 		"""
 		extraction_root = kfs_extractor.extract_archives(test_game)
 
@@ -31,9 +31,13 @@ class TestKFSExtractor:
 		assert os.path.exists(os.path.join(extraction_root, 'data'))
 		assert os.path.exists(os.path.join(extraction_root, 'loc'))
 
-		# Check that files were extracted to correct locations
-		assert os.path.exists(os.path.join(extraction_root, 'data', 'items.txt'))
-		assert os.path.exists(os.path.join(extraction_root, 'loc', 'rus_items.lng'))
+		# Check that session subdirectories exist
+		assert os.path.exists(os.path.join(extraction_root, 'data', 'darkside'))
+		assert os.path.exists(os.path.join(extraction_root, 'loc', 'darkside'))
+
+		# Check that files were extracted to correct session subdirectories
+		assert os.path.exists(os.path.join(extraction_root, 'data', 'darkside', 'items.txt'))
+		assert os.path.exists(os.path.join(extraction_root, 'loc', 'darkside', 'rus_items.lng'))
 
 		# Cleanup
 		shutil.rmtree(extraction_root, ignore_errors=True)
@@ -74,7 +78,7 @@ class TestKFSExtractor:
 
 	def test_extract_archives_with_invalid_game_path(self, kfs_extractor, test_config):
 		"""
-		Test error when game directory doesn't exist
+		Test that extraction completes without error even when no archives found
 		"""
 		invalid_game = Game(
 			id=999,
@@ -85,8 +89,12 @@ class TestKFSExtractor:
 			saves_pattern="*.sav"
 		)
 
-		with pytest.raises(FileNotFoundError):
-			kfs_extractor.extract_archives(invalid_game)
+		# Should not raise error, just extract nothing
+		extraction_root = kfs_extractor.extract_archives(invalid_game)
+		assert extraction_root == f'/tmp/{invalid_game.path}'
+
+		# Cleanup
+		shutil.rmtree(extraction_root, ignore_errors=True)
 
 	def test_extract_archives_creates_loc_directory(self, kfs_extractor, test_game):
 		"""
@@ -103,7 +111,7 @@ class TestKFSExtractor:
 
 	def test_extract_archives_creates_data_directory(self, kfs_extractor, test_game):
 		"""
-		Test that data archives are extracted to data directory
+		Test that data archives are extracted to data session subdirectory
 		"""
 		extraction_root = kfs_extractor.extract_archives(test_game)
 
@@ -111,8 +119,10 @@ class TestKFSExtractor:
 		assert os.path.exists(data_dir)
 		assert os.path.isdir(data_dir)
 
-		# Should contain items.txt from ses archives
-		items_file = os.path.join(data_dir, 'items.txt')
+		# Should contain session subdirectory with items.txt
+		session_dir = os.path.join(data_dir, 'darkside')
+		assert os.path.exists(session_dir)
+		items_file = os.path.join(session_dir, 'items.txt')
 		assert os.path.exists(items_file)
 
 		# Cleanup
@@ -124,58 +134,79 @@ class TestKFSExtractor:
 		"""
 		extraction_root = kfs_extractor.extract_archives(test_game)
 
-		# Check data directory - should only have .atom and .txt files
+		# Check data directory session subdirectories - should only have .atom and .txt files
 		data_dir = os.path.join(extraction_root, 'data')
-		for file in os.listdir(data_dir):
-			ext = os.path.splitext(file)[1].lower()
-			assert ext in ['.atom', '.txt'], f"Unexpected file extension: {ext}"
+		for session_name in os.listdir(data_dir):
+			session_dir = os.path.join(data_dir, session_name)
+			if os.path.isdir(session_dir):
+				for file in os.listdir(session_dir):
+					ext = os.path.splitext(file)[1].lower()
+					assert ext in ['.atom', '.txt'], f"Unexpected file extension in data/{session_name}: {ext}"
 
-		# Check loc directory - should only have .lng files
+		# Check loc directory session subdirectories - should only have .lng files
 		loc_dir = os.path.join(extraction_root, 'loc')
-		for file in os.listdir(loc_dir):
-			ext = os.path.splitext(file)[1].lower()
-			assert ext == '.lng', f"Unexpected file in loc/: {file}"
+		for session_name in os.listdir(loc_dir):
+			session_dir = os.path.join(loc_dir, session_name)
+			if os.path.isdir(session_dir):
+				for file in os.listdir(session_dir):
+					ext = os.path.splitext(file)[1].lower()
+					assert ext == '.lng', f"Unexpected file in loc/{session_name}: {file}"
 
 		# Cleanup
 		shutil.rmtree(extraction_root, ignore_errors=True)
 
-	def test_extract_archives_creates_flat_structure(self, kfs_extractor, test_game):
+	def test_extract_archives_creates_session_subdirectories(self, kfs_extractor, test_game):
 		"""
-		Test that files are extracted flat (no subdirectories in output)
+		Test that session subdirectories are created and files within them are flat
 		"""
 		extraction_root = kfs_extractor.extract_archives(test_game)
 
-		# Check data directory - all entries should be files, not directories
+		# Check data directory - should contain session subdirectories
 		data_dir = os.path.join(extraction_root, 'data')
-		for entry in os.listdir(data_dir):
-			entry_path = os.path.join(data_dir, entry)
-			assert os.path.isfile(entry_path), f"Found directory in data/: {entry}"
+		assert os.path.exists(os.path.join(data_dir, 'darkside')), "Session subdirectory missing in data/"
 
-		# Check loc directory - all entries should be files, not directories
+		# Check that files within session subdirectories are flat (no nested directories)
+		for session_name in os.listdir(data_dir):
+			session_dir = os.path.join(data_dir, session_name)
+			if os.path.isdir(session_dir):
+				for entry in os.listdir(session_dir):
+					entry_path = os.path.join(session_dir, entry)
+					assert os.path.isfile(entry_path), f"Found nested directory in data/{session_name}/: {entry}"
+
+		# Check loc directory - should contain session subdirectories
 		loc_dir = os.path.join(extraction_root, 'loc')
-		for entry in os.listdir(loc_dir):
-			entry_path = os.path.join(loc_dir, entry)
-			assert os.path.isfile(entry_path), f"Found directory in loc/: {entry}"
+		assert os.path.exists(os.path.join(loc_dir, 'darkside')), "Session subdirectory missing in loc/"
+
+		# Check that files within session subdirectories are flat (no nested directories)
+		for session_name in os.listdir(loc_dir):
+			session_dir = os.path.join(loc_dir, session_name)
+			if os.path.isdir(session_dir):
+				for entry in os.listdir(session_dir):
+					entry_path = os.path.join(session_dir, entry)
+					assert os.path.isfile(entry_path), f"Found nested directory in loc/{session_name}/: {entry}"
 
 		# Cleanup
 		shutil.rmtree(extraction_root, ignore_errors=True)
 
 	def test_extract_archives_routes_lng_to_loc(self, kfs_extractor, test_game):
 		"""
-		Test that .lng files go to loc/ directory
+		Test that .lng files go to loc/ session subdirectories
 		"""
 		extraction_root = kfs_extractor.extract_archives(test_game)
 
 		loc_dir = os.path.join(extraction_root, 'loc')
 
-		# Should have .lng files
-		assert os.path.exists(os.path.join(loc_dir, 'rus_items.lng'))
+		# Should have .lng files in session subdirectory
+		assert os.path.exists(os.path.join(loc_dir, 'darkside', 'rus_items.lng'))
 
-		# Data directory should NOT have .lng files
+		# Data directory session subdirectories should NOT have .lng files
 		data_dir = os.path.join(extraction_root, 'data')
-		for file in os.listdir(data_dir):
-			ext = os.path.splitext(file)[1].lower()
-			assert ext != '.lng', f"Found .lng file in data/: {file}"
+		for session_name in os.listdir(data_dir):
+			session_dir = os.path.join(data_dir, session_name)
+			if os.path.isdir(session_dir):
+				for file in os.listdir(session_dir):
+					ext = os.path.splitext(file)[1].lower()
+					assert ext != '.lng', f"Found .lng file in data/{session_name}/: {file}"
 
 		# Cleanup
 		shutil.rmtree(extraction_root, ignore_errors=True)
@@ -187,7 +218,7 @@ class TestKFSExtractor:
 		test_config
 	):
 		"""
-		Test extraction with game having multiple sessions
+		Test extraction with game having multiple sessions creates separate subdirectories
 		"""
 		# Create game with multiple sessions
 		multi_session_game = Game(
@@ -201,10 +232,14 @@ class TestKFSExtractor:
 
 		extraction_root = kfs_extractor.extract_archives(multi_session_game)
 
-		# Files should be extracted
+		# Files should be extracted to session subdirectories
 		assert os.path.exists(extraction_root)
-		assert os.path.exists(os.path.join(extraction_root, 'data'))
-		assert os.path.exists(os.path.join(extraction_root, 'loc'))
+		assert os.path.exists(os.path.join(extraction_root, 'data', 'darkside'))
+		assert os.path.exists(os.path.join(extraction_root, 'loc', 'darkside'))
+
+		# Session subdirectory should contain files
+		session_data_dir = os.path.join(extraction_root, 'data', 'darkside')
+		assert len(os.listdir(session_data_dir)) > 0, "Session data directory is empty"
 
 		# Cleanup
 		shutil.rmtree(extraction_root, ignore_errors=True)

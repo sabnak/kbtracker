@@ -1,4 +1,5 @@
 import re
+from logging import Logger
 
 from dependency_injector.wiring import Provide
 
@@ -15,7 +16,11 @@ from src.utils.parsers.game_data.IKFSLocalizationParser import IKFSLocalizationP
 
 class KFSLocalizationParser(IKFSLocalizationParser):
 
-	def __init__(self, reader: IKFSReader = Provide[Container.kfs_reader]):
+	def __init__(
+		self,
+		reader: IKFSReader = Provide[Container.kfs_reader],
+		logger: Logger = Provide[Container.logger]
+	):
 		"""
 		Initialize KFS localization parser
 
@@ -23,6 +28,7 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 		from King's Bounty game files
 		"""
 		self._reader = reader
+		self._logger = logger
 
 	def parse(
 		self,
@@ -31,7 +37,7 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 		kb_id_pattern: re.Pattern = None,
 		lang: str = 'rus',
 		tag: str | None = None
-	) -> list[Localization]:
+	) -> dict[str, Localization]:
 		"""
 		Parse localization file and return Localization entities
 
@@ -61,10 +67,11 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 			self._validate_pattern_has_kb_id_group(kb_id_pattern)
 
 		filename = f"{lang}_{file_name}.lng"
-		content = self._reader.read_loc_files(game_name, [filename])[0]
+
+		contents = self._reader.read_loc_files(game_name, [filename])
 
 		final_pattern = self._build_final_pattern(kb_id_pattern)
-		localizations = self._parse_content(content, final_pattern, file_name, lang, tag)
+		localizations = self._parse_content(contents, final_pattern, file_name, lang, tag)
 
 		return localizations
 
@@ -100,12 +107,12 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 
 	def _parse_content(
 		self,
-		content: str,
+		content: list[str],
 		pattern: re.Pattern,
 		file_name: str,
 		lang: str,
 		tag: str | None = None
-	) -> list[Localization]:
+	) -> dict[str, Localization]:
 		"""
 		Parse file content and create Localization entities
 
@@ -126,7 +133,7 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 		:raises InvalidKbIdException:
 			When kb_id doesn't match strict format
 		"""
-		matches = list(pattern.finditer(content))
+		matches = list(pattern.finditer("\n".join(content)))
 
 		if not matches:
 			raise NoLocalizationMatchesException(
@@ -135,7 +142,7 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 				lang=lang
 			)
 
-		localizations = []
+		localizations = dict()
 		for match in matches:
 			kb_id = match.group('kb_id')
 			text = match.group('text')
@@ -149,7 +156,7 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 				source=file_name,
 				tag=tag
 			)
-			localizations.append(localization)
+			localizations[kb_id] = localization
 
 		return localizations
 

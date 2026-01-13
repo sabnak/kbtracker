@@ -33,9 +33,8 @@ class ItemsAndSetsScannerService(IItemsAndSetsScannerService):
 		all_items = []
 		all_sets = []
 
-		for set_kb_id, set_data in parse_results.items():
+		for set_kb_id, items in parse_results.items():
 			if set_kb_id == "setless":
-				items = set_data["items"]
 				created_items = self._item_repository.create_batch(items)
 				all_items.extend(created_items)
 			else:
@@ -43,7 +42,6 @@ class ItemsAndSetsScannerService(IItemsAndSetsScannerService):
 				created_set = self._item_set_repository.create(item_set)
 				all_sets.append(created_set)
 
-				items = set_data["items"]
 				for item in items:
 					item.item_set_id = created_set.id
 				created_items = self._item_repository.create_batch(items)

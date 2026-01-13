@@ -18,10 +18,11 @@ class KFSExtractor(IKFSExtractor):
 
 	def extract_archives(self, game: Game) -> str:
 		"""
-		Extract all game archives to /tmp/<game.path>/
+		Extract all game archives to /tmp/<game.path>/ with session-specific subdirectories
 
-		Data archives go to /tmp/<game.path>/data/
-		Localization archives go to /tmp/<game.path>/loc/
+		Data archives go to /tmp/<game.path>/data/<session>/
+		Localization archives go to /tmp/<game.path>/loc/<session>/
+		Main data archive goes to /tmp/<game.path>/data/data/ and /tmp/<game.path>/loc/data/
 
 		:param game:
 			Game entity with path and sessions list
@@ -34,9 +35,16 @@ class KFSExtractor(IKFSExtractor):
 
 		game_path = os.path.join(self._config.game_data_path, game.path)
 
-		archive_paths = self._build_archive_paths_from_game(game, game_path)
+		# Extract main data archive to data/ subdirectory
+		data_archive_paths = self._get_data_archive_paths(game_path)
+		if data_archive_paths:
+			self._extract_to_session(data_archive_paths, extraction_root, "data", "1")
 
-		self._extract_archives_flat(archive_paths, extraction_root)
+		# Extract session-specific archives
+		for i, session in enumerate(game.sessions):
+			session_archive_paths = self._get_session_archive_paths(game_path, session)
+			if session_archive_paths:
+				self._extract_to_session(session_archive_paths, extraction_root, session, str(i + 2))
 
 		return extraction_root
 
@@ -51,63 +59,58 @@ class KFSExtractor(IKFSExtractor):
 		if os.path.exists(extraction_root):
 			shutil.rmtree(extraction_root)
 
-	def _build_archive_paths_from_game(
-		self,
-		game: Game,
-		game_path: str
-	) -> list[str]:
+	def _get_data_archive_paths(self, game_path: str) -> list[str]:
 		"""
-		Build list of archive paths from Game.sessions
+		Get paths to main data archive
 
-		:param game:
-			Game entity with sessions list
 		:param game_path:
 			Absolute path to game directory
 		:return:
-			List of resolved archive paths
-		:raises FileNotFoundError:
-			If no archives found
+			List of matched data archive paths (may be empty)
 		"""
-		paths = []
-
 		data_path = self._config.data_archive_path.format(game_path=game_path)
-		matched_data = glob.glob(data_path)
-		paths.extend(matched_data)
+		return glob.glob(data_path)
 
-		for session in game.sessions:
-			pattern = self._config.session_archives_pattern.format(
-				game_path=game_path,
-				session=session
-			)
-			matched_session = glob.glob(pattern)
-			paths.extend(matched_session)
+	def _get_session_archive_paths(
+		self,
+		game_path: str,
+		session: str
+	) -> list[str]:
+		"""
+		Get paths to session-specific archives
 
-		if not paths:
-			raise FileNotFoundError(
-				f"No archives found for game {game.path}"
-			)
+		:param game_path:
+			Absolute path to game directory
+		:param session:
+			Session name
+		:return:
+			List of matched session archive paths (may be empty)
+		"""
+		pattern = self._config.session_archives_pattern.format(
+			game_path=game_path,
+			session=session
+		)
+		return glob.glob(pattern)
 
-		return paths
-
-	def _extract_archives_flat(
+	def _extract_to_session(
 		self,
 		archive_paths: list[str],
-		extraction_root: str
+		extraction_root: str,
+		session_name: str,
+		prefix: str
 	) -> None:
 		"""
-		Extract archives with flat structure and extension filtering
-
-		Only files with extensions .atom, .txt, .lng are extracted.
-		Files are extracted flat (no subdirectories).
-		.lng files go to loc/, .atom and .txt go to data/
+		Extract archives to session-specific subdirectories
 
 		:param archive_paths:
 			List of archive paths to extract
 		:param extraction_root:
 			Root extraction directory (/tmp/<game.path>/)
+		:param session_name:
+			Session name (e.g., 'data', 'darkside', 'lightside')
 		"""
-		data_dir = os.path.join(extraction_root, 'data')
-		loc_dir = os.path.join(extraction_root, 'loc')
+		data_dir = os.path.join(extraction_root, 'data', f"{prefix}-{session_name}")
+		loc_dir = os.path.join(extraction_root, 'loc', f"{prefix}-{session_name}")
 
 		os.makedirs(data_dir, exist_ok=True)
 		os.makedirs(loc_dir, exist_ok=True)
@@ -117,15 +120,18 @@ class KFSExtractor(IKFSExtractor):
 				archive_path,
 				extraction_root,
 				data_dir,
-				loc_dir
+				loc_dir,
+				session_name
 			)
+
 
 	@staticmethod
 	def _extract_archive_flat(
 		archive_path: str,
 		extraction_root: str,
 		data_dir: str,
-		loc_dir: str
+		loc_dir: str,
+		session_name: str
 	) -> None:
 		"""
 		Extract single archive with flat structure and extension filtering
@@ -138,6 +144,8 @@ class KFSExtractor(IKFSExtractor):
 			Directory for data files (.atom, .txt)
 		:param loc_dir:
 			Directory for localization files (.lng)
+		:param session_name:
+			Session name for logging (e.g., 'data', 'darkside')
 		"""
 		try:
 			with zipfile.ZipFile(archive_path, 'r') as archive:
@@ -159,7 +167,7 @@ class KFSExtractor(IKFSExtractor):
 						print(
 							f"Info: File '{filename}' from archive "
 							f"'{os.path.basename(archive_path)}' overwrites existing file "
-							f"in '{target_subdir_name}/' directory. This is expected for modded games."
+							f"in '{target_subdir_name}/{session_name}/' directory. This is expected for modded games."
 						)
 
 					content = archive.read(file_info)
