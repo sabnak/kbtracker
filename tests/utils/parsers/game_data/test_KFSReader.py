@@ -6,22 +6,22 @@ import pytest
 class TestKFSReader:
 
 	@pytest.fixture(autouse=True)
-	def setup_extraction(self, kfs_extractor, test_game_name):
+	def setup_extraction(self, kfs_extractor, test_game):
 		"""
 		Auto-use fixture that extracts archives before each test
 
 		:param kfs_extractor:
 			KFSExtractor instance
-		:param test_game_name:
-			Test game name
+		:param test_game:
+			Test Game entity
 		"""
 		# Extract archives for tests
-		kfs_extractor.extract_archives(test_game_name)
+		kfs_extractor.extract_archives(test_game)
 
 		yield
 
 		# Cleanup after test
-		extraction_root = f'/tmp/{test_game_name}'
+		extraction_root = f'/tmp/{test_game.path}'
 		shutil.rmtree(extraction_root, ignore_errors=True)
 
 	def test_read_data_files_single_file(self, kfs_reader, test_game_name):

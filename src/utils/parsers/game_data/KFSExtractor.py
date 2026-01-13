@@ -7,6 +7,7 @@ from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
+from src.domain.app.entities.Game import Game
 from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
 
 
@@ -15,147 +16,155 @@ class KFSExtractor(IKFSExtractor):
 	def __init__(self, config: Config = Provide[Container.config]):
 		self._config = config
 
-	def extract_archives(self, game_name: str) -> str:
+	def extract_archives(self, game: Game) -> str:
 		"""
-		Extract all game archives to /tmp/<game_name>/
+		Extract all game archives to /tmp/<game.path>/
 
-		Data archives go to /tmp/<game_name>/data/
-		Localization archives go to /tmp/<game_name>/loc/
+		Data archives go to /tmp/<game.path>/data/
+		Localization archives go to /tmp/<game.path>/loc/
 
-		:param game_name:
-			Game name (e.g., 'Darkside', 'Armored_Princess')
+		:param game:
+			Game entity with path and sessions list
 		:return:
-			Path to extraction root (/tmp/<game_name>/)
+			Path to extraction root (/tmp/<game.path>/)
 		"""
-		extraction_root = os.path.join(self._config.tmp_dir, game_name)
+		extraction_root = os.path.join(self._config.tmp_dir, game.path)
 
-		self._cleanup_previous_extraction(game_name)
+		self._cleanup_previous_extraction(game.path)
 
-		game_path = os.path.join(self._config.game_data_path, game_name)
+		game_path = os.path.join(self._config.game_data_path, game.path)
 
-		# Extract data archives
-		data_patterns = self._build_archive_patterns(game_path, self._config.data_archive_patterns)
-		data_paths = self._resolve_archive_patterns(data_patterns)
-		self._extract_archives_to_subdir(data_paths, extraction_root, 'data')
+		archive_paths = self._build_archive_paths_from_game(game, game_path)
 
-		# Extract localization archives
-		loc_patterns = self._build_archive_patterns(game_path, self._config.loc_archive_patterns)
-		loc_paths = self._resolve_archive_patterns(loc_patterns)
-		self._extract_archives_to_subdir(loc_paths, extraction_root, 'loc')
+		self._extract_archives_flat(archive_paths, extraction_root)
 
 		return extraction_root
 
-	@staticmethod
-	def _cleanup_previous_extraction(game_name: str) -> None:
+	def _cleanup_previous_extraction(self, game_path: str) -> None:
 		"""
-		Delete /tmp/<game_name>/ directory if exists
+		Delete /tmp/<game_path>/ directory if exists
 
-		:param game_name:
-			Game name
+		:param game_path:
+			Game path
 		"""
-		extraction_root = f'/tmp/{game_name}'
+		extraction_root = os.path.join(self._config.tmp_dir, game_path)
 		if os.path.exists(extraction_root):
 			shutil.rmtree(extraction_root)
 
-	@staticmethod
-	def _build_archive_patterns(game_path: str, patterns: list[str]) -> list[str]:
+	def _build_archive_paths_from_game(
+		self,
+		game: Game,
+		game_path: str
+	) -> list[str]:
 		"""
-		Build archive patterns for extraction
+		Build list of archive paths from Game.sessions
 
+		:param game:
+			Game entity with sessions list
 		:param game_path:
 			Absolute path to game directory
-		:param patterns:
-			List of pattern templates
-		:return:
-			List of glob patterns
-		"""
-		return [
-			pattern.format(game_path=game_path)
-			for pattern in patterns
-		]
-
-	@staticmethod
-	def _resolve_archive_patterns(patterns: list[str]) -> list[str]:
-		"""
-		Convert glob patterns to actual archive paths
-
-		:param patterns:
-			List of glob patterns
 		:return:
 			List of resolved archive paths
 		:raises FileNotFoundError:
-			If no archives found for any pattern
+			If no archives found
 		"""
-		all_paths = []
+		paths = []
 
-		for pattern in patterns:
-			matched_paths = glob.glob(pattern)
+		data_path = self._config.data_archive_path.format(game_path=game_path)
+		matched_data = glob.glob(data_path)
+		paths.extend(matched_data)
 
-			if not matched_paths:
-				raise FileNotFoundError(
-					f"No archives found matching pattern: {pattern}"
-				)
+		for session in game.sessions:
+			pattern = self._config.session_archives_pattern.format(
+				game_path=game_path,
+				session=session
+			)
+			matched_session = glob.glob(pattern)
+			paths.extend(matched_session)
 
-			all_paths.extend(matched_paths)
+		if not paths:
+			raise FileNotFoundError(
+				f"No archives found for game {game.path}"
+			)
 
-		return all_paths
+		return paths
 
-	def _extract_archives_to_subdir(
+	def _extract_archives_flat(
 		self,
 		archive_paths: list[str],
-		extraction_root: str,
-		target_subdir: str
+		extraction_root: str
 	) -> None:
 		"""
-		Extract archives to target subdirectory (data/ or loc/)
+		Extract archives with flat structure and extension filtering
+
+		Only files with extensions .atom, .txt, .lng are extracted.
+		Files are extracted flat (no subdirectories).
+		.lng files go to loc/, .atom and .txt go to data/
 
 		:param archive_paths:
 			List of archive paths to extract
 		:param extraction_root:
-			Root extraction directory (/tmp/<game_name>/)
-		:param target_subdir:
-			Target subdirectory name ('data' or 'loc')
+			Root extraction directory (/tmp/<game.path>/)
 		"""
-		if not archive_paths:
-			return
+		data_dir = os.path.join(extraction_root, 'data')
+		loc_dir = os.path.join(extraction_root, 'loc')
 
-		target_dir = os.path.join(extraction_root, target_subdir)
-		os.makedirs(target_dir, exist_ok=True)
+		os.makedirs(data_dir, exist_ok=True)
+		os.makedirs(loc_dir, exist_ok=True)
 
 		for archive_path in sorted(archive_paths):
-			self._extract_archive_to_dir(archive_path, target_dir, target_subdir)
+			self._extract_archive_flat(
+				archive_path,
+				extraction_root,
+				data_dir,
+				loc_dir
+			)
 
 	@staticmethod
-	def _extract_archive_to_dir(
+	def _extract_archive_flat(
 		archive_path: str,
-		target_dir: str,
-		target_subdir: str = ''
+		extraction_root: str,
+		data_dir: str,
+		loc_dir: str
 	) -> None:
 		"""
-		Extract archive contents to target directory
+		Extract single archive with flat structure and extension filtering
 
 		:param archive_path:
 			Path to archive file
-		:param target_dir:
-			Directory to extract files into
-		:param target_subdir:
-			Optional subdirectory name for logging context
+		:param extraction_root:
+			Root extraction directory
+		:param data_dir:
+			Directory for data files (.atom, .txt)
+		:param loc_dir:
+			Directory for localization files (.lng)
 		"""
 		try:
 			with zipfile.ZipFile(archive_path, 'r') as archive:
 				for file_info in archive.filelist:
-					file_path = file_info.filename
-					target_path = os.path.join(target_dir, file_path)
+					if file_info.is_dir():
+						continue
+
+					filename = os.path.basename(file_info.filename)
+					ext = os.path.splitext(filename)[1].lower()
+
+					if ext not in ['.atom', '.txt', '.lng']:
+						continue
+
+					target_subdir_name = 'loc' if ext == '.lng' else 'data'
+					target_dir = loc_dir if ext == '.lng' else data_dir
+					target_path = os.path.join(target_dir, filename)
 
 					if os.path.exists(target_path):
-						subdir_msg = f" in '{target_subdir}/' directory" if target_subdir else ""
 						print(
-							f"Info: File '{file_path}' from archive "
-							f"'{os.path.basename(archive_path)}' overwrites existing file"
-							f"{subdir_msg}. This is expected for modded games."
+							f"Info: File '{filename}' from archive "
+							f"'{os.path.basename(archive_path)}' overwrites existing file "
+							f"in '{target_subdir_name}/' directory. This is expected for modded games."
 						)
 
-					archive.extract(file_info, target_dir)
+					content = archive.read(file_info)
+					with open(target_path, 'wb') as f:
+						f.write(content)
 
 		except zipfile.BadZipFile as e:
 			raise zipfile.BadZipFile(

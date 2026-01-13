@@ -64,7 +64,7 @@ class ScannerService:
 		# Update last_scan_time at start of scan
 		self._game_repository.update_last_scan_time(game_id, datetime.now())
 
-		self._kfs_extractor.extract_archives(game.path)
+		self._kfs_extractor.extract_archives(game)
 
 		localizations_string = len(self._localization_scanner.scan(game_id, game.path, language))
 
@@ -127,7 +127,7 @@ class ScannerService:
 				message="Extracting game archives..."
 			)
 
-			self._kfs_extractor.extract_archives(game.path)
+			self._kfs_extractor.extract_archives(game)
 
 			yield ScanProgressEvent(
 				event_type=ScanEventType.EXTRACTION_COMPLETED,

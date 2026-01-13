@@ -19,14 +19,8 @@ class Config(BaseSettings):
 
 	tmp_dir: str = "/tmp"
 
-	data_archive_patterns: list[str] = [
-		"{game_path}/data/data.kfs",
-		"{game_path}/sessions/*/ses*.kfs"
-	]
-
-	loc_archive_patterns: list[str] = [
-		"{game_path}/sessions/*/loc_ses*.kfs"
-	]
+	data_archive_path: str = "{game_path}/data/data.kfs"
+	session_archives_pattern: str = "{game_path}/sessions/{session}/*.kfs"
 
 	localization_config: list[LocalizationConfig] = [
 		LocalizationConfig(file="items", tag="items"),

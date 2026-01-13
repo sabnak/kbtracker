@@ -46,6 +46,29 @@ def test_game_name() -> str:
 
 
 @pytest.fixture(scope="session")
+def test_game(test_game_name):
+	"""
+	Session-scoped fixture for test Game object
+
+	:param test_game_name:
+		Test game name
+	:return:
+		Test Game entity
+	"""
+	from src.domain.app.entities.Game import Game
+	from datetime import datetime
+
+	return Game(
+		id=1,
+		name="Test Game",
+		path=test_game_name,
+		last_scan_time=datetime.now(),
+		sessions=["darkside"],
+		saves_pattern="*.sav"
+	)
+
+
+@pytest.fixture(scope="session")
 def test_config(test_game_data_path):
 	"""
 	Session-scoped mock Config for tests
@@ -57,14 +80,10 @@ def test_config(test_game_data_path):
 	"""
 	config = Mock(spec=Config)
 	config.game_data_path = test_game_data_path
-	# Test patterns point directly to darkside directory
 	# Exclude data.kfs from tests - it's large and slows down test execution
-	config.data_archive_patterns = [
-		"{game_path}/darkside/ses*.kfs"
-	]
-	config.loc_archive_patterns = [
-		"{game_path}/darkside/loc_ses*.kfs"
-	]
+	# Test patterns point to sessions/{session}/ structure
+	config.data_archive_path = "{game_path}/data/data.kfs"
+	config.session_archives_pattern = "{game_path}/darkside/*.kfs"
 	config.tmp_dir = "/tmp"
 	return config
 
@@ -153,21 +172,21 @@ def kfs_atoms_map_info_parser(test_container):
 
 
 @pytest.fixture
-def extracted_game_files(kfs_extractor, test_game_name):
+def extracted_game_files(kfs_extractor, test_game):
 	"""
 	Fixture that extracts game archives before tests and cleans up after
 
 	:param kfs_extractor:
 		KFSExtractor instance
-	:param test_game_name:
-		Test game name
+	:param test_game:
+		Test Game entity
 	:return:
 		Extraction root path
 	"""
 	import shutil
 
 	# Extract archives
-	extraction_root = kfs_extractor.extract_archives(test_game_name)
+	extraction_root = kfs_extractor.extract_archives(test_game)
 
 	yield extraction_root
 

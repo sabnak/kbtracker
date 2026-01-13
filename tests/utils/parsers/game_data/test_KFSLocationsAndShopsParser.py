@@ -1,9 +1,9 @@
 import pytest
-from src.domain.game.entities.Location import Location
+from src.domain.game.entities.AtomMap import AtomMap
 from src.domain.game.entities.Shop import Shop
 
 
-class TestKFSLocationsAndShopsParser:
+class TestKFSAtomMapsAndShopsParser:
 
 	@pytest.fixture(autouse=True)
 	def setup(self, extracted_game_files):
@@ -31,7 +31,7 @@ class TestKFSLocationsAndShopsParser:
 			assert isinstance(item, dict)
 			assert 'location' in item
 			assert 'shops' in item
-			assert isinstance(item['location'], Location)
+			assert isinstance(item['location'], AtomMap)
 			assert isinstance(item['shops'], list)
 			assert all(isinstance(shop, Shop) for shop in item['shops'])
 
@@ -92,7 +92,7 @@ class TestKFSLocationsAndShopsParser:
 		# (we can't verify this directly without the raw data, but we can
 		# verify the structure is consistent)
 		for entry in result:
-			assert len(entry['shops']) > 0, f"Location {entry['location'].kb_id} has no shops"
+			assert len(entry['shops']) > 0, f"AtomMap {entry['location'].kb_id} has no shops"
 
 	def test_prefix_stripped_from_values(
 		self,
@@ -150,8 +150,8 @@ class TestKFSLocationsAndShopsParser:
 
 		for entry in result:
 			location = entry['location']
-			assert location.kb_id != '', "Location has empty kb_id"
-			assert location.name != '', f"Location {location.kb_id} has empty name"
+			assert location.kb_id != '', "AtomMap has empty kb_id"
+			assert location.name != '', f"AtomMap {location.kb_id} has empty name"
 
 			for shop in entry['shops']:
 				assert shop.kb_id != '', f"Shop has empty kb_id"
@@ -164,13 +164,13 @@ class TestKFSLocationsAndShopsParser:
 		test_game_name
 	):
 		"""
-		Test that all Location.id, Shop.id, and Shop.location_id are 0
+		Test that all AtomMap.id, Shop.id, and Shop.location_id are 0
 		"""
 		result = kfs_locations_and_shops_parser.parse(test_game_name)
 
 		for entry in result:
 			location = entry['location']
-			assert location.id == 0, f"Location {location.kb_id} has non-zero id: {location.id}"
+			assert location.id == 0, f"AtomMap {location.kb_id} has non-zero id: {location.id}"
 
 			for shop in entry['shops']:
 				assert shop.id == 0, f"Shop {shop.kb_id} has non-zero id: {shop.id}"
@@ -205,4 +205,4 @@ class TestKFSLocationsAndShopsParser:
 
 		for entry in result:
 			assert len(entry['shops']) > 0, \
-				f"Location {entry['location'].kb_id} has no shops"
+				f"AtomMap {entry['location'].kb_id} has no shops"
