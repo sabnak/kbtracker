@@ -79,7 +79,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			missing_units.extend(set(unit_result.missing_kb_ids))
 
 			garrison_result = self._sync_garrison(inventories['garrison'], atom_map.id, profile_id, shop_kb_id)
-			counts["units"] += garrison_result.count
+			counts["garrison"] += garrison_result.count
 			missing_units.extend(garrison_result.missing_kb_ids)
 
 		corrupted_data = self._build_corrupted_data(

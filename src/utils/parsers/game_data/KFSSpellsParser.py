@@ -1,9 +1,8 @@
 from typing import Any
 
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
-from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
 from src.utils.parsers import atom
 from src.utils.parsers.game_data.IKFSReader import IKFSReader
 from src.utils.parsers.game_data.IKFSSpellsParser import IKFSSpellsParser
@@ -11,22 +10,14 @@ from src.utils.parsers.game_data.IKFSSpellsParser import IKFSSpellsParser
 
 class KFSSpellsParser(IKFSSpellsParser):
 
-	@inject
-	def __init__(
-		self,
-		reader: IKFSReader = Provide[Container.kfs_reader],
-		localization_repository: ILocalizationRepository = Provide[Container.localization_repository]
-	):
+	def __init__(self, reader: IKFSReader = Provide[Container.kfs_reader]):
 		"""
 		Initialize KFS spell parser
 
 		:param reader:
 			KFS file reader
-		:param localization_repository:
-			Localization repository
 		"""
 		self._reader = reader
-		self._localization_repository = localization_repository
 
 	def parse(
 		self,
@@ -58,12 +49,7 @@ class KFSSpellsParser(IKFSSpellsParser):
 		:raises ValueError:
 			When spell file has invalid structure
 		"""
-		spell_kb_ids = self._get_spell_kb_ids()
-
-		if allowed_kb_ids:
-			spell_kb_ids = [kb_id for kb_id in spell_kb_ids if kb_id in allowed_kb_ids]
-
-		spell_files = self._reader.read_data_files(game_name, ['spells*.txt'])
+		spell_files = self._reader.read_data_files(game_name, ['spells*.txt', 'new_spells.txt'])
 
 		if not spell_files:
 			raise FileNotFoundError(f"Spell data files not found for game: {game_name}")
@@ -74,33 +60,11 @@ class KFSSpellsParser(IKFSSpellsParser):
 			for spell_id, spell_data in parsed_spells.items():
 				if spell_id.startswith('spell_'):
 					kb_id = spell_id[6:]
-					if kb_id in spell_kb_ids:
-						processed = self._process_spell_data(kb_id, spell_data)
-						if processed:
-							result[kb_id] = processed
+					processed = self._process_spell_data(kb_id, spell_data)
+					if processed:
+						result[kb_id] = processed
 
 		return result
-
-	def _get_spell_kb_ids(self) -> list[str]:
-		"""
-		Get spell kb_ids from localization table
-
-		Queries for entries with kb_id matching 'spell_*'
-
-		:return:
-			List of unique spell kb_ids
-		"""
-		all_localizations = self._localization_repository.list_all()
-		spell_kb_ids = []
-
-		for loc in all_localizations:
-			if loc.kb_id.startswith('spell_'):
-				kb_id = loc.kb_id[6:]
-				base_kb_id = self._extract_base_kb_id(kb_id)
-				if base_kb_id and base_kb_id not in spell_kb_ids:
-					spell_kb_ids.append(base_kb_id)
-
-		return spell_kb_ids
 
 	@staticmethod
 	def _extract_base_kb_id(kb_id: str) -> str | None:
