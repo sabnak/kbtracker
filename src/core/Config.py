@@ -35,7 +35,7 @@ class Config(BaseSettings):
 	supported_games: list[GameConfig] = [
 		GameConfig(
 			name="Легенда / The Legend",
-			session="data",
+			session="base",
 			saves_pattern=os.path.join("Kings Bounty Legend", "$save", "*.sav"),
 		),
 		GameConfig(
