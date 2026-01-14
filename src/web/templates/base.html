@@ -8,16 +8,73 @@
 	<link rel="stylesheet" href="{{ url_for('static', path='/css/styles.css') }}">
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
 		<div class="container">
 			<a class="navbar-brand" href="/games">{{ _('ui.navigation.brand_name') }}</a>
+
+			<!-- Show game name when in game context -->
+			{% if game %}
+			<span class="navbar-text text-light me-3">
+				{{ game.name }}
+			</span>
+			{% endif %}
+
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
 				<span class="navbar-toggler-icon"></span>
 			</button>
+
 			<div class="collapse navbar-collapse" id="navbarNav">
+				{% set current_path = request.url.path %}
+
+				<ul class="navbar-nav me-auto">
+					<!-- Game context navigation (only shown when game object exists) -->
+					{% if game %}
+					<li class="nav-item">
+						<a class="nav-link {% if '/items' in current_path %}active{% endif %}"
+						   href="/games/{{ game.id }}/items"
+						   {% if '/items' in current_path %}aria-current="page"{% endif %}>
+							{{ _('ui.items') }}
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link {% if '/units' in current_path %}active{% endif %}"
+						   href="/games/{{ game.id }}/units"
+						   {% if '/units' in current_path %}aria-current="page"{% endif %}>
+							{{ _('ui.units') }}
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link {% if '/spells' in current_path %}active{% endif %}"
+						   href="/games/{{ game.id }}/spells"
+						   {% if '/spells' in current_path %}aria-current="page"{% endif %}>
+							{{ _('ui.spells') }}
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link {% if '/shops' in current_path %}active{% endif %}"
+						   href="/games/{{ game.id }}/shops"
+						   {% if '/shops' in current_path %}aria-current="page"{% endif %}>
+							{{ _('ui.shops') }}
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link {% if '/profiles' in current_path %}active{% endif %}"
+						   href="/games/{{ game.id }}/profiles"
+						   {% if '/profiles' in current_path %}aria-current="page"{% endif %}>
+							{{ _('ui.profiles') }}
+						</a>
+					</li>
+					{% endif %}
+				</ul>
+
+				<!-- Global navigation (right-aligned) -->
 				<ul class="navbar-nav ms-auto">
 					<li class="nav-item">
-						<a class="nav-link" href="/games">{{ _('ui.navigation.games') }}</a>
+						<a class="nav-link {% if current_path == '/games' %}active{% endif %}"
+						   href="/games"
+						   {% if current_path == '/games' %}aria-current="page"{% endif %}>
+							{{ _('ui.navigation.games') }}
+						</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" href="/settings" title="{{ _('ui.navigation.settings') }}">⚙️</a>
