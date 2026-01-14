@@ -65,7 +65,7 @@ class ProfileSaveScanner {
 				const option = document.createElement('option');
 				// Store full path: gameName/saveDir
 				option.value = `${gameName}/${save.name}`;
-				option.textContent = this.formatTimestamp(save.timestamp);
+				option.textContent = `${save.name} (${this.formatTimestamp(save.timestamp)})`;
 				option.dataset.gameName = gameName;
 				option.dataset.saveDir = save.path;
 				optgroup.appendChild(option);
