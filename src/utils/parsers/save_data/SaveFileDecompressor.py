@@ -20,20 +20,23 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 
 	def decompress(self, save_path: Path, data_type: DataFileType = DataFileType.DATA) -> bytes:
 		"""
-		Decompress King's Bounty save data file
+		Extract and decompress King's Bounty save file
 
-		Save file format:
+		Data file format (compressed):
 		- 4 bytes: Magic "slcb"
 		- 4 bytes: Decompressed size (uint32 LE)
 		- 4 bytes: Compressed size (uint32 LE)
 		- N bytes: zlib compressed data
 
+		Info file format (NOT compressed):
+		- Raw binary data (no compression)
+
 		:param save_path:
 			Path to save
 		:param data_type:
-			File type to extract
+			File type to extract (DATA or INFO)
 		:return:
-			Decompressed binary data
+			Decompressed/extracted binary data
 		:raises ValueError:
 			If magic header invalid or size mismatch
 		:raises FileNotFoundError:
@@ -45,6 +48,11 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 			names = self._DATA_FILE_NAMES[:]
 		data = self._extract_data_file(save_path, names)
 
+		# Info files are not compressed, return raw data
+		if data_type == DataFileType.INFO:
+			return data
+
+		# Data files are compressed with slcb format
 		magic = data[0:4]
 		self._validate_magic_header(magic)
 

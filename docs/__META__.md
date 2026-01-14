@@ -81,6 +81,18 @@ Save file extractor tool documentation. Contains complete guide for extracting s
 
 **Use this when**: You need to extract shop inventories (items, units, spells, garrison) from save files for analysis or integration.
 
+### [save-extractor/hero-name-extraction.md](save-extractor/hero-name-extraction.md)
+Hero name extraction from save files. Covers:
+- Info file format (structured key-value data)
+- Extracting `name` and `nickname` fields (UTF-16LE)
+- Campaign identifier generation (MD5 hash)
+- Single-name vs two-name heroes
+- Why info file is more reliable than data file
+
+**Parser location**: `/src/utils/parsers/save_data/HeroSaveParser.py`
+
+**Use this when**: You need to extract hero character names from save files for campaign identification or need to understand the info file structure.
+
 ### [campaign-identifier.md](campaign-identifier.md)
 Campaign identification from save files. Covers:
 - How to extract campaign ID from hero character names
@@ -129,6 +141,7 @@ Application internationalization (i18n) workflow using Babel. Covers:
 | Spells | `ses.kfs` | `spell` | [spells.md](spells.md) |
 | Atom Format Parser | `.atom`, `.txt` (atom format) | - | [atom-parser.md](atom-parser.md) |
 | Save Shops | Save file `data` | - | [save-extractor/](save-extractor/) |
+| Hero Names | Save file `info` | - | [save-extractor/hero-name-extraction.md](save-extractor/hero-name-extraction.md) |
 | Campaign ID | Save file `data` | - | [campaign-identifier.md](campaign-identifier.md) |
 
 ## Key Concepts
