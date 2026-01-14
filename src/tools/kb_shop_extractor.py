@@ -10,7 +10,7 @@ from src.tools.CLITool import CLITool, T
 
 class LaunchParams(pydantic.BaseModel):
 
-	save_directory: Path
+	save_path: Path
 
 
 class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
@@ -20,28 +20,19 @@ class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 
 	def _build_params(self) -> T:
 		p = argparse.ArgumentParser(description='King\'s Bounty Shop Extractor')
-		p.add_argument('save_directory', type=Path, help='Path to King\'s Bounty save directory')
+		p.add_argument('save_path', type=Path, help='Path to King\'s Bounty save name')
 		args = p.parse_args()
-		return LaunchParams(save_directory=args.save_directory)
+		return LaunchParams(save_path=args.save_path)
 
 	def _run(self):
 		self._shops = dict()
 		parser = self._container.shop_inventory_parser()
 
-		if not self._launch_params.save_directory.exists():
-			print(f"Error: Save directory not found: {self._launch_params.save_directory}")
+		if not self._launch_params.save_path.exists():
+			print(f"Error: Save not found: {self._launch_params.save_path}")
 			sys.exit(1)
 
-		if not self._launch_params.save_directory.is_dir():
-			print(f"Error: Path is not a directory: {self._launch_params.save_directory}")
-			sys.exit(1)
-
-		save_data_path = self._launch_params.save_directory / 'data'
-		if not save_data_path.exists():
-			print(f"Error: Save 'data' file not found in: {self._launch_params.save_directory}")
-			sys.exit(1)
-
-		save_name = self._launch_params.save_directory.name
+		save_name = self._launch_params.save_path.name
 		output_dir = Path('/tmp/save_export')
 		output_dir.mkdir(parents=True, exist_ok=True)
 		output_path = output_dir / f'{save_name}.json'
@@ -50,13 +41,13 @@ class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 			self._boundary,
 			"KING'S BOUNTY SHOP EXTRACTOR",
 			self._boundary,
-			f"Input:  {self._launch_params.save_directory}",
+			f"Input:  {self._launch_params.save_path}",
 			f"Output: {output_path}\n",
 			"Extracting shop data...",
 			sep="\n"
 		)
 
-		self._shops = parser.parse(save_data_path)
+		self._shops = parser.parse(self._launch_params.save_path)
 
 		print("\nSaving to JSON...")
 		with open(output_path, 'w', encoding='utf-8') as f:

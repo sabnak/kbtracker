@@ -32,7 +32,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY docker-compose/app/s /usr/local/bin/s
-RUN chmod +x /usr/local/bin/s
+COPY docker-compose/app/h /usr/local/bin/h
+RUN chmod -R +x /usr/local/bin
 
 # Prod stage: Copies application source code into image
 FROM base AS prod
