@@ -1,4 +1,5 @@
 import hashlib
+import re
 from glob import glob
 from logging import Logger
 from pathlib import Path
@@ -124,21 +125,20 @@ class SaveFileService(ISaveFileService):
 		matching_paths = glob(pattern_str)
 		matching_paths = sorted(matching_paths, key=lambda p: Path(p).stat().st_mtime, reverse=True)[:5]
 
-		self._logger.info(f"Scanning saves by pattern: {pattern_str}")
+		self._logger.info(f"Scanning saves by pattern: {pattern_str}. Matching paths: {matching_paths}")
 
 		for save_path_str in matching_paths:
-			try:
-				save_path = Path(save_path_str)
-				hero_data = self._hero_parser.parse(save_path)
-				full_name = f"{hero_data['first_name']} {hero_data['second_name']}"
-				computed_hash = self.compute_hash(full_name)
+			save_path = Path(save_path_str)
+			self._logger.info(f"Scanning save: {save_path}")
+			hero_data = self._hero_parser.parse(save_path)
+			full_name = f"{hero_data['first_name']} {hero_data['second_name']}"
+			computed_hash = self.compute_hash(full_name)
+			self._logger.info(f"Hero data: {hero_data}. Hash: {computed_hash}")
 
-				if computed_hash == profile.hash:
-					return save_path
-			except Exception:
-				continue
+			if computed_hash == profile.hash:
+				return save_path
 
-		raise FileNotFoundError(f"No matching save found for profile {profile.id}")
+		raise FileNotFoundError(f"No matching save found for profile {profile.id}. Pattern: {pattern_str}")
 
 	def compute_hash(self, full_name: str) -> str:
 		"""
@@ -149,4 +149,5 @@ class SaveFileService(ISaveFileService):
 		:return:
 			Hash as MD5 hex string
 		"""
-		return hashlib.md5(full_name.encode('utf-8')).hexdigest()
+		cleared_name = re.sub(r"\s+", " ", full_name)
+		return hashlib.md5(cleared_name.encode('utf-8')).hexdigest()

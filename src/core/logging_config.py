@@ -48,7 +48,7 @@ class JsonFormatter(logging.Formatter):
 		if hasattr(record, "extra"):
 			log_data["extra"] = record.extra
 
-		return json.dumps(log_data)
+		return json.dumps(log_data, ensure_ascii=False)
 
 
 def setup_logging() -> logging.Logger:
