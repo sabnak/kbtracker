@@ -36,7 +36,7 @@ class Config(BaseSettings):
 		GameConfig(
 			name="Легенда / The Legend",
 			session="base",
-			saves_pattern=os.path.join("Kings Bounty Legend", "$save", "*.sav"),
+			saves_pattern=os.path.join("Kings Bounty", "$save", "*.sav"),
 		),
 		GameConfig(
 			name="Принцесса в доспехах / Armored Princess",
