@@ -102,7 +102,7 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 			Extended pattern with text capture
 		"""
 		base_pattern = kb_id_pattern.pattern
-		extended_pattern = base_pattern + r'=(?P<text>[^\n\r]+)'
+		extended_pattern = base_pattern + r'=(?P<text>[^\n\r]*)'
 		return re.compile(extended_pattern, re.I | re.MULTILINE)
 
 	def _parse_content(

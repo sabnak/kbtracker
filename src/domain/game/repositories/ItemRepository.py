@@ -3,7 +3,7 @@ from sqlalchemy.orm import aliased
 
 from src.domain.base.factories.PydanticEntityFactory import PydanticEntityFactory
 from src.domain.base.repositories.CrudRepository import CrudRepository
-from src.domain.exceptions import InvalidPropbitException, LocalizationNotFoundException
+from src.domain.exceptions import InvalidPropbitException
 from src.domain.game.entities.Item import Item
 from src.domain.game.entities.Propbit import Propbit
 from src.domain.game.interfaces.IItemRepository import IItemRepository
@@ -95,11 +95,12 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		mapper, name, hint = row
 
 		if not name:
-			raise LocalizationNotFoundException(
-				entity_type="Item",
-				kb_id=mapper.kb_id,
-				localization_key=f"itm_{mapper.kb_id}_name"
-			)
+			name = mapper.kb_id
+			# raise LocalizationNotFoundException(
+			# 	entity_type="Item",
+			# 	kb_id=mapper.kb_id,
+			# 	localization_key=f"itm_{mapper.kb_id}_name"
+			# )
 
 		propbits_enum = None
 		if mapper.propbits is not None:

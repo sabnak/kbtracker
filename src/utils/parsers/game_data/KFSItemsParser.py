@@ -71,7 +71,7 @@ class KFSItemsParser(IKFSItemsParser):
 				key = setref if setref and setref in results else "setless"
 				results[key].append(item)
 
-		self._logger.info(results)
+		self._logger.debug(results)
 		return results
 
 	def _extract_files(self, game_name: str) -> list[str]:

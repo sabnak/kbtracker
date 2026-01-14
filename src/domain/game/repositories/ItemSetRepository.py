@@ -2,7 +2,6 @@ from sqlalchemy import func
 from sqlalchemy.orm import aliased
 
 from src.domain.base.repositories.CrudRepository import CrudRepository
-from src.domain.exceptions import LocalizationNotFoundException
 from src.domain.game.entities.ItemSet import ItemSet
 from src.domain.game.interfaces.IItemSetRepository import IItemSetRepository
 from src.domain.game.repositories.mappers.ItemSetMapper import ItemSetMapper
@@ -80,11 +79,12 @@ class ItemSetRepository(CrudRepository[ItemSet, ItemSetMapper], IItemSetReposito
 		mapper, name, hint = row
 
 		if not name:
-			raise LocalizationNotFoundException(
-				entity_type="ItemSet",
-				kb_id=mapper.kb_id,
-				localization_key=f"itm_{mapper.kb_id}_name"
-			)
+			name = mapper.kb_id
+			# raise LocalizationNotFoundException(
+			# 	entity_type="ItemSet",
+			# 	kb_id=mapper.kb_id,
+			# 	localization_key=f"itm_{mapper.kb_id}_name"
+			# )
 
 		return ItemSet(
 			id=mapper.id,
