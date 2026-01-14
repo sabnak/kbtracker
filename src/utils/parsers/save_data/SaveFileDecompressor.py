@@ -1,3 +1,4 @@
+import typing
 from pathlib import Path
 import struct
 import zlib
@@ -5,6 +6,7 @@ import zipfile
 import tempfile
 import shutil
 
+from src.utils.parsers.save_data.DataFileType import DataFileType
 from src.utils.parsers.save_data.ISaveFileDecompressor import ISaveFileDecompressor
 
 
@@ -13,7 +15,10 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 	MAGIC_HEADER: bytes = b'slcb'
 	HEADER_SIZE: int = 12
 
-	def decompress(self, save_path: Path) -> bytes:
+	_DATA_FILE_NAMES = ("data", "savedata")
+	_INFO_FILE_NAMES = ("info", "saveinfo")
+
+	def decompress(self, save_path: Path, data_type: DataFileType = DataFileType.DATA) -> bytes:
 		"""
 		Decompress King's Bounty save data file
 
@@ -24,7 +29,9 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 		- N bytes: zlib compressed data
 
 		:param save_path:
-			Path to save (directory containing 'data' file or .sav archive)
+			Path to save
+		:param data_type:
+			File type to extract
 		:return:
 			Decompressed binary data
 		:raises ValueError:
@@ -32,7 +39,11 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 		:raises FileNotFoundError:
 			If save file doesn't exist
 		"""
-		data = self._extract_data_file(save_path)
+		if data_type == DataFileType.INFO:
+			names = self._INFO_FILE_NAMES[:]
+		else:
+			names = self._DATA_FILE_NAMES[:]
+		data = self._extract_data_file(save_path, names)
 
 		magic = data[0:4]
 		self._validate_magic_header(magic)
@@ -47,7 +58,7 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 
 		return decompressed_data
 
-	def _extract_data_file(self, save_path: Path) -> bytes:
+	def _extract_data_file(self, save_path: Path, file_names: typing.Iterable[str]) -> bytes:
 		"""
 		Extract 'data' file from save (directory or .sav archive)
 
@@ -64,12 +75,12 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 			raise FileNotFoundError(f"Save path not found: {save_path}")
 
 		if save_path.suffix == '.sav':
-			return self._extract_from_archive(save_path)
+			return self._extract_from_archive(save_path, file_names)
 		else:
-			return self._extract_from_directory(save_path)
+			return self._extract_from_directory(save_path, file_names)
 
 	@staticmethod
-	def _extract_from_directory(save_dir: Path) -> bytes:
+	def _extract_from_directory(save_dir: Path, file_names: typing.Iterable[str]) -> bytes:
 		"""
 		Extract 'data' file from save directory
 
@@ -80,15 +91,16 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 		:raises FileNotFoundError:
 			If 'data' file doesn't exist
 		"""
-		data_file = save_dir / 'data'
-		if not data_file.exists():
-			raise FileNotFoundError(f"Data file not found in save directory: {data_file}")
-
-		with open(data_file, 'rb') as f:
-			return f.read()
+		data_files = [save_dir / n for n in file_names]
+		for data_file in data_files:
+			if not data_file.exists():
+				continue
+			with open(data_file, 'rb') as f:
+				return f.read()
+		raise FileNotFoundError(f"Data file not found in save directory: {save_dir}")
 
 	@staticmethod
-	def _extract_from_archive(archive_path: Path) -> bytes:
+	def _extract_from_archive(archive_path: Path, file_names: typing.Iterable[str]) -> bytes:
 		"""
 		Extract 'data' file from .sav ZIP archive
 
@@ -118,7 +130,7 @@ class SaveFileDecompressor(ISaveFileDecompressor):
 
 				zip_file.extractall(temp_path)
 
-			data_files = [temp_path / 'data', temp_path / 'savedata']
+			data_files = [temp_path / n for n in file_names]
 			for data_file in data_files:
 				if not data_file.exists():
 					continue
