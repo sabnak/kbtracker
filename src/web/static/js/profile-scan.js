@@ -90,6 +90,9 @@ class ProfileScanner {
 			if (result.corrupted_data.items) {
 				formattedData += `- Items: ${result.corrupted_data.items.join(', ')}\n`;
 			}
+			if (result.corrupted_data.spells) {
+				formattedData += `- Spells: ${result.corrupted_data.spells.join(', ')}\n`;
+			}
 			if (result.corrupted_data.units) {
 				formattedData += `- Units: ${result.corrupted_data.units.join(', ')}\n`;
 			}
@@ -163,8 +166,8 @@ class ProfileScanner {
 	handleExamineClick(button) {
 		const shops = button.dataset.shops;
 		const items = button.dataset.items;
+		const spells = button.dataset.spells;
 		const units = button.dataset.units;
-		const garrison = button.dataset.garrison;
 
 		const successContainer = document.getElementById('scan-success-container');
 		const errorContainer = document.getElementById('scan-error-container');
@@ -181,8 +184,8 @@ class ProfileScanner {
 		let formattedData = 'Missing objects:\n';
 		if (shops) formattedData += `- Shops: ${shops}\n`;
 		if (items) formattedData += `- Items: ${items}\n`;
+		if (spells) formattedData += `- Spells: ${spells}\n`;
 		if (units) formattedData += `- Units: ${units}\n`;
-		if (garrison) formattedData += `- Garrison: ${garrison}\n`;
 
 		corruptedWarning.style.display = 'block';
 		corruptedContent.textContent = formattedData;

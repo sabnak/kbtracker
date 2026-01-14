@@ -56,8 +56,8 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		counts = {"items": 0, "spells": 0, "units": 0, "garrison": 0}
 		missing_shops: list[str] = []
 		missing_items: list[str] = []
+		missing_spells: list[str] = []
 		missing_units: list[str] = []
-		missing_garrison: list[str] = []
 
 		for shop_kb_id, inventories in data.items():
 			atom_map = self._atom_map_repository.get_by_kb_id(shop_kb_id)
@@ -72,18 +72,21 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 
 			spell_result = self._sync_spells(inventories['spells'], atom_map.id, profile_id, shop_kb_id)
 			counts["spells"] += spell_result.count
-			missing_items.extend(spell_result.missing_kb_ids)
+			missing_spells.extend(spell_result.missing_kb_ids)
 
 			unit_result = self._sync_units(inventories['units'], atom_map.id, profile_id, shop_kb_id)
 			counts["units"] += unit_result.count
 			missing_units.extend(set(unit_result.missing_kb_ids))
 
 			garrison_result = self._sync_garrison(inventories['garrison'], atom_map.id, profile_id, shop_kb_id)
-			counts["garrison"] += garrison_result.count
-			missing_garrison.extend(garrison_result.missing_kb_ids)
+			counts["units"] += garrison_result.count
+			missing_units.extend(garrison_result.missing_kb_ids)
 
 		corrupted_data = self._build_corrupted_data(
-			missing_shops, missing_items, missing_units, missing_garrison
+			shops=missing_shops,
+			items=missing_items,
+			spells=missing_spells,
+			units=missing_units
 		)
 
 		return ProfileSyncResult(
@@ -275,7 +278,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		shops: list[str],
 		items: list[str],
 		units: list[str],
-		garrison: list[str]
+		spells: list[str]
 	) -> CorruptedProfileData | None:
 		"""
 		Build CorruptedProfileData if any missing KB IDs found
@@ -284,19 +287,19 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			Missing shop KB IDs
 		:param items:
 			Missing item KB IDs
+		:param spells:
+			Missing spell KB IDs
 		:param units:
 			Missing unit KB IDs
-		:param garrison:
-			Missing garrison unit KB IDs
 		:return:
 			CorruptedProfileData or None if no errors
 		"""
-		if not any([shops, items, units, garrison]):
+		if not any([shops, items, units, spells]):
 			return None
 
 		return CorruptedProfileData(
 			shops=list(set(shops)) if shops else None,
 			items=list(set(items)) if items else None,
 			units=list(set(units)) if units else None,
-			garrison=list(set(garrison)) if garrison else None
+			spells=list(set(spells)) if spells else None
 		)
