@@ -43,7 +43,7 @@ class GameService(IGameService):
 			name=name,
 			path=path,
 			last_scan_time=None,
-			sessions=sessions,
+			sessions=list(set(sessions)),
 			saves_pattern=saves_pattern
 		)
 		game = self._game_repository.create(game)
