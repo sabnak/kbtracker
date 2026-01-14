@@ -12,6 +12,13 @@
 				<!-- Save File Selection Section -->
 				<div class="mb-4">
 					<h5 class="card-title">{{ _('ui.profile.step_select_save_file') }}</h5>
+
+					<!-- Important Notice about Hero Name Uniqueness -->
+					<div class="alert alert-warning mb-3" role="alert">
+						<strong>{{ _('ui.profile.hero_name_notice_title') }}<br /></strong>
+						{{ _('ui.profile.hero_name_uniqueness_text') }}
+					</div>
+
 					<div class="row g-3">
 						<div class="col-md-8">
 							<label for="save-select" class="form-label">{{ _('ui.profile.save_directory_label') }}</label>

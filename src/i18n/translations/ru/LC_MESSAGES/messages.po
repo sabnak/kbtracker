@@ -305,6 +305,12 @@ msgstr "Имя профиля"
 msgid "ui.profile.profile_name_help"
 msgstr "Понятное имя для этого прохождения игры"
 
+msgid "ui.profile.hero_name_notice_title"
+msgstr "Важно!"
+
+msgid "ui.profile.hero_name_uniqueness_text"
+msgstr "- Имя героя в файле сохранения должно быть уникальным!<br />- Имя героя используется как идентификатор профиля!<br />- Все сохранения с одинаковыми именами героев считаются принадлежащими одному профилю."
+
 msgid "ui.profile.scan_save_first_tooltip"
 msgstr "Сначала просканируйте файл сохранения"
 

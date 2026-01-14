@@ -301,6 +301,12 @@ msgstr "Profile Name"
 msgid "ui.profile.profile_name_help"
 msgstr "A friendly name for this game playthrough"
 
+msgid "ui.profile.hero_name_notice_title"
+msgstr "Important!"
+
+msgid "ui.profile.hero_name_uniqueness_text"
+msgstr "- Hero name in save file must be unique.<br />- Hero name is used as profile identifier!<br />- All saves with same hero names are considered to belong to the same profile."
+
 msgid "ui.profile.scan_save_first_tooltip"
 msgstr "Please scan a save file first"
 
