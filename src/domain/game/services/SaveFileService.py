@@ -124,15 +124,15 @@ class SaveFileService(ISaveFileService):
 		matching_paths = glob(pattern_str)
 		matching_paths = sorted(matching_paths, key=lambda p: Path(p).stat().st_mtime, reverse=True)[:5]
 
-		self._logger.info(f"Scanning saves by pattern: {pattern_str}. Matching paths: {matching_paths}")
+		self._logger.debug(f"Scanning saves by pattern: {pattern_str}. Matching paths: {matching_paths}")
 
 		for save_path_str in matching_paths:
 			save_path = Path(save_path_str)
-			self._logger.info(f"Scanning save: {save_path}")
+			self._logger.debug(f"Scanning save: {save_path}")
 			hero_data = self._hero_parser.parse(save_path)
 			full_name = f"{hero_data['first_name']} {hero_data['second_name']}"
 			computed_hash = self.compute_hash(full_name)
-			self._logger.info(f"Hero data: {hero_data}. Hash: {computed_hash}")
+			self._logger.debug(f"Hero data: {hero_data}. Hash: {computed_hash}")
 
 			if computed_hash == profile.hash:
 				return save_path
