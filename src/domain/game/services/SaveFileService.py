@@ -5,10 +5,10 @@ from logging import Logger
 from pathlib import Path
 from typing import Any
 
-from dependency_injector.wiring import inject, Provide
+from dependency_injector.wiring import Provide
 
-from src.core.Container import Container
 from src.core.Config import Config
+from src.core.Container import Container
 from src.domain import ProfileEntity
 from src.domain.app.entities.Game import Game
 from src.domain.game.interfaces.ISaveFileService import ISaveFileService
@@ -18,7 +18,6 @@ from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParse
 
 class SaveFileService(ISaveFileService):
 
-	@inject
 	def __init__(
 		self,
 		config: Config = Provide[Container.config],
@@ -149,5 +148,5 @@ class SaveFileService(ISaveFileService):
 		:return:
 			Hash as MD5 hex string
 		"""
-		cleared_name = re.sub(r"\s+", " ", full_name)
+		cleared_name = re.sub(r"\s+", "", full_name)
 		return hashlib.md5(cleared_name.encode('utf-8')).hexdigest()
