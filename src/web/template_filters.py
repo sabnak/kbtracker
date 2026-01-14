@@ -50,7 +50,11 @@ def format_text(text: str | None) -> str:
 	formatted = formatted.replace("^?^", "")
 
 	# Handle <color=...> tags - convert to span with inline style
-	formatted = re.sub(r'<color=(\d+),(\d+),(\d+)>', lambda m: f'<span style="color: rgb({m.group(1)}, {m.group(2)}, {m.group(3)});">', formatted)
+	formatted = re.sub(
+		r'<color=(\d+[,\s]+\d+[,\s]+\d+)>',
+		lambda m: f'<span style="font-weight: bold; color: rgb({re.sub(r"(?:240[ ,]*){3}", "0,0,0", m.group(1))});">',
+		formatted
+	)
 	formatted = formatted.replace('</color>', '</span>')
 
 	# Remove <gen=...> tags (placeholders for in-game generated values)

@@ -150,25 +150,9 @@
 								{% endif %}
 
 								{% if spell.loc.desc_list %}
-									{% if spell.loc.desc %}<br><br>{% endif %}
-									{% for desc_item in spell.loc.desc_list %}
-										{{ desc_item|format_text|safe }}
-										{% if not loop.last %}<br><br>{% endif %}
-									{% endfor %}
+									{{ spell.loc.desc_list[0]|format_text|safe }}
 								{% endif %}
 
-								{% if spell.loc.text %}
-									{% if spell.loc.desc or spell.loc.desc_list %}<br><br>{% endif %}
-									{{ spell.loc.text|format_text|safe }}
-								{% endif %}
-
-								{% if spell.loc.text_list %}
-									{% if spell.loc.desc or spell.loc.desc_list or spell.loc.text %}<br><br>{% endif %}
-									{% for text_item in spell.loc.text_list %}
-										{{ text_item|format_text|safe }}
-										{% if not loop.last %}<br><br>{% endif %}
-									{% endfor %}
-								{% endif %}
 							{% else %}
 								<span class="text-muted">{{ _('ui.spell.no_description') }}</span>
 							{% endif %}
