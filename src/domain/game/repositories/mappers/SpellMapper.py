@@ -22,7 +22,7 @@ class SpellMapper(Base):
 
 	shop_inventory = relationship(
 		"ShopInventoryMapper",
-		foreign_keys="[ShopInventoryMapper.entity_id]",
-		primaryjoin=f"and_(SpellMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == '{ShopProductType.SPELL.value}')",
+		foreign_keys="[ShopInventoryMapper.product_id]",
+		primaryjoin=f"and_(SpellMapper.id == ShopInventoryMapper.product_id, ShopInventoryMapper.product_type == '{ShopProductType.SPELL.value}')",
 		viewonly=True
 	)

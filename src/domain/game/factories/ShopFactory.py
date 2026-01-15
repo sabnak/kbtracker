@@ -1,15 +1,17 @@
-import re
 from typing import Any
 
 from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
+from src.domain.game.entities.Actor import Actor
+from src.domain.game.entities.AtomMap import AtomMap
 from src.domain.game.entities.Shop import Shop
 from src.domain.game.entities.ShopInventory import ShopInventory
 from src.domain.game.entities.ShopItem import ShopItem
 from src.domain.game.entities.ShopProduct import ShopProduct
 from src.domain.game.entities.ShopProductType import ShopProductType
 from src.domain.game.entities.ShopSpell import ShopSpell
+from src.domain.game.entities.ShopType import ShopType
 from src.domain.game.entities.ShopUnit import ShopUnit
 from src.domain.game.interfaces.IEntityRepository import IEntityRepository
 from src.domain.game.interfaces.IItemRepository import IItemRepository
@@ -24,7 +26,8 @@ class ShopFactory(IShopFactory):
 	def __init__(
 		self,
 		products: list[ShopProduct],
-		atom_map_repository: IEntityRepository = Provide[Container.atom_map_repository],
+		atom_map_repository: IEntityRepository[AtomMap] = Provide[Container.atom_map_repository],
+		actor_repository: IEntityRepository[Actor] = Provide[Container.actor_repository],
 		localization_repository: ILocalizationRepository = Provide[Container.localization_repository],
 		item_repository: IItemRepository = Provide[Container.item_repository],
 		spell_repository: ISpellRepository = Provide[Container.spell_repository],
@@ -32,6 +35,7 @@ class ShopFactory(IShopFactory):
 	):
 		self._products = products
 		self._atom_map_repository = atom_map_repository
+		self._actor_repository = actor_repository
 		self._localization_repository = localization_repository
 		self._item_repository = item_repository
 		self._spell_repository = spell_repository
@@ -47,11 +51,22 @@ class ShopFactory(IShopFactory):
 		if not self._products:
 			return []
 
-		atom_maps_dict = self._fetch_atom_maps()
-		location_names_dict = self._fetch_location_names(atom_maps_dict)
-		entities = self._fetch_entities()
-		shops_by_atom_map = self._group_products_by_shop()
-		shops = self._create_shops(shops_by_atom_map, atom_maps_dict, location_names_dict, entities)
+		atom_map_ids = []
+		actor_ids = []
+		location_kb_ids = []
+		for product in self._products:
+			if product.shop_type == ShopType.ATOM:
+				atom_map_ids.append(product.shop_id)
+			elif product.shop_type == ShopType.ACTOR:
+				actor_ids.append(product.shop_id)
+			location_kb_ids.append(product.location)
+		atom_maps = self._atom_map_repository.get_by_ids(set(atom_map_ids))
+		actors = self._actor_repository.get_by_ids(set(actor_ids))
+		location_names_dict = self._fetch_location_names(location_kb_ids)
+
+		products = self._fetch_products()
+		shops_group = self._group_products_by_shop()
+		shops = self._create_shops(shops_group, atom_maps, actors, location_names_dict, products)
 
 		return shops
 
@@ -65,20 +80,7 @@ class ShopFactory(IShopFactory):
 		atom_map_ids = list(set(product.atom_map_id for product in self._products))
 		return self._atom_map_repository.get_by_ids(atom_map_ids)
 
-	def _fetch_location_names(self, atom_maps_dict: dict) -> dict[str, str]:
-		"""
-		Fetch location names for atom maps
-
-		:param atom_maps_dict:
-			Dictionary of atom maps
-		:return:
-			Dictionary mapping location_kb_id to localized name
-		"""
-		location_kb_ids = set()
-		for atom_map in atom_maps_dict.values():
-			location_kb_id = self._extract_location_kb_id(atom_map.kb_id)
-			location_kb_ids.add(location_kb_id)
-
+	def _fetch_location_names(self, location_kb_ids: list[str]) -> dict[str, str]:
 		location_names_dict = {}
 		for loc_kb_id in location_kb_ids:
 			localization = self._localization_repository.get_by_kb_id(loc_kb_id)
@@ -89,19 +91,13 @@ class ShopFactory(IShopFactory):
 
 		return location_names_dict
 
-	def _fetch_entities(self) -> dict:
-		"""
-		Fetch all entities needed for products
-
-		:return:
-			Dictionary with 'items', 'units', 'spells' keys mapping IDs to entities
-		"""
-		item_ids = [p.entity_id for p in self._products if p.type == ShopProductType.ITEM]
+	def _fetch_products(self) -> dict:
+		item_ids = [p.product_id for p in self._products if p.product_type == ShopProductType.ITEM]
 		unit_ids = [
-			p.entity_id for p in self._products
-			if p.type in [ShopProductType.UNIT, ShopProductType.GARRISON]
+			p.product_id for p in self._products
+			if p.product_type in [ShopProductType.UNIT, ShopProductType.GARRISON]
 		]
-		spell_ids = [p.entity_id for p in self._products if p.type == ShopProductType.SPELL]
+		spell_ids = [p.product_id for p in self._products if p.product_type == ShopProductType.SPELL]
 
 		return {
 			"items": self._item_repository.get_by_ids(item_ids) if item_ids else {},
@@ -109,56 +105,45 @@ class ShopFactory(IShopFactory):
 			"spells": self._spell_repository.get_by_ids(spell_ids) if spell_ids else {}
 		}
 
-	def _group_products_by_shop(self) -> dict[int, list[ShopProduct]]:
+	def _group_products_by_shop(self) -> dict[(int, ShopType), list[ShopProduct]]:
 		"""
 		Group products by atom_map_id (shop)
 
 		:return:
 			Dictionary mapping atom_map_id to list of products
 		"""
-		shops_by_atom_map = {}
+		shops_group = {}
 		for product in self._products:
-			atom_map_id = product.atom_map_id
-			if atom_map_id not in shops_by_atom_map:
-				shops_by_atom_map[atom_map_id] = []
-			shops_by_atom_map[atom_map_id].append(product)
+			shop_id = (product.shop_id, product.shop_type)
+			if shop_id not in shops_group:
+				shops_group[shop_id] = []
+			shops_group[shop_id].append(product)
 
-		return shops_by_atom_map
+		return shops_group
 
 	def _create_shops(
 		self,
-		shops_by_atom_map: dict,
-		atom_maps_dict: dict,
+		shops_group: dict,
+		atom_maps: dict,
+		actors: dict,
 		location_names_dict: dict,
 		entities: dict
 	) -> list[Shop]:
-		"""
-		Create Shop entities from grouped products
-
-		:param shops_by_atom_map:
-			Products grouped by atom_map_id
-		:param atom_maps_dict:
-			Dictionary of atom maps
-		:param location_names_dict:
-			Dictionary of location names
-		:param entities:
-			Dictionary of fetched entities
-		:return:
-			List of Shop entities
-		"""
 		shops = []
-		for atom_map_id, products in shops_by_atom_map.items():
-			atom_map = atom_maps_dict.get(atom_map_id)
-			if not atom_map:
-				continue
+		for (shop_id, shop_type), products in shops_group.items():
+			if shop_type == ShopType.ATOM:
+				s = atom_maps[shop_id]
+			else:
+				s = actors[shop_id]
 
-			location_kb_id = self._extract_location_kb_id(atom_map.kb_id)
 			inventory = self._create_inventory(products, entities)
+			location_kb_id = products[0].location
 
 			shop = Shop(
-				shop_id=atom_map.id,
-				shop_kb_id=atom_map.kb_id,
-				shop_loc=atom_map.loc,
+				shop_id=shop_id,
+				shop_type=shop_type,
+				shop_kb_id=s.kb_id,
+				shop_loc=s.loc,
 				location_kb_id=location_kb_id,
 				location_name=location_names_dict.get(location_kb_id, location_kb_id),
 				inventory=inventory
@@ -167,40 +152,31 @@ class ShopFactory(IShopFactory):
 
 		return shops
 
-	def _create_inventory(self, products: list[ShopProduct], entities: dict) -> ShopInventory:
-		"""
-		Create ShopInventory from products
-
-		:param products:
-			List of products for a shop
-		:param entities:
-			Dictionary of fetched entities
-		:return:
-			ShopInventory entity
-		"""
+	@staticmethod
+	def _create_inventory(products: list[ShopProduct], entities: dict) -> ShopInventory:
 		shop_items = []
 		shop_spells = []
 		shop_units = []
 		garrison_units = []
 
 		for product in products:
-			if product.type == ShopProductType.ITEM:
-				item = entities["items"].get(product.entity_id)
+			if product.product_type == ShopProductType.ITEM:
+				item = entities["items"].get(product.product_id)
 				if item:
 					shop_items.append(ShopItem(item=item, count=product.count))
 
-			elif product.type == ShopProductType.SPELL:
-				spell = entities["spells"].get(product.entity_id)
+			elif product.product_type == ShopProductType.SPELL:
+				spell = entities["spells"].get(product.product_id)
 				if spell and spell.loc and spell.loc.name:
 					shop_spells.append(ShopSpell(spell=spell, count=product.count))
 
-			elif product.type == ShopProductType.UNIT:
-				unit = entities["units"].get(product.entity_id)
+			elif product.product_type == ShopProductType.UNIT:
+				unit = entities["units"].get(product.product_id)
 				if unit:
 					shop_units.append(ShopUnit(unit=unit, count=product.count))
 
-			elif product.type == ShopProductType.GARRISON:
-				unit = entities["units"].get(product.entity_id)
+			elif product.product_type == ShopProductType.GARRISON:
+				unit = entities["units"].get(product.product_id)
 				if unit:
 					garrison_units.append(ShopUnit(unit=unit, count=product.count))
 
@@ -210,18 +186,3 @@ class ShopFactory(IShopFactory):
 			units=shop_units,
 			garrison=garrison_units
 		)
-
-	def _extract_location_kb_id(self, atom_map_kb_id: str) -> str:
-		"""
-		Extract location kb_id from atom_map kb_id
-
-		:param atom_map_kb_id:
-			Atom map kb_id (e.g., 'aralan_1')
-		:return:
-			Location kb_id (e.g., 'aralan')
-		"""
-		match = re.match(r'^(.+)_\d+$', atom_map_kb_id)
-		if match:
-			return match.group(1)
-		return atom_map_kb_id
-

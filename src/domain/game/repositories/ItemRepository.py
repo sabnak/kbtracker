@@ -244,8 +244,8 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 
 				query = query.join(
 					ShopInventoryMapper,
-					(ShopInventoryMapper.entity_id == ItemMapper.id) &
-					(ShopInventoryMapper.type == ShopProductType.ITEM) &
+					(ShopInventoryMapper.product_id == ItemMapper.id) &
+					(ShopInventoryMapper.product_type == ShopProductType.ITEM) &
 					(ShopInventoryMapper.profile_id == profile_id)
 				).distinct()
 

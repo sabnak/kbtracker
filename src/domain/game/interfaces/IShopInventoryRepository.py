@@ -22,14 +22,14 @@ class IShopInventoryRepository(ABC):
 	def get_by_profile(
 		self,
 		profile_id: int,
-		types: typing.Iterable[ShopProductType] = None
+		product_types: typing.Iterable[ShopProductType] = None
 	) -> list[ShopProduct]:
 		"""
 		Get all inventory entries for a profile, optionally filtered by type
 
 		:param profile_id:
 			Profile ID
-		:param types:
+		:param product_types:
 			Optional inventory types filter
 		:return:
 			List of inventory entries
@@ -39,17 +39,17 @@ class IShopInventoryRepository(ABC):
 	@abstractmethod
 	def get_by_entity(
 		self,
-		entity_id: int,
-		type: ShopProductType,
+		product_id: int,
+		product_type: ShopProductType,
 		profile_id: int
 	) -> list[ShopProduct]:
 		"""
 		Get all shops where an entity is found for a profile
 
-		:param entity_id:
-			Entity ID
-		:param type:
-			Entity type
+		:param product_id:
+			Product ID
+		:param product_type:
+			Product type
 		:param profile_id:
 			Profile ID
 		:return:
@@ -58,24 +58,12 @@ class IShopInventoryRepository(ABC):
 		pass
 
 	@abstractmethod
-	def delete(
-		self,
-		entity_id: int,
-		type: ShopProductType,
-		atom_map_id: int,
-		profile_id: int
-	) -> None:
+	def delete(self, product_id: int) -> None:
 		"""
 		Delete shop inventory entry
 
-		:param entity_id:
-			Entity ID
-		:param type:
-			Entity type
-		:param atom_map_id:
-			Atom map ID
-		:param profile_id:
-			Profile ID
+		:param product_id:
+			Product ID
 		:return:
 		"""
 		pass
@@ -88,32 +76,5 @@ class IShopInventoryRepository(ABC):
 		:param profile_id:
 			Profile ID
 		:return:
-		"""
-		pass
-
-	@abstractmethod
-	def update_count(
-		self,
-		entity_id: int,
-		type: ShopProductType,
-		atom_map_id: int,
-		profile_id: int,
-		new_count: int
-	) -> ShopProduct:
-		"""
-		Update count for shop inventory entry
-
-		:param entity_id:
-			Entity ID
-		:param type:
-			Entity type
-		:param atom_map_id:
-			Atom map ID
-		:param profile_id:
-			Profile ID
-		:param new_count:
-			New count value
-		:return:
-			Updated inventory entry
 		"""
 		pass

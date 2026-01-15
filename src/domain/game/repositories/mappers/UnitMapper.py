@@ -34,14 +34,14 @@ class UnitMapper(Base):
 
 	shop_inventory_sale = relationship(
 		"ShopInventoryMapper",
-		foreign_keys="[ShopInventoryMapper.entity_id]",
-		primaryjoin=f"and_(UnitMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == '{ShopProductType.UNIT.value}')",
+		foreign_keys="[ShopInventoryMapper.product_id]",
+		primaryjoin=f"and_(UnitMapper.id == ShopInventoryMapper.product_id, ShopInventoryMapper.product_type == '{ShopProductType.UNIT.value}')",
 		viewonly=True
 	)
 
 	shop_inventory_garrison = relationship(
 		"ShopInventoryMapper",
-		foreign_keys="[ShopInventoryMapper.entity_id]",
-		primaryjoin=f"and_(UnitMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == '{ShopProductType.GARRISON.value}')",
+		foreign_keys="[ShopInventoryMapper.product_id]",
+		primaryjoin=f"and_(UnitMapper.id == ShopInventoryMapper.product_id, ShopInventoryMapper.product_type == '{ShopProductType.GARRISON.value}')",
 		viewonly=True
 	)

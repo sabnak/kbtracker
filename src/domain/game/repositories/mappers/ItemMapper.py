@@ -17,8 +17,8 @@ class ItemMapper(Base):
 
 	shop_inventory = relationship(
 		"ShopInventoryMapper",
-		foreign_keys="[ShopInventoryMapper.entity_id]",
-		primaryjoin=f"and_(ItemMapper.id == ShopInventoryMapper.entity_id, ShopInventoryMapper.type == '{ShopProductType.ITEM.value}')",
+		foreign_keys="[ShopInventoryMapper.product_id]",
+		primaryjoin=f"and_(ItemMapper.id == ShopInventoryMapper.product_id, ShopInventoryMapper.product_type == '{ShopProductType.ITEM.value}')",
 		viewonly=True
 	)
 	item_set = relationship("ItemSetMapper")

@@ -197,8 +197,8 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 
 				query = query.join(
 					ShopInventoryMapper,
-					(ShopInventoryMapper.entity_id == UnitMapper.id) &
-					(ShopInventoryMapper.type.in_([ShopProductType.UNIT, ShopProductType.GARRISON])) &
+					(ShopInventoryMapper.product_id == UnitMapper.id) &
+					(ShopInventoryMapper.product_type.in_([ShopProductType.UNIT, ShopProductType.GARRISON])) &
 					(ShopInventoryMapper.profile_id == profile_id)
 				).distinct()
 

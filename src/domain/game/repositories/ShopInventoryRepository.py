@@ -20,11 +20,13 @@ class ShopInventoryRepository(CrudRepository[ShopProduct, ShopInventoryMapper], 
 			ShopInventoryMapper instance
 		"""
 		return ShopInventoryMapper(
-			entity_id=entity.entity_id,
-			type=entity.type,
-			atom_map_id=entity.atom_map_id,
-			profile_id=entity.profile_id,
-			count=entity.count
+			product_id=entity.product_id,
+			product_type=entity.product_type,
+			count=entity.count,
+			shop_id=entity.shop_id,
+			shop_type=entity.shop_type,
+			location=entity.location,
+			profile_id=entity.profile_id
 		)
 
 	def _get_entity_type_name(self) -> str:
@@ -36,16 +38,18 @@ class ShopInventoryRepository(CrudRepository[ShopProduct, ShopInventoryMapper], 
 		"""
 		return "ShopProduct"
 
-	def _get_duplicate_identifier(self, entity: ShopProduct) -> str:
+	def _get_duplicate_identifier(self, product: ShopProduct) -> str:
 		"""
 		Get duplicate identifier for ShopProduct
 
-		:param entity:
+		:param product:
 			ShopProduct entity
 		:return:
 			Identifier string
 		"""
-		return f"entity_id={entity.entity_id}, type={entity.type.value}, atom_map_id={entity.atom_map_id}, profile_id={entity.profile_id}"
+		return (f"product_id={product.product_id}, product_type={product.product_type.value}, "
+		        f"shop_id={product.shop_id}, shop_type={product.shop_type.value}, location={product.location}, "
+		        f"profile_id={product.profile_id}")
 
 	def create(self, inventory: ShopProduct) -> ShopProduct:
 		"""
@@ -61,14 +65,14 @@ class ShopInventoryRepository(CrudRepository[ShopProduct, ShopInventoryMapper], 
 	def get_by_profile(
 		self,
 		profile_id: int,
-		types: typing.Iterable[ShopProductType] = None
+		product_types: typing.Iterable[ShopProductType] = None
 	) -> list[ShopProduct]:
 		"""
 		Get all inventory entries for a profile, optionally filtered by type
 
 		:param profile_id:
 			Profile ID
-		:param types:
+		:param product_types:
 			Optional inventory type filter
 		:return:
 			List of inventory entries
@@ -77,23 +81,23 @@ class ShopInventoryRepository(CrudRepository[ShopProduct, ShopInventoryMapper], 
 			query = session.query(ShopInventoryMapper).filter(
 				ShopInventoryMapper.profile_id == profile_id
 			)
-			if types:
-				query = query.filter(ShopInventoryMapper.type.in_(types))
+			if product_types:
+				query = query.filter(ShopInventoryMapper.product_type.in_(product_types))
 			mappers = query.all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
 	def get_by_entity(
 		self,
-		entity_id: int,
-		type: ShopProductType,
+		product_id: int,
+		product_type: ShopProductType,
 		profile_id: int
 	) -> list[ShopProduct]:
 		"""
 		Get all shops where an entity is found for a profile
 
-		:param entity_id:
+		:param product_id:
 			Entity ID
-		:param type:
+		:param product_type:
 			Entity type
 		:param profile_id:
 			Profile ID
@@ -102,38 +106,23 @@ class ShopInventoryRepository(CrudRepository[ShopProduct, ShopInventoryMapper], 
 		"""
 		with self._get_session() as session:
 			mappers = session.query(ShopInventoryMapper).filter(
-				ShopInventoryMapper.entity_id == entity_id,
-				ShopInventoryMapper.type == type,
+				ShopInventoryMapper.product_id == product_id,
+				ShopInventoryMapper.product_type == product_type,
 				ShopInventoryMapper.profile_id == profile_id
 			).all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
-	def delete(
-		self,
-		entity_id: int,
-		type: ShopProductType,
-		atom_map_id: int,
-		profile_id: int
-	) -> None:
+	def delete(self, product_id: int) -> None:
 		"""
 		Delete shop inventory entry
 
-		:param entity_id:
+		:param product_id:
 			Entity ID
-		:param type:
-			Entity type
-		:param atom_map_id:
-			Atom map ID
-		:param profile_id:
-			Profile ID
 		:return:
 		"""
 		with self._get_session() as session:
 			session.query(ShopInventoryMapper).filter(
-				ShopInventoryMapper.entity_id == entity_id,
-				ShopInventoryMapper.type == type,
-				ShopInventoryMapper.atom_map_id == atom_map_id,
-				ShopInventoryMapper.profile_id == profile_id
+				ShopInventoryMapper.product_id == product_id
 			).delete()
 			session.commit()
 
@@ -150,50 +139,6 @@ class ShopInventoryRepository(CrudRepository[ShopProduct, ShopInventoryMapper], 
 				ShopInventoryMapper.profile_id == profile_id
 			).delete()
 			session.commit()
-
-	def update_count(
-		self,
-		entity_id: int,
-		type: ShopProductType,
-		atom_map_id: int,
-		profile_id: int,
-		new_count: int
-	) -> ShopProduct:
-		"""
-		Update count for shop inventory entry
-
-		:param entity_id:
-			Entity ID
-		:param type:
-			Entity type
-		:param atom_map_id:
-			Atom map ID
-		:param profile_id:
-			Profile ID
-		:param new_count:
-			New count value
-		:return:
-			Updated inventory entry
-		"""
-		with self._get_session() as session:
-			mapper = session.query(ShopInventoryMapper).filter(
-				ShopInventoryMapper.entity_id == entity_id,
-				ShopInventoryMapper.type == type,
-				ShopInventoryMapper.atom_map_id == atom_map_id,
-				ShopInventoryMapper.profile_id == profile_id
-			).first()
-
-			if not mapper:
-				from src.domain.exceptions import EntityNotFoundException
-				raise EntityNotFoundException(
-					f"ShopInventory not found: entity_id={entity_id}, type={type.value}, atom_map_id={atom_map_id}, profile_id={profile_id}"
-				)
-
-			mapper.count = new_count
-			session.commit()
-			session.refresh(mapper)
-
-			return self._mapper_to_entity(mapper)
 
 	def _mapper_to_entity(self, mapper: ShopInventoryMapper) -> ShopProduct:
 		"""

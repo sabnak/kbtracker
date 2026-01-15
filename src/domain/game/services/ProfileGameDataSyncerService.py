@@ -5,6 +5,10 @@ from typing import Any
 from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
+from src.domain.base.entities.BaseEntity import BaseEntity
+from src.domain.game.entities.Actor import Actor
+from src.domain.game.entities.AtomMap import AtomMap
+from src.domain.game.entities.ShopType import ShopType
 from src.domain.game.interfaces.IEntityRepository import IEntityRepository
 from src.domain.game.interfaces.IItemRepository import IItemRepository
 from src.domain.game.interfaces.IProfileGameDataSyncerService import IProfileGameDataSyncerService
@@ -30,13 +34,15 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		item_repository: IItemRepository = Provide[Container.item_repository],
 		spell_repository: ISpellRepository = Provide[Container.spell_repository],
 		unit_repository: IUnitRepository = Provide[Container.unit_repository],
-		atom_map_repository: IEntityRepository = Provide[Container.atom_map_repository],
+		atom_map_repository: IEntityRepository[AtomMap] = Provide[Container.atom_map_repository],
+		actor_repository: IEntityRepository[Actor] = Provide[Container.actor_repository],
 		shop_inventory_repository: IShopInventoryRepository = Provide[Container.shop_inventory_repository]
 	):
 		self._item_repository = item_repository
 		self._spell_repository = spell_repository
 		self._unit_repository = unit_repository
 		self._atom_map_repository = atom_map_repository
+		self._actor_repository = actor_repository
 		self._shop_inventory_repository = shop_inventory_repository
 
 	def sync(
@@ -55,47 +61,50 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			ProfileSyncResult with counts and corrupted data
 		"""
 		counts = {"items": 0, "spells": 0, "units": 0, "garrison": 0}
-		missing_shops: list[str] = []
-		missing_items: list[str] = []
-		missing_spells: list[str] = []
-		missing_units: list[str] = []
+		missing_data = {"items": [], "spells": [], "units": [], "garrison": [], "shops": []}
 
 		for shop_data in data:
-			atom_map = None
+			params: dict[str, int | None | ShopType | str] = dict(
+				shop_id=None,
+				profile_id=profile_id,
+				location=shop_data.get('location')
+			)
 			if shop_data['itext']:
-				shop_kb_id = shop_data['itext']
-				atom_map = self._atom_map_repository.get_by_kb_id(shop_kb_id)
+				kb_id = shop_data['itext']
+				params['shop_id'] = self._atom_map_repository.get_by_kb_id(kb_id).id
+				params['shop_type'] = ShopType.ATOM
 			else:
-				# We will ignore such shops for now
-				shop_kb_id = f"actor_system_{shop_data['actor']}_name"
+				kb_id = shop_data['actor']
+				params['shop_id'] = self._actor_repository.get_by_kb_id(kb_id).id
+				params['shop_type'] = ShopType.ACTOR
+
+			if not params['shop_id']:
+				missing_data["shops"].append(kb_id)
+				continue
 
 			inventory = shop_data['inventory']
 
-			if not atom_map:
-				missing_shops.append(shop_kb_id)
-				continue
-
-			item_result = self._sync_items(inventory['items'], atom_map.id, profile_id, shop_kb_id)
-			counts["items"] += item_result.count
-			missing_items.extend(item_result.missing_kb_ids)
-
-			spell_result = self._sync_spells(inventory['spells'], atom_map.id, profile_id, shop_kb_id)
-			counts["spells"] += spell_result.count
-			missing_spells.extend(spell_result.missing_kb_ids)
-
-			unit_result = self._sync_units(inventory['units'], atom_map.id, profile_id, shop_kb_id)
-			counts["units"] += unit_result.count
-			missing_units.extend(set(unit_result.missing_kb_ids))
-
-			garrison_result = self._sync_garrison(inventory['garrison'], atom_map.id, profile_id, shop_kb_id)
-			counts["garrison"] += garrison_result.count
-			missing_units.extend(garrison_result.missing_kb_ids)
+			for (key, kb_id_fn, product_type, repository) in (
+				("items", None, ShopProductType.ITEM, self._item_repository),
+				("spells", lambda n: n[6:], ShopProductType.SPELL, self._spell_repository),    # spell_
+				("units", None, ShopProductType.UNIT, self._unit_repository),
+				("garrison", None, ShopProductType.GARRISON, self._unit_repository),
+			):
+				result = self._sync(
+					inventory[key],
+					kb_id_fn=kb_id_fn,
+					product_type=product_type,
+					repository=repository,
+					**params
+				)
+				counts[key] += result.count
+				missing_data[key].extend(result.missing_kb_ids)
 
 		corrupted_data = self._build_corrupted_data(
-			shops=missing_shops,
-			items=missing_items,
-			spells=missing_spells,
-			units=missing_units
+			shops=missing_data["shops"],
+			items=missing_data["items"],
+			spells=missing_data["spells"],
+			units=missing_data["units"]
 		)
 
 		return ProfileSyncResult(
@@ -106,203 +115,49 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			corrupted_data=corrupted_data
 		)
 
-	def _sync_items(
+	def _sync(
 		self,
-		items: list[dict[str, Any]],
-		atom_map_id: int,
+		raw_datas: list[dict[str, Any]],
+		shop_id: int,
+		shop_type: ShopType,
 		profile_id: int,
-		atom_kb_id: str
+		location: str | None,
+		kb_id_fn: typing.Callable[[str], str],
+		product_type: ShopProductType,
+		repository
 	) -> _SyncItemResult:
-		"""
-		Sync item inventories
-
-		:param items:
-			Item inventory data
-		:param atom_map_id:
-			Atom map ID
-		:param profile_id:
-			Profile ID
-		:param atom_kb_id:
-			Shop KB ID for context
-		:return:
-			Sync result with count and missing KB IDs
-		"""
 		count = 0
 		missing_kb_ids: list[str] = []
 
-		for item_data in items:
-			kb_id = item_data['name']
-			item = self._item_repository.get_by_kb_id(kb_id)
+		for raw_data in raw_datas:
+			kb_id = kb_id_fn(raw_data['name']) if kb_id_fn else raw_data['name']
+			product: BaseEntity = repository.get_by_kb_id(kb_id)
 
-			if not item:
+			if not product:
 				missing_kb_ids.append(kb_id)
 				continue
 
 			inventory = ShopProduct(
-				entity_id=item.id,
-				atom_map_id=atom_map_id,
+				product_id=product.id,
+				shop_id=shop_id,
+				shop_type=shop_type,
 				profile_id=profile_id,
-				type=ShopProductType.ITEM,
-				count=item_data['quantity']
+				product_type=product_type,
+				count=raw_data['quantity'],
+				location=location
 			)
 			self._shop_inventory_repository.create(inventory)
 			count += 1
 
 		return _SyncItemResult(count=count, missing_kb_ids=missing_kb_ids)
 
-	def _sync_spells(
-		self,
-		spells: list[dict[str, Any]],
-		atom_map_id: int,
-		profile_id: int,
-		atom_kb_id: str
-	) -> _SyncItemResult:
-		"""
-		Sync spell inventories
-
-		:param spells:
-			Spell inventory data
-		:param atom_map_id:
-			Atom map ID
-		:param profile_id:
-			Profile ID
-		:param atom_kb_id:
-			Shop KB ID for context
-		:return:
-			Sync result with count and missing KB IDs
-		"""
-		count = 0
-		missing_kb_ids: list[str] = []
-
-		for spell_data in spells:
-			kb_id = spell_data['name'][6:]  # spell_
-			spell = self._spell_repository.get_by_kb_id(kb_id)
-
-			if not spell:
-				missing_kb_ids.append(kb_id)
-				continue
-
-			inventory = ShopProduct(
-				entity_id=spell.id,
-				atom_map_id=atom_map_id,
-				profile_id=profile_id,
-				type=ShopProductType.SPELL,
-				count=spell_data['quantity']
-			)
-			self._shop_inventory_repository.create(inventory)
-			count += 1
-
-		return _SyncItemResult(count=count, missing_kb_ids=missing_kb_ids)
-
-	def _sync_units(
-		self,
-		units: list[dict[str, Any]],
-		atom_map_id: int,
-		profile_id: int,
-		atom_kb_id: str
-	) -> _SyncItemResult:
-		"""
-		Sync unit inventories
-
-		:param units:
-			Unit inventory data
-		:param atom_map_id:
-			Atom map ID
-		:param profile_id:
-			Profile ID
-		:param atom_kb_id:
-			Shop KB ID for context
-		:return:
-			Sync result with count and missing KB IDs
-		"""
-		count = 0
-		missing_kb_ids: list[str] = []
-
-		for unit_data in units:
-			kb_id = unit_data['name']
-			unit = self._unit_repository.get_by_kb_id(kb_id)
-
-			if not unit:
-				missing_kb_ids.append(kb_id)
-				continue
-
-			inventory = ShopProduct(
-				entity_id=unit.id,
-				atom_map_id=atom_map_id,
-				profile_id=profile_id,
-				type=ShopProductType.UNIT,
-				count=unit_data['quantity']
-			)
-			self._shop_inventory_repository.create(inventory)
-			count += 1
-
-		return _SyncItemResult(count=count, missing_kb_ids=missing_kb_ids)
-
-	def _sync_garrison(
-		self,
-		garrison: list[dict[str, Any]],
-		atom_map_id: int,
-		profile_id: int,
-		atom_kb_id: str
-	) -> _SyncItemResult:
-		"""
-		Sync garrison inventories
-
-		:param garrison:
-			Garrison inventory data
-		:param atom_map_id:
-			Atom map ID
-		:param profile_id:
-			Profile ID
-		:param atom_kb_id:
-			Shop KB ID for context
-		:return:
-			Sync result with count and missing KB IDs
-		"""
-		count = 0
-		missing_kb_ids: list[str] = []
-
-		for unit_data in garrison:
-			kb_id = unit_data['name']
-			unit = self._unit_repository.get_by_kb_id(kb_id)
-
-			if not unit:
-				missing_kb_ids.append(kb_id)
-				continue
-
-			inventory = ShopProduct(
-				entity_id=unit.id,
-				atom_map_id=atom_map_id,
-				profile_id=profile_id,
-				type=ShopProductType.GARRISON,
-				count=unit_data['quantity']
-			)
-			self._shop_inventory_repository.create(inventory)
-			count += 1
-
-		return _SyncItemResult(count=count, missing_kb_ids=missing_kb_ids)
-
+	@staticmethod
 	def _build_corrupted_data(
-		self,
 		shops: list[str],
 		items: list[str],
 		units: list[str],
 		spells: list[str]
 	) -> CorruptedProfileData | None:
-		"""
-		Build CorruptedProfileData if any missing KB IDs found
-
-		:param shops:
-			Missing shop KB IDs
-		:param items:
-			Missing item KB IDs
-		:param spells:
-			Missing spell KB IDs
-		:param units:
-			Missing unit KB IDs
-		:return:
-			CorruptedProfileData or None if no errors
-		"""
 		if not any([shops, items, units, spells]):
 			return None
 

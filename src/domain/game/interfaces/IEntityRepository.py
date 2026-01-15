@@ -29,12 +29,12 @@ class IEntityRepository(ABC, typing.Generic[TEntity]):
 		pass
 
 	@abstractmethod
-	def get_by_ids(self, ids: list[int]) -> dict[int, TEntity]:
+	def get_by_ids(self, ids: typing.Iterable[int]) -> dict[int, TEntity]:
 		"""
-		Batch fetch atom maps by IDs
+		Batch fetch entities by IDs
 
 		:param ids:
-			List of atom map IDs
+			List of entities IDs
 		:return:
 			Dictionary mapping ID to TEntity
 		"""

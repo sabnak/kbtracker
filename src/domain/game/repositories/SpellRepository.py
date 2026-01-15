@@ -235,8 +235,8 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 
 				query = query.join(
 					ShopInventoryMapper,
-					(ShopInventoryMapper.entity_id == SpellMapper.id) &
-					(ShopInventoryMapper.type == ShopProductType.SPELL) &
+					(ShopInventoryMapper.product_id == SpellMapper.id) &
+					(ShopInventoryMapper.product_type == ShopProductType.SPELL) &
 					(ShopInventoryMapper.profile_id == profile_id)
 				).distinct()
 

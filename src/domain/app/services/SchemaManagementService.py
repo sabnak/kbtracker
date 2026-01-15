@@ -150,12 +150,14 @@ class SchemaManagementService(ISchemaManagementService):
 			# Create shop_inventory table
 			session.execute(text(f"""
 				CREATE TABLE {schema_name}.shop_inventory (
-					entity_id INTEGER NOT NULL,
-					atom_map_id INTEGER REFERENCES {schema_name}.atom_map(id),
-					profile_id INTEGER REFERENCES {schema_name}.profile(id) ON DELETE CASCADE,
-					type VARCHAR(20) NOT NULL,
+					product_id INTEGER NOT NULL,
+					product_type VARCHAR(20) NOT NULL,
 					count INTEGER DEFAULT 1,
-					PRIMARY KEY (entity_id, atom_map_id, profile_id, type)
+					shop_id INTEGER NOT NULL,
+					shop_type VARCHAR(20),
+					location VARCHAR(255),
+					profile_id INTEGER REFERENCES {schema_name}.profile(id) ON DELETE CASCADE,
+					PRIMARY KEY (product_id, product_type, shop_id, shop_type, location, profile_id)
 				)
 			"""))
 
