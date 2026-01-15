@@ -6,15 +6,28 @@ from typing import Any
 class IShopInventoryParser(abc.ABC):
 
 	@abc.abstractmethod
-	def parse(self, save_path: Path) -> dict[str, dict[str, list[dict[str, Any]]]]:
+	def parse(self, save_path: Path) -> list[dict[str, Any]]:
 		"""
 		Extract shop inventory data from save file
 
 		:param save_path:
 			Path to save 'data' file
 		:return:
-			Dictionary mapping shop_id to inventory sections
-			Format: {shop_id: {garrison: [...], items: [...], units: [...], spells: [...]}}
+			List of shop dictionaries with structure:
+			[
+				{
+					"itext": str,      # Shop itext ID or empty string
+					"actor": str,      # Actor ID or empty string
+					"location": str,   # Location name (e.g., "m_portland", "dragondor")
+					"inventory": {
+						"garrison": list[dict],
+						"items": list[dict],
+						"units": list[dict],
+						"spells": list[dict]
+					}
+				},
+				...
+			]
 		:raises ValueError:
 			If save file is invalid
 		:raises FileNotFoundError:

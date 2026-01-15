@@ -13,14 +13,13 @@ Production-ready tool to extract shop inventory data from King's Bounty save fil
 **Major Feature:**
 - ✅ **Actor ID Extraction:** Shops without `itext_` identifiers now correctly extract trader actor IDs
   - Actor IDs stored in `.actors` section's `strg` field with bit 7 encoding
-  - Bit 7 set = active shop with assigned actor
-  - Bit 7 not set = inactive/template shop
+  - Bit 7 set = active shop with assigned actor (included in results)
+  - Bit 7 not set = inactive/template shop (skipped)
   - Example: `dragondor_actor_807991996` (trader localization: `actor_system_807991996_name`)
-- ✅ **Shop Types:** Three formats now supported
+- ✅ **Shop Types:** Two formats supported
   - Standard: `{location}_{shop_num}` (e.g., `m_portland_8671`)
   - Actor-based: `{location}_actor_{actor_id}` (e.g., `dragondor_actor_807991996`)
-  - Unnamed: `{location}_building_trader_{building_num}` (e.g., `m_inselburg_building_trader_31`)
-- ✅ **Removed:** Unreliable lookup table method (contained outdated mappings)
+- ✅ **Removed:** Unreliable lookup table method and inactive shops without actors
 
 **Previous Updates (v1.3.1)**
 
@@ -123,37 +122,47 @@ Each save is a directory with a timestamp (e.g., `1707047253`) containing:
 ### JSON Format
 
 ```json
-{
-  "portland_6820": {
-    "garrison": [],
-    "items": [
-      {"name": "addon4_3_crystal", "quantity": 4},
-      {"name": "snake_ring", "quantity": 1}
-    ],
-    "units": [
-      {"name": "bowman", "quantity": 152}
-    ],
-    "spells": [
-      {"name": "spell_plantation", "quantity": 2},
-      {"name": "spell_sanctuary", "quantity": 2}
-    ]
+[
+  {
+    "itext": "portland_6820",
+    "actor": "",
+    "location": "portland",
+    "inventory": {
+      "garrison": [],
+      "items": [
+        {"name": "addon4_3_crystal", "quantity": 4},
+        {"name": "snake_ring", "quantity": 1}
+      ],
+      "units": [
+        {"name": "bowman", "quantity": 152}
+      ],
+      "spells": [
+        {"name": "spell_plantation", "quantity": 2},
+        {"name": "spell_sanctuary", "quantity": 2}
+      ]
+    }
   },
-  "dragondor_actor_807991996": {
-    "garrison": [],
-    "items": [],
-    "units": [
-      {"name": "bocman", "quantity": 1460},
-      {"name": "monstera", "quantity": 250},
-      {"name": "bear_white", "quantity": 156},
-      {"name": "demonologist", "quantity": 134}
-    ],
-    "spells": [
-      {"name": "spell_dispell", "quantity": 2},
-      {"name": "spell_gifts", "quantity": 2},
-      {"name": "spell_dragon_slayer", "quantity": 1}
-    ]
+  {
+    "itext": "",
+    "actor": "807991996",
+    "location": "dragondor",
+    "inventory": {
+      "garrison": [],
+      "items": [],
+      "units": [
+        {"name": "bocman", "quantity": 1460},
+        {"name": "monstera", "quantity": 250},
+        {"name": "bear_white", "quantity": 156},
+        {"name": "demonologist", "quantity": 134}
+      ],
+      "spells": [
+        {"name": "spell_dispell", "quantity": 2},
+        {"name": "spell_gifts", "quantity": 2},
+        {"name": "spell_dragon_slayer", "quantity": 1}
+      ]
+    }
   }
-}
+]
 ```
 
 ### TXT Format
@@ -194,14 +203,26 @@ SPELLS (3):
 
 ### JSON Fields
 
-- **Shop ID** (key): Unique shop identifier
-  - Standard shops: `{location}_{shop_num}` (e.g., `portland_6820`)
-  - Actor-based shops: `{location}_actor_{actor_id}` (e.g., `dragondor_actor_807991996`)
-  - Unnamed shops: `{location}_building_trader_{building_num}` (e.g., `m_inselburg_building_trader_31`)
-- **garrison**: Player's stored army units (array of name/quantity objects)
-- **items**: Equipment and consumable items for sale (array)
-- **units**: Units/troops available for hire (array)
-- **spells**: Spells available for purchase (array)
+Each shop in the array contains:
+
+- **itext** (string): Shop itext identifier or empty string
+  - Standard shops: Shop ID (e.g., `"m_portland_8671"`)
+  - Actor-based shops: Empty string (`""`)
+
+- **actor** (string): Actor ID or empty string
+  - Standard shops: Empty string (`""`)
+  - Actor-based shops: Actor ID (e.g., `"807991996"`)
+  - Maps to localization key: `actor_system_{actor_id}_name`
+
+- **location** (string): Location name
+  - All shops: Location identifier (e.g., `"m_portland"`, `"dragondor"`, `"aralan"`)
+  - Extracted from shop ID by removing the trailing number or actor suffix
+
+- **inventory** (object): Shop inventory with 4 sections
+  - **garrison**: Player's stored army units (array of name/quantity objects)
+  - **items**: Equipment and consumable items for sale (array)
+  - **units**: Units/troops available for hire (array)
+  - **spells**: Spells available for purchase (array)
 
 Each item/unit/spell contains:
 - `name`: Item identifier (e.g., `addon4_3_crystal`, `bowman`, `spell_lull`)

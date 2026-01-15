@@ -1,6 +1,7 @@
 import argparse
 import json
 import sys
+from collections import Counter
 from pathlib import Path
 
 import pydantic
@@ -15,7 +16,7 @@ class LaunchParams(pydantic.BaseModel):
 
 class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 
-	_shops: dict
+	_shops: list[dict]
 	_boundary = "=" * 78
 
 	def _build_params(self) -> T:
@@ -25,7 +26,7 @@ class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 		return LaunchParams(save_path=args.save_path)
 
 	def _run(self):
-		self._shops = dict()
+		self._shops = []
 		parser = self._container.shop_inventory_parser()
 
 		if not self._launch_params.save_path.exists():
@@ -64,17 +65,22 @@ class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 		)
 
 	def _print_statistics(self) -> None:
-		total_garrison = sum(len(s['garrison']) for s in self._shops.values())
-		total_items = sum(len(s['items']) for s in self._shops.values())
-		total_units = sum(len(s['units']) for s in self._shops.values())
-		total_spells = sum(len(s['spells']) for s in self._shops.values())
-		total_products = total_garrison + total_items + total_units + total_spells
-
-		shops_with_garrison = sum(1 for s in self._shops.values() if s['garrison'])
-		shops_with_items = sum(1 for s in self._shops.values() if s['items'])
-		shops_with_units = sum(1 for s in self._shops.values() if s['units'])
-		shops_with_spells = sum(1 for s in self._shops.values() if s['spells'])
-		shops_with_any = sum(1 for s in self._shops.values() if s['garrison'] or s['items'] or s['units'] or s['spells'])
+		summary = Counter()
+		not_empty_shops = Counter()
+		for shop in self._shops:
+			inventory = shop['inventory']
+			if inventory['garrison']:
+				not_empty_shops['garrison'] += 1
+				summary['garrison'] += len(inventory['garrison'])
+			if inventory['items']:
+				not_empty_shops['items'] += 1
+				summary['items'] += len(inventory['items'])
+			if inventory['units']:
+				not_empty_shops['units'] += 1
+				summary['units'] += len(inventory['units'])
+			if inventory['spells']:
+				not_empty_shops['spells'] += 1
+				summary['spells'] += len(inventory['spells'])
 
 		print(
 			"\n",
@@ -83,17 +89,16 @@ class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 			"="*78,
 			"",
 			f"Total shops:           {len(self._shops)}",
-			f"Shops with content:    {shops_with_any}",
-			f"  - With garrison:     {shops_with_garrison}",
-			f"  - With items:        {shops_with_items}",
-			f"  - With units:        {shops_with_units}",
-			f"  - With spells:       {shops_with_spells}",
+			f"  - With garrison:     {not_empty_shops['garrison']}",
+			f"  - With items:        {not_empty_shops['items']}",
+			f"  - With units:        {not_empty_shops['units']}",
+			f"  - With spells:       {not_empty_shops['spells']}",
 			"",
-			f"Total products:        {total_products}",
-			f"  - Garrison units:    {total_garrison}",
-			f"  - Items:             {total_items}",
-			f"  - Units:             {total_units}",
-			f"  - Spells:            {total_spells}",
+			f"Total products:        {summary['garrison'] + summary['items'] + summary['units'] + summary['spells']}",
+			f"  - Garrison units:    {summary['garrison']}",
+			f"  - Items:             {summary['items']}",
+			f"  - Units:             {summary['units']}",
+			f"  - Spells:            {summary['spells']}",
 			sep="\n"
 		)
 

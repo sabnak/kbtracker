@@ -35,11 +35,11 @@ class ShopInventoryParser(IShopInventoryParser):
 		"""
 		self._decompressor = decompressor
 
-	def parse(self, save_path: Path) -> dict[str, dict[str, list[dict[str, Any]]]]:
+	def parse(self, save_path: Path) -> list[dict[str, Any]]:
 		"""
 		Extract shop inventory data from save file
 
-		Extracts all shops with 4 sections:
+		Extracts all shops with 4 inventory sections:
 		- garrison: Player's stored army units
 		- items: Equipment and consumables for sale
 		- units: Units/troops for hire
@@ -49,23 +49,33 @@ class ShopInventoryParser(IShopInventoryParser):
 		1. itext_ shops: Standard named shops
 		   Format: {location}_{shop_num}
 		   Example: m_portland_8671
+		   Output: itext = "m_portland_8671", actor = "", location = "m_portland"
 
-		2. building_trader@ shops: Shops without itext_ identifiers
+		2. Actor-based shops: Shops without itext_ identifiers
 		   Actor IDs are extracted from .actors section's 'strg' field
 		   by clearing bit 7 of the last byte
+		   Only shops with bit 7 set (active shops) are included
 
-		   Format with actor: {location}_actor_{actor_id}
+		   Format: {location}_actor_{actor_id}
 		   Example: dragondor_actor_807991996
+		   Output: itext = "", actor = "807991996", location = "dragondor"
 		   (actor_id maps to actor_system_{id}_name in localization)
-
-		   Format without actor: {location}_building_trader_{building_num}
-		   Example: m_inselburg_building_trader_31
-		   (inactive shops or shops without assigned traders)
 
 		:param save_path:
 			Path to save 'data' file
 		:return:
-			Dictionary mapping shop_id to inventory sections
+			List of shop dictionaries with structure:
+			{
+				"itext": str,      # Shop itext ID or empty string
+				"actor": str,      # Actor ID or empty string
+				"location": str,   # Location name (e.g., "m_portland", "dragondor")
+				"inventory": {
+					"garrison": list[dict],
+					"items": list[dict],
+					"units": list[dict],
+					"spells": list[dict]
+				}
+			}
 		:raises ValueError:
 			If save file is invalid
 		:raises FileNotFoundError:
@@ -79,15 +89,37 @@ class ShopInventoryParser(IShopInventoryParser):
 		all_shops = itext_shops + building_shops
 		all_shops = sorted(all_shops, key=lambda x: x[1])
 
-		result = {}
+		result = []
 		for shop_id, shop_pos in all_shops:
 			shop_data = self._parse_shop(data, shop_id, shop_pos)
-			result[shop_id] = {
-				'garrison': [{'name': n, 'quantity': q} for n, q in shop_data['garrison']],
-				'items': [{'name': n, 'quantity': q} for n, q in shop_data['items']],
-				'units': [{'name': n, 'quantity': q} for n, q in shop_data['units']],
-				'spells': [{'name': n, 'quantity': q} for n, q in shop_data['spells']]
+
+			itext_id = ""
+			actor_id = ""
+			location = ""
+
+			if "_actor_" in shop_id:
+				parts = shop_id.split("_actor_")
+				location = parts[0]
+				actor_id = parts[1]
+			else:
+				parts = shop_id.rsplit("_", 1)
+				if len(parts) == 2:
+					location = parts[0]
+				itext_id = shop_id
+
+			shop_entry = {
+				'itext': itext_id,
+				'actor': actor_id,
+				'location': location,
+				'inventory': {
+					'garrison': [{'name': n, 'quantity': q} for n, q in shop_data['garrison']],
+					'items': [{'name': n, 'quantity': q} for n, q in shop_data['items']],
+					'units': [{'name': n, 'quantity': q} for n, q in shop_data['units']],
+					'spells': [{'name': n, 'quantity': q} for n, q in shop_data['spells']]
+				}
 			}
+
+			result.append(shop_entry)
 
 		return result
 
@@ -204,28 +236,22 @@ class ShopInventoryParser(IShopInventoryParser):
 
 	def _find_building_trader_shops(self, data: bytes) -> list[tuple[str, int]]:
 		"""
-		Find all building_trader@ shops without itext_ identifiers
+		Find all building_trader@ shops with actor IDs
 
 		Structure: .actors → .shopunits → .spells → .temp → lt <location> → building_trader@<id>
 
-		Shop ID format:
-		- If actor ID extracted from .actors: {location}_actor_{actor_id}
-		- If no actor ID found: {location}_building_trader_{building_num}
+		Shop ID format: {location}_actor_{actor_id}
+		Example: dragondor_actor_807991996
 
 		Actor ID extraction:
 		- Extracted from .actors section's 'strg' field by clearing bit 7
-		- Only shops with bit 7 set are active and have assigned actors
-		- Shops without bit 7 set are inactive/template shops
-
-		Unnamed shops without actor IDs typically:
-		- Have no name in game
-		- Do not display on game map
-		- Are still fully interactable with inventory
+		- Only shops with bit 7 set (active shops) are included
+		- Shops without bit 7 set (inactive/template shops) are skipped
 
 		:param data:
 			Decompressed save file data
 		:return:
-			List of (shop_id, position) tuples
+			List of (shop_id, position) tuples for shops with actor IDs
 		"""
 		shops = []
 		seen_inventory_positions = set()
@@ -255,11 +281,8 @@ class ShopInventoryParser(IShopInventoryParser):
 								actor_id = self._extract_actor_id_from_actors_section(data, pos)
 								if actor_id:
 									shop_id = f'{location}_actor_{actor_id}'
-								else:
-									shop_id = f'{location}_building_trader_{building_num}'
-
-								shops.append((shop_id, pos))
-								seen_inventory_positions.add(shopunits_pos)
+									shops.append((shop_id, pos))
+									seen_inventory_positions.add(shopunits_pos)
 			except:
 				pass
 

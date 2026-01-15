@@ -20,11 +20,11 @@
 9. **Actor ID Extraction for building_trader@ Shops (v1.4.0)**
    - **Feature:** Shops without `itext_` identifiers now extract actor IDs from `.actors` section
    - **Method:** Bit 7 encoding in `strg` field (clear bit 7 to extract actor ID)
-   - **Formats:** Three shop ID formats now supported:
+   - **Formats:** Two shop ID formats now supported:
      - Standard: `{location}_{shop_num}` (e.g., `m_portland_8671`)
      - Actor-based: `{location}_actor_{actor_id}` (e.g., `dragondor_actor_807991996`)
-     - Unnamed: `{location}_building_trader_{building_num}` (e.g., `m_inselburg_building_trader_31`)
-   - **Removed:** Unreliable lookup table method (contained outdated mappings)
+   - **Filtering:** Only active shops with actor IDs (bit 7 set) are included
+   - **Removed:** Unreliable lookup table method and inactive shops without actors
    - **Example:** `dragondor_actor_807991996` correctly identified with bocman x1460 inventory
    - **Validation:** Tested on save 1768403991 with 371 shops
    - **Status:** ✅ IMPLEMENTED & VALIDATED

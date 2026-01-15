@@ -9,7 +9,7 @@
 - **Shop Types Supported:**
   1. Standard named shops: `{location}_{shop_num}` (e.g., `m_portland_8671`)
   2. Actor-based shops: `{location}_actor_{actor_id}` (e.g., `dragondor_actor_807991996`)
-  3. Unnamed shops: `{location}_building_trader_{building_num}` (e.g., `m_inselburg_building_trader_31`)
+- **Filtering:** Only active shops with actor IDs (bit 7 set) are included
 - **Impact:** Correctly identifies shops with trader actors for proper naming/localization
 
 **Actor ID Extraction Method:**
@@ -52,13 +52,13 @@ building_trader@{num}    ← Shop identifier (ASCII)
 3. Locate `strg` field (offset +8 from 'strg' marker)
 4. Read 4-byte little-endian value
 5. Check if bit 7 is set in last byte
-6. If set: Clear bit 7 to extract actor ID
-7. If not set: Shop is inactive, use `building_trader_{num}` format
+6. If set: Clear bit 7 to extract actor ID and include shop
+7. If not set: Shop is inactive, skip it entirely
 
 **Examples:**
 - `dragondor_actor_807991996` - Active shop with trader (bocman x1460 inventory)
 - `m_inselburg_actor_1906201168` - Active shop with different trader
-- `dragondor_building_trader_31` - Inactive shop without assigned actor
+- Inactive shops without actors are skipped (not included in results)
 
 ### Removed Features
 

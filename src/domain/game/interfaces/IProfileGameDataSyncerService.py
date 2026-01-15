@@ -1,3 +1,4 @@
+import typing
 from abc import ABC, abstractmethod
 from typing import Any
 
@@ -9,7 +10,7 @@ class IProfileGameDataSyncerService(ABC):
 	@abstractmethod
 	def sync(
 		self,
-		data: dict[str, dict[str, list[dict[str, Any]]]],
+		data: list[dict[str, typing.Any]],
 		profile_id: int
 	) -> ProfileSyncResult:
 		"""

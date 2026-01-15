@@ -1,3 +1,4 @@
+import typing
 from dataclasses import dataclass
 from typing import Any
 
@@ -40,7 +41,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 
 	def sync(
 		self,
-		data: dict[str, dict[str, list[dict[str, Any]]]],
+		data: list[dict[str, typing.Any]],
 		profile_id: int
 	) -> ProfileSyncResult:
 		"""
@@ -59,26 +60,34 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		missing_spells: list[str] = []
 		missing_units: list[str] = []
 
-		for shop_kb_id, inventories in data.items():
-			atom_map = self._atom_map_repository.get_by_kb_id(shop_kb_id)
+		for shop_data in data:
+			atom_map = None
+			if shop_data['itext']:
+				shop_kb_id = shop_data['itext']
+				atom_map = self._atom_map_repository.get_by_kb_id(shop_kb_id)
+			else:
+				# We will ignore such shops for now
+				shop_kb_id = f"actor_system_{shop_data['actor']}_name"
+
+			inventory = shop_data['inventory']
 
 			if not atom_map:
 				missing_shops.append(shop_kb_id)
 				continue
 
-			item_result = self._sync_items(inventories['items'], atom_map.id, profile_id, shop_kb_id)
+			item_result = self._sync_items(inventory['items'], atom_map.id, profile_id, shop_kb_id)
 			counts["items"] += item_result.count
 			missing_items.extend(item_result.missing_kb_ids)
 
-			spell_result = self._sync_spells(inventories['spells'], atom_map.id, profile_id, shop_kb_id)
+			spell_result = self._sync_spells(inventory['spells'], atom_map.id, profile_id, shop_kb_id)
 			counts["spells"] += spell_result.count
 			missing_spells.extend(spell_result.missing_kb_ids)
 
-			unit_result = self._sync_units(inventories['units'], atom_map.id, profile_id, shop_kb_id)
+			unit_result = self._sync_units(inventory['units'], atom_map.id, profile_id, shop_kb_id)
 			counts["units"] += unit_result.count
 			missing_units.extend(set(unit_result.missing_kb_ids))
 
-			garrison_result = self._sync_garrison(inventories['garrison'], atom_map.id, profile_id, shop_kb_id)
+			garrison_result = self._sync_garrison(inventory['garrison'], atom_map.id, profile_id, shop_kb_id)
 			counts["garrison"] += garrison_result.count
 			missing_units.extend(garrison_result.missing_kb_ids)
 

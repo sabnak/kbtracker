@@ -9,7 +9,6 @@ from src.utils.parsers.game_data.IKFSAtomsMapInfoParser import IKFSAtomsMapInfoP
 
 class AtomMapScannerService(IAtomMapScannerService):
 
-	@inject
 	def __init__(
 		self,
 		atom_map_repository: IAtomMapRepository = Provide[Container.atom_map_repository],

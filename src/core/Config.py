@@ -32,6 +32,7 @@ class Config(BaseSettings):
 		LocalizationConfig(file="new_spells", tag="spells"),
 		LocalizationConfig(file="atoms_info", tag="atoms_info"),
 		LocalizationConfig(file="map", tag="maps"),
+		LocalizationConfig(file="actors", tag="actors"),
 	]
 	supported_games: list[GameConfig] = [
 		GameConfig(

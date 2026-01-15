@@ -72,21 +72,26 @@ Shops with garrison: 9
 
 ### JSON Output
 ```json
-{
-  "portland_6820": {
-    "items": [
-      {"name": "addon4_3_crystal", "quantity": 4},
-      {"name": "snake_ring", "quantity": 1}
-    ],
-    "units": [
-      {"name": "bowman", "quantity": 152}
-    ],
-    "spells": [
-      {"name": "spell_plantation", "quantity": 2}
-    ],
-    "garrison": []
+[
+  {
+    "itext": "portland_6820",
+    "actor": "",
+    "location": "portland",
+    "inventory": {
+      "items": [
+        {"name": "addon4_3_crystal", "quantity": 4},
+        {"name": "snake_ring", "quantity": 1}
+      ],
+      "units": [
+        {"name": "bowman", "quantity": 152}
+      ],
+      "spells": [
+        {"name": "spell_plantation", "quantity": 2}
+      ],
+      "garrison": []
+    }
   }
-}
+]
 ```
 
 ### TXT Output
@@ -152,11 +157,11 @@ docker cp kbtracker_app:/tmp/save_export/1707047253_20260104_211453.json ./
 
 **Major Feature - Actor ID Extraction:**
 - ✅ **Building_trader@ Shops:** Shops without `itext_` identifiers now extract actor IDs
-- ✅ **Three Shop Formats:**
+- ✅ **Two Shop Formats:**
   - Standard: `{location}_{shop_num}` (e.g., `m_portland_8671`)
   - Actor-based: `{location}_actor_{actor_id}` (e.g., `dragondor_actor_807991996`)
-  - Unnamed: `{location}_building_trader_{building_num}` (e.g., `m_inselburg_building_trader_31`)
-- ✅ **Bit 7 Encoding:** Automatically detects active vs inactive shops
+- ✅ **Bit 7 Encoding:** Only active shops with actors are included (bit 7 set)
+- ✅ **Inactive Shops:** Shops without actors (bit 7 not set) are automatically skipped
 - ✅ **Example:** `dragondor_actor_807991996` correctly identified with bocman x1460 inventory
 
 **Previous Bug Fix (v1.3.1):**
