@@ -45,13 +45,13 @@ class ShopInventoryParser(IShopInventoryParser):
 		- units: Units/troops for hire
 		- spells: Spells for purchase
 
-		Supports two shop types:
-		1. itext_ shops: Standard named shops
+		Supports three shop configurations:
+		1. itext_ only: Standard named shops without actors
 		   Format: {location}_{shop_num}
 		   Example: m_portland_8671
 		   Output: itext = "m_portland_8671", actor = "", location = "m_portland"
 
-		2. Actor-based shops: Shops without itext_ identifiers
+		2. Actor only: Shops without itext_ identifiers
 		   Actor IDs are extracted from .actors section's 'strg' field
 		   by clearing bit 7 of the last byte
 		   Only shops with bit 7 set (active shops) are included
@@ -60,6 +60,16 @@ class ShopInventoryParser(IShopInventoryParser):
 		   Example: dragondor_actor_807991996
 		   Output: itext = "", actor = "807991996", location = "dragondor"
 		   (actor_id maps to actor_system_{id}_name in localization)
+
+		3. Both itext_ and actor: Shops with both identifiers
+		   Some shops have both an itext_ name AND a building_trader@ with actor
+		   These are merged into a single shop entry with both fields populated
+
+		   Example: wizard_tower_22 + building_trader@123 (actor 2103300303)
+		   Output: itext = "wizard_tower_22", actor = "2103300303", location = "wizard_tower"
+
+		Deduplication: Shops are deduplicated by inventory position to handle
+		cases where the same physical shop has multiple identifiers
 
 		:param save_path:
 			Path to save 'data' file
@@ -89,28 +99,50 @@ class ShopInventoryParser(IShopInventoryParser):
 		all_shops = itext_shops + building_shops
 		all_shops = sorted(all_shops, key=lambda x: x[1])
 
-		result = []
+		shops_by_inventory = {}
+
 		for shop_id, shop_pos in all_shops:
 			shop_data = self._parse_shop(data, shop_id, shop_pos)
 
-			itext_id = ""
-			actor_id = ""
-			location = ""
+			inventory_key = None
+			for section_marker in [b'.garrison', b'.items', b'.shopunits', b'.spells']:
+				section_pos = self._find_preceding_section(data, section_marker, shop_pos, 5000)
+				if section_pos and self._section_belongs_to_shop(data, section_pos, shop_pos):
+					if inventory_key is None:
+						inventory_key = section_pos
+					break
+
+			if inventory_key is None:
+				inventory_key = shop_pos
+
+			if inventory_key not in shops_by_inventory:
+				shops_by_inventory[inventory_key] = {
+					'itext': '',
+					'actor': '',
+					'location': '',
+					'shop_data': shop_data
+				}
+
+			shop_entry = shops_by_inventory[inventory_key]
 
 			if "_actor_" in shop_id:
 				parts = shop_id.split("_actor_")
-				location = parts[0]
-				actor_id = parts[1]
+				if not shop_entry['location']:
+					shop_entry['location'] = parts[0]
+				shop_entry['actor'] = parts[1]
 			else:
 				parts = shop_id.rsplit("_", 1)
-				if len(parts) == 2:
-					location = parts[0]
-				itext_id = shop_id
+				if len(parts) == 2 and not shop_entry['location']:
+					shop_entry['location'] = parts[0]
+				shop_entry['itext'] = shop_id
 
+		result = []
+		for shop_info in shops_by_inventory.values():
+			shop_data = shop_info['shop_data']
 			shop_entry = {
-				'itext': itext_id,
-				'actor': actor_id,
-				'location': location,
+				'itext': shop_info['itext'],
+				'actor': shop_info['actor'],
+				'location': shop_info['location'],
 				'inventory': {
 					'garrison': [{'name': n, 'quantity': q} for n, q in shop_data['garrison']],
 					'items': [{'name': n, 'quantity': q} for n, q in shop_data['items']],
@@ -118,7 +150,6 @@ class ShopInventoryParser(IShopInventoryParser):
 					'spells': [{'name': n, 'quantity': q} for n, q in shop_data['spells']]
 				}
 			}
-
 			result.append(shop_entry)
 
 		return result

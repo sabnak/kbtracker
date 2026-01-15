@@ -16,9 +16,11 @@ Production-ready tool to extract shop inventory data from King's Bounty save fil
   - Bit 7 set = active shop with assigned actor (included in results)
   - Bit 7 not set = inactive/template shop (skipped)
   - Example: `dragondor_actor_807991996` (trader localization: `actor_system_807991996_name`)
-- ✅ **Shop Types:** Two formats supported
-  - Standard: `{location}_{shop_num}` (e.g., `m_portland_8671`)
-  - Actor-based: `{location}_actor_{actor_id}` (e.g., `dragondor_actor_807991996`)
+- ✅ **Shop Types:** Three configurations supported
+  - itext only: `{location}_{shop_num}` (e.g., `m_portland_8671`)
+  - Actor only: `{location}_actor_{actor_id}` (e.g., `dragondor_actor_807991996`)
+  - Both itext and actor: Merged when shop has both identifiers (e.g., `wizard_tower_22` with actor `2103300303`)
+- ✅ **Deduplication:** Shops with multiple identifiers are merged by inventory position
 - ✅ **Removed:** Unreliable lookup table method and inactive shops without actors
 
 **Previous Updates (v1.3.1)**
@@ -161,6 +163,22 @@ Each save is a directory with a timestamp (e.g., `1707047253`) containing:
         {"name": "spell_dragon_slayer", "quantity": 1}
       ]
     }
+  },
+  {
+    "itext": "wizard_tower_22",
+    "actor": "2103300303",
+    "location": "wizard_tower",
+    "inventory": {
+      "garrison": [],
+      "items": [],
+      "units": [
+        {"name": "assassin", "quantity": 9999},
+        {"name": "sprite", "quantity": 9999}
+      ],
+      "spells": [
+        {"name": "spell_scare", "quantity": 4}
+      ]
+    }
   }
 ]
 ```
@@ -207,11 +225,13 @@ Each shop in the array contains:
 
 - **itext** (string): Shop itext identifier or empty string
   - Standard shops: Shop ID (e.g., `"m_portland_8671"`)
-  - Actor-based shops: Empty string (`""`)
+  - Actor-only shops: Empty string (`""`)
+  - Shops with both: Shop ID (e.g., `"wizard_tower_22"`)
 
 - **actor** (string): Actor ID or empty string
   - Standard shops: Empty string (`""`)
-  - Actor-based shops: Actor ID (e.g., `"807991996"`)
+  - Actor-only shops: Actor ID (e.g., `"807991996"`)
+  - Shops with both: Actor ID (e.g., `"2103300303"`)
   - Maps to localization key: `actor_system_{actor_id}_name`
 
 - **location** (string): Location name

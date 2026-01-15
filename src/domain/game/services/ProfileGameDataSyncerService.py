@@ -1,11 +1,13 @@
 import typing
 from dataclasses import dataclass
+from logging import Logger
 from typing import Any
 
 from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
 from src.domain.base.entities.BaseEntity import BaseEntity
+from src.domain.exceptions import DuplicateEntityException
 from src.domain.game.entities.Actor import Actor
 from src.domain.game.entities.AtomMap import AtomMap
 from src.domain.game.entities.ShopType import ShopType
@@ -36,7 +38,8 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		unit_repository: IUnitRepository = Provide[Container.unit_repository],
 		atom_map_repository: IEntityRepository[AtomMap] = Provide[Container.atom_map_repository],
 		actor_repository: IEntityRepository[Actor] = Provide[Container.actor_repository],
-		shop_inventory_repository: IShopInventoryRepository = Provide[Container.shop_inventory_repository]
+		shop_inventory_repository: IShopInventoryRepository = Provide[Container.shop_inventory_repository],
+		logger: Logger = Provide[Container.logger]
 	):
 		self._item_repository = item_repository
 		self._spell_repository = spell_repository
@@ -44,6 +47,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		self._atom_map_repository = atom_map_repository
 		self._actor_repository = actor_repository
 		self._shop_inventory_repository = shop_inventory_repository
+		self._looger = logger
 
 	def sync(
 		self,
@@ -64,6 +68,11 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		missing_data = {"items": [], "spells": [], "units": [], "garrison": [], "shops": []}
 
 		for shop_data in data:
+			inventory = shop_data['inventory']
+
+			if not inventory['items'] and not inventory['spells'] and not inventory['units'] and not inventory['garrison']:
+				continue
+
 			params: dict[str, int | None | ShopType | str] = dict(
 				shop_id=None,
 				profile_id=profile_id,
@@ -71,18 +80,20 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			)
 			if shop_data['itext']:
 				kb_id = shop_data['itext']
-				params['shop_id'] = self._atom_map_repository.get_by_kb_id(kb_id).id
+				shop = self._atom_map_repository.get_by_kb_id(kb_id)
 				params['shop_type'] = ShopType.ATOM
-			else:
+			elif shop_data['actor']:
 				kb_id = shop_data['actor']
-				params['shop_id'] = self._actor_repository.get_by_kb_id(kb_id).id
+				shop = self._actor_repository.get_by_kb_id(kb_id)
 				params['shop_type'] = ShopType.ACTOR
+			else:
+				raise ValueError("Invalid shop data. Either itext or actor must be present")
 
-			if not params['shop_id']:
+			if not shop:
 				missing_data["shops"].append(kb_id)
+				self._looger.warning(f"Shop not found: {kb_id}. Shop data: {shop_data}")
 				continue
-
-			inventory = shop_data['inventory']
+			params['shop_id'] = shop.id
 
 			for (key, kb_id_fn, product_type, repository) in (
 				("items", None, ShopProductType.ITEM, self._item_repository),
@@ -90,13 +101,17 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 				("units", None, ShopProductType.UNIT, self._unit_repository),
 				("garrison", None, ShopProductType.GARRISON, self._unit_repository),
 			):
-				result = self._sync(
-					inventory[key],
-					kb_id_fn=kb_id_fn,
-					product_type=product_type,
-					repository=repository,
-					**params
-				)
+				try:
+					result = self._sync(
+						inventory[key],
+						kb_id_fn=kb_id_fn,
+						product_type=product_type,
+						repository=repository,
+						**params
+					)
+				except DuplicateEntityException as e:
+					self._looger.warning(f"Duplicate entity detected: {e}")
+					continue
 				counts[key] += result.count
 				missing_data[key].extend(result.missing_kb_ids)
 
