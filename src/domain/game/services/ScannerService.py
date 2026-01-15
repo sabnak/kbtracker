@@ -5,6 +5,7 @@ from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
+from src.domain.game.entities.Actor import Actor
 from src.domain.game.entities.AtomMap import AtomMap
 from src.domain.game.interfaces.IEntityFromLocalizationService import IEntityFromLocalizationService
 from src.domain.app.interfaces.IGameRepository import IGameRepository
@@ -29,6 +30,7 @@ class ScannerService:
 		spells_scanner_service: ISpellsScannerService = Provide[Container.spells_scanner_service],
 		units_scanner_service: IUnitsScannerService = Provide[Container.units_scanner_service],
 		atom_map_scanner_service: IEntityFromLocalizationService[AtomMap] = Provide[Container.atom_map_scanner_service],
+		actor_scanner_service: IEntityFromLocalizationService[Actor] = Provide[Container.actor_scanner_service],
 		kfs_extractor: IKFSExtractor = Provide[Container.kfs_extractor],
 		config: Config = Provide[Container.config]
 	):
@@ -38,6 +40,7 @@ class ScannerService:
 		self._spells_scanner = spells_scanner_service
 		self._units_scanner = units_scanner_service
 		self._atom_map_scanner = atom_map_scanner_service
+		self._actor_scanner = actor_scanner_service
 		self._kfs_extractor = kfs_extractor
 		self._config = config
 
@@ -176,6 +179,22 @@ class ScannerService:
 				resource_type=ResourceType.ATOMS,
 				count=len(atoms),
 				message=f"Created {len(atoms)} atoms"
+			)
+
+			# Step 6: Parse and create actors
+			yield ScanProgressEvent(
+				event_type=ScanEventType.RESOURCE_STARTED,
+				resource_type=ResourceType.ACTORS,
+				message="Parsing actors"
+			)
+
+			actors = self._actor_scanner.scan(game_id)
+
+			yield ScanProgressEvent(
+				event_type=ScanEventType.RESOURCE_COMPLETED,
+				resource_type=ResourceType.ACTORS,
+				count=len(actors),
+				message=f"Created {len(actors)} actors"
 			)
 
 			# Final results

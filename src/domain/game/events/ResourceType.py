@@ -9,5 +9,6 @@ class ResourceType(Enum):
 	ITEMS = "items"
 	SETS = "sets"
 	ATOMS = "atoms"
+	ACTORS = "actors"
 	SPELLS = "spells"
 	UNITS = "units"

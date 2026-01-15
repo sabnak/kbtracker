@@ -6,10 +6,14 @@ from sqlalchemy.orm import sessionmaker
 from src.core.Config import Config
 from src.core.Container import Container
 from src.core.logging_config import setup_logging
+from src.domain.app.repositories.mappers.GameMapper import GameMapper
+from src.domain.app.repositories.mappers.MetaMapper import MetaMapper
 from src.domain.filesystem.services.GamePathService import GamePathService
 from src.domain.app.services.GameConfigService import GameConfigService
+from src.domain.game.entities.Actor import Actor
 from src.domain.game.entities.AtomMap import AtomMap
-from src.domain.game.repositories.mappers import AtomMapMapper
+from src.domain.game.repositories.mappers.ActorMapper import ActorMapper
+from src.domain.game.repositories.mappers.AtomMapMapper import AtomMapMapper
 from src.domain.game.services.ProfileGameDataSyncerService import ProfileGameDataSyncerService
 from src.utils.parsers.game_data.KFSExtractor import KFSExtractor
 from src.utils.parsers.game_data.KFSReader import KFSReader
@@ -71,25 +75,12 @@ class DefaultInstaller:
 
 		db_engine = create_db_engine(database_url)
 
-		self._init_public_schema_tables(db_engine)
+		tables = [GameMapper.__table__, MetaMapper.__table__]
+		Base.metadata.create_all(bind=db_engine, tables=tables)
 
 		self._container.db_session_factory.override(
 			providers.Factory(sessionmaker, autocommit=False, autoflush=False, bind=db_engine)
 		)
-
-	def _init_public_schema_tables(self, engine) -> None:
-		"""
-		Initialize public schema tables (game and meta)
-
-		:param engine:
-			SQLAlchemy engine
-		:return:
-		"""
-		from src.domain.app.repositories.mappers.GameMapper import GameMapper
-		from src.domain.app.repositories.mappers.MetaMapper import MetaMapper
-
-		tables = [GameMapper.__table__, MetaMapper.__table__]
-		Base.metadata.create_all(bind=engine, tables=tables)
 
 	def _install_services(self):
 
@@ -121,6 +112,13 @@ class DefaultInstaller:
 			kb_pattern=r"^itext_(.+_\d+)_\w+$",
 			entity_repository=self._container.atom_map_repository(),
 			localization_tag="atoms_info"
+		))
+		self._container.actor_scanner_service.override(providers.Factory(
+			EntityFromLocalizationService,
+			entity_type=Actor,
+			kb_pattern=r"^actor_system_(\d+)_\w+$",
+			entity_repository=self._container.actor_repository(),
+			localization_tag="actors"
 		))
 
 	def _install_game_resource_processors(self):
@@ -155,4 +153,10 @@ class DefaultInstaller:
 			entity_type=AtomMap,
 			mapper_type=AtomMapMapper,
 			loc_pattern="itext\\_{}\\_%"
+		))
+		self._container.actor_repository.override(providers.Singleton(
+			EntityRepository,
+			entity_type=Actor,
+			mapper_type=ActorMapper,
+			loc_pattern="actor\\_system\\_{}\\_%"
 		))

@@ -379,6 +379,9 @@ msgstr "Заклинания"
 msgid "ui.scan.resource_atoms"
 msgstr "Атомы"
 
+msgid "ui.scan.resource_actors"
+msgstr "Акторы"
+
 msgid "ui.scan.status_initializing"
 msgstr "Инициализация сканирования..."
 

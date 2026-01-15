@@ -85,6 +85,14 @@ class SchemaManagementService(ISchemaManagementService):
 				)
 			"""))
 
+			# Create actor table
+			session.execute(text(f"""
+				CREATE TABLE {schema_name}.actor (
+					id SERIAL PRIMARY KEY,
+					kb_id VARCHAR(255) NOT NULL UNIQUE
+				)
+			"""))
+
 			# Create localization table
 			session.execute(text(f"""
 				CREATE TABLE {schema_name}.localization (

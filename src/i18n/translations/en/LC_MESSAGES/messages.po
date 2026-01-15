@@ -375,6 +375,9 @@ msgstr "Spells"
 msgid "ui.scan.resource_atoms"
 msgstr "Atoms"
 
+msgid "ui.scan.resource_actors"
+msgstr "Actors"
+
 msgid "ui.scan.status_initializing"
 msgstr "Initializing scan..."
 

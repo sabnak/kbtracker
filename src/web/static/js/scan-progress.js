@@ -158,6 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			units: parseInt(progressList.querySelector('[data-resource="units"] .count-badge')?.textContent || 0),
 			spells: parseInt(progressList.querySelector('[data-resource="spells"] .count-badge')?.textContent || 0),
 			atoms: parseInt(progressList.querySelector('[data-resource="atoms"] .count-badge')?.textContent || 0),
+			actors: parseInt(progressList.querySelector('[data-resource="actors"] .count-badge')?.textContent || 0),
 			localizations: parseInt(progressList.querySelector('[data-resource="localizations"] .count-badge')?.textContent || 0)
 		};
 
@@ -168,6 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			Units scanned: ${counts.units}<br>
 			Spells scanned: ${counts.spells}<br>
 			Atoms scanned: ${counts.atoms}<br>
+			Actors scanned: ${counts.actors}<br>
 			Localizations scanned: ${counts.localizations}
 		`;
 

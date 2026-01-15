@@ -42,6 +42,7 @@ class Container(containers.DeclarativeContainer):
 	item_repository = providers.AbstractSingleton(IItemRepository)
 	item_set_repository = providers.AbstractSingleton(IItemSetRepository)
 	atom_map_repository = providers.AbstractSingleton(IEntityRepository)
+	actor_repository = providers.AbstractSingleton(IEntityRepository)
 	localization_repository = providers.AbstractSingleton(ILocalizationRepository)
 	shop_inventory_repository = providers.AbstractSingleton(IShopInventoryRepository)
 	profile_repository = providers.AbstractSingleton(IProfileRepository)
@@ -65,6 +66,7 @@ class Container(containers.DeclarativeContainer):
 	spells_scanner_service = providers.AbstractFactory()
 	units_scanner_service = providers.AbstractFactory()
 	atom_map_scanner_service = providers.AbstractFactory()
+	actor_scanner_service = providers.AbstractFactory()
 	schema_management_service = providers.AbstractFactory(ISchemaManagementService)
 
 	# Data extractors and parsers
