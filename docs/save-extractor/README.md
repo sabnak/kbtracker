@@ -1,14 +1,28 @@
 # King's Bounty Shop Inventory Extractor
 
-**Version:** 1.3.1
-**Date:** 2026-01-06
+**Version:** 1.4.0
+**Date:** 2026-01-15
 **Status:** Production Ready ✅
 
 ## Overview
 
-Production-ready tool to extract shop inventory data from King's Bounty save files. Extracts all shop contents including items, units, spells, and garrison across all game locations.
+Production-ready tool to extract shop inventory data from King's Bounty save files. Extracts all shop contents including items, units, spells, and garrison across all game locations. Supports both standard named shops and building_trader@ shops with actor ID extraction.
 
-## Recent Updates (v1.3.1)
+## Recent Updates (v1.4.0)
+
+**Major Feature:**
+- ✅ **Actor ID Extraction:** Shops without `itext_` identifiers now correctly extract trader actor IDs
+  - Actor IDs stored in `.actors` section's `strg` field with bit 7 encoding
+  - Bit 7 set = active shop with assigned actor
+  - Bit 7 not set = inactive/template shop
+  - Example: `dragondor_actor_807991996` (trader localization: `actor_system_807991996_name`)
+- ✅ **Shop Types:** Three formats now supported
+  - Standard: `{location}_{shop_num}` (e.g., `m_portland_8671`)
+  - Actor-based: `{location}_actor_{actor_id}` (e.g., `dragondor_actor_807991996`)
+  - Unnamed: `{location}_building_trader_{building_num}` (e.g., `m_inselburg_building_trader_31`)
+- ✅ **Removed:** Unreliable lookup table method (contained outdated mappings)
+
+**Previous Updates (v1.3.1)**
 
 **Critical Bug Fix:**
 - ✅ **Bug #8 Fixed:** Shop ID truncation at chunk boundaries causing 98% inventory loss
@@ -123,6 +137,21 @@ Each save is a directory with a timestamp (e.g., `1707047253`) containing:
       {"name": "spell_plantation", "quantity": 2},
       {"name": "spell_sanctuary", "quantity": 2}
     ]
+  },
+  "dragondor_actor_807991996": {
+    "garrison": [],
+    "items": [],
+    "units": [
+      {"name": "bocman", "quantity": 1460},
+      {"name": "monstera", "quantity": 250},
+      {"name": "bear_white", "quantity": 156},
+      {"name": "demonologist", "quantity": 134}
+    ],
+    "spells": [
+      {"name": "spell_dispell", "quantity": 2},
+      {"name": "spell_gifts", "quantity": 2},
+      {"name": "spell_dragon_slayer", "quantity": 1}
+    ]
   }
 }
 ```
@@ -145,11 +174,30 @@ UNITS (1):
 SPELLS (2):
   1. spell_plantation x2
   2. spell_sanctuary x2
+
+================================================================================
+SHOP: dragondor_actor_807991996
+================================================================================
+Summary: 0 items, 4 units, 3 spells, 0 garrison
+
+UNITS (4):
+  1. bocman x1460
+  2. monstera x250
+  3. bear_white x156
+  4. demonologist x134
+
+SPELLS (3):
+  1. spell_dispell x2
+  2. spell_gifts x2
+  3. spell_dragon_slayer x1
 ```
 
 ### JSON Fields
 
-- **Shop ID** (key): Unique shop identifier (e.g., `portland_6820`)
+- **Shop ID** (key): Unique shop identifier
+  - Standard shops: `{location}_{shop_num}` (e.g., `portland_6820`)
+  - Actor-based shops: `{location}_actor_{actor_id}` (e.g., `dragondor_actor_807991996`)
+  - Unnamed shops: `{location}_building_trader_{building_num}` (e.g., `m_inselburg_building_trader_31`)
 - **garrison**: Player's stored army units (array of name/quantity objects)
 - **items**: Equipment and consumable items for sale (array)
 - **units**: Units/troops available for hire (array)
@@ -177,8 +225,9 @@ Body:
 
 ### Shop Structure
 
-Each shop in the decompressed data follows this pattern:
+Each shop in the decompressed data follows one of two patterns:
 
+**Type 1: Standard Named Shops (with itext_ identifier)**
 ```
 [.garrison section]   ← Player's stored army (optional, 3 slots max)
 [.items section]      ← Equipment and consumables for sale
@@ -188,6 +237,26 @@ Each shop in the decompressed data follows this pattern:
 [Shop ID UTF-16 LE]   ← Identifier: "itext_{location}_{number}"
                          Examples: "itext_m_portland_6820", "itext_aralan_3338"
 ```
+
+**Type 2: Building Trader Shops (without itext_ identifier)**
+```
+[.actors section]     ← Contains encoded actor ID in 'strg' field (bit 7 encoding)
+[.items section]      ← Equipment and consumables for sale
+[.shopunits section]  ← Units/troops for hire
+[.spells section]     ← Spells for purchase
+[.garrison section]   ← Player's stored army (optional)
+[.temp section]       ← Temporary metadata (optional)
+lt tag (ASCII)        ← Location name (e.g., "dragondor", "m_inselburg")
+building_trader@NUM   ← Shop identifier (ASCII)
+                         Examples: "building_trader@31", "building_trader@818"
+```
+
+**Actor ID Extraction:**
+- Actor IDs stored in `.actors` section's `strg` field
+- Encoded with **bit 7 set** in last byte (e.g., 0xb0 → 0x30)
+- Clear bit 7 to extract actor ID: `actor_bytes[3] = strg_bytes[3] & 0x7F`
+- Bit 7 set = active shop, Bit 7 not set = inactive/template shop
+- Maps to localization key: `actor_system_{actor_id}_name`
 
 **Important:** Section boundary detection prevents parsing data from adjacent sections (Bug #2 fix).
 
@@ -228,12 +297,20 @@ Different sections use different formats for storing quantities:
 ### Extraction Process
 
 1. **Decompress** - Extract zlib compressed data
-2. **Find Shops** - Scan for shop IDs (UTF-16 LE pattern matching)
-3. **Locate Sections** - Search backwards from shop ID for section markers
-4. **Detect Boundaries** - Find actual section end using SECTION_MARKERS
-5. **Parse Each Section** - Use appropriate parser for each section type
-6. **Validate IDs** - Filter out metadata keywords
-7. **Export** - Save to JSON, TXT, and stats files
+2. **Find Shops** - Scan for shop identifiers:
+   - Type 1: `itext_` pattern (UTF-16 LE encoding)
+   - Type 2: `building_trader@` pattern (ASCII encoding)
+3. **Extract Actor IDs** (building_trader@ shops only):
+   - Search backwards for `.actors` section
+   - Read `strg` field value (4-byte little-endian)
+   - Check if bit 7 is set in last byte
+   - If set: Clear bit 7 to extract actor ID
+   - If not set: Shop is inactive, use `building_trader_{num}` format
+4. **Locate Sections** - Search backwards from shop ID for section markers
+5. **Detect Boundaries** - Find actual section end using SECTION_MARKERS
+6. **Parse Each Section** - Use appropriate parser for each section type
+7. **Validate IDs** - Filter out metadata keywords
+8. **Export** - Save to JSON, TXT, and stats files
 
 ## Validation
 
@@ -368,6 +445,20 @@ Valid item/unit/spell IDs must:
 
 ## Version History
 
+### 1.4.0 (2026-01-15)
+- ✅ **Actor ID Extraction:** Building_trader@ shops now extract actor IDs from `.actors` section
+- ✅ **Bit 7 Encoding:** Support for bit 7 encoding pattern (active vs inactive shops)
+- ✅ **Three Shop Formats:** Standard, actor-based, and unnamed shop identifiers
+- ✅ **Removed:** Unreliable lookup table method
+- ✅ Validated on save 1768403991 with 371 shops
+- ✅ Correctly identifies `dragondor_actor_807991996` with bocman x1460 inventory
+
+### 1.3.1 (2026-01-06)
+- ✅ **Bug #8 Fixed:** Shop ID truncation at chunk boundaries
+- ✅ **Impact:** 24x increase in extracted products (39 → 943)
+- ✅ Overlapping chunks with dual deduplication
+- ✅ Validated on save with 312 shops, 72 with content
+
 ### 1.3.0 (2026-01-05)
 - ✅ **Bug #5 Fixed:** Missing units when sections appear out of expected order
 - ✅ **Bug #6 Fixed:** False positive spells from wrong shops (cross-shop attribution)
@@ -418,6 +509,6 @@ This tool was created for research and educational purposes.
 ---
 
 **Developed by:** Claude (Anthropic)
-**Date:** 2026-01-05
+**Date:** 2026-01-15
 **Status:** Production Ready ✅
-**Version:** 1.3.0
+**Version:** 1.4.0

@@ -1,7 +1,7 @@
 # Production Ready Status ✅
 
-**King's Bounty Shop Inventory Extractor v1.3.1**
-**Date:** 2026-01-06
+**King's Bounty Shop Inventory Extractor v1.4.0**
+**Date:** 2026-01-15
 **Status:** Production Ready with Caveats
 
 ## Summary
@@ -9,10 +9,27 @@
 ✅ **Functionally Production Ready** - Parser works correctly and has been validated
 ⚠️ **Testing Gaps** - Missing regression tests and unit tests
 ✅ **Validated on Multiple Save Files** - Endgame and early game saves
+✅ **Actor ID Extraction** - Building_trader@ shops now correctly identify trader actors
 
-**Overall Score:** 85% Production Ready
+**Overall Score:** 90% Production Ready
 
-## Recent Updates (v1.3.1)
+## Recent Updates (v1.4.0)
+
+### Major Features
+
+9. **Actor ID Extraction for building_trader@ Shops (v1.4.0)**
+   - **Feature:** Shops without `itext_` identifiers now extract actor IDs from `.actors` section
+   - **Method:** Bit 7 encoding in `strg` field (clear bit 7 to extract actor ID)
+   - **Formats:** Three shop ID formats now supported:
+     - Standard: `{location}_{shop_num}` (e.g., `m_portland_8671`)
+     - Actor-based: `{location}_actor_{actor_id}` (e.g., `dragondor_actor_807991996`)
+     - Unnamed: `{location}_building_trader_{building_num}` (e.g., `m_inselburg_building_trader_31`)
+   - **Removed:** Unreliable lookup table method (contained outdated mappings)
+   - **Example:** `dragondor_actor_807991996` correctly identified with bocman x1460 inventory
+   - **Validation:** Tested on save 1768403991 with 371 shops
+   - **Status:** ✅ IMPLEMENTED & VALIDATED
+
+### Previous Critical Bug Fixes (v1.3.1)
 
 ### Critical Bug Fixes
 

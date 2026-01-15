@@ -47,7 +47,7 @@ from src.domain.game.services.SaveFileService import SaveFileService
 from src.utils.db import create_db_engine
 from src.domain.base.repositories.mappers.base import Base
 from src.utils.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
-from src.utils.parsers.save_data.ShopInventoryParser import ShopInventoryParser
+from src.utils.parsers.save_data.ShopInventoryParser import ShopInventoryParserV2
 from src.utils.parsers.save_data.HeroSaveParser import HeroSaveParser
 
 
@@ -131,7 +131,7 @@ class DefaultInstaller:
 
 	def _install_save_file_parsers(self):
 		self._container.save_file_decompressor.override(providers.Singleton(SaveFileDecompressor))
-		self._container.shop_inventory_parser.override(providers.Singleton(ShopInventoryParser))
+		self._container.shop_inventory_parser.override(providers.Singleton(ShopInventoryParserV2))
 		self._container.hero_save_parser.override(providers.Singleton(HeroSaveParser))
 
 	def _install_repositories(self):

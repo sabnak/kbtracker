@@ -161,9 +161,9 @@ for i, occ_pos in enumerate(occurrences, 1):
 	print('\n')
 
 # Now check if "moral" appears in metadata keywords
-from src.utils.parsers.save_data.ShopInventoryParser import ShopInventoryParser
+from src.utils.parsers.save_data.ShopInventoryParserOld import ShopInventoryParserOld
 
-parser = ShopInventoryParser(
+parser = ShopInventoryParserOld(
 	decompressor=None,
 	item_repository=None,
 	spell_repository=None,

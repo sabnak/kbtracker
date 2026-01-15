@@ -3,7 +3,7 @@ Check for duplicate shop IDs at different positions
 to diagnose the empty inventory issue
 """
 from pathlib import Path
-from src.utils.parsers.save_data.ShopInventoryParser import ShopInventoryParser
+from src.utils.parsers.save_data.ShopInventoryParserOld import ShopInventoryParserOld
 from src.utils.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
 from collections import defaultdict
 
@@ -16,7 +16,7 @@ def check_duplicate_shop_ids():
 	occurrences might overwrite earlier ones in the result dict.
 	"""
 	decompressor = SaveFileDecompressor()
-	parser = ShopInventoryParser(decompressor)
+	parser = ShopInventoryParserOld(decompressor)
 
 	data = decompressor.decompress(Path("/saves/Darkside/1767650305/data"))
 	shops = parser._find_all_shop_ids(data)

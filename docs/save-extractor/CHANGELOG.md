@@ -1,5 +1,102 @@
 # Changelog
 
+## Version 1.4.0 (2026-01-15)
+
+### Major Features
+
+**Feature: Actor ID Extraction for building_trader@ Shops**
+- **New Capability:** Extract actor IDs from shops without `itext_` identifiers
+- **Shop Types Supported:**
+  1. Standard named shops: `{location}_{shop_num}` (e.g., `m_portland_8671`)
+  2. Actor-based shops: `{location}_actor_{actor_id}` (e.g., `dragondor_actor_807991996`)
+  3. Unnamed shops: `{location}_building_trader_{building_num}` (e.g., `m_inselburg_building_trader_31`)
+- **Impact:** Correctly identifies shops with trader actors for proper naming/localization
+
+**Actor ID Extraction Method:**
+- Actor IDs stored in `.actors` section before inventory
+- Encoded in `strg` field with **bit 7 set** in last byte
+- Extraction algorithm:
+  ```python
+  # Clear bit 7 of last byte to extract actor ID
+  actor_bytes[3] = strg_bytes[3] & 0x7F
+  ```
+- Example encoding:
+  ```
+  strg value: 0xb028fabc = [bc, fa, 28, b0]  (bit 7 = 1)
+  actor_id:   0x3028fabc = [bc, fa, 28, 30]  (bit 7 = 0)
+  Difference: 0xb0 → 0x30 (bit 7 cleared: 0x80)
+  ```
+
+**Bit 7 Significance:**
+- **Bit 7 SET (75% of shops):** Active shops with assigned actors
+- **Bit 7 NOT SET (25% of shops):** Inactive/template shops without actors
+- Default placeholder value: `0x3b84bcee` (actor_998554862) for uninitialized shops
+
+### Technical Details
+
+**Building Trader Shop Structure:**
+```
+.actors section          ← Contains encoded actor ID in 'strg' field
+  └─ strg field with bit 7 set
+.shopunits section       ← Units for hire
+.spells section          ← Spells for purchase
+.items section           ← Items for sale
+.temp section            ← Temporary metadata
+lt tag                   ← Location name (ASCII)
+building_trader@{num}    ← Shop identifier (ASCII)
+```
+
+**Extraction Process:**
+1. Find `building_trader@{num}` marker
+2. Search backwards for `.actors` section (within 3000 bytes)
+3. Locate `strg` field (offset +8 from 'strg' marker)
+4. Read 4-byte little-endian value
+5. Check if bit 7 is set in last byte
+6. If set: Clear bit 7 to extract actor ID
+7. If not set: Shop is inactive, use `building_trader_{num}` format
+
+**Examples:**
+- `dragondor_actor_807991996` - Active shop with trader (bocman x1460 inventory)
+- `m_inselburg_actor_1906201168` - Active shop with different trader
+- `dragondor_building_trader_31` - Inactive shop without assigned actor
+
+### Removed Features
+
+**Deprecated Lookup Table Method:**
+- ❌ Removed `_build_trader_id_map()` method
+- Reason: Lookup table at position 2.16M-2.18M contained outdated/incorrect mappings
+- Example error: Mapped `building_trader@818` → `actor_807991996` (incorrect, actual: `actor_1906201168`)
+
+### Validation
+
+**Tested on:**
+- Save /saves/1768403991: 371 shops extracted
+- `dragondor_actor_807991996` correctly identified with bocman x1460 inventory
+- `m_inselburg_actor_1906201168` correctly identified (not 807991996)
+- 79 active shops with bit 7 set (74.7% have inventory)
+- 26 inactive shops without bit 7 (11.5% have inventory)
+
+**Verification Results:**
+```
+✓ dragondor_actor_807991996:
+  - bocman x1460
+  - monstera x250
+  - bear_white x156
+  - demonologist x134
+```
+
+**Research Documentation:**
+- Full investigation: `tests/research/save_decompiler/kb_shop_extractor/2026-01-15/`
+- `SOLUTION_SUMMARY.md` - Complete discovery process and algorithm
+- Verification scripts for extraction algorithm
+- Bit 7 pattern analysis across 105 shops
+
+### Breaking Changes
+
+None - all changes are backward compatible. Shops with `itext_` identifiers work exactly as before.
+
+---
+
 ## Version 1.3.1 (2026-01-06)
 
 ### Critical Bug Fixes

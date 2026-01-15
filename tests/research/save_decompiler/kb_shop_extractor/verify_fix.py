@@ -4,7 +4,7 @@ Verification script for overlapping chunks fix
 Demonstrates that the fix prevents shop IDs from being split across chunk boundaries.
 """
 from pathlib import Path
-from src.utils.parsers.save_data.ShopInventoryParser import ShopInventoryParser
+from src.utils.parsers.save_data.ShopInventoryParserOld import ShopInventoryParserOld
 from src.utils.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
 
 
@@ -22,7 +22,7 @@ def verify_overlapping_chunks_implementation():
 	print("=" * 80)
 
 	decompressor = SaveFileDecompressor()
-	parser = ShopInventoryParser(decompressor)
+	parser = ShopInventoryParserOld(decompressor)
 
 	save_path = Path("/app/tests/game_files/saves/1707047253/data")
 

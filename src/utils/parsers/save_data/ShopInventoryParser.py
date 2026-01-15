@@ -45,6 +45,23 @@ class ShopInventoryParser(IShopInventoryParser):
 		- units: Units/troops for hire
 		- spells: Spells for purchase
 
+		Supports two shop types:
+		1. itext_ shops: Standard named shops
+		   Format: {location}_{shop_num}
+		   Example: m_portland_8671
+
+		2. building_trader@ shops: Shops without itext_ identifiers
+		   Actor IDs are extracted from .actors section's 'strg' field
+		   by clearing bit 7 of the last byte
+
+		   Format with actor: {location}_actor_{actor_id}
+		   Example: dragondor_actor_807991996
+		   (actor_id maps to actor_system_{id}_name in localization)
+
+		   Format without actor: {location}_building_trader_{building_num}
+		   Example: m_inselburg_building_trader_31
+		   (inactive shops or shops without assigned traders)
+
 		:param save_path:
 			Path to save 'data' file
 		:return:
@@ -55,10 +72,15 @@ class ShopInventoryParser(IShopInventoryParser):
 			If save file doesn't exist
 		"""
 		data = self._decompressor.decompress(save_path)
-		shop_positions = self._find_all_shop_ids(data)
+
+		itext_shops = self._find_all_shop_ids(data)
+		building_shops = self._find_building_trader_shops(data)
+
+		all_shops = itext_shops + building_shops
+		all_shops = sorted(all_shops, key=lambda x: x[1])
 
 		result = {}
-		for shop_id, shop_pos in shop_positions:
+		for shop_id, shop_pos in all_shops:
 			shop_data = self._parse_shop(data, shop_id, shop_pos)
 			result[shop_id] = {
 				'garrison': [{'name': n, 'quantity': q} for n, q in shop_data['garrison']],
@@ -118,6 +140,201 @@ class ShopInventoryParser(IShopInventoryParser):
 			pos += chunk_size - overlap
 
 		return sorted(shops, key=lambda x: x[1])
+
+	def _extract_actor_id_from_actors_section(
+		self,
+		data: bytes,
+		building_pos: int
+	) -> Optional[int]:
+		"""
+		Extract actor ID from .actors section before building_trader@
+
+		Structure: .actors section contains a 'strg' field with encoded actor ID
+		The actor ID is stored with bit 7 set in the last byte:
+		- If bit 7 is SET: Shop is active, actor ID extracted by clearing bit 7
+		- If bit 7 is NOT SET: Shop is inactive/template, no valid actor ID
+
+		Example:
+		strg value: 0xb028fabc (bytes: bc fa 28 b0)
+		actor_id:   0x3028fabc (bytes: bc fa 28 30)
+		Difference: Last byte 0xb0 → 0x30 (bit 7 cleared)
+
+		:param data:
+			Decompressed save file data
+		:param building_pos:
+			Position of building_trader@ marker
+		:return:
+			Actor ID or None if not found or inactive shop
+		"""
+		search_start = max(0, building_pos - 3000)
+		search_chunk = data[search_start:building_pos]
+
+		actors_pos = search_chunk.rfind(b'.actors')
+		if actors_pos == -1:
+			return None
+
+		abs_actors_pos = search_start + actors_pos
+		chunk = data[abs_actors_pos:abs_actors_pos + 100]
+
+		strg_pos = chunk.find(b'strg')
+		if strg_pos == -1:
+			return None
+
+		value_offset = strg_pos + 8
+		if value_offset + 4 > len(chunk):
+			return None
+
+		try:
+			strg_value = struct.unpack('<I', chunk[value_offset:value_offset + 4])[0]
+
+			strg_bytes = struct.unpack('4B', struct.pack('<I', strg_value))
+
+			if (strg_bytes[3] & 0x80) == 0:
+				return None
+
+			actor_bytes = list(strg_bytes)
+			actor_bytes[3] = actor_bytes[3] & 0x7F
+
+			actor_id = struct.unpack('<I', bytes(actor_bytes))[0]
+
+			return actor_id
+
+		except:
+			return None
+
+	def _find_building_trader_shops(self, data: bytes) -> list[tuple[str, int]]:
+		"""
+		Find all building_trader@ shops without itext_ identifiers
+
+		Structure: .actors → .shopunits → .spells → .temp → lt <location> → building_trader@<id>
+
+		Shop ID format:
+		- If actor ID extracted from .actors: {location}_actor_{actor_id}
+		- If no actor ID found: {location}_building_trader_{building_num}
+
+		Actor ID extraction:
+		- Extracted from .actors section's 'strg' field by clearing bit 7
+		- Only shops with bit 7 set are active and have assigned actors
+		- Shops without bit 7 set are inactive/template shops
+
+		Unnamed shops without actor IDs typically:
+		- Have no name in game
+		- Do not display on game map
+		- Are still fully interactable with inventory
+
+		:param data:
+			Decompressed save file data
+		:return:
+			List of (shop_id, position) tuples
+		"""
+		shops = []
+		seen_inventory_positions = set()
+		pos = 0
+
+		while pos < len(data):
+			pos = data.find(b'building_trader@', pos)
+			if pos == -1:
+				break
+
+			segment = data[pos:pos+30]
+			try:
+				text = segment.decode('ascii', errors='ignore')
+				match = re.match(r'building_trader@(\d+)', text)
+				if match:
+					building_num = match.group(1)
+
+					location = self._extract_location_from_lt_tag(data, pos)
+
+					if location:
+						shopunits_pos = self._find_preceding_section(data, b'.shopunits', pos, 2000)
+
+						if shopunits_pos and self._section_belongs_to_building_trader(
+							data, shopunits_pos, pos
+						):
+							if shopunits_pos not in seen_inventory_positions:
+								actor_id = self._extract_actor_id_from_actors_section(data, pos)
+								if actor_id:
+									shop_id = f'{location}_actor_{actor_id}'
+								else:
+									shop_id = f'{location}_building_trader_{building_num}'
+
+								shops.append((shop_id, pos))
+								seen_inventory_positions.add(shopunits_pos)
+			except:
+				pass
+
+			pos += 1
+
+		return shops
+
+	def _extract_location_from_lt_tag(
+		self,
+		data: bytes,
+		building_pos: int
+	) -> Optional[str]:
+		"""
+		Extract location from 'lt' tag before building_trader@
+
+		Structure: lt [4-byte length] [location_name]
+		Typically appears ~29 bytes before building_trader@
+
+		:param data:
+			Save file data
+		:param building_pos:
+			Position of building_trader@
+		:return:
+			Location name or None if not found
+		"""
+		search_start = max(0, building_pos - 500)
+		chunk = data[search_start:building_pos]
+
+		lt_pos = chunk.rfind(b'lt')
+
+		if lt_pos != -1:
+			abs_lt_pos = search_start + lt_pos
+
+			if abs_lt_pos + 6 < len(data):
+				try:
+					length_bytes = data[abs_lt_pos + 2:abs_lt_pos + 6]
+					location_length = struct.unpack('<I', length_bytes)[0]
+
+					if 0 < location_length < 100:
+						location_start = abs_lt_pos + 6
+						location_bytes = data[location_start:location_start + location_length]
+						location = location_bytes.decode('ascii')
+						return location
+				except:
+					pass
+
+		return None
+
+	def _section_belongs_to_building_trader(
+		self,
+		data: bytes,
+		section_pos: int,
+		building_pos: int
+	) -> bool:
+		"""
+		Verify that no other shop ID exists between section and building_trader@
+
+		:param data:
+			Save file data
+		:param section_pos:
+			Section position
+		:param building_pos:
+			building_trader@ position
+		:return:
+			True if section belongs to this building_trader
+		"""
+		chunk = data[section_pos:building_pos]
+
+		if b'itext_' in chunk:
+			return False
+
+		if b'building_trader@' in chunk:
+			return False
+
+		return True
 
 	def _find_preceding_section(
 		self,

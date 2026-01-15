@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-**Version:** 1.2.0 | **Date:** 2026-01-05
+**Version:** 1.4.0 | **Date:** 2026-01-15
 
 ## 5-Minute Setup
 
@@ -148,25 +148,30 @@ docker cp kbtracker_app:/tmp/save_export/. ./save_exports/
 docker cp kbtracker_app:/tmp/save_export/1707047253_20260104_211453.json ./
 ```
 
-## What's New in v1.2.0?
+## What's New in v1.4.0?
 
-**Critical Bug Fix - Missing Locations:**
-- ✅ **Bug #4 Fixed:** Entire locations (aralan, dragondor, d) now extracted
-- ✅ **+59 shops discovered** (255 → 314 total shops)
-- ✅ Example: `aralan_3338` and 58 other shops now in exports
+**Major Feature - Actor ID Extraction:**
+- ✅ **Building_trader@ Shops:** Shops without `itext_` identifiers now extract actor IDs
+- ✅ **Three Shop Formats:**
+  - Standard: `{location}_{shop_num}` (e.g., `m_portland_8671`)
+  - Actor-based: `{location}_actor_{actor_id}` (e.g., `dragondor_actor_807991996`)
+  - Unnamed: `{location}_building_trader_{building_num}` (e.g., `m_inselburg_building_trader_31`)
+- ✅ **Bit 7 Encoding:** Automatically detects active vs inactive shops
+- ✅ **Example:** `dragondor_actor_807991996` correctly identified with bocman x1460 inventory
 
-**Previous Bug Fixes (v1.1.0):**
-- ✅ Short names (imp, orc, trap) now work (was missing 3-4 char entities)
-- ✅ "moral" metadata no longer appears as items
-- ✅ Section boundaries properly detected (no invalid entries)
+**Previous Bug Fix (v1.3.1):**
+- ✅ **Bug #8 Fixed:** Shop ID truncation causing 98% inventory loss (24x improvement)
 
-**Before v1.2.0:**
-- Save 1707047253: 255 shops
-- Missing: All aralan shops, dragondor shops, d shops
+**Previous Bug Fix (v1.2.0):**
+- ✅ **Bug #4 Fixed:** Entire locations (aralan, dragondor, d) now extracted (+59 shops)
 
-**After v1.2.0:**
-- Save 1707047253: 314 shops (+59) ✅
-- All locations extracted including aralan, dragondor, d ✅
+**Before v1.4.0:**
+- Building_trader@ shops had incorrect actor IDs (used outdated lookup table)
+- Example: `building_trader@818` mapped to wrong actor
+
+**After v1.4.0:**
+- Actor IDs extracted directly from `.actors` section ✅
+- Correct mapping: `dragondor_actor_807991996` ✅
 
 ## Troubleshooting
 
@@ -199,5 +204,5 @@ docker cp kbtracker_app:/tmp/save_export/1707047253_20260104_211453.json ./
 
 ---
 
-**Version:** 1.2.0
-**Last Updated:** 2026-01-05
+**Version:** 1.4.0
+**Last Updated:** 2026-01-15

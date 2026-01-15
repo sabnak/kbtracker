@@ -6,11 +6,11 @@ import json
 sys.path.insert(0, '/app')
 
 from src.utils.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
-from src.utils.parsers.save_data.ShopInventoryParser import ShopInventoryParser
+from src.utils.parsers.save_data.ShopInventoryParserOld import ShopInventoryParserOld
 
 # Manual instantiation
 decompressor = SaveFileDecompressor()
-parser = ShopInventoryParser(
+parser = ShopInventoryParserOld(
 	decompressor=decompressor,
 	item_repository=None,
 	spell_repository=None,
