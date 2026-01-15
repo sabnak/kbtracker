@@ -40,55 +40,6 @@ class ScannerService:
 		self._kfs_extractor = kfs_extractor
 		self._config = config
 
-	def scan_game_files(
-		self,
-		game_id: int,
-		language: str
-	) -> ScanResults:
-		"""
-		Scan game files and populate database
-
-		:param game_id:
-			Game ID to scan
-		:param language:
-			Language code (rus, eng, ger, pol)
-		:return:
-			ScanResults with counts of scanned items, locations, shops, and sets
-		"""
-		from datetime import datetime
-
-		game = self._game_repository.get_by_id(game_id)
-		if not game:
-			raise ValueError(f"Game with ID {game_id} not found")
-
-		# Update last_scan_time at start of scan
-		self._game_repository.update_last_scan_time(game_id, datetime.now())
-
-		self._kfs_extractor.extract_archives(game)
-
-		localizations_string = len(self._localization_scanner.scan(game_id, game.path, language))
-
-		items, sets = self._items_and_sets_scanner.scan(game_id, game.path)
-		total_items = len(items)
-		total_sets = len(sets)
-
-		units = self._units_scanner.scan(game_id, game.path)
-		total_units = len(units)
-
-		spells = self._spells_scanner.scan(game_id, game.path)
-		total_spells = len(spells)
-
-		atoms = self._atom_map_scanner.scan(game_id, game.path)
-
-		return ScanResults(
-			items=total_items,
-			atoms=len(atoms),
-			sets=total_sets,
-			localizations=localizations_string,
-			spells=total_spells,
-			units=total_units
-		)
-
 	def scan_game_files_stream(
 		self,
 		game_id: int,
@@ -217,7 +168,7 @@ class ScannerService:
 				message="Parsing atoms"
 			)
 
-			atoms = self._atom_map_scanner.scan(game_id, game.path, language)
+			atoms = self._atom_map_scanner.scan(game_id, game.path)
 
 			yield ScanProgressEvent(
 				event_type=ScanEventType.RESOURCE_COMPLETED,
