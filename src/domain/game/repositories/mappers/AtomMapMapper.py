@@ -1,10 +1,5 @@
-from sqlalchemy import Column, Integer, String
-
-from src.domain.base.repositories.mappers.base import Base
+from src.domain.base.repositories.mappers.EntityMapper import EntityMapper
 
 
-class AtomMapMapper(Base):
+class AtomMapMapper(EntityMapper):
 	__tablename__ = "atom_map"
-
-	id = Column(Integer, primary_key=True, autoincrement=True)
-	kb_id = Column(String, nullable=False, unique=True)

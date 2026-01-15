@@ -2,7 +2,7 @@ from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
 from src.domain.game.entities.AtomMap import AtomMap
-from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
+from src.domain.game.interfaces.IEntityRepository import IEntityRepository
 from src.domain.game.interfaces.IAtomMapScannerService import IAtomMapScannerService
 from src.utils.parsers.game_data.IKFSAtomsMapInfoParser import IKFSAtomsMapInfoParser
 
@@ -11,7 +11,7 @@ class AtomMapScannerService(IAtomMapScannerService):
 
 	def __init__(
 		self,
-		atom_map_repository: IAtomMapRepository = Provide[Container.atom_map_repository],
+		atom_map_repository: IEntityRepository[AtomMap] = Provide[Container.atom_map_repository],
 		parser: IKFSAtomsMapInfoParser = Provide[Container.kfs_atoms_map_info_parser]
 	):
 		self._atom_map_repository = atom_map_repository

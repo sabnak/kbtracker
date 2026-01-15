@@ -1,7 +1,7 @@
 from dependency_injector import containers, providers
 
 from src.domain.filesystem.IGamePathService import IGamePathService
-from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
+from src.domain.game.interfaces.IEntityRepository import IEntityRepository
 from src.domain.app.interfaces.IGameConfigService import IGameConfigService
 from src.domain.app.interfaces.IGameRepository import IGameRepository
 from src.domain.app.interfaces.IGameService import IGameService
@@ -41,7 +41,7 @@ class Container(containers.DeclarativeContainer):
 	meta_repository = providers.AbstractSingleton(IMetaRepository)
 	item_repository = providers.AbstractSingleton(IItemRepository)
 	item_set_repository = providers.AbstractSingleton(IItemSetRepository)
-	atom_map_repository = providers.AbstractSingleton(IAtomMapRepository)
+	atom_map_repository = providers.AbstractSingleton(IEntityRepository)
 	localization_repository = providers.AbstractSingleton(ILocalizationRepository)
 	shop_inventory_repository = providers.AbstractSingleton(IShopInventoryRepository)
 	profile_repository = providers.AbstractSingleton(IProfileRepository)

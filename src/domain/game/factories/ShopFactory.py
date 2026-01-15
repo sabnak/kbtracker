@@ -11,7 +11,7 @@ from src.domain.game.entities.ShopProduct import ShopProduct
 from src.domain.game.entities.ShopProductType import ShopProductType
 from src.domain.game.entities.ShopSpell import ShopSpell
 from src.domain.game.entities.ShopUnit import ShopUnit
-from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
+from src.domain.game.interfaces.IEntityRepository import IEntityRepository
 from src.domain.game.interfaces.IItemRepository import IItemRepository
 from src.domain.game.interfaces.ILocalizationRepository import ILocalizationRepository
 from src.domain.game.interfaces.IShopFactory import IShopFactory
@@ -24,7 +24,7 @@ class ShopFactory(IShopFactory):
 	def __init__(
 		self,
 		products: list[ShopProduct],
-		atom_map_repository: IAtomMapRepository = Provide[Container.atom_map_repository],
+		atom_map_repository: IEntityRepository = Provide[Container.atom_map_repository],
 		localization_repository: ILocalizationRepository = Provide[Container.localization_repository],
 		item_repository: IItemRepository = Provide[Container.item_repository],
 		spell_repository: ISpellRepository = Provide[Container.spell_repository],

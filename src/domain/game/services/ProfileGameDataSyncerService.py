@@ -5,7 +5,7 @@ from typing import Any
 from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
-from src.domain.game.interfaces.IAtomMapRepository import IAtomMapRepository
+from src.domain.game.interfaces.IEntityRepository import IEntityRepository
 from src.domain.game.interfaces.IItemRepository import IItemRepository
 from src.domain.game.interfaces.IProfileGameDataSyncerService import IProfileGameDataSyncerService
 from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
@@ -30,7 +30,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		item_repository: IItemRepository = Provide[Container.item_repository],
 		spell_repository: ISpellRepository = Provide[Container.spell_repository],
 		unit_repository: IUnitRepository = Provide[Container.unit_repository],
-		atom_map_repository: IAtomMapRepository = Provide[Container.atom_map_repository],
+		atom_map_repository: IEntityRepository = Provide[Container.atom_map_repository],
 		shop_inventory_repository: IShopInventoryRepository = Provide[Container.shop_inventory_repository]
 	):
 		self._item_repository = item_repository

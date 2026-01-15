@@ -8,6 +8,8 @@ from src.core.Container import Container
 from src.core.logging_config import setup_logging
 from src.domain.filesystem.services.GamePathService import GamePathService
 from src.domain.app.services.GameConfigService import GameConfigService
+from src.domain.game.entities.AtomMap import AtomMap
+from src.domain.game.repositories.mappers import AtomMapMapper
 from src.domain.game.services.ProfileGameDataSyncerService import ProfileGameDataSyncerService
 from src.utils.parsers.game_data.KFSExtractor import KFSExtractor
 from src.utils.parsers.game_data.KFSReader import KFSReader
@@ -18,7 +20,7 @@ from src.utils.parsers.game_data.KFSUnitParser import KFSUnitParser
 from src.utils.parsers.game_data.KFSAtomsMapInfoParser import KFSAtomsMapInfoParser
 from src.domain.app.repositories.GameRepository import GameRepository
 from src.domain.app.repositories.MetaRepository import MetaRepository
-from src.domain.game.repositories.AtomMapRepository import AtomMapRepository
+from src.domain.game.repositories.EntityRepository import EntityRepository
 from src.domain.game.repositories.ItemRepository import ItemRepository
 from src.domain.game.repositories.ItemSetRepository import ItemSetRepository
 from src.domain.game.repositories.LocalizationRepository import LocalizationRepository
@@ -140,8 +142,13 @@ class DefaultInstaller:
 		self._container.item_repository.override(providers.Singleton(ItemRepository))
 		self._container.item_set_repository.override(providers.Singleton(ItemSetRepository))
 		self._container.localization_repository.override(providers.Singleton(LocalizationRepository))
-		self._container.atom_map_repository.override(providers.Singleton(AtomMapRepository))
 		self._container.shop_inventory_repository.override(providers.Singleton(ShopInventoryRepository))
 		self._container.profile_repository.override(providers.Singleton(ProfilePostgresRepository))
 		self._container.spell_repository.override(providers.Singleton(SpellRepository))
 		self._container.unit_repository.override(providers.Singleton(UnitRepository))
+		self._container.atom_map_repository.override(providers.Singleton(
+			EntityRepository,
+			entity_type=AtomMap,
+			mapper_type=AtomMapMapper,
+			loc_pattern="itext\\_{}\\_%"
+		))

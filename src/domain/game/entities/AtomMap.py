@@ -1,10 +1,8 @@
-from dataclasses import dataclass
-
+from src.domain.base.entities.BaseEntity import BaseEntity
 from src.domain.game.entities.LocStrings import LocStrings
 
 
-@dataclass
-class AtomMap:
+class AtomMap(BaseEntity):
 
 	id: int
 	kb_id: str
