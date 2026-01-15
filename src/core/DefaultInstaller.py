@@ -17,7 +17,6 @@ from src.utils.parsers.game_data.KFSItemsParser import KFSItemsParser
 from src.utils.parsers.game_data.KFSLocalizationParser import KFSLocalizationParser
 from src.utils.parsers.game_data.KFSSpellsParser import KFSSpellsParser
 from src.utils.parsers.game_data.KFSUnitParser import KFSUnitParser
-from src.utils.parsers.game_data.KFSAtomsMapInfoParser import KFSAtomsMapInfoParser
 from src.domain.app.repositories.GameRepository import GameRepository
 from src.domain.app.repositories.MetaRepository import MetaRepository
 from src.domain.game.repositories.EntityRepository import EntityRepository
@@ -31,7 +30,7 @@ from src.domain.game.factories.LocFactory import LocFactory
 from src.domain.game.factories.SpellFactory import SpellFactory
 from src.domain.game.factories.UnitFactory import UnitFactory
 from src.domain.game.factories.ShopFactory import ShopFactory
-from src.domain.game.services.AtomMapScannerService import AtomMapScannerService
+from src.domain.game.services.EntityFromLocalizationService import EntityFromLocalizationService
 from src.domain.app.services.GameService import GameService
 from src.domain.app.services.SettingsService import SettingsService
 from src.domain.app.services.TranslationService import TranslationService
@@ -115,8 +114,14 @@ class DefaultInstaller:
 		self._container.items_and_sets_scanner_service.override(providers.Factory(ItemsAndSetsScannerService))
 		self._container.spells_scanner_service.override(providers.Factory(SpellsScannerService))
 		self._container.units_scanner_service.override(providers.Factory(UnitsScannerService))
-		self._container.atom_map_scanner_service.override(providers.Factory(AtomMapScannerService))
 		self._container.schema_management_service.override(providers.Factory(SchemaManagementService))
+		self._container.atom_map_scanner_service.override(providers.Factory(
+			EntityFromLocalizationService,
+			entity_type=AtomMap,
+			kb_pattern=r"^itext_(.+_\d+)_\w+$",
+			entity_repository=self._container.atom_map_repository(),
+			localization_tag="atoms_info"
+		))
 
 	def _install_game_resource_processors(self):
 		self._container.kfs_extractor.override(providers.Singleton(KFSExtractor))
@@ -124,7 +129,6 @@ class DefaultInstaller:
 		self._container.kfs_localization_parser.override(providers.Singleton(KFSLocalizationParser))
 		self._container.kfs_items_parser.override(providers.Singleton(KFSItemsParser))
 		self._container.kfs_unit_parser.override(providers.Singleton(KFSUnitParser))
-		self._container.kfs_atoms_map_info_parser.override(providers.Singleton(KFSAtomsMapInfoParser))
 		self._container.kfs_spells_parser.override(providers.Singleton(KFSSpellsParser))
 		self._container.loc_factory.override(providers.Singleton(LocFactory))
 		self._container.spell_factory.override(providers.Singleton(SpellFactory))

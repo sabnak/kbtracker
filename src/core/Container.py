@@ -74,7 +74,6 @@ class Container(containers.DeclarativeContainer):
 	kfs_localization_parser = providers.AbstractSingleton()
 	kfs_spells_parser = providers.AbstractSingleton()
 	kfs_unit_parser = providers.AbstractSingleton()
-	kfs_atoms_map_info_parser = providers.AbstractSingleton()
 
 	# Factories
 	loc_factory = providers.AbstractSingleton()

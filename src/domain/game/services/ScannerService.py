@@ -5,7 +5,8 @@ from dependency_injector.wiring import Provide
 
 from src.core.Config import Config
 from src.core.Container import Container
-from src.domain.game.interfaces.IAtomMapScannerService import IAtomMapScannerService
+from src.domain.game.entities.AtomMap import AtomMap
+from src.domain.game.interfaces.IEntityFromLocalizationService import IEntityFromLocalizationService
 from src.domain.app.interfaces.IGameRepository import IGameRepository
 from src.domain.game.interfaces.IItemsAndSetsScannerService import IItemsAndSetsScannerService
 from src.domain.game.interfaces.ILocalizationScannerService import ILocalizationScannerService
@@ -27,7 +28,7 @@ class ScannerService:
 		items_and_sets_scanner_service: IItemsAndSetsScannerService = Provide[Container.items_and_sets_scanner_service],
 		spells_scanner_service: ISpellsScannerService = Provide[Container.spells_scanner_service],
 		units_scanner_service: IUnitsScannerService = Provide[Container.units_scanner_service],
-		atom_map_scanner_service: IAtomMapScannerService = Provide[Container.atom_map_scanner_service],
+		atom_map_scanner_service: IEntityFromLocalizationService[AtomMap] = Provide[Container.atom_map_scanner_service],
 		kfs_extractor: IKFSExtractor = Provide[Container.kfs_extractor],
 		config: Config = Provide[Container.config]
 	):
@@ -168,7 +169,7 @@ class ScannerService:
 				message="Parsing atoms"
 			)
 
-			atoms = self._atom_map_scanner.scan(game_id, game.path)
+			atoms = self._atom_map_scanner.scan(game_id)
 
 			yield ScanProgressEvent(
 				event_type=ScanEventType.RESOURCE_COMPLETED,

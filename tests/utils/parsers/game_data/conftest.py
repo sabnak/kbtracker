@@ -9,7 +9,6 @@ from src.utils.parsers.game_data.KFSExtractor import KFSExtractor
 from src.utils.parsers.game_data.KFSReader import KFSReader
 from src.utils.parsers.game_data.KFSItemsParser import KFSItemsParser
 from src.utils.parsers.game_data.KFSLocalizationParser import KFSLocalizationParser
-from src.utils.parsers.game_data.KFSAtomsMapInfoParser import KFSAtomsMapInfoParser
 
 
 @pytest.fixture(scope="session")
@@ -105,7 +104,6 @@ def test_container(test_config):
 	container.kfs_reader.override(providers.Singleton(KFSReader))
 	container.kfs_items_parser.override(providers.Singleton(KFSItemsParser))
 	container.kfs_localization_parser.override(providers.Singleton(KFSLocalizationParser))
-	container.kfs_atoms_map_info_parser.override(providers.Singleton(KFSAtomsMapInfoParser))
 
 	container.wire(packages=[
 		"tests.utils.parsers.game_data"
