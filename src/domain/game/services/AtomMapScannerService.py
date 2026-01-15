@@ -1,4 +1,4 @@
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
 from src.domain.game.entities.AtomMap import AtomMap
@@ -17,8 +17,8 @@ class AtomMapScannerService(IAtomMapScannerService):
 		self._atom_map_repository = atom_map_repository
 		self._parser = parser
 
-	def scan(self, game_id: int, game_name: str, language: str) -> list[AtomMap]:
-		atom_maps = self._parser.parse(game_name, language)
+	def scan(self, game_id: int, game_name: str) -> list[AtomMap]:
+		atom_maps = self._parser.parse(game_name)
 
 		if not atom_maps:
 			return []

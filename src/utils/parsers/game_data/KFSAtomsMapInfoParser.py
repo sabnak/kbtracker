@@ -1,6 +1,6 @@
 import re
 
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.wiring import Provide
 
 from src.core.Container import Container
 from src.domain.game.entities.AtomMap import AtomMap
@@ -11,14 +11,13 @@ from src.utils.parsers.game_data.IKFSAtomsMapInfoParser import IKFSAtomsMapInfoP
 
 class KFSAtomsMapInfoParser(IKFSAtomsMapInfoParser):
 
-	@inject
 	def __init__(
 		self,
 		localization_repository: ILocalizationRepository = Provide[Container.localization_repository]
 	):
 		self._localization_repository = localization_repository
 
-	def parse(self, game_name: str, lang: str = 'rus') -> list[AtomMap]:
+	def parse(self, game_name: str) -> list[AtomMap]:
 		localizations = self._localization_repository.list_all(tag='atoms_info')
 
 		atom_kb_ids = self._extract_unique_kb_ids(localizations)

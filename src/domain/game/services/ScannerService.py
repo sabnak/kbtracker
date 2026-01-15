@@ -78,7 +78,7 @@ class ScannerService:
 		spells = self._spells_scanner.scan(game_id, game.path)
 		total_spells = len(spells)
 
-		atoms = self._atom_map_scanner.scan(game_id, game.path, language)
+		atoms = self._atom_map_scanner.scan(game_id, game.path)
 
 		return ScanResults(
 			items=total_items,
