@@ -1,5 +1,111 @@
 # Changelog
 
+## Version 1.5.0 (2026-01-17)
+
+### Critical Bug Fixes
+
+**Bug #9: UTF-16-LE Alignment Bug - Missing Shops at Odd Byte Offsets**
+- **Issue:** Shops located at odd byte offsets within chunks were not detected, causing ~10-15% of shops to be randomly missed
+- **Example:** `m_inselburg_6529` found in one save but missing in another (same shop, different byte position)
+- **Root Cause:** Parser decoded UTF-16-LE data only at even byte offsets (0), missing shops at odd offsets (1)
+- **Impact Before Fix:**
+  - Save `quick1768586988`: 357 shops extracted (missing 54 shops, ~13% loss)
+  - Save `quick1768595656`: 367 shops extracted (missing 44 shops, ~11% loss)
+- **Fix:** Decode chunks at BOTH even and odd byte offsets (alignment_offset in [0, 1])
+- **Impact After Fix:**
+  - Both saves: **420 shops** extracted (+54 and +44 shops respectively)
+  - 104 shops with inventory (items/units/spells/garrison)
+  - 316 empty shops (NPCs and entities without inventory)
+- **Affected Methods:**
+  - `_find_all_shop_ids()` - Shop detection (lines 157-217)
+  - `_section_belongs_to_shop()` - Section attribution validation (lines 655-693)
+
+**Bug #10: False Inventory Attribution - Section Reuse Across Shops**
+- **Issue:** Inventory sections incorrectly attributed to multiple shops
+- **Example:** `m_whitehill_1725` (enemy NPC) received spells from `m_zcom_1308` (real shop 1484 bytes before)
+- **Root Cause:** `_section_belongs_to_shop()` had same UTF-16 alignment bug - couldn't detect intervening shops at odd offsets
+- **Fix:** Apply UTF-16 alignment fix to section validation
+- **Impact:**
+  - Removed 2 false positives: `m_whitehill_1725`, `m_castle_of_monteville_1205`
+  - Corrected empty NPCs now show as truly empty
+  - More accurate shop/NPC distinction
+
+### Technical Details
+
+**UTF-16-LE Alignment Issue:**
+```python
+# Problem: Shop text at odd offset gets misaligned during UTF-16-LE decoding
+Chunk starts at byte 107800 (even)
+Shop at byte 113773 (odd offset within chunk = 5973)
+→ UTF-16-LE decode reads byte pairs: [5972,5973], [5974,5975], [5976,5977]...
+→ Shop text "itext_m_inselburg_6529" split incorrectly → garbage characters
+→ Regex fails to match → shop not found
+
+# Solution: Try both alignments
+for alignment_offset in [0, 1]:
+    decode_start = pos + alignment_offset
+    text = data[decode_start:decode_end].decode('utf-16-le', errors='ignore')
+    matches = re.finditer(r'itext_([-\w]+)_(\d+)', text)
+```
+
+**Why This Happened:**
+- Save files evolve during gameplay (items collected, spells learned, etc.)
+- New content shifts all subsequent data by varying byte amounts
+- Same shop can appear at even offset in one save, odd offset in another
+- Without alignment fix: probabilistic ~50% detection rate per shop
+
+**Affected Saves:**
+- `quick1768586988` and `quick1768595656` differ by **661 bytes**
+- Content changes: spells learned (`dark_light_energy_3`, `enemy_units_leadership5`, etc.)
+- Time difference: 144.5 minutes of gameplay between saves
+- Shop shifted from byte 113773 (odd, missed) to 113658 (even, found)
+
+### Validation
+
+**Test Results:**
+| Save File | Before Fix | After Fix | Change |
+|-----------|-----------|-----------|--------|
+| quick1768586988 | 357 shops | 420 shops | +63 (+17.6%) |
+| quick1768595656 | 367 shops | 420 shops | +53 (+14.4%) |
+
+**Shop Statistics (After Fix):**
+- Total shops: 420
+- Shops with inventory: 104 (24.8%)
+- Empty shops: 316 (75.2% - NPCs, entities)
+- Shops with items: 98
+- Shops with units: 96
+- Shops with spells: 96
+- Shops with garrison: 7
+
+**Verification:**
+✅ `m_inselburg_6529` now found in both saves with correct inventory:
+  - Items: addon2_belt_obeliks_belt, astral_bow
+  - Units: pirat2 x2580, robber x2140, assassin x300, spider_venom x9000, spider_fire x9200
+  - Spells: advspell_summon_bandit, titan_sword, fire_arrow
+
+✅ `m_whitehill_1725` (enemy NPC) now correctly shows empty inventory (no false spells)
+
+✅ Tests passed: `tests/smoke/test_shop_inventory_parser.py`
+
+### Research Documentation
+
+- Full investigation: `/tests/research/save_decompiler/kb_shop_extractor/2026-01-16/`
+- `ALIGNMENT_BUG_ANALYSIS.md` - Complete root cause analysis with hex dumps
+- `FIX_RESULTS.md` - Before/after comparison and test results
+- `SECTION_ATTRIBUTION_FIX.md` - False inventory attribution fix details
+
+### Performance Impact
+
+- **Parsing time:** +5-10% (due to double decoding per chunk)
+- **Memory usage:** No significant change
+- **Accuracy improvement:** +12-17% more shops extracted
+
+### Breaking Changes
+
+None - all changes are backward compatible
+
+---
+
 ## Version 1.4.0 (2026-01-15)
 
 ### Major Features

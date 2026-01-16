@@ -167,6 +167,11 @@ class ShopInventoryParser(IShopInventoryParser):
 		across chunk boundaries. Deduplicates using both position and
 		shop_id to prevent multiple occurrences of the same shop.
 
+		UTF-16-LE Alignment Fix:
+		Decodes each chunk at both even and odd byte offsets to handle
+		UTF-16-LE alignment issues. Shop text at odd offsets would be
+		missed by single-pass decoding due to misaligned byte pairs.
+
 		:param data:
 			Decompressed save file data
 		:return:
@@ -182,23 +187,30 @@ class ShopInventoryParser(IShopInventoryParser):
 		while pos < len(data):
 			current_chunk_size = min(chunk_size, len(data) - pos)
 
-			try:
-				text = data[pos:pos+current_chunk_size].decode('utf-16-le', errors='ignore')
-				matches = re.finditer(r'itext_([-\w]+)_(\d+)', text)
+			for alignment_offset in [0, 1]:
+				decode_start = pos + alignment_offset
+				decode_end = min(decode_start + current_chunk_size, len(data))
 
-				for match in matches:
-					shop_id_full = match.group(0)
-					location = match.group(1)
-					shop_num = match.group(2)
-					shop_id = location + '_' + shop_num
-					shop_bytes = shop_id_full.encode('utf-16-le')
-					actual_pos = data.find(shop_bytes, pos, pos+current_chunk_size)
-					if actual_pos != -1 and actual_pos not in seen_positions and shop_id not in seen_shop_ids:
-						shops.append((shop_id, actual_pos))
-						seen_positions.add(actual_pos)
-						seen_shop_ids.add(shop_id)
-			except:
-				pass
+				if decode_start >= len(data):
+					continue
+
+				try:
+					text = data[decode_start:decode_end].decode('utf-16-le', errors='ignore')
+					matches = re.finditer(r'itext_([-\w]+)_(\d+)', text)
+
+					for match in matches:
+						shop_id_full = match.group(0)
+						location = match.group(1)
+						shop_num = match.group(2)
+						shop_id = location + '_' + shop_num
+						shop_bytes = shop_id_full.encode('utf-16-le')
+						actual_pos = data.find(shop_bytes, pos, pos+current_chunk_size)
+						if actual_pos != -1 and actual_pos not in seen_positions and shop_id not in seen_shop_ids:
+							shops.append((shop_id, actual_pos))
+							seen_positions.add(actual_pos)
+							seen_shop_ids.add(shop_id)
+				except:
+					pass
 
 			pos += chunk_size - overlap
 
@@ -652,6 +664,10 @@ class ShopInventoryParser(IShopInventoryParser):
 		Prevents attributing sections to wrong shop when searching backwards
 		across shop boundaries.
 
+		UTF-16-LE Alignment Fix:
+		Checks both even and odd byte offsets to detect shops that may be
+		at odd positions within the chunk due to UTF-16-LE alignment.
+
 		:param data:
 			Save file data
 		:param section_pos:
@@ -663,12 +679,16 @@ class ShopInventoryParser(IShopInventoryParser):
 		"""
 		chunk = data[section_pos:shop_pos]
 
-		try:
-			text = chunk.decode('utf-16-le', errors='ignore')
-			if re.search(r'itext_[-\w]+_\d+', text):
-				return False
-		except:
-			pass
+		for alignment_offset in [0, 1]:
+			if alignment_offset >= len(chunk):
+				continue
+
+			try:
+				text = chunk[alignment_offset:].decode('utf-16-le', errors='ignore')
+				if re.search(r'itext_[-\w]+_\d+', text):
+					return False
+			except:
+				pass
 
 		return True
 

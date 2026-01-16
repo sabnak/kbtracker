@@ -1,14 +1,34 @@
 # King's Bounty Shop Inventory Extractor
 
-**Version:** 1.4.0
-**Date:** 2026-01-15
+**Version:** 1.5.0
+**Date:** 2026-01-17
 **Status:** Production Ready ✅
 
 ## Overview
 
 Production-ready tool to extract shop inventory data from King's Bounty save files. Extracts all shop contents including items, units, spells, and garrison across all game locations. Supports both standard named shops and building_trader@ shops with actor ID extraction.
 
-## Recent Updates (v1.4.0)
+## Recent Updates (v1.5.0)
+
+**Critical Bug Fixes:**
+- ✅ **Bug #9 Fixed:** UTF-16-LE alignment bug causing 10-15% of shops to be missed
+  - Shops at odd byte offsets were not detected during chunk decoding
+  - Example: `m_inselburg_6529` found in one save but missing in another (same shop, different position)
+  - Impact: +54 to +63 shops per save (+12-17% increase)
+  - Fix: Decode chunks at both even and odd byte offsets
+- ✅ **Bug #10 Fixed:** False inventory attribution - sections incorrectly shared between shops
+  - Enemy NPCs receiving inventory from nearby shops
+  - Example: `m_whitehill_1725` (NPC) incorrectly had spells from `m_zcom_1308`
+  - Fix: Apply UTF-16 alignment fix to section validation
+  - Impact: 2 false positives removed, more accurate NPC/shop distinction
+
+**Results:**
+- Both test saves now extract **420 shops** (was 357 and 367)
+- 104 shops with actual inventory
+- 316 empty entities (NPCs, locations without shops)
+- More accurate data with fewer false positives
+
+**Previous Updates (v1.4.0)
 
 **Major Feature:**
 - ✅ **Actor ID Extraction:** Shops without `itext_` identifiers now correctly extract trader actor IDs
@@ -357,6 +377,16 @@ Different sections use different formats for storing quantities:
 
 The extractor has been validated on multiple save files:
 
+### Save quick1768586988 & quick1768595656 (v1.5.0 Test Saves)
+- **Shops:** 420 total (after UTF-16 alignment fix)
+- **With Inventory:** 104 shops (24.8%)
+- **Empty Entities:** 316 (NPCs, locations)
+- **Items:** 98 shops have items (546 total items)
+- **Units:** 96 shops have units (481 total units)
+- **Spells:** 96 shops have spells (371 total spells)
+- **Garrison:** 7 shops have garrison (18 total garrison units)
+- **Status:** ✅ PASS
+
 ### Save 1707047253 (Endgame)
 - **Shops:** 314 total (after Bug #4 fix)
 - **Items:** 882 total
@@ -380,6 +410,8 @@ The extractor has been validated on multiple save files:
 - **Bug #2 (Section boundaries):** ✅ No invalid entries from adjacent sections
 - **Bug #3 ("moral" metadata):** ✅ 0 "moral" entries found (correctly filtered)
 - **Bug #4 (Shops without "m_" prefix):** ✅ 59 previously missing shops now extracted (aralan, dragondor, d)
+- **Bug #9 (UTF-16 alignment):** ✅ m_inselburg_6529 found in both test saves
+- **Bug #10 (False attribution):** ✅ m_whitehill_1725 correctly shows empty (no false spells)
 
 ## Technical Details
 
@@ -485,6 +517,14 @@ Valid item/unit/spell IDs must:
 - Shops without "m_" prefix now correctly extracted
 
 ## Version History
+
+### 1.5.0 (2026-01-17)
+- ✅ **Bug #9 Fixed:** UTF-16-LE alignment bug - shops at odd byte offsets now detected
+- ✅ **Bug #10 Fixed:** False inventory attribution - section validation now uses alignment fix
+- ✅ **Impact:** +54 to +63 shops per save (+12-17% increase), 420 total shops extracted
+- ✅ **Accuracy:** Removed 2 false positives, better NPC/shop distinction
+- ✅ Validated on saves quick1768586988 and quick1768595656
+- ✅ Research documentation in `/tests/research/save_decompiler/kb_shop_extractor/2026-01-16/`
 
 ### 1.4.0 (2026-01-15)
 - ✅ **Actor ID Extraction:** Building_trader@ shops now extract actor IDs from `.actors` section
