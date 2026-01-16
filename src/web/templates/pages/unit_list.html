@@ -176,14 +176,6 @@
 								<div>{{ _('ui.unit.attack_label') }} {{ unit.attack if unit.attack else 'N/A' }}</div>
 								<div>{{ _('ui.unit.crit_label') }} {{ unit.krit if unit.krit else 'N/A' }}%</div>
 								<div>{{ _('ui.unit.speed_label') }} {{ unit.speed if unit.speed else 'N/A' }}</div>
-								<div>
-									{{ _('ui.unit.movetype_label') }}
-									{% if unit.movetype %}
-										{{ unit.movetype.name|replace('_', ' ')|title }}
-									{% else %}
-										N/A
-									{% endif %}
-								</div>
 								<div>{{ _('ui.unit.initiative_label') }} {{ unit.initiative if unit.initiative else 'N/A' }}</div>
 							</div>
 
