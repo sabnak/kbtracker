@@ -18,6 +18,7 @@ from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.entities.SpellSchool import SpellSchool
 from src.domain.game.interfaces.IShopInventoryService import IShopInventoryService
 from src.domain.game.dto.ShopsGroupBy import ShopsGroupBy
+from src.domain.game.dto.UnitFilterDto import UnitFilterDto
 from src.domain.game.entities.ShopProductType import ShopProductType
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
@@ -611,14 +612,32 @@ async def list_units(
 	allowed_sort_orders = ["asc", "desc"]
 	sort_direction = sort_order.lower() if sort_order.lower() in allowed_sort_orders else "asc"
 
-	# Fetch units with filters
-	units = unit_repository.search_with_filters(
-		unit_class=UnitClass.CHESSPIECE,
-		sort_by=sort_field,
-		sort_order=sort_direction,
+	# Convert form to DTO
+	filter_dto = UnitFilterDto(
 		profile_id=selected_profile_id,
 		min_cost=filters.min_cost,
-		max_cost=filters.max_cost
+		max_cost=filters.max_cost,
+		min_attack=filters.min_attack,
+		min_krit=filters.min_krit,
+		min_hitpoint=filters.min_hitpoint,
+		min_defense=filters.min_defense,
+		min_speed=filters.min_speed,
+		min_initiative=filters.min_initiative,
+		min_resistance_fire=filters.min_resistance_fire,
+		min_resistance_magic=filters.min_resistance_magic,
+		min_resistance_poison=filters.min_resistance_poison,
+		min_resistance_glacial=filters.min_resistance_glacial,
+		min_resistance_physical=filters.min_resistance_physical,
+		min_resistance_astral=filters.min_resistance_astral,
+		level=filters.level
+	)
+
+	# Fetch units with filters
+	units = unit_repository.search_with_filters(
+		filters=filter_dto,
+		unit_class=UnitClass.CHESSPIECE,
+		sort_by=sort_field,
+		sort_order=sort_direction
 	)
 
 	# Fetch shop data (only when profile selected)
@@ -648,8 +667,7 @@ async def list_units(
 			"selected_profile_id": selected_profile_id,
 			"shops_for_sale": shops_for_sale,
 			"shops_garrison": shops_garrison,
-			"min_cost": filters.min_cost,
-			"max_cost": filters.max_cost
+			"filters": filters
 		}
 	)
 

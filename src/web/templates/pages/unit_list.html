@@ -7,7 +7,7 @@
 	<div class="col-md-12">
 		<h1 class="mb-4">{{ _('ui.unit.title_for') }} {{ game.name }}</h1>
 
-		<!-- Profile and Cost Filter Row -->
+		<!-- Unit Filters -->
 		{% if profiles %}
 		<div class="card mb-4">
 			<div class="card-body">
@@ -16,8 +16,9 @@
 					<input type="hidden" name="sort_by" value="{{ sort_by }}">
 					<input type="hidden" name="sort_order" value="{{ sort_order }}">
 
-					<div class="row g-3">
-						<div class="col-md-3">
+					<!-- Row 1: Profile Filter (alone) -->
+					<div class="row g-3 mb-3">
+						<div class="col-md-4">
 							<label for="profile_id" class="form-label">{{ _('ui.item.profile_label') }}</label>
 							<select
 								class="form-select"
@@ -34,8 +35,11 @@
 								{% endfor %}
 							</select>
 						</div>
+					</div>
 
-						<div class="col-md-3">
+					<!-- Row 2: Cost Filters -->
+					<div class="row g-3 mb-3">
+						<div class="col-md-2">
 							<label for="min_cost" class="form-label">{{ _('ui.unit.min_cost_label') }}</label>
 							<input
 								type="number"
@@ -43,11 +47,9 @@
 								id="min_cost"
 								name="min_cost"
 								min="0"
-								placeholder="{{ _('ui.unit.min_placeholder') }}"
-								value="{{ min_cost if min_cost else '' }}">
+								value="{{ filters.min_cost if filters.min_cost else '' }}">
 						</div>
-
-						<div class="col-md-3">
+						<div class="col-md-2">
 							<label for="max_cost" class="form-label">{{ _('ui.unit.max_cost_label') }}</label>
 							<input
 								type="number"
@@ -55,11 +57,168 @@
 								id="max_cost"
 								name="max_cost"
 								min="0"
-								placeholder="{{ _('ui.unit.max_placeholder') }}"
-								value="{{ max_cost if max_cost else '' }}">
+								value="{{ filters.max_cost if filters.max_cost else '' }}">
 						</div>
+					</div>
 
-						<div class="col-md-3 d-flex align-items-end">
+					<!-- Row 3: Numeric Attributes -->
+					<div class="row g-3 mb-3">
+						<div class="col-md-2">
+							<label for="min_attack" class="form-label">{{ _('ui.unit.attack_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_attack"
+								name="min_attack"
+								min="0"
+								value="{{ filters.min_attack if filters.min_attack else '' }}">
+						</div>
+						<div class="col-md-2">
+							<label for="min_krit" class="form-label">{{ _('ui.unit.krit_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_krit"
+								name="min_krit"
+								min="0"
+								value="{{ filters.min_krit if filters.min_krit else '' }}">
+						</div>
+						<div class="col-md-2">
+							<label for="min_hitpoint" class="form-label">{{ _('ui.unit.hp_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_hitpoint"
+								name="min_hitpoint"
+								min="0"
+								value="{{ filters.min_hitpoint if filters.min_hitpoint else '' }}">
+						</div>
+						<div class="col-md-2">
+							<label for="min_defense" class="form-label">{{ _('ui.unit.defense_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_defense"
+								name="min_defense"
+								min="0"
+								value="{{ filters.min_defense if filters.min_defense else '' }}">
+						</div>
+						<div class="col-md-2">
+							<label for="min_speed" class="form-label">{{ _('ui.unit.speed_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_speed"
+								name="min_speed"
+								min="0"
+								value="{{ filters.min_speed if filters.min_speed else '' }}">
+						</div>
+						<div class="col-md-2">
+							<label for="min_initiative" class="form-label">{{ _('ui.unit.initiative_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_initiative"
+								name="min_initiative"
+								min="0"
+								value="{{ filters.min_initiative if filters.min_initiative else '' }}">
+						</div>
+					</div>
+
+					<!-- Resistances Title -->
+					<div class="row mb-2">
+						<div class="col-12">
+							<h6 class="mb-0">{{ _('ui.unit.resistances_title') }}</h6>
+						</div>
+					</div>
+
+					<!-- Row 4: Resistance Filters -->
+					<div class="row g-3 mb-3">
+						<div class="col-md-2">
+							<label for="min_resistance_fire" class="form-label">{{ _('ui.unit.resistance_fire_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_resistance_fire"
+								name="min_resistance_fire"
+								min="-80"
+								max="80"
+								value="{{ filters.min_resistance_fire if filters.min_resistance_fire else '' }}">
+						</div>
+						<div class="col-md-2">
+							<label for="min_resistance_magic" class="form-label">{{ _('ui.unit.resistance_magic_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_resistance_magic"
+								name="min_resistance_magic"
+								min="-80"
+								max="80"
+								value="{{ filters.min_resistance_magic if filters.min_resistance_magic else '' }}">
+						</div>
+						<div class="col-md-2">
+							<label for="min_resistance_poison" class="form-label">{{ _('ui.unit.resistance_poison_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_resistance_poison"
+								name="min_resistance_poison"
+								min="-80"
+								max="80"
+								value="{{ filters.min_resistance_poison if filters.min_resistance_poison else '' }}">
+						</div>
+						<div class="col-md-2">
+							<label for="min_resistance_glacial" class="form-label">{{ _('ui.unit.resistance_glacial_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_resistance_glacial"
+								name="min_resistance_glacial"
+								min="-80"
+								max="80"
+								value="{{ filters.min_resistance_glacial if filters.min_resistance_glacial else '' }}">
+						</div>
+						<div class="col-md-2">
+							<label for="min_resistance_physical" class="form-label">{{ _('ui.unit.resistance_physical_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_resistance_physical"
+								name="min_resistance_physical"
+								min="-80"
+								max="80"
+								value="{{ filters.min_resistance_physical if filters.min_resistance_physical else '' }}">
+						</div>
+						<div class="col-md-2">
+							<label for="min_resistance_astral" class="form-label">{{ _('ui.unit.resistance_astral_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_resistance_astral"
+								name="min_resistance_astral"
+								min="-80"
+								max="80"
+								value="{{ filters.min_resistance_astral if filters.min_resistance_astral else '' }}">
+						</div>
+					</div>
+
+					<!-- Row 5: Level + Action Buttons -->
+					<div class="row g-3">
+						<div class="col-md-2">
+							<label for="level" class="form-label">{{ _('ui.unit.level_label') }}</label>
+							<select
+								class="form-select"
+								id="level"
+								name="level">
+								<option value="">{{ _('ui.common.all') }}</option>
+								<option value="1" {% if filters.level == 1 %}selected{% endif %}>1</option>
+								<option value="2" {% if filters.level == 2 %}selected{% endif %}>2</option>
+								<option value="3" {% if filters.level == 3 %}selected{% endif %}>3</option>
+								<option value="4" {% if filters.level == 4 %}selected{% endif %}>4</option>
+								<option value="5" {% if filters.level == 5 %}selected{% endif %}>5</option>
+							</select>
+						</div>
+						<div class="col-md-4 d-flex align-items-end">
 							<button class="btn btn-primary me-2" type="submit">{{ _('ui.item.apply_filters') }}</button>
 							<a href="/games/{{ game.id }}/units{% if selected_profile_id %}?profile_id={{ selected_profile_id }}{% endif %}" class="btn btn-secondary">{{ _('ui.item.clear_all') }}</a>
 						</div>
@@ -159,24 +318,24 @@
 						<td style="white-space: nowrap;">{{ unit.leadership|format_price if unit.leadership else 'N/A' }}</td>
 						<td>
 							<div class="unit-common-params">
-								<div>{{ _('ui.unit.hp_label') }} {{ unit.hitpoint if unit.hitpoint else 'N/A' }}</div>
-								<div>{{ _('ui.unit.defense_label') }} {{ unit.defense if unit.defense else 'N/A' }}</div>
+								<div>{{ _('ui.unit.hp_label') }}: {{ unit.hitpoint if unit.hitpoint else 'N/A' }}</div>
+								<div>{{ _('ui.unit.defense_label') }}: {{ unit.defense if unit.defense else 'N/A' }}</div>
 								<div class="resistance-list">
-									{{ _('ui.unit.resistances_label') }}
+									{{ _('ui.unit.resistances_label') }}:
 									{% if unit.resistance %}
 										{% for res_type, res_value in unit.resistance.items() %}
 										<div class="resistance-item ms-2">
-											{{ res_type }}: {{ res_value }}%
+											{{ _("ui.unit.resistance_" + res_type + "_label") }}: {{ res_value }}%
 										</div>
 										{% endfor %}
 									{% else %}
 										<span class="text-muted ms-2">{{ _('ui.common.none') }}</span>
 									{% endif %}
 								</div>
-								<div>{{ _('ui.unit.attack_label') }} {{ unit.attack if unit.attack else 'N/A' }}</div>
-								<div>{{ _('ui.unit.crit_label') }} {{ unit.krit if unit.krit else 'N/A' }}%</div>
-								<div>{{ _('ui.unit.speed_label') }} {{ unit.speed if unit.speed else 'N/A' }}</div>
-								<div>{{ _('ui.unit.initiative_label') }} {{ unit.initiative if unit.initiative else 'N/A' }}</div>
+								<div>{{ _('ui.unit.attack_label') }}: {{ unit.attack if unit.attack else 'N/A' }}</div>
+								<div>{{ _('ui.unit.crit_label') }}: {{ unit.krit if unit.krit else 'N/A' }}%</div>
+								<div>{{ _('ui.unit.speed_label') }}: {{ unit.speed if unit.speed else 'N/A' }}</div>
+								<div>{{ _('ui.unit.initiative_label') }}: {{ unit.initiative if unit.initiative else 'N/A' }}</div>
 							</div>
 
 							<div class="unit-features mt-2">
@@ -316,12 +475,18 @@
 				currentUrl.searchParams.set('sort_order', newSortOrder);
 
 				// Preserve filter parameters
-				const profileId = currentUrl.searchParams.get('profile_id');
-				const minCost = currentUrl.searchParams.get('min_cost');
-				const maxCost = currentUrl.searchParams.get('max_cost');
-				if (profileId) currentUrl.searchParams.set('profile_id', profileId);
-				if (minCost) currentUrl.searchParams.set('min_cost', minCost);
-				if (maxCost) currentUrl.searchParams.set('max_cost', maxCost);
+				const filters = [
+					'profile_id', 'min_cost', 'max_cost',
+					'min_attack', 'min_krit', 'min_hitpoint', 'min_defense', 'min_speed', 'min_initiative',
+					'min_resistance_fire', 'min_resistance_magic', 'min_resistance_poison',
+					'min_resistance_glacial', 'min_resistance_physical', 'min_resistance_astral',
+					'level'
+				];
+
+				filters.forEach(filterName => {
+					const value = currentUrl.searchParams.get(filterName);
+					if (value) currentUrl.searchParams.set(filterName, value);
+				});
 
 				// Navigate to new URL
 				window.location.href = currentUrl.toString();

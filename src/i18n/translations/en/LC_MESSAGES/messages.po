@@ -508,37 +508,67 @@ msgid "ui.unit.attributes_header"
 msgstr "Attributes"
 
 msgid "ui.unit.hp_label"
-msgstr "HP:"
+msgstr "HP"
 
 msgid "ui.unit.defense_label"
-msgstr "Defense:"
+msgstr "Defense"
 
 msgid "ui.unit.resistances_label"
-msgstr "Resistances:"
+msgstr "Resistances"
 
 msgid "ui.common.none"
 msgstr "None"
 
+msgid "ui.common.all"
+msgstr "All"
+
 msgid "ui.unit.attack_label"
-msgstr "Attack:"
+msgstr "Attack"
 
 msgid "ui.unit.crit_label"
-msgstr "Crit:"
+msgstr "Crit"
+
+msgid "ui.unit.krit_label"
+msgstr "Krit"
 
 msgid "ui.unit.speed_label"
-msgstr "Speed:"
+msgstr "Speed"
 
 msgid "ui.unit.movetype_label"
-msgstr "Movetype:"
+msgstr "Movetype"
 
 msgid "ui.unit.initiative_label"
-msgstr "Initiative:"
+msgstr "Initiative"
+
+msgid "ui.unit.level_label"
+msgstr "Level"
 
 msgid "ui.unit.actions_label"
-msgstr "Actions:"
+msgstr "Actions"
 
 msgid "ui.unit.for_sale_label"
-msgstr "For Sale:"
+msgstr "For Sale"
+
+msgid "ui.unit.resistances_title"
+msgstr "Resistances:"
+
+msgid "ui.unit.resistance_fire_label"
+msgstr "Fire"
+
+msgid "ui.unit.resistance_magic_label"
+msgstr "Magic"
+
+msgid "ui.unit.resistance_poison_label"
+msgstr "Poison"
+
+msgid "ui.unit.resistance_glacial_label"
+msgstr "Glacial"
+
+msgid "ui.unit.resistance_physical_label"
+msgstr "Physical"
+
+msgid "ui.unit.resistance_astral_label"
+msgstr "Astral"
 
 msgid "ui.unit.no_units_found"
 msgstr "No units found. Scan game files first to populate the database."

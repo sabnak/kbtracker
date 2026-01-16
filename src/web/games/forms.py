@@ -42,3 +42,22 @@ class UnitFilterForm(BaseModel):
 	profile_id: OptionalInt = None
 	min_cost: OptionalInt = None
 	max_cost: OptionalInt = None
+
+	# Numeric attribute filters (min values)
+	min_attack: OptionalInt = None
+	min_krit: OptionalInt = None
+	min_hitpoint: OptionalInt = None
+	min_defense: OptionalInt = None
+	min_speed: OptionalInt = None
+	min_initiative: OptionalInt = None
+
+	# Resistance filters (min values)
+	min_resistance_fire: OptionalInt = None
+	min_resistance_magic: OptionalInt = None
+	min_resistance_poison: OptionalInt = None
+	min_resistance_glacial: OptionalInt = None
+	min_resistance_physical: OptionalInt = None
+	min_resistance_astral: OptionalInt = None
+
+	# Level filter (exact match)
+	level: OptionalInt = None

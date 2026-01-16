@@ -516,37 +516,67 @@ msgid "ui.unit.attributes_header"
 msgstr "Атрибуты"
 
 msgid "ui.unit.hp_label"
-msgstr "HP:"
+msgstr "HP"
 
 msgid "ui.unit.defense_label"
-msgstr "Защита:"
+msgstr "Защита"
 
 msgid "ui.unit.resistances_label"
-msgstr "Сопротивления:"
+msgstr "Сопротивления"
 
 msgid "ui.common.none"
 msgstr "Нет"
 
+msgid "ui.common.all"
+msgstr "Все"
+
 msgid "ui.unit.attack_label"
-msgstr "Атака:"
+msgstr "Атака"
 
 msgid "ui.unit.crit_label"
-msgstr "Крит:"
+msgstr "Крит"
+
+msgid "ui.unit.krit_label"
+msgstr "Крит"
 
 msgid "ui.unit.speed_label"
-msgstr "Скорость:"
+msgstr "Скорость"
 
 msgid "ui.unit.movetype_label"
-msgstr "Тип передвижения:"
+msgstr "Тип передвижения"
 
 msgid "ui.unit.initiative_label"
-msgstr "Инициатива:"
+msgstr "Инициатива"
+
+msgid "ui.unit.level_label"
+msgstr "Уровень"
 
 msgid "ui.unit.actions_label"
-msgstr "Действия:"
+msgstr "Действия"
 
 msgid "ui.unit.for_sale_label"
-msgstr "Продается:"
+msgstr "Продается"
+
+msgid "ui.unit.resistances_title"
+msgstr "Сопротивления:"
+
+msgid "ui.unit.resistance_fire_label"
+msgstr "Огонь"
+
+msgid "ui.unit.resistance_magic_label"
+msgstr "Магия"
+
+msgid "ui.unit.resistance_poison_label"
+msgstr "Яд"
+
+msgid "ui.unit.resistance_glacial_label"
+msgstr "Холод"
+
+msgid "ui.unit.resistance_physical_label"
+msgstr "Физика"
+
+msgid "ui.unit.resistance_astral_label"
+msgstr "Астрал"
 
 msgid "ui.unit.no_units_found"
 msgstr ""

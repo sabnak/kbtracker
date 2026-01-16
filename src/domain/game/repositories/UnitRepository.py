@@ -1,7 +1,8 @@
-from sqlalchemy import desc, asc
+from sqlalchemy import desc, asc, Numeric
 
 from src.domain.base.factories.PydanticEntityFactory import PydanticEntityFactory
 from src.domain.base.repositories.CrudRepository import CrudRepository
+from src.domain.game.dto.UnitFilterDto import UnitFilterDto
 from src.domain.game.entities.Unit import Unit
 from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.entities.UnitMovetype import UnitMovetype
@@ -162,28 +163,22 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 
 	def search_with_filters(
 		self,
+		filters: UnitFilterDto,
 		unit_class: UnitClass | None = None,
 		sort_by: str = "name",
-		sort_order: str = "asc",
-		profile_id: int | None = None,
-		min_cost: int | None = None,
-		max_cost: int | None = None
+		sort_order: str = "asc"
 	) -> list[Unit]:
 		"""
 		Search units with filter criteria
 
+		:param filters:
+			Filter criteria DTO
 		:param unit_class:
 			Optional unit class filter
 		:param sort_by:
 			Field to sort by
 		:param sort_order:
 			Sort direction (asc, desc)
-		:param profile_id:
-			Optional profile ID filter (shows only units in shop inventory for profile)
-		:param min_cost:
-			Optional minimum cost filter
-		:param max_cost:
-			Optional maximum cost filter
 		:return:
 			List of units matching all provided criteria
 		"""
@@ -191,7 +186,7 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			query = session.query(UnitMapper)
 
 			# Filter by profile_id (JOIN with shop inventory)
-			if profile_id is not None:
+			if filters.profile_id is not None:
 				from src.domain.game.repositories.mappers.ShopInventoryMapper import ShopInventoryMapper
 				from src.domain.game.entities.ShopProductType import ShopProductType
 
@@ -199,7 +194,7 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 					ShopInventoryMapper,
 					(ShopInventoryMapper.product_id == UnitMapper.id) &
 					(ShopInventoryMapper.product_type.in_([ShopProductType.UNIT, ShopProductType.GARRISON])) &
-					(ShopInventoryMapper.profile_id == profile_id)
+					(ShopInventoryMapper.profile_id == filters.profile_id)
 				).distinct()
 
 			# Filter by unit class
@@ -207,10 +202,42 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 				query = query.filter(UnitMapper.unit_class == unit_class.value)
 
 			# Filter by cost range
-			if min_cost is not None:
-				query = query.filter(UnitMapper.cost >= min_cost)
-			if max_cost is not None:
-				query = query.filter(UnitMapper.cost <= max_cost)
+			if filters.min_cost is not None:
+				query = query.filter(UnitMapper.cost >= filters.min_cost)
+			if filters.max_cost is not None:
+				query = query.filter(UnitMapper.cost <= filters.max_cost)
+
+			# Filter by numeric attributes (min values)
+			if filters.min_attack is not None:
+				query = query.filter(UnitMapper.attack >= filters.min_attack)
+			if filters.min_krit is not None:
+				query = query.filter(UnitMapper.krit >= filters.min_krit)
+			if filters.min_hitpoint is not None:
+				query = query.filter(UnitMapper.hitpoint >= filters.min_hitpoint)
+			if filters.min_defense is not None:
+				query = query.filter(UnitMapper.defense >= filters.min_defense)
+			if filters.min_speed is not None:
+				query = query.filter(UnitMapper.speed >= filters.min_speed)
+			if filters.min_initiative is not None:
+				query = query.filter(UnitMapper.initiative >= filters.min_initiative)
+
+			# Filter by resistance values (JSONB queries)
+			if filters.min_resistance_fire is not None:
+				query = query.filter(UnitMapper.resistance['fire'].astext.cast(Numeric) >= filters.min_resistance_fire)
+			if filters.min_resistance_magic is not None:
+				query = query.filter(UnitMapper.resistance['magic'].astext.cast(Numeric) >= filters.min_resistance_magic)
+			if filters.min_resistance_poison is not None:
+				query = query.filter(UnitMapper.resistance['poison'].astext.cast(Numeric) >= filters.min_resistance_poison)
+			if filters.min_resistance_glacial is not None:
+				query = query.filter(UnitMapper.resistance['glacial'].astext.cast(Numeric) >= filters.min_resistance_glacial)
+			if filters.min_resistance_physical is not None:
+				query = query.filter(UnitMapper.resistance['physical'].astext.cast(Numeric) >= filters.min_resistance_physical)
+			if filters.min_resistance_astral is not None:
+				query = query.filter(UnitMapper.resistance['astral'].astext.cast(Numeric) >= filters.min_resistance_astral)
+
+			# Filter by level (exact match)
+			if filters.level is not None:
+				query = query.filter(UnitMapper.level == filters.level)
 
 			# Apply sorting
 			query = self._apply_sorting(query, sort_by, sort_order)
