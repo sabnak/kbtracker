@@ -456,6 +456,12 @@ msgstr "School"
 msgid "ui.spell.all_schools"
 msgstr "All Schools"
 
+msgid "ui.spell.profit_label"
+msgstr "Rank"
+
+msgid "ui.spell.all_profits"
+msgstr "All Ranks"
+
 msgid "ui.spell.found_spells_count"
 msgstr "Found %(count)d spell(s)"
 
@@ -467,6 +473,9 @@ msgstr "Mana"
 
 msgid "ui.spell.crystal_header"
 msgstr "Crystal"
+
+msgid "ui.spell.profit_header"
+msgstr "Rank"
 
 msgid "ui.spell.effect_header"
 msgstr "Effect"

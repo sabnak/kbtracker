@@ -462,6 +462,12 @@ msgstr "Школа"
 msgid "ui.spell.all_schools"
 msgstr "Все школы"
 
+msgid "ui.spell.profit_label"
+msgstr "Ранг"
+
+msgid "ui.spell.all_profits"
+msgstr "Все ранги"
+
 msgid "ui.spell.found_spells_count"
 msgstr "Найдено %(count)d заклинан(ие/ий)"
 
@@ -473,6 +479,9 @@ msgstr "Мана"
 
 msgid "ui.spell.crystal_header"
 msgstr "Кристалл"
+
+msgid "ui.spell.profit_header"
+msgstr "Ранг"
 
 msgid "ui.spell.effect_header"
 msgstr "Эффект"

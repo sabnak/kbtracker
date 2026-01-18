@@ -38,6 +38,41 @@ class ScanForm(BaseModel):
 	language: LanguageEnum
 
 
+class SpellFilterForm(BaseModel):
+	profile_id: OptionalInt = None
+	school: str = ""
+	profit: OptionalInt = None
+	sort_by: str = "name"
+	sort_order: str = "asc"
+
+	@field_validator("sort_by")
+	@classmethod
+	def validate_sort_by(cls, v: str) -> str:
+		"""
+		Validate sort_by field
+
+		:param v:
+			Sort by value
+		:return:
+			Validated sort field
+		"""
+		allowed = ["name", "school", "mana", "crystal", "profit"]
+		return v if v in allowed else "name"
+
+	@field_validator("sort_order")
+	@classmethod
+	def validate_sort_order(cls, v: str) -> str:
+		"""
+		Validate sort_order field
+
+		:param v:
+			Sort order value
+		:return:
+			Validated sort order
+		"""
+		return v.lower() if v.lower() in ["asc", "desc"] else "asc"
+
+
 class UnitFilterForm(BaseModel):
 	profile_id: OptionalInt = None
 	min_cost: OptionalInt = None

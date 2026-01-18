@@ -207,6 +207,7 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 	def search_with_filters(
 		self,
 		school: SpellSchool | None = None,
+		profit: int | None = None,
 		sort_by: str = "name",
 		sort_order: str = "asc",
 		profile_id: int | None = None
@@ -216,8 +217,10 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 
 		:param school:
 			Optional spell school filter
+		:param profit:
+			Optional profit/rank filter (1-5)
 		:param sort_by:
-			Field to sort by (name, school, mana, crystal)
+			Field to sort by (name, school, mana, crystal, profit)
 		:param sort_order:
 			Sort direction (asc, desc)
 		:param profile_id:
@@ -243,6 +246,10 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 			# Filter by school
 			if school:
 				query = query.filter(SpellMapper.school == school.value)
+
+			# Filter by profit
+			if profit is not None:
+				query = query.filter(SpellMapper.profit == profit)
 
 			# For name sorting, sort in Python after fetching localizations
 			if sort_by != "name":
@@ -281,7 +288,8 @@ class SpellRepository(CrudRepository[Spell, SpellMapper], ISpellRepository):
 			"name": SpellMapper.kb_id,
 			"school": SpellMapper.school,
 			"mana": SpellMapper.mana_cost[1],
-			"crystal": SpellMapper.crystal_cost[1]
+			"crystal": SpellMapper.crystal_cost[1],
+			"profit": SpellMapper.profit
 		}
 
 		sort_column = sort_column_map.get(sort_by, SpellMapper.kb_id)

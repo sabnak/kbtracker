@@ -91,6 +91,7 @@ class ISpellRepository(ABC):
 	def search_with_filters(
 		self,
 		school: SpellSchool | None = None,
+		profit: int | None = None,
 		sort_by: str = "name",
 		sort_order: str = "asc",
 		profile_id: int | None = None
@@ -100,8 +101,10 @@ class ISpellRepository(ABC):
 
 		:param school:
 			Optional spell school filter
+		:param profit:
+			Optional profit/rank filter (1-5)
 		:param sort_by:
-			Field to sort by (name, school, mana, crystal)
+			Field to sort by (name, school, mana, crystal, profit)
 		:param sort_order:
 			Sort direction (asc, desc)
 		:param profile_id:

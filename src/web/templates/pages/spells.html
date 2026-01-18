@@ -17,7 +17,8 @@
 					<input type="hidden" name="sort_order" value="{{ sort_order }}">
 
 					<div class="row g-3">
-						<div class="col-md-4">
+						<!-- Profile filter - FULL WIDTH ROW -->
+						<div class="col-md-12">
 							<label for="profile_id" class="form-label">{{ _('ui.item.profile_label') }}</label>
 							<select
 								class="form-select"
@@ -34,7 +35,10 @@
 								{% endfor %}
 							</select>
 						</div>
+					</div>
 
+					<div class="row g-3 mt-2">
+						<!-- School filter -->
 						<div class="col-md-4">
 							<label for="school" class="form-label">{{ _('ui.spell.school_label') }}</label>
 							<select class="form-select" id="school" name="school">
@@ -49,6 +53,18 @@
 							</select>
 						</div>
 
+						<!-- Profit filter - NEW -->
+						<div class="col-md-4">
+							<label for="profit" class="form-label">{{ _('ui.spell.profit_label') }}</label>
+							<select class="form-select" id="profit" name="profit">
+								<option value="">{{ _('ui.spell.all_profits') }}</option>
+								{% for p in [1, 2, 3, 4, 5] %}
+								<option value="{{ p }}" {% if selected_profit == p %}selected{% endif %}>{{ p }}</option>
+								{% endfor %}
+							</select>
+						</div>
+
+						<!-- Apply/Clear buttons -->
 						<div class="col-md-4 d-flex align-items-end">
 							<button class="btn btn-primary me-2" type="submit">{{ _('ui.item.apply_filters') }}</button>
 							<a href="/games/{{ game.id }}/spells{% if selected_profile_id %}?profile_id={{ selected_profile_id }}{% endif %}" class="btn btn-secondary">{{ _('ui.item.clear_all') }}</a>
@@ -115,6 +131,17 @@
 								{% endif %}
 							</span>
 						</th>
+						<th class="sortable {% if sort_by == 'profit' %}sorted sorted-{{ sort_order }}{% endif %}"
+							data-sort="profit" style="white-space: nowrap;">
+							{{ _('ui.spell.profit_header') }}
+							<span class="sort-indicator">
+								{% if sort_by == 'profit' %}
+									{% if sort_order == 'asc' %}↑{% else %}↓{% endif %}
+								{% else %}
+									<span class="hover-icon">↕</span>
+								{% endif %}
+							</span>
+						</th>
 						<th>{{ _('ui.spell.effect_header') }}</th>
 						<th>{{ _('ui.shops') }}</th>
 					</tr>
@@ -142,6 +169,9 @@
 							{% else %}
 								-
 							{% endif %}
+						</td>
+						<td style="white-space: nowrap;">
+							{{ spell.profit }}
 						</td>
 						<td>
 							{% if spell.loc %}

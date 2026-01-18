@@ -26,7 +26,7 @@ from src.domain.base.repositories.CrudRepository import GAME_CONTEXT
 from src.domain.game.services.ItemService import ItemService
 from src.domain.game.services.ScannerService import ScannerService
 from src.web.dependencies.game_context import get_game_context, GameContext
-from src.web.games.forms import GameCreateForm, ScanForm, UnitFilterForm
+from src.web.games.forms import GameCreateForm, ScanForm, SpellFilterForm, UnitFilterForm
 from src.web.template_filters import register_filters
 
 router = APIRouter(tags=["games"])
@@ -677,10 +677,7 @@ async def list_units(
 async def list_spells(
 	request: Request,
 	game_id: int,
-	sort_by: str = Query(default="name"),
-	sort_order: str = Query(default="asc"),
-	profile_id: int | None = Query(default=None),
-	school: str = Query(default=""),
+	filters: SpellFilterForm = Depends(),
 	game_context: GameContext = Depends(get_game_context),
 	spell_repository: ISpellRepository = Depends(Provide["spell_repository"]),
 	game_service: IGameService = Depends(Provide["game_service"]),
@@ -702,34 +699,27 @@ async def list_spells(
 	# Determine selected profile (default to "All Profiles")
 	# profile_id = None or 0 means "All Profiles" (no filter)
 	selected_profile_id = None
-	if profiles and profile_id is not None and profile_id != 0:
-		selected_profile = next((p for p in profiles if p.id == profile_id), None)
+	if profiles and filters.profile_id is not None and filters.profile_id != 0:
+		selected_profile = next((p for p in profiles if p.id == filters.profile_id), None)
 		if selected_profile:
-			selected_profile_id = profile_id
+			selected_profile_id = filters.profile_id
 		else:
 			return RedirectResponse(url=f"/games/{game_id}/spells", status_code=303)
 
-	# Validate sort parameters
-	allowed_sort_fields = ["name", "school", "mana", "crystal"]
-	sort_field = sort_by if sort_by in allowed_sort_fields else "name"
-
-	allowed_sort_orders = ["asc", "desc"]
-	sort_direction = sort_order.lower() if sort_order.lower() in allowed_sort_orders else "asc"
-
 	# Parse school filter
 	selected_school = None
-	if school:
+	if filters.school:
 		try:
-			selected_school = SpellSchool[school.upper()]
+			selected_school = SpellSchool[filters.school.upper()]
 		except KeyError:
-			# Invalid school name, ignore filter
 			pass
 
 	# Fetch spells with filters
 	all_spells = spell_repository.search_with_filters(
 		school=selected_school,
-		sort_by=sort_field,
-		sort_order=sort_direction,
+		profit=filters.profit,
+		sort_by=filters.sort_by,
+		sort_order=filters.sort_order,
 		profile_id=selected_profile_id
 	)
 
@@ -751,13 +741,14 @@ async def list_spells(
 			"request": request,
 			"game": game,
 			"spells": spells,
-			"sort_by": sort_field,
-			"sort_order": sort_direction,
+			"sort_by": filters.sort_by,
+			"sort_order": filters.sort_order,
 			"profiles": profiles,
 			"selected_profile_id": selected_profile_id,
 			"shops_by_spell": shops_by_spell,
 			"all_schools": list(SpellSchool),
-			"selected_school": selected_school
+			"selected_school": selected_school,
+			"selected_profit": filters.profit
 		}
 	)
 
