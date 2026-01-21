@@ -100,7 +100,7 @@ class SaveFileService(ISaveFileService):
 
 		return hero_data
 
-	def scan_shop_inventory(self, save_path: Path) -> dict[str, dict[str, list[dict[str, Any]]]]:
+	def scan_shop_inventory(self, save_path: Path) -> list[dict[str, Any]]:
 		return self._shop_parser.parse(save_path)
 
 	def find_profile_most_recent_save(self, profile: ProfileEntity) -> Path:

@@ -59,7 +59,7 @@ class ISaveFileService(ABC):
 		...
 
 	@abstractmethod
-	def scan_shop_inventory(self, save_path: Path) -> dict[str, dict[str, list[dict[str, Any]]]]:
+	def scan_shop_inventory(self, save_path: Path) -> list[dict[str, Any]]:
 		...
 
 	@abstractmethod

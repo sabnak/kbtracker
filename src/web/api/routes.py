@@ -1,16 +1,14 @@
+from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
-from dependency_injector.wiring import inject, Provide
 
-from src.domain.game.interfaces.IProfileService import IProfileService
-from src.domain.game.interfaces.ISaveFileService import ISaveFileService
 from src.domain.app.interfaces.IGameService import IGameService
-from src.domain.game.interfaces.IProfileRepository import IProfileRepository
-from src.web.dependencies.game_context import get_game_context, GameContext
 from src.domain.base.repositories.CrudRepository import GAME_CONTEXT
 from src.domain.exceptions import InvalidKbIdException
-from dataclasses import replace
-
+from src.domain.game.interfaces.IProfileRepository import IProfileRepository
+from src.domain.game.interfaces.IProfileService import IProfileService
+from src.domain.game.interfaces.ISaveFileService import ISaveFileService
+from src.web.dependencies.game_context import get_game_context, GameContext
 
 router = APIRouter(prefix="/api", tags=["api"])
 
