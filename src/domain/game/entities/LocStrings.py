@@ -9,3 +9,7 @@ class LocStrings(pydantic.BaseModel):
 	text: str | None = None
 	text_list: list[str] | None = None
 	header: str | None = None
+
+	@property
+	def caption(self) -> str:
+		return self.name or self.hint or self.desc or self.text

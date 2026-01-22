@@ -195,8 +195,8 @@
 										{% for shop in spell_shops %}
 											{% set shop_spell = shop.inventory.get_spell(spell.id) %}
 											{{ shop.location_name }}
-											{% if shop.shop_loc and shop.shop_loc.name %}
-												/ {{ shop.shop_loc.name }}
+											{% if shop.shop_loc %}
+												/ {{ shop.shop_loc.caption|format_text }}
 											{% elif shop.shop_kb_id %}
 												/ {{ shop.shop_kb_id }}
 											{% endif %}
