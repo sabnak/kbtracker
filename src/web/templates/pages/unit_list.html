@@ -384,8 +384,8 @@
 											{% for shop in unit_for_sale_shops %}
 												{% set shop_unit = shop.inventory.get_unit(unit.id) %}
 												{{ shop.location_name }}
-												{% if shop.shop_loc and shop.shop_loc.name %}
-													/ {{ shop.shop_loc.name }}
+												{% if shop.shop_loc %}
+													/ {{ shop.shop_loc.caption|format_text }}
 												{% elif shop.shop_kb_id %}
 													/ {{ shop.shop_kb_id }}
 												{% endif %}
