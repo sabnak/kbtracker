@@ -1,5 +1,121 @@
 # Changelog
 
+## Version 1.5.1 (2026-01-24)
+
+### Critical Bug Fixes
+
+**Bug #11: Incorrect Section Attribution to itext Shops**
+- **Issue:** itext shops incorrectly claiming inventory sections belonging to preceding building_trader@ shops
+- **Example:** `m_zcom_start_519` showing inventory from `building_trader@31` (actor 807991996)
+  - Before fix: Both shops merged into single entry with same inventory
+  - Result: 2 shops incorrectly merged, wrong inventory data, total 436 shops instead of 438
+- **Root Cause:** `_section_belongs_to_shop()` only checked for `itext_` patterns when validating section ownership, completely ignoring `building_trader@` patterns
+- **Timeline of Structures:**
+  ```
+  718713: .actors (actor 807991996)
+  718769: .items       ← Actor shop inventory
+  719274: .spells      ← Actor shop inventory
+  719785: building_trader@31 (actor 807991996)
+  720314: .shopunits   ← m_zcom_start_519 inventory
+  720601: itext_m_zcom_start_519
+  ```
+- **Problem:** When parsing `m_zcom_start_519`, parser searched backwards and found `.items` (718769) and `.spells` (719274)
+  - Chunk between sections and shop contained `building_trader@` but NO `itext_` patterns
+  - `_section_belongs_to_shop()` only checked for `itext_`, returned True (section belongs)
+  - Result: `m_zcom_start_519` incorrectly claimed actor shop's inventory
+- **Fix:** Added `building_trader@` check to `_section_belongs_to_shop()` method
+  ```python
+  def _section_belongs_to_shop(self, data: bytes, section_pos: int, shop_pos: int) -> bool:
+      chunk = data[section_pos:shop_pos]
+
+      # NEW: Check for building_trader@ shops
+      if b'building_trader@' in chunk:
+          return False
+
+      # Existing: Check for itext_ shops (UTF-16-LE aligned)
+      # ...
+  ```
+- **Impact:**
+  - Before fix: 436 shops (2 shops incorrectly merged)
+  - After fix: 438 shops (correctly separated)
+  - `m_zcom_start_519` now shows only its own units (archer, zombie, imp)
+  - `building_trader@31` (actor 807991996) correctly shows its inventory (bocman, monstera, items, spells)
+- **Affected Code:** `_section_belongs_to_shop()` method in `ShopInventoryParser.py` (line 655)
+
+### Comparison with _section_belongs_to_building_trader()
+
+`_section_belongs_to_building_trader()` (lines 377-403) **correctly** checks for both shop types:
+```python
+def _section_belongs_to_building_trader(self, data: bytes, section_pos: int, building_pos: int) -> bool:
+    chunk = data[section_pos:building_pos]
+
+    if b'itext_' in chunk:           # ← Checks itext_ shops
+        return False
+
+    if b'building_trader@' in chunk:  # ← Checks building_trader@ shops
+        return False
+
+    return True
+```
+
+The fix brings `_section_belongs_to_shop()` to parity with this correct implementation.
+
+### Validation
+
+**Test Results (Save quick1769254717):**
+
+Before Fix:
+```
+Total shops: 436
+m_zcom_start_519: merged with actor 807991996
+  - Items: [addon4_spell_rock_heat_drop_200, ...]
+  - Units: [bocman (1460), monstera (250), ...]
+  - Spells: [spell_advspell_summon_dwarf, ...]
+```
+
+After Fix:
+```
+Total shops: 438 (+2 correctly separated)
+
+m_zcom_start_519:
+  - itext: m_zcom_start_519
+  - actor: "" (empty)
+  - location: m_zcom_start
+  - Items: [] (correctly empty)
+  - Units: [archer (420), zombie (140), imp (60)]
+  - Spells: [] (correctly empty)
+
+building_trader@31 (actor 807991996):
+  - itext: "" (empty)
+  - actor: 807991996
+  - location: dragondor
+  - Items: [addon4_spell_rock_heat_drop_200, addon4_spell_rock_ice_serpent_200]
+  - Units: [bocman (1460), monstera (250), bear_white (156), ...]
+  - Spells: [spell_advspell_summon_dwarf, spell_dispell, ...]
+```
+
+✅ Shops correctly separated with distinct inventories
+✅ No more incorrect section attribution
+✅ Each shop shows only its own inventory
+
+### Research Documentation
+
+- Full investigation: `/tests/research/save_decompiler/kb_shop_extractor/2026-01-24/`
+- `README.md` - Complete root cause analysis with file positions and byte-level details
+- Decompressed save data for verification
+
+### Performance Impact
+
+- **Parsing time:** Negligible (single byte pattern check added)
+- **Memory usage:** No change
+- **Accuracy improvement:** Correct shop separation, no more merged shops
+
+### Breaking Changes
+
+None - all changes are backward compatible
+
+---
+
 ## Version 1.5.0 (2026-01-17)
 
 ### Critical Bug Fixes

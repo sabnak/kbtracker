@@ -1,6 +1,25 @@
 # Known Limitations and Magic Constants
 
-## Recent Fixes (v1.5.0)
+## Recent Fixes
+
+### v1.5.1 (2026-01-24)
+
+**✅ FIXED: Incorrect Section Attribution to itext Shops**
+- **Issue:** itext shops incorrectly claiming inventory from preceding building_trader@ shops
+- **Status:** RESOLVED in v1.5.1
+- **Example:** `m_zcom_start_519` was merged with `building_trader@31` (actor 807991996)
+- **Fix:** Added `building_trader@` check to `_section_belongs_to_shop()` method
+- **Impact:** +2 shops correctly separated, accurate inventory per shop
+
+This bug affected shop separation:
+- itext shops appearing after building_trader@ shops would claim their inventory
+- Result: Merged shops showing duplicate/wrong inventory
+- Caused by incomplete shop boundary detection in section validation
+- Only checked for `itext_` patterns, ignored `building_trader@` patterns
+
+If you're using v1.5.1 or later, this issue no longer applies.
+
+### v1.5.0 (2026-01-17)
 
 **✅ FIXED: UTF-16-LE Alignment Bug**
 - **Issue:** Shops at odd byte offsets were missed during decoding (~10-15% shop loss)

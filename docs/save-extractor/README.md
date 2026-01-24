@@ -1,14 +1,30 @@
 # King's Bounty Shop Inventory Extractor
 
-**Version:** 1.5.0
-**Date:** 2026-01-17
+**Version:** 1.5.1
+**Date:** 2026-01-24
 **Status:** Production Ready ✅
 
 ## Overview
 
 Production-ready tool to extract shop inventory data from King's Bounty save files. Extracts all shop contents including items, units, spells, and garrison across all game locations. Supports both standard named shops and building_trader@ shops with actor ID extraction.
 
-## Recent Updates (v1.5.0)
+## Recent Updates (v1.5.1)
+
+**Critical Bug Fix:**
+- ✅ **Bug #11 Fixed:** Incorrect section attribution to itext shops
+  - itext shops incorrectly claiming inventory from preceding building_trader@ shops
+  - Example: `m_zcom_start_519` merged with `building_trader@31` (actor 807991996)
+  - Root cause: `_section_belongs_to_shop()` only checked for `itext_` patterns, ignored `building_trader@`
+  - Fix: Added `building_trader@` check to section ownership validation
+  - Impact: +2 shops (438 vs 436), correct inventory separation
+
+**Results:**
+- Shops correctly separated with distinct inventories
+- `m_zcom_start_519`: Only its own units (archer, zombie, imp)
+- `building_trader@31`: Correct inventory (bocman, items, spells)
+- No more merged shops or cross-attribution
+
+**Previous Updates (v1.5.0)**
 
 **Critical Bug Fixes:**
 - ✅ **Bug #9 Fixed:** UTF-16-LE alignment bug causing 10-15% of shops to be missed
@@ -412,6 +428,7 @@ The extractor has been validated on multiple save files:
 - **Bug #4 (Shops without "m_" prefix):** ✅ 59 previously missing shops now extracted (aralan, dragondor, d)
 - **Bug #9 (UTF-16 alignment):** ✅ m_inselburg_6529 found in both test saves
 - **Bug #10 (False attribution):** ✅ m_whitehill_1725 correctly shows empty (no false spells)
+- **Bug #11 (itext shop section attribution):** ✅ m_zcom_start_519 and building_trader@31 correctly separated
 
 ## Technical Details
 
@@ -518,6 +535,13 @@ Valid item/unit/spell IDs must:
 
 ## Version History
 
+### 1.5.1 (2026-01-24)
+- ✅ **Bug #11 Fixed:** Incorrect section attribution - itext shops claiming building_trader@ inventory
+- ✅ **Impact:** +2 shops correctly separated (438 vs 436), accurate inventory per shop
+- ✅ **Fix:** Added `building_trader@` check to `_section_belongs_to_shop()` method
+- ✅ Validated on save quick1769254717 with m_zcom_start_519 and building_trader@31 (actor 807991996)
+- ✅ Research documentation in `/tests/research/save_decompiler/kb_shop_extractor/2026-01-24/`
+
 ### 1.5.0 (2026-01-17)
 - ✅ **Bug #9 Fixed:** UTF-16-LE alignment bug - shops at odd byte offsets now detected
 - ✅ **Bug #10 Fixed:** False inventory attribution - section validation now uses alignment fix
@@ -590,6 +614,6 @@ This tool was created for research and educational purposes.
 ---
 
 **Developed by:** Claude (Anthropic)
-**Date:** 2026-01-15
+**Date:** 2026-01-24
 **Status:** Production Ready ✅
-**Version:** 1.4.0
+**Version:** 1.5.1

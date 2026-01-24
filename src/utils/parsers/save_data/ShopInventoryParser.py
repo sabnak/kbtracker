@@ -679,6 +679,9 @@ class ShopInventoryParser(IShopInventoryParser):
 		"""
 		chunk = data[section_pos:shop_pos]
 
+		if b'building_trader@' in chunk:
+			return False
+
 		for alignment_offset in [0, 1]:
 			if alignment_offset >= len(chunk):
 				continue
