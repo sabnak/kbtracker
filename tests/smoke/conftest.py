@@ -4,7 +4,7 @@ from dependency_injector import providers
 
 from src.core.Container import Container
 from src.utils.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
-from src.utils.parsers.save_data.ShopInventoryParserOld import ShopInventoryParserOld
+from src.utils.parsers.save_data.ShopInventoryParser import ShopInventoryParser
 
 
 @pytest.fixture(scope="session")
@@ -42,7 +42,7 @@ def test_container():
 	container = Container()
 
 	container.save_file_decompressor.override(providers.Singleton(SaveFileDecompressor))
-	container.shop_inventory_parser.override(providers.Singleton(ShopInventoryParserOld))
+	container.shop_inventory_parser.override(providers.Singleton(ShopInventoryParser))
 
 	container.wire(modules=["tests.smoke.test_shop_inventory_parser"])
 
