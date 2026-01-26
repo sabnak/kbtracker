@@ -95,10 +95,10 @@
 ## Files Included
 
 ### Core Implementation
-- ✅ `src/utils/parsers/save_data/ShopInventoryParser.py` - Main parser class
+- ✅ `src/utils/parsers/save_data/SaveDataParser.py` - Main parser class
 - ✅ `src/utils/parsers/save_data/SaveFileDecompressor.py` - Decompression
 - ✅ `src/utils/parsers/save_data/export_shop_inventory.py` - Console tool
-- ✅ `src/utils/parsers/save_data/IShopInventoryParser.py` - Interface
+- ✅ `src/utils/parsers/save_data/ISaveDataParser.py` - Interface
 - ✅ `src/utils/parsers/save_data/ISaveFileDecompressor.py` - Interface
 
 ### Documentation

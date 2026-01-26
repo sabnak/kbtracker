@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
+from src.utils.parsers.save_data.SaveFileData import SaveFileData
 
 
 class IProfileGameDataSyncerService(ABC):
@@ -10,7 +11,7 @@ class IProfileGameDataSyncerService(ABC):
 	@abstractmethod
 	def sync(
 		self,
-		data: list[dict[str, typing.Any]],
+		data: SaveFileData,
 		profile_id: int
 	) -> ProfileSyncResult:
 		"""

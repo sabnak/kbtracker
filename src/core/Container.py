@@ -85,7 +85,7 @@ class Container(containers.DeclarativeContainer):
 
 	# Save file parsers
 	save_file_decompressor = providers.AbstractSingleton()
-	shop_inventory_parser = providers.AbstractSingleton()
+	save_data_parser = providers.AbstractSingleton()
 	hero_save_parser = providers.AbstractSingleton()
 
 	logger = providers.AbstractSingleton()

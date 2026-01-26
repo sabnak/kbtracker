@@ -7,10 +7,11 @@ from dependency_injector.wiring import inject, Provide
 
 from src.core.Container import Container
 from src.utils.parsers.save_data.ISaveFileDecompressor import ISaveFileDecompressor
-from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
+from src.utils.parsers.save_data.ISaveDataParser import ISaveDataParser
+from src.utils.parsers.save_data.SaveFileData import SaveFileData
 
 
-class ShopInventoryParser(IShopInventoryParser):
+class SaveDataParser(ISaveDataParser):
 
 	METADATA_KEYWORDS: set[str] = {
 		'count', 'flags', 'lvars', 'slruck', 'id', 'strg', 'bmd', 'ugid',
@@ -28,14 +29,14 @@ class ShopInventoryParser(IShopInventoryParser):
 		decompressor: ISaveFileDecompressor = Provide[Container.save_file_decompressor]
 	):
 		"""
-		Initialize shop inventory parser
+		Initialize save data parser
 
 		:param decompressor:
 			Save file decompressor
 		"""
 		self._decompressor = decompressor
 
-	def parse(self, save_path: Path) -> list[dict[str, Any]]:
+	def parse(self, save_path: Path) -> SaveFileData:
 		"""
 		Extract shop inventory data from save file
 
@@ -74,17 +75,21 @@ class ShopInventoryParser(IShopInventoryParser):
 		:param save_path:
 			Path to save 'data' file
 		:return:
-			List of shop dictionaries with structure:
+			SaveFileData containing shop inventories with structure:
 			{
-				"itext": str,      # Shop itext ID or empty string
-				"actor": str,      # Actor ID or empty string
-				"location": str,   # Location name (e.g., "m_portland", "dragondor")
-				"inventory": {
-					"garrison": list[dict],
-					"items": list[dict],
-					"units": list[dict],
-					"spells": list[dict]
-				}
+				"shops": [
+					{
+						"itext": str,      # Shop itext ID or empty string
+						"actor": str,      # Actor ID or empty string
+						"location": str,   # Location name (e.g., "m_portland", "dragondor")
+						"inventory": {
+							"garrison": list[dict],
+							"items": list[dict],
+							"units": list[dict],
+							"spells": list[dict]
+						}
+					}
+				]
 			}
 		:raises ValueError:
 			If save file is invalid
@@ -152,7 +157,7 @@ class ShopInventoryParser(IShopInventoryParser):
 			}
 			result.append(shop_entry)
 
-		return result
+		return SaveFileData(shops=result)
 
 	def _find_all_shop_ids(self, data: bytes) -> list[tuple[str, int]]:
 		"""

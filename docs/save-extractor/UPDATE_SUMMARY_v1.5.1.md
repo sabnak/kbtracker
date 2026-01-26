@@ -23,7 +23,7 @@
 - Added v1.5.1 entry to Version History section
 - Updated footer version and date
 
-### 3. ShopInventoryParser.py
+### 3. SaveDataParser.py
 **Fixed:** `_section_belongs_to_shop()` method (line 655)
 - Added `building_trader@` check before UTF-16-LE alignment checks
 - One-line fix: `if b'building_trader@' in chunk: return False`

@@ -141,8 +141,8 @@ class ProfileService(IProfileService):
 	def scan_save(self, profile: ProfileEntity, save_path: Path) -> ProfileSyncResult:
 		self.clear_profile(profile.id)
 
-		shop_data = self._save_file_service.scan_shop_inventory(save_path)
-		result = self._data_syncer.sync(shop_data, profile.id)
+		save_data = self._save_file_service.scan_save_data(save_path)
+		result = self._data_syncer.sync(save_data, profile.id)
 
 		save_timestamp = int(save_path.stat().st_mtime)
 

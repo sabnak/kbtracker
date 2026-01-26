@@ -4,10 +4,10 @@ from typing import Any
 
 
 @pytest.mark.smoke
-class TestShopInventoryParser:
+class TestSaveDataParser:
 
 	"""
-	Smoke tests for ShopInventoryParser using real save files
+	Smoke tests for SaveDataParser using real save files
 
 	CRITICAL: Manual execution only - excluded from CI/CD
 	Run with: pytest -m smoke tests/smoke/
@@ -46,7 +46,7 @@ class TestShopInventoryParser:
 
 	def test_shop_itext_m_zcom_1422_inventory(
 		self,
-		shop_inventory_parser,
+		save_data_parser,
 		test_save_1707047253_path: Path
 	) -> None:
 		"""
@@ -58,16 +58,16 @@ class TestShopInventoryParser:
 		- Units parsing (39 units)
 		- Spells parsing (30 spells)
 
-		:param shop_inventory_parser:
-			ShopInventoryParser instance
+		:param save_data_parser:
+			SaveDataParser instance
 		:param test_save_1707047253_path:
 			Path to save data file
 		"""
-		result = shop_inventory_parser.parse(test_save_1707047253_path)
+		result = save_data_parser.parse(test_save_1707047253_path)
 
 		shop_id = "m_zcom_1422"
 		inventory = None
-		for shop_data in result:
+		for shop_data in result.shops:
 			if shop_data.get('itext') == shop_id:
 				inventory = shop_data['inventory']
 				break

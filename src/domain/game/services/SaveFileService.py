@@ -13,7 +13,8 @@ from src.domain import ProfileEntity
 from src.domain.app.entities.Game import Game
 from src.domain.game.interfaces.ISaveFileService import ISaveFileService
 from src.utils.parsers.save_data.IHeroSaveParser import IHeroSaveParser
-from src.utils.parsers.save_data.IShopInventoryParser import IShopInventoryParser
+from src.utils.parsers.save_data.ISaveDataParser import ISaveDataParser
+from src.utils.parsers.save_data.SaveFileData import SaveFileData
 
 
 class SaveFileService(ISaveFileService):
@@ -21,13 +22,13 @@ class SaveFileService(ISaveFileService):
 	def __init__(
 		self,
 		config: Config = Provide[Container.config],
-		shop_parser: IShopInventoryParser = Provide[Container.shop_inventory_parser],
-		hero_parser: IHeroSaveParser = Provide[Container.hero_save_parser],
+		save_data_parser: ISaveDataParser = Provide[Container.save_data_parser],
+		hero_data_parser: IHeroSaveParser = Provide[Container.hero_save_parser],
 		logger: Logger = Provide[Container.logger]
 	):
 		self._config = config
-		self._hero_parser = hero_parser
-		self._shop_parser = shop_parser
+		self._hero_parser = hero_data_parser
+		self._shop_parser = save_data_parser
 		self._logger = logger
 
 	def list_save_directories(
@@ -100,7 +101,7 @@ class SaveFileService(ISaveFileService):
 
 		return hero_data
 
-	def scan_shop_inventory(self, save_path: Path) -> list[dict[str, Any]]:
+	def scan_save_data(self, save_path: Path) -> SaveFileData:
 		return self._shop_parser.parse(save_path)
 
 	def find_profile_most_recent_save(self, profile: ProfileEntity) -> Path:

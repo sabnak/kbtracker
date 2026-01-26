@@ -42,7 +42,7 @@ def test_container():
 	container = Container()
 
 	container.save_file_decompressor.override(providers.Singleton(SaveFileDecompressor))
-	container.shop_inventory_parser.override(providers.Singleton(ShopInventoryParser))
+	container.save_data_parser.override(providers.Singleton(ShopInventoryParser))
 
 	container.wire(modules=["tests.smoke.test_shop_inventory_parser"])
 
@@ -61,4 +61,4 @@ def shop_inventory_parser(test_container):
 	:return:
 		ShopInventoryParser instance from container
 	"""
-	return test_container.shop_inventory_parser()
+	return test_container.save_data_parser()

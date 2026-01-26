@@ -40,7 +40,7 @@
   - After fix: 438 shops (correctly separated)
   - `m_zcom_start_519` now shows only its own units (archer, zombie, imp)
   - `building_trader@31` (actor 807991996) correctly shows its inventory (bocman, monstera, items, spells)
-- **Affected Code:** `_section_belongs_to_shop()` method in `ShopInventoryParser.py` (line 655)
+- **Affected Code:** `_section_belongs_to_shop()` method in `SaveDataParser.py` (line 655)
 
 ### Comparison with _section_belongs_to_building_trader()
 
@@ -337,7 +337,7 @@ None - all changes are backward compatible. Shops with `itext_` identifiers work
   - Before fix: 312 shops, 4 with content (98% empty), 39 total products
   - After fix: 312 shops, 72 with content, 943 total products (24x increase)
   - Inventory breakdown: 10 garrison units, 385 items, 323 units, 225 spells
-- **Affected Code:** `_find_all_shop_ids()` method in `ShopInventoryParser.py` (lines 72-120)
+- **Affected Code:** `_find_all_shop_ids()` method in `SaveDataParser.py` (lines 72-120)
 
 ### Technical Details
 
@@ -434,7 +434,7 @@ None - all changes are backward compatible
   - aralan: 25 shops
   - dragondor: 16 shops
   - d: 18 shops
-- **Affected Code:** Line 122 in `ShopInventoryParser.py` - `_find_all_shop_ids()` method
+- **Affected Code:** Line 122 in `SaveDataParser.py` - `_find_all_shop_ids()` method
 
 ### Statistics Update (Save 1707047253)
 
@@ -475,7 +475,7 @@ None - all changes are backward compatible
 - **Root Cause:** Minimum length validation was set to 5 characters
 - **Fix:** Reduced minimum length from 5 → 3 characters in `_is_valid_id()` method
 - **Impact:** 56 shops now correctly extract short-named entities
-- **Affected Code:** Lines 246, 319, 397 in `ShopInventoryParser.py`
+- **Affected Code:** Lines 246, 319, 397 in `SaveDataParser.py`
 
 **Bug #2: Invalid Entries from Adjacent Sections**
 - **Issue:** Parser read beyond section boundaries into `.temp` and other adjacent sections
@@ -489,7 +489,7 @@ None - all changes are backward compatible
 - **Root Cause:** "moral" missing from METADATA_KEYWORDS filter list
 - **Fix:** Added "moral" to METADATA_KEYWORDS set
 - **Impact:** Reduced total items from 837 → 789 (48 false positives removed across all shops)
-- **Affected Code:** Line 24 in `ShopInventoryParser.py`
+- **Affected Code:** Line 24 in `SaveDataParser.py`
 
 ### New Features
 

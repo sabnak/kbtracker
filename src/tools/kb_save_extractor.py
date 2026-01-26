@@ -27,7 +27,7 @@ class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 
 	def _run(self):
 		self._shops = []
-		parser = self._container.shop_inventory_parser()
+		parser = self._container.save_data_parser()
 
 		if not self._launch_params.save_path.exists():
 			print(f"Error: Save not found: {self._launch_params.save_path}")
@@ -48,7 +48,7 @@ class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 			sep="\n"
 		)
 
-		self._shops = parser.parse(self._launch_params.save_path)
+		self._shops = parser.parse(self._launch_params.save_path).shops
 
 		print("\nSaving to JSON...")
 		with open(output_path, 'w', encoding='utf-8') as f:

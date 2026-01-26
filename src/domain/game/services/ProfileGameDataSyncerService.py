@@ -21,6 +21,7 @@ from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
 from src.domain.game.entities.CorruptedProfileData import CorruptedProfileData
 from src.domain.game.entities.ShopProduct import ShopProduct
 from src.domain.game.entities.ShopProductType import ShopProductType
+from src.utils.parsers.save_data.SaveFileData import SaveFileData
 
 
 @dataclass
@@ -51,7 +52,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 
 	def sync(
 		self,
-		data: list[dict[str, typing.Any]],
+		data: SaveFileData,
 		profile_id: int
 	) -> ProfileSyncResult:
 		"""
@@ -64,6 +65,11 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		:return:
 			ProfileSyncResult with counts and corrupted data
 		"""
+		shops = self._sync_shops(data.shops, profile_id)
+		return shops
+
+	def _sync_shops(self, data: list[dict[str, typing.Any]], profile_id: int):
+
 		counts = {"items": 0, "spells": 0, "units": 0, "garrison": 0}
 		missing_data = {"items": [], "spells": [], "units": [], "garrison": [], "shops": []}
 

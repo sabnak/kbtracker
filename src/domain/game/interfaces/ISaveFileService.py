@@ -4,6 +4,7 @@ from typing import Any
 
 from src.domain import ProfileEntity
 from src.domain.app.entities.Game import Game
+from src.utils.parsers.save_data.SaveFileData import SaveFileData
 
 
 class ISaveFileService(ABC):
@@ -59,7 +60,7 @@ class ISaveFileService(ABC):
 		...
 
 	@abstractmethod
-	def scan_shop_inventory(self, save_path: Path) -> list[dict[str, Any]]:
+	def scan_save_data(self, save_path: Path) -> SaveFileData:
 		...
 
 	@abstractmethod

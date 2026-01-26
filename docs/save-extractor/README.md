@@ -457,7 +457,7 @@ Both match the basic pattern, so the only reliable way to filter them is maintai
 1. If parser extracts items with very generic names (e.g., `mana`, `limit`, `count`)
 2. Verify the item doesn't appear in the game at that shop
 3. Check if it appears in many shops (metadata keywords appear frequently)
-4. Add to METADATA_KEYWORDS set in `ShopInventoryParser.py`
+4. Add to METADATA_KEYWORDS set in `SaveDataParser.py`
 
 **Recent Additions:**
 - `mana`, `limit` - Added 2026-01-05 (found in dragondor_5464 item metadata)
