@@ -1,10 +1,11 @@
 import pytest
 from pathlib import Path
 from dependency_injector import providers
+from unittest.mock import Mock
 
 from src.core.Container import Container
 from src.utils.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
-from src.utils.parsers.save_data.ShopInventoryParser import ShopInventoryParser
+from src.utils.parsers.save_data.SaveDataParser import SaveDataParser
 
 
 @pytest.fixture(scope="session")
@@ -32,19 +33,35 @@ def test_save_1707047253_path(test_saves_path: str) -> Path:
 
 
 @pytest.fixture(scope="module")
-def test_container():
+def mock_item_repository():
+	"""
+	Module-scoped mock ItemRepository
+
+	:return:
+		Mock ItemRepository instance that always returns False
+	"""
+	mock_repo = Mock()
+	mock_repo.is_item_exists.return_value = False
+	return mock_repo
+
+
+@pytest.fixture(scope="module")
+def test_container(mock_item_repository):
 	"""
 	Module-scoped test container with real parser implementations
 
+	:param mock_item_repository:
+		Mock ItemRepository instance
 	:return:
 		Configured Container instance
 	"""
 	container = Container()
 
 	container.save_file_decompressor.override(providers.Singleton(SaveFileDecompressor))
-	container.save_data_parser.override(providers.Singleton(ShopInventoryParser))
+	container.save_data_parser.override(providers.Singleton(SaveDataParser))
+	container.item_repository.override(providers.Singleton(lambda: mock_item_repository))
 
-	container.wire(modules=["tests.smoke.test_shop_inventory_parser"])
+	container.wire(modules=["tests.smoke.test_save_data_parser"])
 
 	yield container
 
@@ -52,13 +69,13 @@ def test_container():
 
 
 @pytest.fixture
-def shop_inventory_parser(test_container):
+def save_data_parser(test_container):
 	"""
-	Function-scoped ShopInventoryParser instance
+	Function-scoped SaveDataParser instance
 
 	:param test_container:
 		Module-scoped test container
 	:return:
-		ShopInventoryParser instance from container
+		SaveDataParser instance from container
 	"""
 	return test_container.save_data_parser()

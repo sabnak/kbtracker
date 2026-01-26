@@ -7,6 +7,7 @@ from pathlib import Path
 import pydantic
 
 from src.tools.CLITool import CLITool, T
+from src.utils.parsers.save_data.SaveFileData import SaveFileData
 
 
 class LaunchParams(pydantic.BaseModel):
@@ -16,7 +17,7 @@ class LaunchParams(pydantic.BaseModel):
 
 class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 
-	_shops: list[dict]
+	_result: SaveFileData | None = None
 	_boundary = "=" * 78
 
 	def _build_params(self) -> T:
@@ -26,7 +27,7 @@ class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 		return LaunchParams(save_path=args.save_path)
 
 	def _run(self):
-		self._shops = []
+		self._result = None
 		parser = self._container.save_data_parser()
 
 		if not self._launch_params.save_path.exists():
@@ -48,18 +49,18 @@ class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 			sep="\n"
 		)
 
-		self._shops = parser.parse(self._launch_params.save_path).shops
+		self._result = parser.parse(self._launch_params.save_path)
 
 		print("\nSaving to JSON...")
 		with open(output_path, 'w', encoding='utf-8') as f:
-			json.dump(self._shops, f, indent=2, ensure_ascii=False)
+			json.dump(self._result.model_dump(), f, indent=2, ensure_ascii=False)
 
 		self._print_statistics()
 
 		print(
 			"",
 			self._boundary,
-			f"SUCCESS: Extracted {len(self._shops)} shops to {output_path}",
+			f"SUCCESS: Extracted {len(self._result.shops)} shops to {output_path}",
 			self._boundary,
 			sep="\n"
 		)
@@ -67,7 +68,7 @@ class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 	def _print_statistics(self) -> None:
 		summary = Counter()
 		not_empty_shops = Counter()
-		for shop in self._shops:
+		for shop in self._result.shops:
 			inventory = shop['inventory']
 			if inventory['garrison']:
 				not_empty_shops['garrison'] += 1
@@ -88,7 +89,7 @@ class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 			"EXTRACTION STATISTICS",
 			"="*78,
 			"",
-			f"Total shops:           {len(self._shops)}",
+			f"Total shops:           {len(self._result.shops)}",
 			f"  - With garrison:     {not_empty_shops['garrison']}",
 			f"  - With items:        {not_empty_shops['items']}",
 			f"  - With units:        {not_empty_shops['units']}",
@@ -99,6 +100,8 @@ class KBShopSaveExtractorCLI(CLITool[LaunchParams]):
 			f"  - Items:             {summary['items']}",
 			f"  - Units:             {summary['units']}",
 			f"  - Spells:            {summary['spells']}",
+			"",
+			f"Items in inventory: {len(self._result.hero_inventory.items) if self._result.hero_inventory else 0}",
 			sep="\n"
 		)
 

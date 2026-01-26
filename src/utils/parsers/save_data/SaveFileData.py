@@ -5,7 +5,7 @@ import pydantic
 
 class GameObjectData(pydantic.BaseModel):
 	kb_id: str
-	quantity: int | None = None
+	quantity: int
 
 
 class HeroInventory(pydantic.BaseModel):

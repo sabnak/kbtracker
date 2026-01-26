@@ -6,9 +6,10 @@ from typing import Any, Optional
 from dependency_injector.wiring import inject, Provide
 
 from src.core.Container import Container
+from src.domain.game.interfaces.IItemRepository import IItemRepository
 from src.utils.parsers.save_data.ISaveFileDecompressor import ISaveFileDecompressor
 from src.utils.parsers.save_data.ISaveDataParser import ISaveDataParser
-from src.utils.parsers.save_data.SaveFileData import SaveFileData
+from src.utils.parsers.save_data.SaveFileData import SaveFileData, HeroInventory, GameObjectData
 
 
 class SaveDataParser(ISaveDataParser):
@@ -26,15 +27,19 @@ class SaveDataParser(ISaveDataParser):
 	@inject
 	def __init__(
 		self,
-		decompressor: ISaveFileDecompressor = Provide[Container.save_file_decompressor]
+		decompressor: ISaveFileDecompressor = Provide[Container.save_file_decompressor],
+		item_repository: IItemRepository = Provide[Container.item_repository]
 	):
 		"""
 		Initialize save data parser
 
 		:param decompressor:
 			Save file decompressor
+		:param item_repository:
+			Item repository for validating kb_ids
 		"""
 		self._decompressor = decompressor
+		self._item_repository = item_repository
 
 	def parse(self, save_path: Path) -> SaveFileData:
 		"""
@@ -157,7 +162,10 @@ class SaveDataParser(ISaveDataParser):
 			}
 			result.append(shop_entry)
 
-		return SaveFileData(shops=result)
+		hero_items = self._parse_hero_inventory(data)
+		hero_inventory = HeroInventory(items=hero_items) if hero_items else None
+
+		return SaveFileData(shops=result, hero_inventory=hero_inventory)
 
 	def _find_all_shop_ids(self, data: bytes) -> list[tuple[str, int]]:
 		"""
@@ -761,6 +769,87 @@ class SaveDataParser(ISaveDataParser):
 				result['spells'] = self._parse_spells_section(data, section_pos, actual_end)
 
 		return result
+
+	def _find_hero_inventory_items_section(self, data: bytes) -> Optional[int]:
+		"""
+		Find .items section containing hero inventory
+
+		Hero inventory shares .items section with achievements.
+		Look for .items preceded by hero@ marker.
+
+		:param data:
+			Decompressed save data
+		:return:
+			Position of .items section or None
+		"""
+		pos = 0
+		while pos < len(data):
+			hero_pos = data.find(b'hero@', pos)
+			if hero_pos == -1:
+				break
+
+			search_end = min(len(data), hero_pos + 5000)
+			items_pos = data.find(b'.items', hero_pos, search_end)
+
+			if items_pos != -1:
+				return items_pos
+
+			pos = hero_pos + 1
+
+		return None
+
+	def _filter_hero_items(
+		self,
+		items: list[tuple[str, int]]
+	) -> list[GameObjectData]:
+		"""
+		Filter hero inventory items by validating against item database
+
+		Only items that exist in the item table are included.
+		This filters out stats, markers, buffs, medals automatically.
+
+		:param items:
+			List of (kb_id, quantity) tuples from bag section
+		:return:
+			List of valid hero inventory items
+		"""
+		hero_items = []
+
+		for kb_id, quantity in items:
+			if not self._is_valid_id(kb_id):
+				continue
+
+			if kb_id in self.METADATA_KEYWORDS:
+				continue
+
+			if not self._item_repository.is_item_exists(kb_id):
+				continue
+
+			hero_items.append(GameObjectData(kb_id=kb_id, quantity=quantity))
+
+		return hero_items
+
+	def _parse_hero_inventory(self, data: bytes) -> list[GameObjectData]:
+		"""
+		Parse hero inventory from save data
+
+		Hero inventory is in the same .items section as achievements.
+		Parse all items then filter out achievements.
+
+		:param data:
+			Decompressed save data
+		:return:
+			List of GameObjectData with kb_id and quantity
+		"""
+		items_pos = self._find_hero_inventory_items_section(data)
+		if not items_pos:
+			return []
+
+		section_end = self._find_section_end(data, items_pos, items_pos + 200000)
+
+		all_items = self._parse_items_section(data, items_pos, section_end)
+
+		return self._filter_hero_items(all_items)
 
 	def _is_valid_id(self, item_id: str) -> bool:
 		"""

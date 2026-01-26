@@ -1,14 +1,33 @@
-# King's Bounty Shop Inventory Extractor
+# King's Bounty Save Data Extractor
 
-**Version:** 1.5.1
-**Date:** 2026-01-24
+**Version:** 1.6.0
+**Date:** 2026-01-26
 **Status:** Production Ready ✅
 
 ## Overview
 
-Production-ready tool to extract shop inventory data from King's Bounty save files. Extracts all shop contents including items, units, spells, and garrison across all game locations. Supports both standard named shops and building_trader@ shops with actor ID extraction.
+Production-ready tool to extract game data from King's Bounty save files. Extracts:
+- **Shop inventory** across all game locations (items, units, spells, garrison)
+- **Hero inventory** (equipped items and bag contents)
 
-## Recent Updates (v1.5.1)
+Supports both standard named shops and building_trader@ shops with actor ID extraction.
+
+## Recent Updates (v1.6.0)
+
+**New Feature: Hero Inventory Extraction**
+- ✅ **Hero Inventory:** Extracts all items from hero's bag and equipped gear
+- ✅ **Database Validation:** Filters non-items using ItemRepository validation
+- ✅ **Quantity Support:** Correctly handles both stackable (scrolls, consumables) and non-stackable items
+- ✅ **Automatic Filtering:** Removes achievements, medals, buffs, stats, and metadata
+- ✅ **Format:** Consistent with shop inventory structure (kb_id, quantity)
+
+**Results:**
+- Extracts >200 hero inventory items per save
+- Database validation ensures only valid items included
+- No achievements (`achievement_*`), medals (`medal_*`), buffs (`sp_*`), or stats (`experience`, `defense`)
+- Stackable items show correct quantities (e.g., spell scrolls x6, quest items x626)
+
+**Previous Updates (v1.5.1)
 
 **Critical Bug Fix:**
 - ✅ **Bug #11 Fixed:** Incorrect section attribution to itext shops
@@ -90,6 +109,8 @@ Production-ready tool to extract shop inventory data from King's Bounty save fil
 ## Features
 
 - ✅ Extracts all 4 shop sections: Garrison, Items, Units, Spells
+- ✅ Extracts hero inventory (equipped + bag items)
+- ✅ Database validation for hero items (filters out non-items)
 - ✅ Handles correct quantity parsing for all item types
 - ✅ Filters metadata keywords automatically (including "moral")
 - ✅ Exports to JSON, TXT, and statistics files
@@ -160,26 +181,27 @@ Each save is a directory with a timestamp (e.g., `1707047253`) containing:
 ### JSON Format
 
 ```json
-[
-  {
-    "itext": "portland_6820",
-    "actor": "",
-    "location": "portland",
-    "inventory": {
-      "garrison": [],
-      "items": [
-        {"name": "addon4_3_crystal", "quantity": 4},
-        {"name": "snake_ring", "quantity": 1}
-      ],
-      "units": [
-        {"name": "bowman", "quantity": 152}
-      ],
-      "spells": [
-        {"name": "spell_plantation", "quantity": 2},
-        {"name": "spell_sanctuary", "quantity": 2}
-      ]
-    }
-  },
+{
+  "shops": [
+    {
+      "itext": "portland_6820",
+      "actor": "",
+      "location": "portland",
+      "inventory": {
+        "garrison": [],
+        "items": [
+          {"name": "addon4_3_crystal", "quantity": 4},
+          {"name": "snake_ring", "quantity": 1}
+        ],
+        "units": [
+          {"name": "bowman", "quantity": 152}
+        ],
+        "spells": [
+          {"name": "spell_plantation", "quantity": 2},
+          {"name": "spell_sanctuary", "quantity": 2}
+        ]
+      }
+    },
   {
     "itext": "",
     "actor": "807991996",
@@ -200,23 +222,33 @@ Each save is a directory with a timestamp (e.g., `1707047253`) containing:
       ]
     }
   },
-  {
-    "itext": "wizard_tower_22",
-    "actor": "2103300303",
-    "location": "wizard_tower",
-    "inventory": {
-      "garrison": [],
-      "items": [],
-      "units": [
-        {"name": "assassin", "quantity": 9999},
-        {"name": "sprite", "quantity": 9999}
-      ],
-      "spells": [
-        {"name": "spell_scare", "quantity": 4}
-      ]
+    {
+      "itext": "wizard_tower_22",
+      "actor": "2103300303",
+      "location": "wizard_tower",
+      "inventory": {
+        "garrison": [],
+        "items": [],
+        "units": [
+          {"name": "assassin", "quantity": 9999},
+          {"name": "sprite", "quantity": 9999}
+        ],
+        "spells": [
+          {"name": "spell_scare", "quantity": 4}
+        ]
+      }
     }
+  ],
+  "hero_inventory": {
+    "items": [
+      {"kb_id": "addon3_magic_ingridients", "quantity": 1},
+      {"kb_id": "kerus_sword", "quantity": 1},
+      {"kb_id": "addon4_spell_rock_holy_rain_100", "quantity": 3},
+      {"kb_id": "addon3_quest_pow", "quantity": 5767},
+      {"kb_id": "battlemage_helm", "quantity": 1}
+    ]
   }
-]
+}
 ```
 
 ### TXT Format
@@ -257,7 +289,14 @@ SPELLS (3):
 
 ### JSON Fields
 
-Each shop in the array contains:
+The root object contains:
+
+- **shops** (array): All shop inventories in the save file
+- **hero_inventory** (object or null): Hero's inventory and equipped items
+
+#### Shop Fields
+
+Each shop in the shops array contains:
 
 - **itext** (string): Shop itext identifier or empty string
   - Standard shops: Shop ID (e.g., `"m_portland_8671"`)
@@ -283,6 +322,24 @@ Each shop in the array contains:
 Each item/unit/spell contains:
 - `name`: Item identifier (e.g., `addon4_3_crystal`, `bowman`, `spell_lull`)
 - `quantity`: Available quantity
+
+#### Hero Inventory Fields
+
+**hero_inventory** (object or null): Hero's complete inventory
+
+- **items** (array): All hero items (equipped + bag contents)
+  - Filtered automatically to exclude achievements, medals, buffs, stats
+  - Database-validated to ensure only real items included
+  - Items with `kb_id` (item identifier) and `quantity` (1 for equipment, N for stackables)
+
+Each hero inventory item contains:
+- `kb_id`: Item identifier (e.g., `addon3_magic_ingridients`, `kerus_sword`)
+- `quantity`: Item quantity (1 for non-stackable equipment, N for stackable scrolls/consumables)
+
+**Examples:**
+- Equipment (non-stackable): `{"kb_id": "kerus_sword", "quantity": 1}`
+- Spell scrolls (stackable): `{"kb_id": "addon4_spell_rock_holy_rain_100", "quantity": 3}`
+- Quest items (stackable): `{"kb_id": "addon3_quest_pow", "quantity": 5767}`
 
 ## How It Works
 
@@ -534,6 +591,15 @@ Valid item/unit/spell IDs must:
 - Shops without "m_" prefix now correctly extracted
 
 ## Version History
+
+### 1.6.0 (2026-01-26)
+- ✅ **Hero Inventory Extraction:** Extracts all hero items (equipped + bag) with database validation
+- ✅ **Automatic Filtering:** Removes achievements, medals, buffs, stats, and metadata automatically
+- ✅ **Quantity Support:** Correctly handles stackable and non-stackable items
+- ✅ **New Methods:** `_find_hero_inventory_items_section()`, `_parse_hero_inventory()`, `_filter_hero_items()`
+- ✅ **Repository Method:** Added `IItemRepository.is_item_exists()` for validation
+- ✅ **Test Suite:** 9 comprehensive unit tests, all passing
+- ✅ Extracts >200 items per save
 
 ### 1.5.1 (2026-01-24)
 - ✅ **Bug #11 Fixed:** Incorrect section attribution - itext shops claiming building_trader@ inventory

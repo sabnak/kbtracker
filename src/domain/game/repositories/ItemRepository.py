@@ -374,6 +374,21 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		"""
 		return [pb.value for pb in propbits]
 
+	def is_item_exists(self, kb_id: str) -> bool:
+		"""
+		Check if item exists by kb_id
+
+		:param kb_id:
+			Item kb_id to check
+		:return:
+			True if item exists, False otherwise
+		"""
+		with self._get_session() as session:
+			exists = session.query(ItemMapper.id).filter(
+				ItemMapper.kb_id == kb_id
+			).first() is not None
+			return exists
+
 	def _mapper_to_entity(self, mapper: ItemMapper) -> Item:
 		"""
 		Convert ItemMapper to Item entity

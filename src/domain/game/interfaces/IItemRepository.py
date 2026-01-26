@@ -158,3 +158,15 @@ class IItemRepository(ABC):
 			Dictionary mapping ID to Item
 		"""
 		pass
+
+	@abstractmethod
+	def is_item_exists(self, kb_id: str) -> bool:
+		"""
+		Check if item exists by kb_id
+
+		:param kb_id:
+			Item kb_id to check
+		:return:
+			True if item exists, False otherwise
+		"""
+		pass
