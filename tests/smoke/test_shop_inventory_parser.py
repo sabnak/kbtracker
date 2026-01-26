@@ -66,9 +66,12 @@ class TestShopInventoryParser:
 		result = shop_inventory_parser.parse(test_save_1707047253_path)
 
 		shop_id = "m_zcom_1422"
-		assert shop_id in result, f"Shop {shop_id} not found in parsed results"
-
-		inventory = result[shop_id]
+		inventory = None
+		for shop_data in result:
+			if shop_data.get('itext') == shop_id:
+				inventory = shop_data['inventory']
+				break
+		assert inventory, f"Shop {shop_id} not found in parsed results"
 
 		expected_garrison = [
 			{"name": "dread_eye", "quantity": 53},
