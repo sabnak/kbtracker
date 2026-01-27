@@ -28,6 +28,7 @@ from src.domain.game.repositories.ItemRepository import ItemRepository
 from src.domain.game.repositories.ItemSetRepository import ItemSetRepository
 from src.domain.game.repositories.LocalizationRepository import LocalizationRepository
 from src.domain.game.repositories.ShopInventoryRepository import ShopInventoryRepository
+from src.domain.game.repositories.HeroInventoryRepository import HeroInventoryRepository
 from src.domain.game.repositories.UnitRepository import UnitRepository
 from src.domain.game.repositories.SpellRepository import SpellRepository
 from src.domain.game.factories.LocFactory import LocFactory
@@ -145,6 +146,7 @@ class DefaultInstaller:
 		self._container.item_set_repository.override(providers.Singleton(ItemSetRepository))
 		self._container.localization_repository.override(providers.Singleton(LocalizationRepository))
 		self._container.shop_inventory_repository.override(providers.Singleton(ShopInventoryRepository))
+		self._container.hero_inventory_repository.override(providers.Singleton(HeroInventoryRepository))
 		self._container.profile_repository.override(providers.Singleton(ProfilePostgresRepository))
 		self._container.spell_repository.override(providers.Singleton(SpellRepository))
 		self._container.unit_repository.override(providers.Singleton(UnitRepository))

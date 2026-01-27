@@ -5,7 +5,7 @@ from datetime import datetime
 from unittest.mock import Mock, MagicMock, patch
 from src.domain.game.services.ProfileService import ProfileService
 from src.domain.game.entities.ProfileEntity import ProfileEntity
-from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
+from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult, ProfileSyncShopResult, ProfileSyncHeroInventoryResult
 from src.domain.exceptions import EntityNotFoundException, InvalidKbIdException
 
 
@@ -34,20 +34,26 @@ class TestProfileServiceScan:
 		return Mock()
 
 	@pytest.fixture
+	def mock_hero_inventory_repo(self):
+		return Mock()
+
+	@pytest.fixture
 	def service(
 		self,
 		mock_profile_repo,
 		mock_save_file_service,
 		mock_config,
 		mock_data_syncer,
-		mock_shop_inventory_repo
+		mock_shop_inventory_repo,
+		mock_hero_inventory_repo
 	):
 		return ProfileService(
 			profile_repository=mock_profile_repo,
 			save_file_service=mock_save_file_service,
 			config=mock_config,
 			data_syncer=mock_data_syncer,
-			shop_inventory_repository=mock_shop_inventory_repo
+			shop_inventory_repository=mock_shop_inventory_repo,
+			hero_inventory_repository=mock_hero_inventory_repo
 		)
 
 	@pytest.fixture
@@ -91,21 +97,28 @@ class TestProfileServiceScan:
 		}
 
 		mock_data_syncer.sync.return_value = ProfileSyncResult(
-			items=1,
-			spells=1,
-			units=1,
-			garrison=1,
-			corrupted_data=None
+			shops=ProfileSyncShopResult(
+				items=1,
+				spells=1,
+				units=1,
+				garrison=1,
+				missed_data=None
+			),
+			hero_inventory=ProfileSyncHeroInventoryResult(
+				items=3,
+				missed_data=None
+			)
 		)
 
 		result = service.scan_most_recent_save(1)
 
 		assert isinstance(result, ProfileSyncResult)
-		assert result.items == 1
-		assert result.spells == 1
-		assert result.units == 1
-		assert result.garrison == 1
-		assert result.corrupted_data is None
+		assert result.shops.items == 1
+		assert result.shops.spells == 1
+		assert result.shops.units == 1
+		assert result.shops.garrison == 1
+		assert result.shops.missed_data is None
+		assert result.hero_inventory.items == 3
 		mock_data_syncer.sync.assert_called_once()
 		mock_profile_repo.update.assert_called_once()
 
@@ -200,27 +213,35 @@ class TestProfileServiceScan:
 		}
 
 		mock_data_syncer.sync.return_value = ProfileSyncResult(
-			items=0,
-			spells=0,
-			units=0,
-			garrison=0,
-			corrupted_data=None
+			shops=ProfileSyncShopResult(
+				items=0,
+				spells=0,
+				units=0,
+				garrison=0,
+				missed_data=None
+			),
+			hero_inventory=ProfileSyncHeroInventoryResult(
+				items=0,
+				missed_data=None
+			)
 		)
 
 		result = service.scan_most_recent_save(1)
 
 		assert isinstance(result, ProfileSyncResult)
-		assert result.items == 0
-		assert result.spells == 0
-		assert result.units == 0
-		assert result.garrison == 0
-		assert result.corrupted_data is None
+		assert result.shops.items == 0
+		assert result.shops.spells == 0
+		assert result.shops.units == 0
+		assert result.shops.garrison == 0
+		assert result.shops.missed_data is None
+		assert result.hero_inventory.items == 0
 
 	def test_scan_multiple_saves_selects_most_recent(
 		self,
 		service,
 		mock_profile_repo,
 		mock_save_file_service,
+		mock_data_syncer,
 		sample_profile,
 		mock_config,
 		tmp_path
@@ -245,9 +266,23 @@ class TestProfileServiceScan:
 		save2.write_text("new save")
 
 		mock_save_file_service.find_profile_most_recent_save.return_value = save2
-		mock_save_file_service.scan_shop_inventory.return_value = {}
+		mock_save_file_service.scan_save_data.return_value = Mock()
+
+		mock_data_syncer.sync.return_value = ProfileSyncResult(
+			shops=ProfileSyncShopResult(
+				items=0,
+				spells=0,
+				units=0,
+				garrison=0,
+				missed_data=None
+			),
+			hero_inventory=ProfileSyncHeroInventoryResult(
+				items=0,
+				missed_data=None
+			)
+		)
 
 		result = service.scan_most_recent_save(1)
 
 		mock_save_file_service.find_profile_most_recent_save.assert_called_once_with(sample_profile)
-		mock_save_file_service.scan_shop_inventory.assert_called_once_with(save2)
+		mock_save_file_service.scan_save_data.assert_called_once_with(save2)

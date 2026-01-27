@@ -15,13 +15,17 @@ from src.domain.game.interfaces.IEntityRepository import IEntityRepository
 from src.domain.game.interfaces.IItemRepository import IItemRepository
 from src.domain.game.interfaces.IProfileGameDataSyncerService import IProfileGameDataSyncerService
 from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
+from src.domain.game.interfaces.IHeroInventoryRepository import IHeroInventoryRepository
 from src.domain.game.interfaces.ISpellRepository import ISpellRepository
 from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult, ProfileSyncShopResult, \
 	ProfileSyncHeroInventoryResult
 from src.domain.game.entities.MissedShopsData import MissedShopsData
+from src.domain.game.entities.MissedHeroInventoryData import MissedHeroInventoryData
 from src.domain.game.entities.ShopProduct import ShopProduct
 from src.domain.game.entities.ShopProductType import ShopProductType
+from src.domain.game.entities.HeroInventoryProduct import HeroInventoryProduct
+from src.domain.game.entities.InventoryEntityType import InventoryEntityType
 from src.utils.parsers.save_data.SaveFileData import SaveFileData, HeroInventory
 
 
@@ -41,6 +45,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		atom_map_repository: IEntityRepository[AtomMap] = Provide[Container.atom_map_repository],
 		actor_repository: IEntityRepository[Actor] = Provide[Container.actor_repository],
 		shop_inventory_repository: IShopInventoryRepository = Provide[Container.shop_inventory_repository],
+		hero_inventory_repository: IHeroInventoryRepository = Provide[Container.hero_inventory_repository],
 		logger: Logger = Provide[Container.logger]
 	):
 		self._item_repository = item_repository
@@ -49,6 +54,7 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		self._atom_map_repository = atom_map_repository
 		self._actor_repository = actor_repository
 		self._shop_inventory_repository = shop_inventory_repository
+		self._hero_inventory_repository = hero_inventory_repository
 		self._looger = logger
 
 	def sync(
@@ -73,8 +79,55 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			hero_inventory=hero_inventory
 		)
 
-	def _sync_hero_inventory(self, data: HeroInventory, profile_id: int) -> ProfileSyncHeroInventoryResult:
-		return ProfileSyncHeroInventoryResult(items=0, missed_data=None)
+	def _sync_hero_inventory(
+		self,
+		data: HeroInventory | None,
+		profile_id: int
+	) -> ProfileSyncHeroInventoryResult:
+		"""
+		Sync hero inventory items to database
+
+		:param data:
+			Hero inventory data from save file
+		:param profile_id:
+			Profile ID to associate inventory with
+		:return:
+			ProfileSyncHeroInventoryResult with item count and missed data
+		"""
+		if not data or not data.items:
+			return ProfileSyncHeroInventoryResult(items=0, missed_data=None)
+
+		count = 0
+		missing_kb_ids: list[str] = []
+
+		for game_object in data.items:
+			kb_id = game_object.kb_id
+			item = self._item_repository.get_by_kb_id(kb_id)
+
+			if not item:
+				missing_kb_ids.append(kb_id)
+				self._looger.warning(f"Item not found in database: {kb_id}")
+				continue
+
+			inventory = HeroInventoryProduct(
+				product_id=item.id,
+				product_type=InventoryEntityType.ITEM,
+				count=game_object.quantity,
+				profile_id=profile_id
+			)
+
+			try:
+				self._hero_inventory_repository.create(inventory)
+				count += 1
+			except DuplicateEntityException as e:
+				self._looger.warning(f"Duplicate hero inventory entry: {e}")
+				continue
+
+		missed_data = None
+		if missing_kb_ids:
+			missed_data = MissedHeroInventoryData(items=list(set(missing_kb_ids)))
+
+		return ProfileSyncHeroInventoryResult(items=count, missed_data=missed_data)
 
 	def _sync_shops(self, data: list[dict[str, typing.Any]], profile_id: int) -> ProfileSyncShopResult:
 

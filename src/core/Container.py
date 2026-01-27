@@ -18,6 +18,7 @@ from src.domain.game.interfaces.IProfileService import IProfileService
 from src.domain.game.interfaces.ISaveFileService import ISaveFileService
 from src.domain.app.interfaces.ISchemaManagementService import ISchemaManagementService
 from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
+from src.domain.game.interfaces.IHeroInventoryRepository import IHeroInventoryRepository
 from src.domain.game.interfaces.ISpellRepository import ISpellRepository
 from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 
@@ -45,6 +46,7 @@ class Container(containers.DeclarativeContainer):
 	actor_repository = providers.AbstractSingleton(IEntityRepository)
 	localization_repository = providers.AbstractSingleton(ILocalizationRepository)
 	shop_inventory_repository = providers.AbstractSingleton(IShopInventoryRepository)
+	hero_inventory_repository = providers.AbstractSingleton(IHeroInventoryRepository)
 	profile_repository = providers.AbstractSingleton(IProfileRepository)
 	spell_repository = providers.AbstractSingleton(ISpellRepository)
 	unit_repository = providers.AbstractSingleton(IUnitRepository)

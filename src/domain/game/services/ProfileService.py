@@ -14,6 +14,7 @@ from src.domain.game.interfaces.IProfileRepository import IProfileRepository
 from src.domain.game.interfaces.IProfileService import IProfileService
 from src.domain.game.interfaces.ISaveFileService import ISaveFileService
 from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
+from src.domain.game.interfaces.IHeroInventoryRepository import IHeroInventoryRepository
 
 
 class ProfileService(IProfileService):
@@ -24,13 +25,15 @@ class ProfileService(IProfileService):
 		data_syncer: IProfileGameDataSyncerService = Provide[Container.profile_data_syncer_service],
 		save_file_service: ISaveFileService = Provide[Container.save_file_service],
 		config: Config = Provide[Container.config],
-		shop_inventory_repository: IShopInventoryRepository = Provide[Container.shop_inventory_repository]
+		shop_inventory_repository: IShopInventoryRepository = Provide[Container.shop_inventory_repository],
+		hero_inventory_repository: IHeroInventoryRepository = Provide[Container.hero_inventory_repository]
 	):
 		self._profile_repository = profile_repository
 		self._data_syncer = data_syncer
 		self._save_file_service = save_file_service
 		self._config = config
 		self._shop_inventory_repository = shop_inventory_repository
+		self._hero_inventory_repository = hero_inventory_repository
 
 	def create_profile(
 		self,
@@ -104,7 +107,7 @@ class ProfileService(IProfileService):
 
 	def clear_profile(self, profile_id: int) -> None:
 		"""
-		Clear all shop inventory data for a profile
+		Clear all shop inventory and hero inventory data for a profile
 
 		:param profile_id:
 			Profile ID
@@ -117,6 +120,7 @@ class ProfileService(IProfileService):
 			raise EntityNotFoundException("Profile", profile_id)
 
 		self._shop_inventory_repository.delete_by_profile(profile_id)
+		self._hero_inventory_repository.delete_by_profile(profile_id)
 
 	def scan_most_recent_save(self, profile_id: int) -> ProfileSyncResult:
 		"""
