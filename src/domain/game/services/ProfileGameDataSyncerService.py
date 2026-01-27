@@ -116,12 +116,8 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 				profile_id=profile_id
 			)
 
-			try:
-				self._hero_inventory_repository.create(inventory)
-				count += 1
-			except DuplicateEntityException as e:
-				self._looger.warning(f"Duplicate hero inventory entry: {e}")
-				continue
+			self._hero_inventory_repository.create(inventory)
+			count += 1
 
 		missed_data = None
 		if missing_kb_ids:

@@ -1,5 +1,6 @@
 from src.domain.base.factories.PydanticEntityFactory import PydanticEntityFactory
 from src.domain.base.repositories.CrudRepository import CrudRepository
+from src.domain.exceptions import DuplicateEntityException
 from src.domain.game.entities.HeroInventoryProduct import HeroInventoryProduct
 from src.domain.game.entities.InventoryEntityType import InventoryEntityType
 from src.domain.game.interfaces.IHeroInventoryRepository import IHeroInventoryRepository
@@ -12,7 +13,18 @@ class HeroInventoryRepository(
 ):
 
 	def create(self, inventory: HeroInventoryProduct) -> HeroInventoryProduct:
-		return self._create_single(inventory)
+		try:
+			return self._create_single(inventory)
+		except DuplicateEntityException:
+			with self._get_session() as session:
+				mapper = session.query(HeroInventoryMapper).filter(
+					HeroInventoryMapper.profile_id == inventory.profile_id,
+					HeroInventoryMapper.product_id == inventory.product_id,
+					HeroInventoryMapper.product_type == inventory.product_type
+				).one()
+				mapper.count += inventory.count
+				session.commit()
+				return self._mapper_to_entity(mapper)
 
 	def get_by_profile(
 		self,
@@ -34,7 +46,8 @@ class HeroInventoryRepository(
 		with self._get_session() as session:
 			session.query(HeroInventoryMapper).filter(
 				HeroInventoryMapper.profile_id == profile_id
-			).delete(synchronize_session=False)
+			).delete()
+			session.commit()
 
 	def _entity_to_mapper(self, entity: HeroInventoryProduct) -> HeroInventoryMapper:
 		return HeroInventoryMapper(
