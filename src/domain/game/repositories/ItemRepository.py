@@ -240,14 +240,29 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 
 			if profile_id is not None:
 				from src.domain.game.repositories.mappers.ShopInventoryMapper import ShopInventoryMapper
+				from src.domain.game.repositories.mappers.HeroInventoryMapper import HeroInventoryMapper
 				from src.domain.game.entities.ShopProductType import ShopProductType
+				from src.domain.game.entities.InventoryEntityType import InventoryEntityType
+				from sqlalchemy import or_
 
-				query = query.join(
-					ShopInventoryMapper,
-					(ShopInventoryMapper.product_id == ItemMapper.id) &
+				# Create subqueries for items in shops and hero inventory
+				shop_items_subq = session.query(ShopInventoryMapper.product_id).filter(
 					(ShopInventoryMapper.product_type == ShopProductType.ITEM) &
 					(ShopInventoryMapper.profile_id == profile_id)
-				).distinct()
+				).distinct().subquery()
+
+				hero_items_subq = session.query(HeroInventoryMapper.product_id).filter(
+					(HeroInventoryMapper.product_type == InventoryEntityType.ITEM) &
+					(HeroInventoryMapper.profile_id == profile_id)
+				).distinct().subquery()
+
+				# Filter items that exist in EITHER shops OR hero inventory
+				query = query.filter(
+					or_(
+						ItemMapper.id.in_(shop_items_subq),
+						ItemMapper.id.in_(hero_items_subq)
+					)
+				)
 
 			if item_id is not None:
 				query = query.filter(ItemMapper.id == item_id)

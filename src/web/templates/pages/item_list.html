@@ -174,7 +174,7 @@
 							</span>
 						</th>
 						<th style="max-width: 100px;">{{ _('ui.item.type_header') }}</th>
-						<th>{{ _('ui.shops') }}</th>
+						<th>{{ _('ui.item.inventory') }}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -248,15 +248,28 @@
 						<td>
 							{% if selected_profile_id %}
 								{% set item_shops = shops_by_item.get(item.id, []) %}
-								{% if item_shops %}
+								{% set in_hero_inventory = item.id in hero_items_set %}
+
+								{% if item_shops or in_hero_inventory %}
 									<small>
-										{% for shop in item_shops %}
-											{% set shop_item = shop.inventory.get_item(item.id) %}
-											{{ shop.location_name }}
-											/ {{ shop.shop_loc.name or shop.shop_loc.hint|format_text|safe }}
-											{% if shop_item.count > 1 %} <strong>{{ shop_item.count }}</strong>{% endif %}
-											{% if not loop.last %}<br>{% endif %}
-										{% endfor %}
+										{# Display shops section #}
+										{% if item_shops %}
+											{% for shop in item_shops %}
+												{% set shop_item = shop.inventory.get_item(item.id) %}
+												{{ shop.location_name }}
+												/ {{ shop.shop_loc.name or shop.shop_loc.hint|format_text|safe }}
+												{% if shop_item.count > 1 %} <strong>{{ shop_item.count }}</strong>{% endif %}
+												<br>
+											{% endfor %}
+										{% endif %}
+
+										{# Display hero inventory section #}
+										{% if in_hero_inventory %}
+											{% if item_shops %}<hr style="margin: 0.5rem 0;">{% endif %}
+											{% set hero_item = hero_items_dict.get(item.id) %}
+											<strong>{{ _('ui.item.hero') }}</strong>
+											{% if hero_item and hero_item.count > 1 %} <strong>{{ hero_item.count }}</strong>{% endif %}
+										{% endif %}
 									</small>
 								{% else %}
 									<small class="text-muted">-</small>

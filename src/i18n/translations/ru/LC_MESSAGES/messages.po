@@ -263,6 +263,12 @@ msgstr "Набор"
 msgid "ui.item.select_profile"
 msgstr "Выберите профиль"
 
+msgid "ui.item.hero"
+msgstr "Герой"
+
+msgid "ui.item.inventory"
+msgstr "Инвентарь"
+
 msgid "ui.item.no_items_found"
 msgstr "Предметы не найдены."
 

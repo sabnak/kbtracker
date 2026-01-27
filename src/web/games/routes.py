@@ -17,9 +17,11 @@ from src.domain.game.interfaces.IUnitRepository import IUnitRepository
 from src.domain.game.entities.UnitClass import UnitClass
 from src.domain.game.entities.SpellSchool import SpellSchool
 from src.domain.game.interfaces.IShopInventoryService import IShopInventoryService
+from src.domain.game.interfaces.IHeroInventoryRepository import IHeroInventoryRepository
 from src.domain.game.dto.ShopsGroupBy import ShopsGroupBy
 from src.domain.game.dto.UnitFilterDto import UnitFilterDto
 from src.domain.game.entities.ShopProductType import ShopProductType
+from src.domain.game.entities.InventoryEntityType import InventoryEntityType
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
 from src.domain.base.repositories.CrudRepository import GAME_CONTEXT
@@ -466,7 +468,8 @@ async def list_items(
 	item_tracking_service: ItemService = Depends(Provide["item_service"]),
 	game_service: IGameService = Depends(Provide["game_service"]),
 	profile_repository: IProfileRepository = Depends(Provide["profile_repository"]),
-	shop_inventory_service: IShopInventoryService = Depends(Provide["shop_inventory_service"])
+	shop_inventory_service: IShopInventoryService = Depends(Provide["shop_inventory_service"]),
+	hero_inventory_repository: IHeroInventoryRepository = Depends(Provide["hero_inventory_repository"])
 ):
 	"""
 	List all items for a game with set information and advanced filters
@@ -498,6 +501,17 @@ async def list_items(
 			group_by=ShopsGroupBy.ITEM,
 			types=(ShopProductType.ITEM,)
 		)
+
+	# Fetch hero inventory for items (only when profile selected)
+	hero_items_set = set()
+	hero_items_dict = {}
+	if selected_profile_id:
+		hero_inventory = hero_inventory_repository.get_by_profile(
+			profile_id=selected_profile_id,
+			product_types=[InventoryEntityType.ITEM]
+		)
+		hero_items_set = {inv.product_id for inv in hero_inventory}
+		hero_items_dict = {inv.product_id: inv for inv in hero_inventory}
 
 	# Convert string parameters to proper types
 	level = int(level_str) if level_str else None
@@ -564,6 +578,9 @@ async def list_items(
 			"selected_profile_id": selected_profile_id,
 			# Shop data
 			"shops_by_item": shops_by_item,
+			# Hero inventory data
+			"hero_items_set": hero_items_set,
+			"hero_items_dict": hero_items_dict,
 			# Error handling
 			"error": error_message
 		}

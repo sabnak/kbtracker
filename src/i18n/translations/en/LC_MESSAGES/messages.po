@@ -259,6 +259,12 @@ msgstr "Set"
 msgid "ui.item.select_profile"
 msgstr "Select profile"
 
+msgid "ui.item.hero"
+msgstr "Hero"
+
+msgid "ui.item.inventory"
+msgstr "Inventory"
+
 msgid "ui.item.no_items_found"
 msgstr "No items found."
 
