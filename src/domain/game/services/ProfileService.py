@@ -148,7 +148,7 @@ class ProfileService(IProfileService):
 
 		profile.last_scan_time = datetime.now()
 		profile.last_save_timestamp = save_timestamp
-		profile.last_corrupted_data = result.corrupted_data
+		profile.last_corrupted_data = result.shops.missed_data
 		self._profile_repository.update(profile)
 
 		return result

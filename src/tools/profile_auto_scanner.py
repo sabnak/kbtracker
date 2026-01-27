@@ -95,7 +95,8 @@ class ProfileAutoScannerCLI(CLITool[LaunchParams]):
 			return
 
 		result = profile_service.scan_save(profile, save_path)
-		result_str = f"items={result.items}, spells={result.spells}, units={result.units}, garrison={result.garrison}"
+		result_str = (f"items={result.shops.items}, spells={result.shops.spells}, "
+		              f"units={result.shops.units}, garrison={result.shops.garrison}; inventory={result.hero_inventory.items}")
 		self._log(f"Profile saved scanned. Result: {result_str}", game=game, profile=profile)
 
 	def _log(self, msg: str, game: Game = None, profile: ProfileEntity = None):

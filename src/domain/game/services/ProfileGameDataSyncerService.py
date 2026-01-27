@@ -17,11 +17,12 @@ from src.domain.game.interfaces.IProfileGameDataSyncerService import IProfileGam
 from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.interfaces.ISpellRepository import ISpellRepository
 from src.domain.game.interfaces.IUnitRepository import IUnitRepository
-from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
-from src.domain.game.entities.CorruptedProfileData import CorruptedProfileData
+from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult, ProfileSyncShopResult, \
+	ProfileSyncHeroInventoryResult
+from src.domain.game.entities.MissedShopsData import MissedShopsData
 from src.domain.game.entities.ShopProduct import ShopProduct
 from src.domain.game.entities.ShopProductType import ShopProductType
-from src.utils.parsers.save_data.SaveFileData import SaveFileData
+from src.utils.parsers.save_data.SaveFileData import SaveFileData, HeroInventory
 
 
 @dataclass
@@ -66,9 +67,16 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 			ProfileSyncResult with counts and corrupted data
 		"""
 		shops = self._sync_shops(data.shops, profile_id)
-		return shops
+		hero_inventory = self._sync_hero_inventory(data.hero_inventory, profile_id)
+		return ProfileSyncResult(
+			shops=shops,
+			hero_inventory=hero_inventory
+		)
 
-	def _sync_shops(self, data: list[dict[str, typing.Any]], profile_id: int):
+	def _sync_hero_inventory(self, data: HeroInventory, profile_id: int) -> ProfileSyncHeroInventoryResult:
+		return ProfileSyncHeroInventoryResult(items=0, missed_data=None)
+
+	def _sync_shops(self, data: list[dict[str, typing.Any]], profile_id: int) -> ProfileSyncShopResult:
 
 		counts = {"items": 0, "spells": 0, "units": 0, "garrison": 0}
 		missing_data = {"items": [], "spells": [], "units": [], "garrison": [], "shops": []}
@@ -121,19 +129,19 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 				counts[key] += result.count
 				missing_data[key].extend(result.missing_kb_ids)
 
-		corrupted_data = self._build_corrupted_data(
+		missed_data = self._build_corrupted_data(
 			shops=missing_data["shops"],
 			items=missing_data["items"],
 			spells=missing_data["spells"],
 			units=missing_data["units"]
 		)
 
-		return ProfileSyncResult(
+		return ProfileSyncShopResult(
 			items=counts["items"],
 			spells=counts["spells"],
 			units=counts["units"],
 			garrison=counts["garrison"],
-			corrupted_data=corrupted_data
+			missed_data=missed_data
 		)
 
 	def _sync(
@@ -178,11 +186,11 @@ class ProfileGameDataSyncerService(IProfileGameDataSyncerService):
 		items: list[str],
 		units: list[str],
 		spells: list[str]
-	) -> CorruptedProfileData | None:
+	) -> MissedShopsData | None:
 		if not any([shops, items, units, spells]):
 			return None
 
-		return CorruptedProfileData(
+		return MissedShopsData(
 			shops=list(set(shops)) if shops else None,
 			items=list(set(items)) if items else None,
 			units=list(set(units)) if units else None,

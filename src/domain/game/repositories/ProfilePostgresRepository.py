@@ -3,7 +3,7 @@ from src.domain.exceptions import EntityNotFoundException
 from src.domain.base.repositories.CrudRepository import CrudRepository
 from src.domain.game.interfaces.IProfileRepository import IProfileRepository
 from src.domain.game.entities.ProfileEntity import ProfileEntity
-from src.domain.game.entities.CorruptedProfileData import CorruptedProfileData
+from src.domain.game.entities.MissedShopsData import MissedShopsData
 from src.domain.game.repositories.mappers.ProfileMapper import ProfileMapper
 from src.domain.app.repositories.GameRepository import GameRepository
 
@@ -136,7 +136,7 @@ class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IP
 	def _mapper_to_entity(self, mapper: ProfileMapper) -> ProfileEntity:
 		corrupted_data = None
 		if mapper.last_corrupted_data:
-			corrupted_data = CorruptedProfileData(**mapper.last_corrupted_data)
+			corrupted_data = MissedShopsData(**mapper.last_corrupted_data)
 
 		return PydanticEntityFactory.create_entity(
 			ProfileEntity,

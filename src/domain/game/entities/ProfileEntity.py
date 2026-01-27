@@ -2,7 +2,7 @@ from datetime import datetime
 
 from src.domain.app.entities.Game import Game
 from src.domain.base.entities.BaseEntity import BaseEntity
-from src.domain.game.entities.CorruptedProfileData import CorruptedProfileData
+from src.domain.game.entities.MissedShopsData import MissedShopsData
 
 
 class ProfileEntity(BaseEntity):
@@ -13,6 +13,6 @@ class ProfileEntity(BaseEntity):
 	save_dir: str | None = None
 	last_scan_time: datetime | None = None
 	last_save_timestamp: int | None = None
-	last_corrupted_data: CorruptedProfileData | None = None
+	last_corrupted_data: MissedShopsData | None = None
 	is_auto_scan_enabled: bool = True
 	game: Game | None = None

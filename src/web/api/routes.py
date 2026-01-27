@@ -122,12 +122,13 @@ async def scan_shops(
 
 	try:
 		result = profile_service.scan_most_recent_save(profile_id)
+		shops = result.shops
 		return {
-			"items": result.items,
-			"spells": result.spells,
-			"units": result.units,
-			"garrison": result.garrison,
-			"corrupted_data": result.corrupted_data.model_dump() if result.corrupted_data else None
+			"items": shops.items,
+			"spells": shops.spells,
+			"units": shops.units,
+			"garrison": shops.garrison,
+			"corrupted_data": shops.corrupted_data.model_dump() if shops.missed_data else None
 		}
 	except FileNotFoundError as e:
 		return JSONResponse(
