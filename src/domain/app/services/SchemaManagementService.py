@@ -161,6 +161,17 @@ class SchemaManagementService(ISchemaManagementService):
 				)
 			"""))
 
+			# Create shop_inventory table
+			session.execute(text(f"""
+				CREATE TABLE {schema_name}.hero_inventory (
+					product_id INTEGER NOT NULL,
+					product_type VARCHAR(20) NOT NULL,
+					count INTEGER DEFAULT 1,
+					profile_id INTEGER REFERENCES {schema_name}.profile(id) ON DELETE CASCADE,
+					PRIMARY KEY (product_id, product_type, profile_id)
+				)
+			"""))
+
 			session.commit()
 
 	def delete_game_schema(self, game_id: int) -> None:

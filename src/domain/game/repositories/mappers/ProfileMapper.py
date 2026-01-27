@@ -23,4 +23,5 @@ class ProfileMapper(Base):
 	game_id = Column(Integer, ForeignKey('public.game.id'), nullable=False)
 
 	shop_inventory = relationship("ShopInventoryMapper", back_populates="profile")
+	hero_inventory = relationship("HeroInventoryMapper", back_populates="profile")
 	game = relationship("GameMapper", foreign_keys=[game_id])
