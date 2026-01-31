@@ -36,12 +36,12 @@
 
 **На данный момент:**
 - King's Bounty: Dark Side (включая мод Saturation)
+- King's Bounty: Crossworlds
+- King's Bounty: Armored Princess
+- King's Bounty: The Legend 
 
 **В перспективе:**
 - King's Bounty: Warriors of the North
-- King's Bounty: Crossworlds
-- King's Bounty: Armored Princess
-- King's Bounty: The Legend
 
 ## Установка
 
@@ -63,20 +63,24 @@
 
 Найдите эти строки:
 ```yaml
-- /path/to/your/game/Darkside:/data/Darkside:ro
-- /path/to/your/saves/Darkside:/saves/Darkside:ro
+- '/path/to/your/game/Darkside:/data/Darkside:ro'
+- 'c:/Users/<USERNAME>/Documents/my games:/saves:ro'
 ```
+
+- Первая путь - путь к папке с игрой. Для каждой игры нужно указать свой путь.
+- Вторая строка - путь к папке с сохранениями. Все сохранения находятся в папке `/Documents/my games/` вашего пользователя.
 
 **Замените на ваши реальные пути:**
 
 #### Пример:
 ```yaml
-- C:/Program Files (x86)/Steam/steamapps/common/Darkside:/data/Darkside:ro
-- C:/Users/BORIS/Documents/my games/Kings Bounty The Dark Side/$$save/base/darkside:/saves/Darkside:ro
+- 'C:/Program Files (x86)/Steam/steamapps/common/Darkside:/data/Darkside:ro'
+- 'C:/Users/BORIS/Documents/my games:/saves/Darkside:ro'
 ```
 
 **Важно:**
 - Используйте прямые слэши `/` (не обратные `\`)
+- Заменять нужно только строку до `:`! Это путь к вашей локальной директории
 - Сохраните `:ro` в конце (это делает папки доступными только для чтения)
 - **Знак доллара `$` нужно удваивать:** если в пути есть `$save` пишите `$$save` в docker-compose.yml
 - Путь к сохранениям должен вести к самим директориям, которые содержат сохранения игры.

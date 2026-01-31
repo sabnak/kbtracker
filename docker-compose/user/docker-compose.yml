@@ -7,16 +7,14 @@ services:
       GAME_DATA_PATH: /data
       TZ: Europe/Moscow
     volumes:
-      # REQUIRED: Edit these paths to match your system
-      # Every path on new line! Every line starts with "- "!
+      # Поменяйте пути! Часть после ":" остаётся неизменной.
       #
-      # Game installation directory (read-only):
-      # Example: - C:/Games/Kings Bounty Darkside:/data/Darkside:ro
-      - /path/to/your/game/Darkside:/data/Darkside:ro
+      # Путь к установленной игре. Если игр несколько, то каждый с новой строки!
+      # Например: - 'C:/Games/Kings Bounty Darkside:/data/Darkside:ro'
+      - '/path/to/your/game/Darkside:/data/Darkside:ro'
       #
-      # Save files directory (read-only):
-      # Usually in "C:/users/<USER_NAME>/Documents/my games/Kings Bounty The Dark Side/$$save/base/darkside"
-      - /path/to/your/saves/Darkside:/saves/Darkside:ro
+      # Путь к сохранениям игр. Замените "C:/Users/<USERNAME>" на свой путь.
+      - 'C:/Users/<USERNAME>/Documents/my games:/saves:ro'
     ports:
       - "9333:80"
     networks:
