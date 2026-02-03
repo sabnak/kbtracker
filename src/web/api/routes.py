@@ -128,7 +128,7 @@ async def scan_shops(
 			"spells": shops.spells,
 			"units": shops.units,
 			"garrison": shops.garrison,
-			"corrupted_data": shops.corrupted_data.model_dump() if shops.missed_data else None,
+			"corrupted_data": shops.missed_data.model_dump() if shops.missed_data else None,
 			"hero_inventory_items": result.hero_inventory.items
 		}
 	except FileNotFoundError as e:
