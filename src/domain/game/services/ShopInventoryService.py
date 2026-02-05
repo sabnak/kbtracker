@@ -10,8 +10,8 @@ from src.domain.game.entities.ShopProductType import ShopProductType
 from src.domain.game.interfaces.IShopFactory import IShopFactory
 from src.domain.game.interfaces.IShopInventoryRepository import IShopInventoryRepository
 from src.domain.game.interfaces.IShopInventoryService import IShopInventoryService
-from src.domain.game.groupers.LocationShopGrouper import LocationShopGrouper
-from src.domain.game.groupers.ProductShopGrouper import ProductShopGrouper
+from src.domain.game.services.shop_groupers.LocationShopGrouper import LocationShopGrouper
+from src.domain.game.services.shop_groupers.ProductShopGrouper import ProductShopGrouper
 
 
 class ShopInventoryService(IShopInventoryService):
