@@ -47,31 +47,38 @@ if (-not (Test-PortAvailable ([int]$AppPort))) {
     exit 1
 }
 
-# --- Start daemon in a new window --------------------------------------------
-$DaemonCmd = @"
-Set-Location '$ProjectRoot'
-Write-Host 'Starting Profile Auto Scanner Daemon...' -ForegroundColor Cyan
-Write-Host ''
-try {
-    & '$VenvPython' -m src.tools.ProfileAutoScannerDaemon
-} catch {
-    Write-Host ''
-    Write-Host 'Daemon failed to start:' -ForegroundColor Red
-    Write-Host `$_.Exception.Message -ForegroundColor Red
-    Write-Host ''
-    Read-Host 'Press Enter to close this window'
+# --- Start daemon in background ----------------------------------------------
+Write-Host "Starting Profile Auto Scanner Daemon..." -ForegroundColor Gray
+Set-Location $ProjectRoot
+$DaemonJob = Start-Job -ScriptBlock {
+    param($VenvPython, $ProjectRoot)
+    Set-Location $ProjectRoot
+    & $VenvPython -m src.tools.ProfileAutoScannerDaemon
+} -ArgumentList $VenvPython, $ProjectRoot
+
+Start-Sleep -Milliseconds 500
+if ($DaemonJob.State -eq "Failed") {
+    Write-Host "  Daemon failed to start" -ForegroundColor Red
+    Receive-Job $DaemonJob
+    Read-Host "Press Enter to exit"
+    exit 1
 }
-"@
-Start-Process powershell -ArgumentList `
-    "-NoProfile", "-ExecutionPolicy", "Bypass", "-NoExit", `
-    "-Command", $DaemonCmd
+Write-Host "  [OK] Daemon started" -ForegroundColor Green
 
 # --- Start web server --------------------------------------------------------
 Write-Host ""
 Write-Host "King's Bounty Tracker" -ForegroundColor White
 Write-Host "URL: http://localhost:$AppPort" -ForegroundColor Cyan
-Write-Host "Press Ctrl+C to stop the server." -ForegroundColor Gray
+Write-Host ""
+Write-Host "Press Ctrl+C to stop both daemon and server." -ForegroundColor Yellow
 Write-Host ""
 
-Set-Location $ProjectRoot
-& $VenvPython -m uvicorn src.main:app --host 127.0.0.1 --port $AppPort
+try {
+    & $VenvPython -m uvicorn src.main:app --host 127.0.0.1 --port $AppPort
+} finally {
+    Write-Host ""
+    Write-Host "Stopping daemon..." -ForegroundColor Gray
+    Stop-Job $DaemonJob -ErrorAction SilentlyContinue
+    Remove-Job $DaemonJob -ErrorAction SilentlyContinue
+    Write-Host "  [OK] Daemon stopped" -ForegroundColor Green
+}
