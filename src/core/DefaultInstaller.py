@@ -1,6 +1,8 @@
 import os
+from pathlib import Path
 
 from dependency_injector import providers
+from dotenv import load_dotenv
 from sqlalchemy.orm import sessionmaker
 
 from src.core.Config import Config
@@ -63,6 +65,9 @@ class DefaultInstaller:
 		self._container = container
 
 	def install(self):
+		project_root = Path(__file__).parent.parent.parent
+		env_file = project_root / ".env"
+		load_dotenv(dotenv_path=env_file, override=True)
 		self._container.logger.override(providers.Singleton(setup_logging))
 		self._container.config.override(providers.Singleton(Config))
 		self._install_db()

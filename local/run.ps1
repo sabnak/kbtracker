@@ -48,7 +48,20 @@ if (-not (Test-PortAvailable ([int]$AppPort))) {
 }
 
 # --- Start daemon in a new window --------------------------------------------
-$DaemonCmd = "Set-Location '$ProjectRoot'; & '$VenvPython' -m src.tools.ProfileAutoScannerDaemon"
+$DaemonCmd = @"
+Set-Location '$ProjectRoot'
+Write-Host 'Starting Profile Auto Scanner Daemon...' -ForegroundColor Cyan
+Write-Host ''
+try {
+    & '$VenvPython' -m src.tools.ProfileAutoScannerDaemon
+} catch {
+    Write-Host ''
+    Write-Host 'Daemon failed to start:' -ForegroundColor Red
+    Write-Host `$_.Exception.Message -ForegroundColor Red
+    Write-Host ''
+    Read-Host 'Press Enter to close this window'
+}
+"@
 Start-Process powershell -ArgumentList `
     "-NoProfile", "-ExecutionPolicy", "Bypass", "-NoExit", `
     "-Command", $DaemonCmd

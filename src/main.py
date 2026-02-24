@@ -1,6 +1,5 @@
 from contextlib import asynccontextmanager
 
-from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import HTTPException, RequestValidationError
@@ -18,9 +17,6 @@ from src.web.exception_handlers import (
 	generic_exception_handler
 )
 from src.domain.exceptions import KBTrackerException
-
-
-load_dotenv()
 
 
 def create_app() -> FastAPI:
