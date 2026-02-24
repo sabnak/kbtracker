@@ -5,111 +5,26 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$GithubZipUrl  = "https://github.com/sabnak/kbtracker/archive/refs/heads/main.zip"
-$DefaultDir    = "$env:USERPROFILE\AppData\LocalLow\KBTracker"
+# Load common functions
+. (Join-Path $PSScriptRoot "common.ps1")
 
-function Write-Step([string]$Text) {
-    Write-Host ""
-    Write-Host "=== $Text ===" -ForegroundColor Cyan
-}
-
-function Write-Ok([string]$Text) {
-    Write-Host "  [OK] $Text" -ForegroundColor Green
-}
-
-function Write-Warn([string]$Text) {
-    Write-Host "  [!]  $Text" -ForegroundColor Yellow
-}
-
-function Read-WithDefault([string]$Prompt, [string]$Default) {
-    $val = Read-Host "$Prompt [$Default]"
-    if ([string]::IsNullOrWhiteSpace($val)) { return $Default }
-    return $val.Trim()
-}
-
-function Test-PortAvailable([int]$Port) {
-    try {
-        $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, $Port)
-        $listener.Start()
-        $listener.Stop()
-        return $true
-    } catch {
-        return $false
-    }
-}
-
-function Refresh-Path {
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
-                [System.Environment]::GetEnvironmentVariable("Path", "User")
-}
+$DefaultDir = "$env:USERPROFILE\AppData\LocalLow\KBTracker"
 
 try {
 
-# --- Step 1: Download and extract from GitHub --------------------------------
 Write-Host ""
 Write-Host "King's Bounty Tracker - Setup" -ForegroundColor White
 Write-Host ""
 
 $InstallDir = Read-WithDefault "Installation directory" $DefaultDir
 
-if (Test-Path $InstallDir) {
-    Remove-Item $InstallDir -Recurse -Force
-}
-
-Write-Step "Step 1/4: Downloading source code"
-$ZipPath = Join-Path $env:TEMP "kbtracker.zip"
-Invoke-WebRequest -Uri $GithubZipUrl -OutFile $ZipPath -UseBasicParsing
-Write-Ok "Downloaded"
-
-$ExtractTemp = Join-Path $env:TEMP "kbtracker_extract"
-if (Test-Path $ExtractTemp) { Remove-Item $ExtractTemp -Recurse -Force }
-Expand-Archive -Path $ZipPath -DestinationPath $ExtractTemp
-$ExtractedRoot = Get-ChildItem $ExtractTemp | Select-Object -First 1
-Move-Item $ExtractedRoot.FullName $InstallDir
-Remove-Item $ExtractTemp -Recurse -Force
-Remove-Item $ZipPath -Force
-Write-Ok "Extracted to: $InstallDir"
+# --- Steps 1-2: Source code and Python --------------------------------------
+Install-SourceCode -InstallDir $InstallDir -RemoveExisting $true
+Install-Python -InstallDir $InstallDir
 
 # Paths inside the extracted project
 $VenvDir    = Join-Path $InstallDir ".venv"
 $VenvPython = Join-Path $VenvDir "Scripts\python.exe"
-$VenvPip    = Join-Path $VenvDir "Scripts\pip.exe"
-$VenvBabel  = Join-Path $VenvDir "Scripts\pybabel.exe"
-
-# --- Step 2: Python 3.14 -----------------------------------------------------
-Write-Step "Step 2/4: Python 3.13"
-
-$py313ok = $false
-try {
-    $null = & py -3.13 --version 2>&1
-    $py313ok = $true
-    Write-Ok "Python 3.13 found"
-} catch {}
-
-if (-not $py313ok) {
-    Write-Host "  Installing Python 3.13 via winget..." -ForegroundColor Gray
-    winget install --id Python.Python.3.13 --silent --accept-source-agreements --accept-package-agreements
-    Refresh-Path
-    try {
-        $null = & py -3.13 --version 2>&1
-        $py313ok = $true
-        Write-Ok "Python 3.13 installed"
-    } catch {
-        throw "Python 3.13 installed but py launcher cannot find it. Please reopen this window and run setup again."
-    }
-}
-
-Write-Host "  Creating .venv inside $InstallDir ..." -ForegroundColor Gray
-& py -3.13 -m venv $VenvDir
-Write-Ok ".venv created"
-
-Write-Host "  Installing packages from requirements.txt..." -ForegroundColor Gray
-& $VenvPip install -r (Join-Path $InstallDir "requirements.txt") --quiet
-Write-Ok "Packages installed"
-
-Write-Host "  Compiling translations..." -ForegroundColor Gray
-& $VenvBabel compile -d (Join-Path $InstallDir "src\i18n\translations")
-Write-Ok "Translations compiled"
 
 # --- Step 3: PostgreSQL ------------------------------------------------------
 Write-Step "Step 3/4: PostgreSQL"
