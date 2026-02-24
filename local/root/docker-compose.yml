@@ -1,0 +1,51 @@
+services:
+  app:
+    container_name: kbtracker_app
+    build:
+      context: .
+      dockerfile: ./docker-compose/app/Dockerfile
+      args:
+        MODE: dev
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${DB_USER}:${DB_PASSWORD}@postgres:${DB_PORT}/${DB_NAME}
+      TZ: Europe/Moscow
+    volumes:
+      - .:/app
+    ports:
+      - "${APP_LOCAL_PORT}:80"
+    networks:
+      - kbtracker-network
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    container_name: kbtracker_postgres
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      TZ: Europe/Moscow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_LOCAL_PORT}:5432"
+    restart: unless-stopped
+    networks:
+      - kbtracker-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  kbtracker-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

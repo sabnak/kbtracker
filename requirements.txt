@@ -10,3 +10,4 @@ pydantic-settings>=2.6.1
 pytest>=8.0.0
 chardet>=5.0.0
 Babel>=2.14.0
+python-dotenv>=1.0.0

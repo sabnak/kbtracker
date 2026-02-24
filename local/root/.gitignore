@@ -1,0 +1,35 @@
+# IDE
+.idea/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+configs/local*
+
+# Claude
+.claude
+.mcp.json
+
+# Docker
+docker-compose.override.yml
+
+# Tests
+/tests/game_files/
+
+# Temporary files
+tmp/
+tmpclaude-*-cwd
+
+# Translations
+*.mo
+*.pot

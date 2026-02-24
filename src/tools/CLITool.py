@@ -3,6 +3,7 @@ import logging
 import typing
 
 import pydantic
+from dotenv import load_dotenv
 
 from src.core.Container import Container
 from src.core.DefaultInstaller import DefaultInstaller
@@ -17,6 +18,7 @@ class CLITool(typing.Generic[T], abc.ABC):
 	_logger: logging.Logger = None
 
 	def __init__(self):
+		load_dotenv()
 		self._launch_params = self._build_params()
 		self._container = Container()
 		installer = DefaultInstaller(self._container)

@@ -1,0 +1,109 @@
+from abc import ABC, abstractmethod
+from pathlib import Path
+
+from src.domain.app.entities.Game import Game
+from src.domain.game.dto.ProfileSyncResult import ProfileSyncResult
+from src.domain.game.entities.ProfileEntity import ProfileEntity
+
+
+class IProfileService(ABC):
+
+	@abstractmethod
+	def create_profile(
+		self,
+		name: str,
+		game: Game,
+		hash: str | None = None,
+		full_name: str | None = None,
+		save_dir: str | None = None
+	) -> ProfileEntity:
+		"""
+		Create new game profile
+
+		:param name:
+			Profile name
+		:param game:
+			Game entity this profile belongs to
+		:param hash:
+			Hash (MD5)
+		:param full_name:
+			Hero's full name from save file
+		:param save_dir:
+			Save directory name (timestamp)
+		:return:
+			Created profile
+		"""
+		pass
+
+	@abstractmethod
+	def list_profiles(self) -> list[ProfileEntity]:
+		"""
+		List all profiles
+
+		:return:
+			List of all profiles
+		"""
+		pass
+
+	@abstractmethod
+	def get_profile(self, profile_id: int) -> ProfileEntity | None:
+		"""
+		Get profile by ID
+
+		:param profile_id:
+			Profile ID
+		:return:
+			Profile or None if not found
+		"""
+		pass
+
+	@abstractmethod
+	def delete_profile(self, profile_id: int) -> None:
+		"""
+		Delete profile
+
+		:param profile_id:
+			Profile ID
+		:return:
+		"""
+		pass
+
+	@abstractmethod
+	def clear_profile(self, profile_id: int) -> None:
+		"""
+		Clear all shop inventory data for a profile
+
+		:param profile_id:
+			Profile ID
+		:return:
+		:raises EntityNotFoundException:
+			If profile not found
+		"""
+		pass
+
+	@abstractmethod
+	def scan_save(self, profile: ProfileEntity, save_path: Path) -> ProfileSyncResult:
+		"""
+		Scan save file and sync shop inventories
+
+		:param profile:
+		:param save_path:
+		:return:
+		"""
+		...
+
+	@abstractmethod
+	def scan_most_recent_save(self, profile_id: int) -> ProfileSyncResult:
+		"""
+		Scan most recent save file and sync shop inventories
+
+		:param profile_id:
+			Profile ID to scan for
+		:return:
+			ProfileSyncResult with counts and corrupted data
+		:raises EntityNotFoundException:
+			If profile not found
+		:raises FileNotFoundError:
+			If no matching save file found
+		"""
+		pass

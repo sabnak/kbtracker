@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('ui.profiles') }} - {{ game.name }} - {{ _('ui.navigation.brand_name') }}{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h1>{{ _('ui.profile.title_for_game') }} {{ game.name }}</h1>
+			<div>
+				<a href="/games" class="btn btn-secondary me-2">{{ _('ui.common.back_to_games') }}</a>
+				<a href="/games/{{ game.id }}/profiles/create" class="btn btn-primary">{{ _('ui.profile.create_new_profile') }}</a>
+			</div>
+		</div>
+
+		<!-- Scan Error Display -->
+		<div id="scan-error-container" class="alert alert-danger alert-dismissible" style="display: none;">
+			<h5 class="alert-heading">
+				<strong>{{ _('ui.profile.scan_failed') }}</strong>
+			</h5>
+			<div id="error-message" class="mb-3"></div>
+			<div id="error-details-container" style="display: none;">
+				<button class="btn btn-sm btn-outline-danger mb-2" type="button"
+						data-bs-toggle="collapse" data-bs-target="#error-traceback"
+						aria-expanded="false" aria-controls="error-traceback">
+					{{ _('ui.profile.show_technical_details') }}
+				</button>
+				<div class="collapse" id="error-traceback">
+					<div class="card card-body bg-dark text-light">
+						<pre id="error-details-content" class="mb-0" style="font-size: 0.85rem;"></pre>
+					</div>
+				</div>
+			</div>
+			<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+		</div>
+
+		<!-- Scan Success Display -->
+		<div id="scan-success-container" class="alert alert-success alert-dismissible" style="display: none;">
+			<h5 class="alert-heading">
+				<strong>{{ _('ui.profile.scan_complete') }}</strong>
+			</h5>
+			<div id="success-message"></div>
+			<div id="corrupted-data-warning" style="display: none;" class="mt-3">
+				<strong>{{ _('ui.profile.warning_sync_issues') }}</strong>
+				<p>{{ _('ui.profile.missing_kb_ids_text') }}</p>
+				<button class="btn btn-sm btn-warning mb-2" type="button"
+						data-bs-toggle="collapse" data-bs-target="#corrupted-data-details"
+						aria-expanded="false" aria-controls="corrupted-data-details">
+					{{ _('ui.profile.show_missing_kb_ids') }}
+				</button>
+				<div class="collapse" id="corrupted-data-details">
+					<div class="card card-body bg-light">
+						<pre id="corrupted-data-content" class="mb-0" style="font-size: 0.85rem;"></pre>
+					</div>
+				</div>
+			</div>
+			<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+		</div>
+
+		{% if profiles %}
+		<div class="row">
+			{% for profile in profiles %}
+			<div class="col-md-4 mb-3">
+				<div class="card">
+					<div class="card-body">
+						<div class="d-flex justify-content-between align-items-center mb-2">
+							<h5 class="mb-0">{{ profile.name }}</h5>
+							<div class="form-check form-switch">
+								<input
+									class="form-check-input auto-scan-toggle"
+									type="checkbox"
+									role="switch"
+									id="autoScan{{ profile.id }}"
+									data-profile-id="{{ profile.id }}"
+									data-game-id="{{ game.id }}"
+									{% if profile.is_auto_scan_enabled %}checked{% endif %}
+									data-bs-toggle="tooltip"
+									data-bs-placement="left"
+									title="{% if profile.is_auto_scan_enabled %}{{ _('ui.profile.auto_scan_enabled_tooltip') }}{% else %}{{ _('ui.profile.auto_scan_disabled_tooltip') }}{% endif %}"
+								>
+							</div>
+						</div>
+						<p class="card-text">
+							<strong>{{ _('ui.profile.created_label') }}:</strong> {{ profile.created_at.strftime('%Y-%m-%d %H:%M') }}
+						</p>
+						{% if profile.last_scan_time %}
+						<p class="card-text">
+							<strong>{{ _('ui.profile.last_scan_label') }}:</strong> {{ profile.last_scan_time.strftime('%Y-%m-%d %H:%M') }}
+							{% if profile.last_corrupted_data %}
+							<span class="examine-issues-btn"
+								  role="button"
+								  style="cursor: pointer; font-size: 1.2em;"
+								  title="{{ _('ui.profile.examine_issues_tooltip') }}"
+								  data-shops="{{ profile.last_corrupted_data.shops | join(', ') if profile.last_corrupted_data.shops else '' }}"
+								  data-items="{{ profile.last_corrupted_data.items | join(', ') if profile.last_corrupted_data.items else '' }}"
+								  data-units="{{ profile.last_corrupted_data.units | join(', ') if profile.last_corrupted_data.units else '' }}"
+								  data-spells="{{ profile.last_corrupted_data.spells | join(', ') if profile.last_corrupted_data.spells else '' }}">
+								⚠️
+							</span>
+							{% else %}
+							<span style="font-size: 1.2em;">✅</span>
+							{% endif %}
+						</p>
+						{% endif %}
+						<div class="d-grid gap-2">
+							<a href="/games/{{ game.id }}/shops?profile_id={{ profile.id }}" class="btn btn-sm btn-outline-info">{{ _('ui.shops') }}</a>
+							<button
+								class="btn btn-sm btn-primary scan-profile-btn"
+								data-profile-id="{{ profile.id }}"
+								data-game-id="{{ game.id }}">
+								{{ _('ui.profile.scan_save_file') }}
+							</button>
+							<form method="POST" action="/games/{{ game.id }}/profiles/{{ profile.id }}/delete" onsubmit="return confirm('{{ _('ui.profile.delete_confirmation') }}');">
+								<button type="submit" class="btn btn-sm btn-danger w-100">{{ _('ui.delete') }}</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+		{% else %}
+		<div class="alert alert-info">
+			<h5>{{ _('ui.profile.no_profiles_yet') }}</h5>
+			<p>{{ _('ui.profile.create_first_profile') }}</p>
+			<a href="/games/{{ game.id }}/profiles/create" class="btn btn-primary">{{ _('ui.profile.create_profile') }}</a>
+		</div>
+		{% endif %}
+	</div>
+</div>
+
+<script src="/static/js/profile-scan.js"></script>
+<script src="/static/js/profile-auto-scan.js"></script>
+{% endblock %}

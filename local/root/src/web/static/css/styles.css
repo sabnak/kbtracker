@@ -1,0 +1,384 @@
+body {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+main {
+	flex: 1;
+}
+
+.card {
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card:hover {
+	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+	transition: box-shadow 0.3s ease-in-out;
+}
+
+.table {
+	margin-bottom: 0;
+}
+
+.navbar-brand {
+	font-weight: bold;
+}
+
+footer {
+	margin-top: auto;
+}
+
+/* Sticky Navigation Enhancements */
+.navbar.sticky-top {
+	z-index: 1020;
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+	transition: box-shadow 0.2s ease-in-out;
+}
+
+/* Game name display in navbar */
+.navbar-text {
+	font-size: 0.9rem;
+	font-weight: 500;
+	padding: 0 0.5rem;
+	border-left: 1px solid rgba(255, 255, 255, 0.1);
+	margin-left: 0.5rem !important;
+}
+
+/* Improve active link visibility */
+.navbar-dark .navbar-nav .nav-link.active {
+	color: #fff !important;
+	font-weight: 600;
+	background-color: rgba(255, 255, 255, 0.1);
+	border-radius: 0.25rem;
+}
+
+/* Responsive: Hide game name on small screens */
+@media (max-width: 991px) {
+	.navbar-text {
+		display: none;
+	}
+}
+
+
+/* Item Quality Colors */
+.quality-1 {
+	color: #9d9d9d;  /* Gray - Common */
+}
+
+.quality-2 {
+	color: #1eff00;  /* Green - Uncommon */
+}
+
+.quality-3 {
+	color: #0070dd;  /* Blue - Rare */
+}
+
+.quality-4 {
+	color: #a335ee;  /* Purple - Epic */
+}
+
+.quality-5 {
+	color: #ff8000;  /* Orange/Red - Legendary */
+}
+
+
+/* Set Information Display */
+.set-info {
+	margin-top: 0.5rem;
+	padding-top: 0.5rem;
+	border-top: 1px solid #dee2e6;
+}
+
+.set-hint {
+	font-size: 0.9rem;
+	color: #6c757d;
+	margin-bottom: 0.25rem;
+}
+
+.set-items {
+	font-size: 0.85rem;
+	color: #9d9d9d;
+	margin: 0;
+	padding-left: 1.25rem;
+}
+
+.set-items li {
+	margin-bottom: 0.125rem;
+}
+
+.set-items .current-item {
+	font-weight: bold;
+	color: #495057;
+}
+
+
+/* Tier Information Display */
+.tier-info {
+	margin-top: 0.5rem;
+}
+
+.tier-items {
+	font-size: 0.85rem;
+	color: #6c757d;
+	margin: 0;
+	padding-left: 1.25rem;
+	list-style: none;
+}
+
+.tier-items li {
+	margin-bottom: 0.125rem;
+	padding-left: 1rem;
+	position: relative;
+}
+
+.tier-items li::before {
+	content: "→";
+	position: absolute;
+	left: 0;
+	color: #6c757d;
+}
+
+.tier-items strong {
+	color: #0d6efd;
+}
+
+
+/* Related Item Links */
+.related-item-link {
+	text-decoration: underline;
+	color: inherit;  /* Inherit color from parent (.set-items or .tier-items) */
+}
+
+.related-item-link:hover {
+	text-decoration: underline;
+	opacity: 0.8;  /* Slight transparency on hover */
+}
+
+/* Tier item links should be blue like the current tier item */
+.tier-items .related-item-link {
+	color: #0d6efd;  /* Blue color for tier links */
+}
+
+
+/* Item List Table Column Widths */
+.table td:nth-child(1) {
+	max-width: 500px;  /* Limit name column width */
+}
+
+.table td:nth-child(2),
+.table th:nth-child(2) {
+	white-space: nowrap;  /* Price on single line */
+}
+
+
+/* BBCode System Text */
+.sys-text {
+	color: #d4af37;  /* Gold color for system/special text */
+	font-weight: 500;
+}
+
+
+/* Text Size Utilities */
+.text-xxs {
+	font-size: 0.6em;
+}
+
+
+/* Sortable Table Headers */
+.sortable {
+	user-select: none;
+	position: relative;
+	padding-right: 1.5rem;
+	cursor: pointer;
+}
+
+.sortable:hover {
+	background-color: rgba(0, 0, 0, 0.05);
+}
+
+.sort-indicator {
+	position: absolute;
+	right: 0.5rem;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 0.8rem;
+	opacity: 0.6;
+}
+
+.sorted .sort-indicator {
+	opacity: 1;
+	font-weight: bold;
+	color: #0d6efd;
+}
+
+.sortable .hover-icon {
+	opacity: 0;
+	transition: opacity 0.2s;
+}
+
+.sortable:hover .hover-icon {
+	opacity: 0.4;
+}
+
+
+/* Tracking Column Styles */
+.tracking-cell {
+	min-width: 200px;
+	max-width: 300px;
+	vertical-align: top;
+	padding: 0.5rem;
+}
+
+.tracked-shops-list {
+	font-size: 0.85rem;
+}
+
+.tracked-shop-item {
+	gap: 0.25rem;
+	flex-direction: column;
+	align-items: flex-start !important;
+}
+
+.tracked-shop-item .shop-name-row {
+	width: 100%;
+}
+
+.tracked-shop-item .controls-row {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	margin-top: 0.25rem;
+}
+
+.tracked-shop-item .shop-name {
+	max-width: 200px;
+}
+
+.add-shop-form select {
+	font-size: 0.85rem;
+}
+
+.add-shop-form .gap-1 {
+	gap: 0.25rem;
+}
+
+#profile-select {
+	max-width: 300px;
+}
+
+
+/* Unit Attributes Display */
+.unit-common-params {
+	font-size: 0.9rem;
+	line-height: 1.6;
+}
+
+.resistance-list {
+	margin: 0.25rem 0;
+}
+
+.resistance-item {
+	font-size: 0.85rem;
+	color: #6c757d;
+}
+
+.unit-features,
+.unit-attacks {
+	font-size: 0.9rem;
+}
+
+.unit-features .badge,
+.unit-attacks .badge {
+	font-weight: normal;
+	cursor: help;
+	margin-right: 0.25rem;
+	margin-bottom: 0.25rem;
+}
+
+
+/* Shop List Styles */
+.location-section {
+	border-bottom: 2px solid #dee2e6;
+	padding-bottom: 1rem;
+}
+
+.location-section:last-child {
+	border-bottom: none;
+}
+
+.shop-card {
+	height: 100%;
+	box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.shop-card .card-header {
+	background-color: #f8f9fa;
+	font-size: 0.95rem;
+	padding: 0.5rem 0.75rem;
+}
+
+.shop-col-3 {
+	width: 33.33%;
+	vertical-align: top;
+	padding: 0.5rem;
+	font-size: 0.85rem;
+}
+
+.shop-inventory-list {
+	max-height: none;
+}
+
+.shop-inventory-list.scrollable {
+	max-height: 300px;
+	overflow-y: auto;
+	padding-right: 0.25rem;
+}
+
+.shop-inventory-list::-webkit-scrollbar {
+	width: 6px;
+}
+
+.shop-inventory-list::-webkit-scrollbar-track {
+	background: #f1f1f1;
+	border-radius: 3px;
+}
+
+.shop-inventory-list::-webkit-scrollbar-thumb {
+	background: #888;
+	border-radius: 3px;
+}
+
+.shop-inventory-list::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
+.shop-item {
+	padding: 0.25rem 0;
+	border-bottom: 1px solid #f0f0f0;
+	font-size: 0.85rem;
+}
+
+.shop-item:last-child {
+	border-bottom: none;
+}
+
+.shop-item .badge {
+	font-size: 0.7rem;
+	margin-left: 0.25rem;
+}
+
+.shop-garrison {
+	padding: 0.75rem;
+	border-top: 1px solid #dee2e6;
+	font-size: 0.85rem;
+	background-color: #f8f9fa;
+}
+
+.shop-cost {
+	white-space: nowrap;
+	color: #DAA520;
+	font-weight: 500;
+}
+

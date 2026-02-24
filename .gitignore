@@ -23,6 +23,9 @@ configs/local*
 # Docker
 docker-compose.override.yml
 
+# Local install
+local/settings.ps1
+
 # Tests
 /tests/game_files/
 
