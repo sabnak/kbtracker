@@ -100,13 +100,17 @@ class GameConfigService(IGameConfigService):
 		Validate that campaign session directory exists
 
 		:param game_path:
-			Game path relative to game_data_path
+			Game path (relative to game_data_path in Docker, absolute in localhost)
 		:param session_dir:
 			Session directory name to validate
 		:param game_data_path:
-			Base game data path
+			Base game data path (":local" for localhost mode)
 		:return:
 			True if session directory exists
 		"""
-		full_path = os.path.join(game_data_path, game_path, "sessions", session_dir)
+		if game_data_path == ":local":
+			full_path = os.path.join(game_path, "sessions", session_dir)
+		else:
+			full_path = os.path.join(game_data_path, game_path, "sessions", session_dir)
+
 		return os.path.isdir(full_path)

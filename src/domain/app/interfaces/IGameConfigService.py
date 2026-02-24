@@ -74,11 +74,11 @@ class IGameConfigService(ABC):
 		Validate that campaign session directory exists
 
 		:param game_path:
-			Game path relative to game_data_path
+			Game path (relative to game_data_path in Docker, absolute in localhost)
 		:param session_dir:
 			Session directory name to validate
 		:param game_data_path:
-			Base game data path
+			Base game data path (":local" for localhost mode)
 		:return:
 			True if session directory exists
 		"""

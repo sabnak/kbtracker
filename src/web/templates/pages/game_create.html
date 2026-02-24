@@ -18,6 +18,19 @@
 				<form method="POST" action="/games/create" id="gameCreateForm">
 					<div class="mb-3">
 						<label for="path" class="form-label">1. {{ _('ui.game.path') }}</label>
+						{% if is_localhost_mode %}
+						<input type="text"
+							   class="form-control"
+							   id="path"
+							   name="path"
+							   placeholder="C:\Program Files\1C-SoftClub\King's Bounty. Legenda o rytsare"
+							   required>
+						<div class="form-text">
+							Enter the full path to your game installation directory.
+							The path must contain a "sessions" subdirectory.
+							<span id="pathValidation" class="ms-2"></span>
+						</div>
+						{% else %}
 						<select class="form-select" id="path" name="path" required>
 							<option value="">{{ _('ui.game.select_path_placeholder') }}</option>
 							{% if available_game_paths %}
@@ -29,6 +42,7 @@
 							{% endif %}
 						</select>
 						<div class="form-text">{{ _('ui.game.path_help') }}</div>
+						{% endif %}
 					</div>
 
 					<div class="mb-3">
@@ -99,6 +113,47 @@
 
 <script>
 const supportedGames = {{ supported_games|tojson }};
+const isLocalhostMode = {{ 'true' if is_localhost_mode else 'false' }};
+
+// Path validation for localhost mode
+if (isLocalhostMode) {
+	const pathInput = document.getElementById('path');
+	const validationSpan = document.getElementById('pathValidation');
+	let validationTimeout = null;
+
+	pathInput.addEventListener('input', function() {
+		const path = this.value.trim();
+
+		// Clear previous timeout
+		if (validationTimeout) {
+			clearTimeout(validationTimeout);
+		}
+
+		// Reset validation display
+		validationSpan.innerHTML = '';
+
+		if (!path) {
+			return;
+		}
+
+		// Debounce validation
+		validationTimeout = setTimeout(async function() {
+			try {
+				const response = await fetch(`/api/games/validate-path?path=${encodeURIComponent(path)}`);
+				const data = await response.json();
+
+				if (data.valid) {
+					validationSpan.innerHTML = '<span class="text-success">✓ Valid game path</span>';
+				} else {
+					validationSpan.innerHTML = '<span class="text-danger">✗ ' + data.message + '</span>';
+				}
+			} catch (err) {
+				console.error('Validation error:', err);
+				validationSpan.innerHTML = '<span class="text-warning">⚠ Could not validate path</span>';
+			}
+		}, 500);
+	});
+}
 
 // Game type change handler
 document.getElementById('game_type').addEventListener('change', function() {

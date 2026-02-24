@@ -63,6 +63,7 @@ async def create_game_form(
 	Show game creation form
 	"""
 	available_paths = game_path_service.get_available_game_paths()
+	is_localhost = game_path_service.is_localhost_mode()
 	supported_games = game_config_service.get_supported_games()
 
 	# Convert to JSON-serializable format
@@ -84,6 +85,7 @@ async def create_game_form(
 		{
 			"request": request,
 			"available_game_paths": available_paths,
+			"is_localhost_mode": is_localhost,
 			"supported_games": games_data
 		}
 	)
@@ -260,25 +262,55 @@ async def create_game(
 	return RedirectResponse(url="/games", status_code=303)
 
 
+@router.get("/api/games/validate-path")
+@inject
+async def validate_game_path(
+	path: str = Query(...),
+	game_path_service: IGamePathService = Depends(Provide["game_path_service"])
+):
+	"""
+	Validate that a path exists and appears to be a valid game directory
+
+	:param path:
+		Absolute game path to validate
+	:param game_path_service:
+		Game path service
+	:return:
+		JSON with validation result
+	"""
+	is_valid = game_path_service.validate_game_path(path)
+
+	return {
+		"valid": is_valid,
+		"message": "Valid game path" if is_valid else "Invalid game path or missing sessions directory"
+	}
+
+
 @router.get("/api/games/scan-sessions")
 @inject
 async def scan_sessions(
 	path: str = Query(...),
-	config = Depends(Provide["config"])
+	config = Depends(Provide["config"]),
+	game_path_service: IGamePathService = Depends(Provide["game_path_service"])
 ):
 	"""
 	Scan sessions directory for available session folders
 
 	:param path:
-		Game path to scan
+		Game path to scan (relative in Docker mode, absolute in localhost mode)
 	:param config:
 		Application config
+	:param game_path_service:
+		Game path service
 	:return:
 		JSON with list of session directories
 	"""
 	import os
 
-	sessions_dir = os.path.join(config.game_data_path, path, "sessions")
+	if game_path_service.is_localhost_mode():
+		sessions_dir = os.path.join(path, "sessions")
+	else:
+		sessions_dir = os.path.join(config.game_data_path, path, "sessions")
 
 	try:
 		if not os.path.exists(sessions_dir):
