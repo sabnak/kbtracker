@@ -1,3 +1,0 @@
-#!/bin/bash
-cd /app
-python src/tools/kb_save_extractor.py "$@"
