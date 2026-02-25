@@ -73,7 +73,7 @@ class DefaultInstaller:
 		self._container.config.override(providers.Singleton(Config))
 
 		config = self._container.config()
-		config.tmp_dir = tempfile.gettempdir()
+		config.tmp_dir = os.path.join(tempfile.gettempdir(), "KBTracker")
 
 		self._install_db()
 		self._install_repositories()
