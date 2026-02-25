@@ -7,8 +7,7 @@
 	<div class="col-md-12">
 		<h1 class="mb-4">{{ _('ui.spell.title_for') }} {{ game.name }}</h1>
 
-		<!-- Profile and School Filter Row -->
-		{% if profiles %}
+		<!-- Filters -->
 		<div class="card mb-4">
 			<div class="card-body">
 				<form method="GET" action="/games/{{ game.id }}/spells">
@@ -16,9 +15,10 @@
 					<input type="hidden" name="sort_by" value="{{ sort_by }}">
 					<input type="hidden" name="sort_order" value="{{ sort_order }}">
 
-					<div class="row g-3">
-						<!-- Profile filter - FULL WIDTH ROW -->
-						<div class="col-md-12">
+					<!-- Profile Filter Row -->
+					{% if profiles %}
+					<div class="row g-3 mb-3">
+						<div class="col-md-4">
 							<label for="profile_id" class="form-label">{{ _('ui.item.profile_label') }}</label>
 							<select
 								class="form-select"
@@ -36,8 +36,9 @@
 							</select>
 						</div>
 					</div>
+					{% endif %}
 
-					<div class="row g-3 mt-2">
+					<div class="row g-3">
 						<!-- School filter -->
 						<div class="col-md-4">
 							<label for="school" class="form-label">{{ _('ui.spell.school_label') }}</label>
@@ -53,7 +54,7 @@
 							</select>
 						</div>
 
-						<!-- Profit filter - NEW -->
+						<!-- Profit filter -->
 						<div class="col-md-4">
 							<label for="profit" class="form-label">{{ _('ui.spell.profit_label') }}</label>
 							<select class="form-select" id="profit" name="profit">
@@ -73,7 +74,6 @@
 				</form>
 			</div>
 		</div>
-		{% endif %}
 
 		<!-- Spells Count Info -->
 		{% if spells %}

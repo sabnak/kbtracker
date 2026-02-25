@@ -8,7 +8,6 @@
 		<h1 class="mb-4">{{ _('ui.unit.title_for') }} {{ game.name }}</h1>
 
 		<!-- Unit Filters -->
-		{% if profiles %}
 		<div class="card mb-4">
 			<div class="card-body">
 				<form method="GET" action="/games/{{ game.id }}/units">
@@ -17,6 +16,7 @@
 					<input type="hidden" name="sort_order" value="{{ sort_order }}">
 
 					<!-- Row 1: Profile Filter (alone) -->
+					{% if profiles %}
 					<div class="row g-3 mb-3">
 						<div class="col-md-4">
 							<label for="profile_id" class="form-label">{{ _('ui.item.profile_label') }}</label>
@@ -36,6 +36,7 @@
 							</select>
 						</div>
 					</div>
+					{% endif %}
 
 					<!-- Row 2: Cost Filters -->
 					<div class="row g-3 mb-3">
@@ -226,7 +227,6 @@
 				</form>
 			</div>
 		</div>
-		{% endif %}
 
 		<!-- Units Count Info -->
 		{% if units %}
