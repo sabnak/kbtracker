@@ -61,6 +61,8 @@ class ScannerService:
 		"""
 		from datetime import datetime
 
+		game = None
+
 		try:
 			# Emit scan started event
 			yield ScanProgressEvent(
@@ -212,9 +214,16 @@ class ScannerService:
 				message="Scan completed successfully"
 			)
 
+			# Clean up temporary extracted files
+			if game:
+				self._kfs_extractor.cleanup_extraction(game)
+
 			return results
 
 		except Exception as e:
+			# Clean up temporary extracted files on error
+			if game:
+				self._kfs_extractor.cleanup_extraction(game)
 			# Emit error event with structured error data
 			yield ScanProgressEvent(
 				event_type=ScanEventType.SCAN_ERROR,

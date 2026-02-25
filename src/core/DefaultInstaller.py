@@ -1,4 +1,5 @@
 import os
+import tempfile
 from pathlib import Path
 
 from dependency_injector import providers
@@ -70,6 +71,10 @@ class DefaultInstaller:
 		load_dotenv(dotenv_path=env_file, override=True)
 		self._container.logger.override(providers.Singleton(setup_logging))
 		self._container.config.override(providers.Singleton(Config))
+
+		config = self._container.config()
+		config.tmp_dir = tempfile.gettempdir()
+
 		self._install_db()
 		self._install_repositories()
 		self._install_game_resource_processors()

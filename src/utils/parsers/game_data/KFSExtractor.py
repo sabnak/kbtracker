@@ -48,6 +48,15 @@ class KFSExtractor(IKFSExtractor):
 
 		return extraction_root
 
+	def cleanup_extraction(self, game: Game) -> None:
+		"""
+		Clean up temporary extracted files for the given game
+
+		:param game:
+			Game entity to clean up temporary files for
+		"""
+		self._cleanup_previous_extraction(f"game_{game.id}")
+
 	def _resolve_game_path(self, game_path: str) -> str:
 		"""
 		Resolve game path based on mode

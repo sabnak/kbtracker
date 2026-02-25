@@ -19,3 +19,13 @@ class IKFSExtractor(abc.ABC):
 			Path to extraction root (/tmp/<game.path>/)
 		"""
 		...
+
+	@abc.abstractmethod
+	def cleanup_extraction(self, game: Game) -> None:
+		"""
+		Clean up temporary extracted files for the given game
+
+		:param game:
+			Game entity to clean up temporary files for
+		"""
+		...
