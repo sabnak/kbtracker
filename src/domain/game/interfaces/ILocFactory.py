@@ -15,9 +15,9 @@ class ILocFactory(ABC):
 		- *_name -> name (exact match, no duplicates)
 		- *_hint -> hint (exact match, no duplicates)
 		- *_desc (exact) -> desc (no duplicates)
-		- *_desc_\d+ (indexed) -> desc_list (allows multiple)
+		- *_desc_\\d+ (indexed) -> desc_list (allows multiple)
 		- *_text (exact) -> text (no duplicates)
-		- *_text_\d+ (indexed) -> text_list (allows multiple)
+		- *_text_\\d+ (indexed) -> text_list (allows multiple)
 		- *_header -> header (exact match, no duplicates)
 		Non-matching suffixes are dropped silently
 
