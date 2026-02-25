@@ -7,7 +7,7 @@ class IKFSSpellsParser(abc.ABC):
 	@abc.abstractmethod
 	def parse(
 		self,
-		game_name: str,
+		game_id: int,
 		allowed_kb_ids: list[str] | None = None
 	) -> dict[str, dict[str, Any]]:
 		"""
@@ -24,8 +24,8 @@ class IKFSSpellsParser(abc.ABC):
 		- Have 'action' field instead of 'levels'
 		- mana_cost and crystal_cost are None
 
-		:param game_name:
-			Game name (e.g., 'Darkside', 'Armored_Princess')
+		:param game_id:
+			Game ID
 		:param allowed_kb_ids:
 			Optional list of spell kb_ids to parse (for testing)
 		:return:

@@ -16,7 +16,7 @@ class KFSReader(IKFSReader):
 
 	def read_data_files(
 		self,
-		game_name: str,
+		game_id: int,
 		patterns: list[str],
 		encoding: str | None = None
 	) -> list[str]:
@@ -25,8 +25,8 @@ class KFSReader(IKFSReader):
 
 		Supports glob patterns for dynamic file discovery.
 
-		:param game_name:
-			Game name (builds path as /tmp/<game_name>/data/**, searches recursively)
+		:param game_id:
+			Game ID (builds path as /tmp/game_<id>/data/**, searches recursively)
 		:param patterns:
 			List of filenames or glob patterns (e.g., ['items*.txt', 'spells.txt'])
 		:param encoding:
@@ -36,12 +36,12 @@ class KFSReader(IKFSReader):
 		:raises FileNotFoundError:
 			If no files match pattern or directory not found
 		"""
-		data_dir = os.path.join(self._config.tmp_dir, game_name, 'data')
+		data_dir = os.path.join(self._config.tmp_dir, f'game_{game_id}', 'data')
 		return self._read_files_from_dir(data_dir, patterns, encoding)
 
 	def read_loc_files(
 		self,
-		game_name: str,
+		game_id: int,
 		patterns: list[str],
 		encoding: str = 'utf-16-le'
 	) -> list[str]:
@@ -50,8 +50,8 @@ class KFSReader(IKFSReader):
 
 		Supports glob patterns for dynamic file discovery.
 
-		:param game_name:
-			Game name (builds path as /tmp/<game_name>/loc/**, searches recursively)
+		:param game_id:
+			Game ID (builds path as /tmp/game_<id>/loc/**, searches recursively)
 		:param patterns:
 			List of filenames or glob patterns (e.g., ['rus_*.lng', 'eng_items.lng'])
 		:param encoding:
@@ -61,7 +61,7 @@ class KFSReader(IKFSReader):
 		:raises FileNotFoundError:
 			If no files match pattern or directory not found
 		"""
-		loc_dir = os.path.join(self._config.tmp_dir, game_name, 'loc')
+		loc_dir = os.path.join(self._config.tmp_dir, f'game_{game_id}', 'loc')
 		print(f"Loc dir: {loc_dir}, patterns: {patterns}")
 		return self._read_files_from_dir(loc_dir, patterns, encoding)
 

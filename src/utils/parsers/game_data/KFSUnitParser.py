@@ -25,7 +25,7 @@ class KFSUnitParser(IKFSUnitParser):
 
 	def parse(
 		self,
-		game_name: str,
+		game_id: int,
 		allowed_kb_ids: list[str] | None = None
 	) -> dict[str, dict[str, any]]:
 		"""
@@ -35,8 +35,8 @@ class KFSUnitParser(IKFSUnitParser):
 		Where params contains raw arena_params data (features_hints as list, etc.)
 		Skips units with class='spirit'. Raises exception for invalid atom files.
 
-		:param game_name:
-			Game name (e.g., 'Darkside', 'Armored_Princess')
+		:param game_id:
+			Game ID
 		:param allowed_kb_ids:
 			Optional list of unit kb_ids to parse (for testing)
 		:return:
@@ -53,7 +53,7 @@ class KFSUnitParser(IKFSUnitParser):
 
 		result = {}
 		for kb_id in unit_kb_ids:
-			unit_data = self._parse_unit_file(game_name, kb_id)
+			unit_data = self._parse_unit_file(game_id, kb_id)
 			if unit_data is not None:
 				result[kb_id] = unit_data
 
@@ -93,12 +93,12 @@ class KFSUnitParser(IKFSUnitParser):
 			return False
 		return True
 
-	def _parse_unit_file(self, game_name: str, kb_id: str) -> dict[str, any] | None:
+	def _parse_unit_file(self, game_id: int, kb_id: str) -> dict[str, any] | None:
 		"""
 		Parse single unit atom file
 
-		:param game_name:
-			Game name
+		:param game_id:
+			Game ID
 		:param kb_id:
 			Unit kb_id (e.g., 'bowman')
 		:return:
@@ -111,7 +111,7 @@ class KFSUnitParser(IKFSUnitParser):
 		atom_filename = f"{kb_id}.atom"
 
 		try:
-			contents = self._reader.read_data_files(game_name, [atom_filename])
+			contents = self._reader.read_data_files(game_id, [atom_filename])
 		except FileNotFoundError as e:
 			self._logger.info(f"Atom file not found: {atom_filename}")
 			return None

@@ -41,18 +41,16 @@ class UnitsScannerService(IUnitsScannerService):
 		self._unit_factory = unit_factory
 		self._config = config
 
-	def scan(self, game_id: int, game_name: str) -> list[Unit]:
+	def scan(self, game_id: int) -> list[Unit]:
 		"""
 		Scan and import units from game files
 
 		:param game_id:
 			Game ID
-		:param game_name:
-			Game name for file paths
 		:return:
 			List of created Unit entities
 		"""
-		raw_data_dict = self._parser.parse(game_name)
+		raw_data_dict = self._parser.parse(game_id)
 		units = self._unit_factory.create_batch_from_raw_data(raw_data_dict)
 		created_units = self._unit_repository.create_batch(units)
 		return created_units

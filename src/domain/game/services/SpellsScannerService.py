@@ -41,18 +41,16 @@ class SpellsScannerService(ISpellsScannerService):
 		self._spell_factory = spell_factory
 		self._config = config
 
-	def scan(self, game_id: int, game_name: str) -> list[Spell]:
+	def scan(self, game_id: int) -> list[Spell]:
 		"""
 		Scan and import spells from game files
 
 		:param game_id:
 			Game ID
-		:param game_name:
-			Game name for file paths
 		:return:
 			List of created Spell entities
 		"""
-		raw_data_dict = self._parser.parse(game_name)
+		raw_data_dict = self._parser.parse(game_id)
 		spells = self._spell_factory.create_batch_from_raw_data(raw_data_dict)
 		created_spells = self._spell_repository.create_batch(spells)
 		return created_spells

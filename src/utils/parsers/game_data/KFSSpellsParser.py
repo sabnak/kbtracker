@@ -21,7 +21,7 @@ class KFSSpellsParser(IKFSSpellsParser):
 
 	def parse(
 		self,
-		game_name: str,
+		game_id: int,
 		allowed_kb_ids: list[str] | None = None
 	) -> dict[str, dict[str, Any]]:
 		"""
@@ -38,8 +38,8 @@ class KFSSpellsParser(IKFSSpellsParser):
 		- Have 'action' field instead of 'levels'
 		- mana_cost and crystal_cost are None
 
-		:param game_name:
-			Game name (e.g., 'Darkside', 'Armored_Princess')
+		:param game_id:
+			Game ID
 		:param allowed_kb_ids:
 			Optional list of spell kb_ids to parse (for testing)
 		:return:
@@ -49,10 +49,10 @@ class KFSSpellsParser(IKFSSpellsParser):
 		:raises ValueError:
 			When spell file has invalid structure
 		"""
-		spell_files = self._reader.read_data_files(game_name, ['spells*.txt', 'new_spells.txt'])
+		spell_files = self._reader.read_data_files(game_id, ['spells*.txt', 'new_spells.txt'])
 
 		if not spell_files:
-			raise FileNotFoundError(f"Spell data files not found for game: {game_name}")
+			raise FileNotFoundError(f"Spell data files not found for game ID: {game_id}")
 
 		result = {}
 		for file_content in spell_files:

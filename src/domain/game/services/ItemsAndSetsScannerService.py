@@ -31,8 +31,8 @@ class ItemsAndSetsScannerService(IItemsAndSetsScannerService):
 		self._config = config
 		self._logger = logger
 
-	def scan(self, game_id: int, game_name: str) -> tuple[list[Item], list[ItemSet]]:
-		parse_results = self._parser.parse(game_name)
+	def scan(self, game_id: int) -> tuple[list[Item], list[ItemSet]]:
+		parse_results = self._parser.parse(game_id)
 
 		all_items = []
 		all_sets = []

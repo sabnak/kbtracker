@@ -96,7 +96,7 @@ class ScannerService:
 				message="Scanning localization files"
 			)
 
-			localizations = self._localization_scanner.scan(game_id, game.path, language)
+			localizations = self._localization_scanner.scan(game_id, language)
 			localizations_count = len(localizations)
 
 			yield ScanProgressEvent(
@@ -113,7 +113,7 @@ class ScannerService:
 				message="Parsing items and sets"
 			)
 
-			items, sets = self._items_and_sets_scanner.scan(game_id, game.path)
+			items, sets = self._items_and_sets_scanner.scan(game_id)
 			total_items = len(items)
 			total_sets = len(sets)
 
@@ -138,7 +138,7 @@ class ScannerService:
 				message="Parsing units"
 			)
 
-			units = self._units_scanner.scan(game_id, game.path)
+			units = self._units_scanner.scan(game_id)
 			total_units = len(units)
 
 			yield ScanProgressEvent(
@@ -155,7 +155,7 @@ class ScannerService:
 				message="Parsing spells"
 			)
 
-			spells = self._spells_scanner.scan(game_id, game.path)
+			spells = self._spells_scanner.scan(game_id)
 			total_spells = len(spells)
 
 			yield ScanProgressEvent(

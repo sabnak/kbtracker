@@ -26,7 +26,7 @@ class KFSItemsParser(IKFSItemsParser):
 		self._reader = reader
 		self._logger = logger
 
-	def parse(self, game_name: str) -> dict[str, list[Item]]:
+	def parse(self, game_id: int) -> dict[str, list[Item]]:
 		"""
 		Extract and parse item data and set data from game files
 
@@ -34,13 +34,13 @@ class KFSItemsParser(IKFSItemsParser):
 		parses sets and items, groups items by their set membership.
 		Files are processed in order, with later files overwriting earlier ones.
 
-		:param game_name:
-			Game name (e.g., 'Darkside', 'Armored_Princess')
+		:param game_id:
+			Game ID
 		:return:
 			Dictionary with sets as keys, each containing items list
 			Also includes 'setless' key for items without sets
 		"""
-		items_contents = self._extract_files(game_name)
+		items_contents = self._extract_files(game_id)
 
 		# First pass: parse all set definitions (kb_id only)
 		set_definitions = {}
@@ -74,18 +74,18 @@ class KFSItemsParser(IKFSItemsParser):
 		self._logger.debug(results)
 		return results
 
-	def _extract_files(self, game_name: str) -> list[str]:
+	def _extract_files(self, game_id: int) -> list[str]:
 		"""
 		Read all items*.txt files from extracted data directory
 
 		Uses glob pattern to dynamically discover all items files.
 
-		:param game_name:
-			Game name
+		:param game_id:
+			Game ID
 		:return:
 			List of items file contents
 		"""
-		return self._reader.read_data_files(game_name, ['items*.txt'])
+		return self._reader.read_data_files(game_id, ['items*.txt'])
 
 	def _parse_items_file(self, content: str) -> dict[str, typing.Any]:
 		"""

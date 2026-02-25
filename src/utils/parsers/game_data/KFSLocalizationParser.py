@@ -32,7 +32,7 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 
 	def parse(
 		self,
-		game_name: str,
+		game_id: int,
 		file_name: str,
 		kb_id_pattern: re.Pattern = None,
 		lang: str = 'rus',
@@ -41,8 +41,8 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 		"""
 		Parse localization file and return Localization entities
 
-		:param game_name:
-			Game name (e.g., 'Darkside', 'Armored_Princess')
+		:param game_id:
+			Game ID
 		:param file_name:
 			Base name of localization file (e.g., 'items' for rus_items.lng)
 		:param kb_id_pattern:
@@ -68,7 +68,7 @@ class KFSLocalizationParser(IKFSLocalizationParser):
 
 		filename = f"{lang}_{file_name}.lng"
 
-		contents = self._reader.read_loc_files(game_name, [filename])
+		contents = self._reader.read_loc_files(game_id, [filename])
 
 		final_pattern = self._build_final_pattern(kb_id_pattern)
 		localizations = self._parse_content(contents, final_pattern, file_name, lang, tag)

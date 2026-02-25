@@ -23,13 +23,13 @@ class LocalizationScannerService(ILocalizationScannerService):
 		self._game_repository = game_repository
 		self._config = config
 
-	def scan(self, game_id: int, game_name: str, lang: str = 'rus') -> list[Localization]:
+	def scan(self, game_id: int, lang: str = 'rus') -> list[Localization]:
 		all_localizations = dict()
 
 		for localization_config in self._config.localization_config:
 			try:
 				localizations = self._parser.parse(
-					game_name=game_name,
+					game_id=game_id,
 					file_name=localization_config.file,
 					kb_id_pattern=localization_config.pattern,
 					lang=lang,
@@ -40,6 +40,6 @@ class LocalizationScannerService(ILocalizationScannerService):
 			all_localizations.update(localizations)
 
 		if not all_localizations:
-			raise FileNotFoundError(f"Can't find any localizations files for {game_name}")
+			raise FileNotFoundError(f"Can't find any localizations files for game {game_id}")
 
 		return self._repository.create_batch(list(all_localizations.values()))

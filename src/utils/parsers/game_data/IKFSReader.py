@@ -6,7 +6,7 @@ class IKFSReader(abc.ABC):
 	@abc.abstractmethod
 	def read_data_files(
 		self,
-		game_name: str,
+		game_id: int,
 		patterns: list[str],
 		encoding: str = 'utf-16-le'
 	) -> list[str]:
@@ -15,8 +15,8 @@ class IKFSReader(abc.ABC):
 
 		Supports glob patterns for dynamic file discovery.
 
-		:param game_name:
-			Game name (builds path as /tmp/<game_name>/data/)
+		:param game_id:
+			Game ID (builds path as /tmp/game_<id>/data/)
 		:param patterns:
 			List of filenames or glob patterns (e.g., ['items*.txt', 'spells.txt'])
 		:param encoding:
@@ -31,7 +31,7 @@ class IKFSReader(abc.ABC):
 	@abc.abstractmethod
 	def read_loc_files(
 		self,
-		game_name: str,
+		game_id: int,
 		patterns: list[str],
 		encoding: str = 'utf-16-le'
 	) -> list[str]:
@@ -40,8 +40,8 @@ class IKFSReader(abc.ABC):
 
 		Supports glob patterns for dynamic file discovery.
 
-		:param game_name:
-			Game name (builds path as /tmp/<game_name>/loc/)
+		:param game_id:
+			Game ID (builds path as /tmp/game_<id>/loc/)
 		:param patterns:
 			List of filenames or glob patterns (e.g., ['rus_*.lng', 'eng_items.lng'])
 		:param encoding:

@@ -18,22 +18,22 @@ class KFSExtractor(IKFSExtractor):
 
 	def extract_archives(self, game: Game) -> str:
 		"""
-		Extract all game archives to /tmp/<game.path>/ with session-specific subdirectories
+		Extract all game archives to /tmp/game_<game.id>/ with session-specific subdirectories
 
-		Data archives go to /tmp/<game.path>/data/<session>/
-		Localization archives go to /tmp/<game.path>/loc/<session>/
-		Main data archive goes to /tmp/<game.path>/data/data/ and /tmp/<game.path>/loc/data/
+		Data archives go to /tmp/game_<game.id>/data/<session>/
+		Localization archives go to /tmp/game_<game.id>/loc/<session>/
+		Main data archive goes to /tmp/game_<game.id>/data/data/ and /tmp/game_<game.id>/loc/data/
 
 		:param game:
 			Game entity with path and sessions list
 		:return:
-			Path to extraction root (/tmp/<game.path>/)
+			Path to extraction root (/tmp/game_<game.id>/)
 		"""
-		extraction_root = os.path.join(self._config.tmp_dir, game.path)
+		extraction_root = os.path.join(self._config.tmp_dir, f"game_{game.id}")
 
-		self._cleanup_previous_extraction(game.path)
+		self._cleanup_previous_extraction(f"game_{game.id}")
 
-		game_path = os.path.join(self._config.game_data_path, game.path)
+		game_path = self._resolve_game_path(game.path)
 
 		# Extract main data archive to data/ subdirectory
 		data_archive_paths = self._get_data_archive_paths(game_path)
@@ -48,14 +48,31 @@ class KFSExtractor(IKFSExtractor):
 
 		return extraction_root
 
-	def _cleanup_previous_extraction(self, game_path: str) -> None:
+	def _resolve_game_path(self, game_path: str) -> str:
 		"""
-		Delete /tmp/<game_path>/ directory if exists
+		Resolve game path based on mode
+
+		In localhost mode (game_data_path=:local), game_path is already absolute
+		In Docker mode, game_path is relative to game_data_path
 
 		:param game_path:
-			Game path
+			Game path from database
+		:return:
+			Absolute path to game directory
 		"""
-		extraction_root = os.path.join(self._config.tmp_dir, game_path)
+		if self._config.game_data_path == ":local":
+			return game_path
+		else:
+			return os.path.join(self._config.game_data_path, game_path)
+
+	def _cleanup_previous_extraction(self, extraction_dir_name: str) -> None:
+		"""
+		Delete /tmp/<extraction_dir_name>/ directory if exists
+
+		:param extraction_dir_name:
+			Directory name under tmp (e.g., 'game_1', 'game_2')
+		"""
+		extraction_root = os.path.join(self._config.tmp_dir, extraction_dir_name)
 		if os.path.exists(extraction_root):
 			shutil.rmtree(extraction_root)
 
