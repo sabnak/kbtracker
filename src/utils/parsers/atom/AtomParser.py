@@ -27,6 +27,9 @@ class AtomParser:
 		:return:
 			Parsed structure as dict or list
 		"""
+		if content.startswith('\ufeff'):
+			content = content[1:]
+
 		cleaned = self._remove_comments(content)
 		self._tokens = self._tokenize(cleaned)
 		self._pos = 0
