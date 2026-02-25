@@ -186,14 +186,18 @@ class KFSReader(IKFSReader):
 		encodings_to_try = []
 
 		if encoding is None:
+			encodings_to_try.extend(['utf-16-le', 'utf-8'])
+
 			detected = chardet.detect(content)
 			detected_encoding = detected.get('encoding')
 			confidence = detected.get('confidence', 0)
 
 			if detected_encoding and confidence > 0.7:
-				encodings_to_try.append(detected_encoding.lower())
+				detected_lower = detected_encoding.lower()
+				if detected_lower not in encodings_to_try:
+					encodings_to_try.append(detected_lower)
 
-			encodings_to_try.extend(['utf-16-le', 'utf-8', 'iso-8859-1'])
+			encodings_to_try.append('iso-8859-1')
 		else:
 			encodings_to_try.append(encoding)
 			if 'utf-16-le' not in encodings_to_try:
@@ -207,9 +211,12 @@ class KFSReader(IKFSReader):
 		for enc in encodings_to_try:
 			try:
 				decoded = content.decode(enc)
-				# Strip BOM (Byte Order Mark) if present
 				if decoded.startswith('\ufeff'):
 					decoded = decoded[1:]
+
+				if encoding is None and not KFSReader._is_valid_decoded_content(decoded):
+					continue
+
 				return decoded
 			except (UnicodeDecodeError, LookupError) as e:
 				last_error = e
@@ -222,3 +229,22 @@ class KFSReader(IKFSReader):
 			len(content),
 			f"Failed to decode content with any of: {', '.join(encodings_to_try)}"
 		) from last_error
+
+	@staticmethod
+	def _is_valid_decoded_content(decoded: str) -> bool:
+		"""
+		Check if decoded content looks valid (not garbage from wrong encoding)
+
+		:param decoded:
+			Decoded string
+		:return:
+			True if content looks valid, False if looks like encoding error
+		"""
+		if not decoded:
+			return True
+
+		sample = decoded[:500]
+		ascii_printable = sum(1 for c in sample if 32 <= ord(c) <= 126 or c in '\n\r\t')
+		ascii_ratio = ascii_printable / len(sample)
+
+		return ascii_ratio > 0.5

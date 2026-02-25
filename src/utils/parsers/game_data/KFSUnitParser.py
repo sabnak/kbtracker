@@ -130,6 +130,8 @@ class KFSUnitParser(IKFSUnitParser):
 			raise ValueError(f"Unit '{kb_id}': atom syntax error: {e}. Atom file name: {atom_filename}")
 
 		if 'main' not in parsed:
+			self._logger.error(f"Unit '{kb_id}': Parsed keys: {list(parsed.keys())}")
+			self._logger.error(f"Unit '{kb_id}': First 200 chars of content: {repr(content[:200])}")
 			raise ValueError(f"Unit '{kb_id}': atom file missing 'main' section")
 
 		main_section = parsed['main']
