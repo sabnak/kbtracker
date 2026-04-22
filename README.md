@@ -45,6 +45,10 @@
 
 ## Установка
 
+Доступны два способа установки:
+- **Docker** (рекомендуется, кроссплатформенно) — описан ниже
+- **Нативная установка на Windows (без Docker)** — см. раздел [«Нативная установка на Windows»](#нативная-установка-на-windows-без-docker)
+
 ### Требования
 
 Вам нужен только **Docker Desktop**: [Скачать Docker Desktop](https://www.docker.com/products/docker-desktop)
@@ -112,6 +116,64 @@ http://localhost:9333
 ```
 
 - После этого вам достаточно будет только запускать Docker, чтобы сайт заработал.
+
+## Нативная установка на Windows (без Docker)
+
+Если вы не хотите использовать Docker, на Windows можно установить приложение нативно с помощью PowerShell-скриптов. Python 3.13 и PostgreSQL 16 будут установлены автоматически, если их ещё нет в системе.
+
+### Требования
+
+- Windows 10 или новее
+- PowerShell 5.1+ (встроен в Windows 10/11)
+- Права администратора (необходимы для установки Python и PostgreSQL через `winget`)
+
+### Шаг 1: Скачайте скрипты установки
+
+Скачайте два файла в одну папку (например, `C:/Games/KBTracker`):
+- [setup.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/setup.ps1)
+- [common.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/common.ps1)
+
+### Шаг 2: Запустите установку
+
+Откройте PowerShell **от имени администратора**, перейдите в папку со скриптами и выполните:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\setup.ps1
+```
+
+Скрипт выполнит следующее:
+- Скачает актуальный исходный код приложения с GitHub
+- Установит Python 3.13 через `winget` (если не установлен) и создаст виртуальное окружение
+- Установит все Python-зависимости и скомпилирует переводы
+- Найдёт существующий сервис PostgreSQL или установит PostgreSQL 16 через `winget` на отдельный порт `5433`
+- Создаст базу данных и пользователя для приложения
+- Сгенерирует `.env` с настройками подключения и путём к сохранениям `Documents/my games`
+- Создаст ярлык **KBTracker** на рабочем столе
+
+По умолчанию приложение ставится в `%USERPROFILE%\AppData\LocalLow\KBTracker`. При запуске установщик задаст несколько вопросов — в большинстве случаев можно нажимать Enter для значений по умолчанию.
+
+### Шаг 3: Запустите приложение
+
+Запустите ярлык **KBTracker** на рабочем столе. Одновременно стартуют два компонента:
+- Фоновый демон автоматической синхронизации профилей (`ProfileAutoScannerDaemon`)
+- Веб-сервер на порту `9333` (по умолчанию)
+
+Откройте в браузере:
+```
+http://localhost:9333
+```
+
+Чтобы остановить приложение, нажмите `Ctrl+C` в окне PowerShell — демон и веб-сервер остановятся вместе.
+
+### Обновление
+
+Для обновления скачайте [update.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/update.ps1) в ту же папку и выполните:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\update.ps1
+```
+
+Скрипт обновит исходный код и зависимости, не затрагивая базу данных, `.env` и виртуальное окружение. После обновления перезапустите приложение ярлыком на рабочем столе.
 
 ## Принцип работы
 
@@ -251,6 +313,10 @@ King's Bounty Tracker helps players track the location of items, spells, and uni
 
 ## Installation
 
+Two installation methods are available:
+- **Docker** (recommended, cross-platform) — described below
+- **Native Windows installation (without Docker)** — see the [Native Windows Installation](#native-windows-installation-without-docker) section
+
 ### Prerequisites
 
 You only need **Docker Desktop**: [Download Docker Desktop](https://www.docker.com/products/docker-desktop)
@@ -303,6 +369,64 @@ Open your browser and go to:
 ```
 http://localhost:9333
 ```
+
+## Native Windows Installation (without Docker)
+
+If you prefer not to use Docker, the application can be installed natively on Windows via PowerShell scripts. Python 3.13 and PostgreSQL 16 are installed automatically if missing.
+
+### Prerequisites
+
+- Windows 10 or newer
+- PowerShell 5.1+ (built into Windows 10/11)
+- Administrator privileges (required to install Python and PostgreSQL via `winget`)
+
+### Step 1: Download the installation scripts
+
+Download both files into a single folder (e.g., `C:/Games/KBTracker`):
+- [setup.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/setup.ps1)
+- [common.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/common.ps1)
+
+### Step 2: Run the installer
+
+Open PowerShell **as Administrator**, navigate to the folder with the scripts, and run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\setup.ps1
+```
+
+The script will:
+- Download the latest application source code from GitHub
+- Install Python 3.13 via `winget` (if missing) and create a virtual environment
+- Install all Python dependencies and compile translations
+- Detect an existing PostgreSQL service, or install PostgreSQL 16 via `winget` on a dedicated port `5433`
+- Create the application's database and user
+- Generate an `.env` with connection settings and the save path pointing to `Documents/my games`
+- Create a **KBTracker** shortcut on your Desktop
+
+By default, the app is installed to `%USERPROFILE%\AppData\LocalLow\KBTracker`. The installer asks a few questions — in most cases you can just press Enter to accept the defaults.
+
+### Step 3: Start the application
+
+Launch the **KBTracker** shortcut on your Desktop. Two components start together:
+- The background profile auto-scanner daemon (`ProfileAutoScannerDaemon`)
+- The web server on port `9333` (by default)
+
+Open in your browser:
+```
+http://localhost:9333
+```
+
+To stop the application, press `Ctrl+C` in the PowerShell window — both the daemon and the web server will stop together.
+
+### Updating
+
+To update the application, download [update.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/update.ps1) into the same folder and run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\update.ps1
+```
+
+The script refreshes the source code and dependencies without touching the database, `.env`, or virtual environment. Restart the app via the Desktop shortcut after updating.
 
 ## Finding Your Game Paths
 
