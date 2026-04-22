@@ -80,9 +80,9 @@ def _create_html_error_response(
 		HTML error page response
 	"""
 	return templates.TemplateResponse(
+		request,
 		"pages/error.html",
 		{
-			"request": request,
 			"error_title": error_title,
 			"error_message": error_message,
 			"error_details": error_details,

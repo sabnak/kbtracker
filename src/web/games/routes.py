@@ -47,8 +47,9 @@ async def list_games(
 	"""
 	games = game_service.list_games()
 	return templates.TemplateResponse(
+		request,
 		"pages/game_list.html",
-		{"request": request, "games": games}
+		{"games": games}
 	)
 
 
@@ -81,9 +82,9 @@ async def create_game_form(
 	]
 
 	return templates.TemplateResponse(
+		request,
 		"pages/game_create.html",
 		{
-			"request": request,
 			"available_game_paths": available_paths,
 			"is_localhost_mode": is_localhost,
 			"supported_games": games_data
@@ -138,9 +139,9 @@ async def create_game(
 		]
 
 		return templates.TemplateResponse(
+			request,
 			"pages/game_create.html",
 			{
-				"request": request,
 				"available_game_paths": available_paths,
 				"supported_games": games_data,
 				"error": "Invalid game type selected"
@@ -166,9 +167,9 @@ async def create_game(
 		]
 
 		return templates.TemplateResponse(
+			request,
 			"pages/game_create.html",
 			{
-				"request": request,
 				"available_game_paths": available_paths,
 				"supported_games": games_data,
 				"error": "Campaign selection is required for this game"
@@ -199,9 +200,9 @@ async def create_game(
 				]
 
 				return templates.TemplateResponse(
+					request,
 					"pages/game_create.html",
 					{
-						"request": request,
 						"available_game_paths": available_paths,
 						"supported_games": games_data,
 						"error": "Custom campaign requires session name"
@@ -231,9 +232,9 @@ async def create_game(
 				]
 
 				return templates.TemplateResponse(
+					request,
 					"pages/game_create.html",
 					{
-						"request": request,
 						"available_game_paths": available_paths,
 						"supported_games": games_data,
 						"error": f"Session directory not found: {campaign_session}"
@@ -368,8 +369,9 @@ async def scan_form(
 	]
 
 	return templates.TemplateResponse(
+		request,
 		"pages/scan.html",
-		{"request": request, "game": game, "languages": languages}
+		{"game": game, "languages": languages}
 	)
 
 
@@ -586,9 +588,9 @@ async def list_items(
 		items_with_sets = []
 
 	return templates.TemplateResponse(
+		request,
 		"pages/item_list.html",
 		{
-			"request": request,
 			"game": game,
 			"items_with_sets": items_with_sets,
 			# Preserve filter values
@@ -705,9 +707,9 @@ async def list_units(
 		)
 
 	return templates.TemplateResponse(
+		request,
 		"pages/unit_list.html",
 		{
-			"request": request,
 			"game": game,
 			"units": units,
 			"sort_by": sort_field,
@@ -785,9 +787,9 @@ async def list_spells(
 		)
 
 	return templates.TemplateResponse(
+		request,
 		"pages/spells.html",
 		{
-			"request": request,
 			"game": game,
 			"spells": spells,
 			"sort_by": filters.sort_by,
@@ -827,9 +829,9 @@ async def list_shops(
 	if profile_id is None:
 		if not profiles:
 			return templates.TemplateResponse(
+				request,
 				"pages/shop_list.html",
 				{
-					"request": request,
 					"game": game,
 					"profiles": [],
 					"selected_profile_id": None,
@@ -846,9 +848,9 @@ async def list_shops(
 	locations = shop_inventory_service.get_shops(selected_profile_id)
 
 	return templates.TemplateResponse(
+		request,
 		"pages/shop_list.html",
 		{
-			"request": request,
 			"game": game,
 			"profiles": profiles,
 			"selected_profile_id": selected_profile_id,

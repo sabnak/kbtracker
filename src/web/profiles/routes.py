@@ -44,9 +44,9 @@ async def list_game_profiles(
 	profiles = profile_service.list_profiles()
 
 	return templates.TemplateResponse(
+		request,
 		"pages/game_profiles.html",
 		{
-			"request": request,
 			"game": game,
 			"profiles": profiles
 		}
@@ -68,9 +68,9 @@ async def create_profile_form(
 		return RedirectResponse(url="/games", status_code=303)
 
 	return templates.TemplateResponse(
+		request,
 		"pages/profile_create.html",
 		{
-			"request": request,
 			"game": game
 		}
 	)

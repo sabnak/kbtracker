@@ -23,9 +23,9 @@ async def get_settings(
 ):
 	settings = settings_service.get_settings()
 	return templates.TemplateResponse(
+		request,
 		"pages/settings.html",
 		{
-			"request": request,
 			"settings": settings,
 			"errors": {},
 			"AppLanguage": AppLanguage
@@ -59,9 +59,9 @@ async def save_settings(
 		settings = settings_service.get_settings()
 		errors = {err["loc"][0]: err["msg"] for err in e.errors()}
 		return templates.TemplateResponse(
+			request,
 			"pages/settings.html",
 			{
-				"request": request,
 				"settings": settings,
 				"errors": errors,
 				"AppLanguage": AppLanguage
