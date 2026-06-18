@@ -73,6 +73,8 @@ Write-Host ""
 Write-Host "Press Ctrl+C to stop both daemon and server." -ForegroundColor Yellow
 Write-Host ""
 
+Start-Process "http://localhost:$AppPort"
+
 try {
     & $VenvPython -m uvicorn src.main:app --host 127.0.0.1 --port $AppPort
 } finally {

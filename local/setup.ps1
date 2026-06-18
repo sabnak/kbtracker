@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 # Load common functions
 . (Join-Path $PSScriptRoot "common.ps1")
 
-$DefaultDir = "$env:USERPROFILE\AppData\LocalLow\KBTracker"
+$DefaultDir = Join-Path (Get-Location) "KBTracker"
 
 try {
 
@@ -62,9 +62,14 @@ Write-Ok "Desktop shortcut created: KBTracker.lnk"
 # --- Done --------------------------------------------------------------------
 Write-Host ""
 Write-Host "Setup complete!" -ForegroundColor Green
-Write-Host "Use the 'KBTracker' shortcut on your desktop to start the server."
-Write-Host "Then open: http://localhost:$AppPort"
+Write-Host "Use the 'KBTracker' shortcut on your desktop to start the server later."
 Write-Host ""
+
+# --- Launch the installed app ------------------------------------------------
+Write-Host "Starting King's Bounty Tracker..." -ForegroundColor White
+Write-Host "Open: http://localhost:$AppPort" -ForegroundColor Cyan
+Write-Host ""
+& $RunScript
 
 } catch {
     Write-Host ""
