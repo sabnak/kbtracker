@@ -73,6 +73,18 @@ class GameService(IGameService):
 		"""
 		return self._game_repository.get_by_id(game_id)
 
+	def rename_game(self, game_id: int, name: str) -> None:
+		"""
+		Rename a game's display name
+
+		:param game_id:
+			Game ID to rename
+		:param name:
+			New display name
+		:return:
+		"""
+		self._game_repository.rename(game_id, name)
+
 	def delete_game(self, game_id: int) -> None:
 		"""
 		Delete game (drops schema with all tables and data)

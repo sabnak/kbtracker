@@ -61,6 +61,12 @@ msgstr "Название игры"
 msgid "ui.game.name_help"
 msgstr "Отображаемое название игры (по умолчанию путь)"
 
+msgid "ui.game.rename"
+msgstr "Переименовать игру"
+
+msgid "ui.saved"
+msgstr "Сохранено"
+
 msgid "ui.game.add_button"
 msgstr "Добавить игру"
 

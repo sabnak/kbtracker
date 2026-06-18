@@ -64,6 +64,19 @@ class IGameRepository(ABC):
 		pass
 
 	@abstractmethod
+	def rename(self, game_id: int, name: str) -> None:
+		"""
+		Update display name for a game
+
+		:param game_id:
+			Game ID to rename
+		:param name:
+			New display name
+		:return:
+		"""
+		pass
+
+	@abstractmethod
 	def update_last_scan_time(
 		self,
 		game_id: int,

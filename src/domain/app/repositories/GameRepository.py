@@ -92,6 +92,22 @@ class GameRepository(CrudRepository[Game, GameMapper], IGameRepository):
 			).delete()
 			session.commit()
 
+	def rename(self, game_id: int, name: str) -> None:
+		"""
+		Update display name for a game
+
+		:param game_id:
+			Game ID to rename
+		:param name:
+			New display name
+		:return:
+		"""
+		with self._session_factory() as session:
+			session.query(GameMapper).filter(
+				GameMapper.id == game_id
+			).update({"name": name})
+			session.commit()
+
 	def update_last_scan_time(
 		self,
 		game_id: int,

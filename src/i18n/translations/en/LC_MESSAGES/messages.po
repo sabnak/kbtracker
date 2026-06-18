@@ -60,6 +60,12 @@ msgstr "Game Name"
 msgid "ui.game.name_help"
 msgstr "Display name for this game (defaults to path)"
 
+msgid "ui.game.rename"
+msgstr "Rename game"
+
+msgid "ui.saved"
+msgstr "Saved"
+
 msgid "ui.game.add_button"
 msgstr "Add Game"
 

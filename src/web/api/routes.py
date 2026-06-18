@@ -1,6 +1,7 @@
 from dependency_injector.wiring import inject, Provide
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
 
 from src.domain.app.interfaces.IGameService import IGameService
 from src.domain.base.repositories.CrudRepository import GAME_CONTEXT
@@ -11,6 +12,45 @@ from src.domain.game.interfaces.ISaveFileService import ISaveFileService
 from src.web.dependencies.game_context import get_game_context, GameContext
 
 router = APIRouter(prefix="/api", tags=["api"])
+
+
+class GameRenameRequest(BaseModel):
+	name: str = Field(..., min_length=1, max_length=255)
+
+
+@router.patch("/games/{game_id}/name")
+@inject
+async def rename_game(
+	game_id: int,
+	payload: GameRenameRequest,
+	game_service: IGameService = Depends(Provide["game_service"])
+) -> JSONResponse:
+	"""
+	Rename a game's display name
+
+	:param game_id:
+		Game ID to rename
+	:param payload:
+		Request body containing the new name
+	:param game_service:
+		Game service
+	:return:
+		JSON response with the updated name
+	"""
+	name = payload.name.strip()
+	if not name:
+		raise HTTPException(status_code=422, detail="Name cannot be empty")
+
+	game = game_service.get_game(game_id)
+	if not game:
+		raise HTTPException(status_code=404, detail="Game not found")
+
+	game_service.rename_game(game_id, name)
+
+	return JSONResponse(
+		status_code=200,
+		content={"id": game_id, "name": name}
+	)
 
 
 @router.get("/games/{game_id}/save-directories")

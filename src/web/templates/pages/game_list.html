@@ -16,7 +16,15 @@
 			<div class="col-md-4 mb-3">
 				<div class="card">
 					<div class="card-body">
-						<h5 class="card-title">{{ game.name }}</h5>
+						<div class="d-flex align-items-center gap-2 mb-2 game-name" data-game-id="{{ game.id }}">
+							<h5 class="card-title mb-0 game-name-text">{{ game.name }}</h5>
+							<input type="text" class="form-control form-control-sm game-name-input d-none"
+								   value="{{ game.name }}" maxlength="255"
+								   aria-label="{{ _('ui.game.rename') }}">
+							<button type="button" class="btn btn-sm btn-link p-0 text-muted text-decoration-none game-name-edit"
+									title="{{ _('ui.game.rename') }}" aria-label="{{ _('ui.game.rename') }}">✏️</button>
+							<small class="text-success game-name-status d-none">{{ _('ui.saved') }}</small>
+						</div>
 						<p class="card-text">
 							<strong>{{ _('ui.path') }}:</strong> {{ game.path }}
 						</p>
@@ -56,4 +64,73 @@
 		{% endif %}
 	</div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+	document.querySelectorAll('.game-name').forEach(function (container) {
+		const gameId = container.dataset.gameId;
+		const text = container.querySelector('.game-name-text');
+		const input = container.querySelector('.game-name-input');
+		const editBtn = container.querySelector('.game-name-edit');
+		const status = container.querySelector('.game-name-status');
+
+		function startEditing() {
+			input.value = text.textContent.trim();
+			text.classList.add('d-none');
+			editBtn.classList.add('d-none');
+			input.classList.remove('d-none');
+			input.focus();
+			input.select();
+		}
+
+		function stopEditing() {
+			input.classList.add('d-none');
+			text.classList.remove('d-none');
+			editBtn.classList.remove('d-none');
+		}
+
+		function flashSaved() {
+			status.classList.remove('d-none');
+			setTimeout(function () { status.classList.add('d-none'); }, 1500);
+		}
+
+		async function save() {
+			const name = input.value.trim();
+			if (!name || name === text.textContent.trim()) {
+				stopEditing();
+				return;
+			}
+			try {
+				const response = await fetch('/api/games/' + gameId + '/name', {
+					method: 'PATCH',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ name: name })
+				});
+				if (!response.ok) {
+					throw new Error('Request failed');
+				}
+				const data = await response.json();
+				text.textContent = data.name;
+				stopEditing();
+				flashSaved();
+			} catch (error) {
+				input.value = text.textContent.trim();
+				stopEditing();
+			}
+		}
+
+		editBtn.addEventListener('click', startEditing);
+		input.addEventListener('blur', save);
+		input.addEventListener('keydown', function (event) {
+			if (event.key === 'Enter') {
+				event.preventDefault();
+				input.blur();
+			} else if (event.key === 'Escape') {
+				input.value = text.textContent.trim();
+				stopEditing();
+			}
+		});
+	});
+</script>
 {% endblock %}

@@ -52,6 +52,19 @@ class IGameService(ABC):
 		pass
 
 	@abstractmethod
+	def rename_game(self, game_id: int, name: str) -> None:
+		"""
+		Rename a game's display name
+
+		:param game_id:
+			Game ID to rename
+		:param name:
+			New display name
+		:return:
+		"""
+		pass
+
+	@abstractmethod
 	def delete_game(self, game_id: int) -> None:
 		"""
 		Delete game (cascades to profiles and game data)
