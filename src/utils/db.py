@@ -22,17 +22,21 @@ def create_db_engine(database_url: str) -> Engine:
 	"""
 	engine = create_engine(database_url, echo=False)
 	if engine.dialect.name == "sqlite":
-		_enable_sqlite_foreign_keys(engine)
+		_enable_sqlite_pragmas(engine)
 	return engine
 
 
-def _enable_sqlite_foreign_keys(engine: Engine) -> None:
+def _enable_sqlite_pragmas(engine: Engine) -> None:
 	"""
-	Enable foreign key enforcement on every SQLite connection
+	Apply per-connection SQLite pragmas
 
-	SQLite does not enforce foreign keys unless ``PRAGMA foreign_keys`` is set
-	per connection. Required for the ``ON DELETE CASCADE`` behaviour of the
-	shop_inventory and hero_inventory tables.
+	- ``foreign_keys=ON``: SQLite does not enforce foreign keys unless this is
+	  set per connection. Required for the ``ON DELETE CASCADE`` behaviour of
+	  the shop_inventory and hero_inventory tables.
+	- ``journal_mode=WAL`` + ``synchronous=NORMAL``: write-ahead logging avoids
+	  an fsync on every commit, which is the dominant cost when scanning writes
+	  many rows in separate transactions. Safe for a single-user local app.
+	- ``busy_timeout``: wait instead of failing immediately on a locked database.
 
 	:param engine:
 		SQLite engine to attach the pragma listener to
@@ -42,6 +46,9 @@ def _enable_sqlite_foreign_keys(engine: Engine) -> None:
 	def _set_sqlite_pragma(dbapi_connection, connection_record):
 		cursor = dbapi_connection.cursor()
 		cursor.execute("PRAGMA foreign_keys=ON")
+		cursor.execute("PRAGMA journal_mode=WAL")
+		cursor.execute("PRAGMA synchronous=NORMAL")
+		cursor.execute("PRAGMA busy_timeout=5000")
 		cursor.close()
 
 
