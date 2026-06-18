@@ -8,7 +8,7 @@ $ErrorActionPreference = "Stop"
 # Load common functions
 . (Join-Path $PSScriptRoot "common.ps1")
 
-$DefaultDir = "$env:USERPROFILE\AppData\LocalLow\KBTracker"
+$DefaultDir = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 
 try {
 
