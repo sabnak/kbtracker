@@ -22,6 +22,9 @@ class Config(BaseSettings):
 	data_archive_path: str = "{game_path}/data/data.kfs"
 	session_archives_pattern: str = "{game_path}/sessions/{session}/*.kfs"
 
+	data_path: str = "{game_path}/data"
+	session_path: str = "{game_path}/sessions/{session}"
+
 	localization_config: list[LocalizationConfig] = [
 		LocalizationConfig(file="items", tag="items"),
 		LocalizationConfig(file="units", tag="units"),

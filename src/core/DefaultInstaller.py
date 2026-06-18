@@ -18,6 +18,7 @@ from src.domain.game.entities.AtomMap import AtomMap
 from src.domain.game.repositories.mappers.ActorMapper import ActorMapper
 from src.domain.game.repositories.mappers.AtomMapMapper import AtomMapMapper
 from src.domain.game.services.ProfileGameDataSyncerService import ProfileGameDataSyncerService
+from src.utils.parsers.game_data.GameDataExtractor import GameDataExtractor
 from src.utils.parsers.game_data.KFSExtractor import KFSExtractor
 from src.utils.parsers.game_data.KFSReader import KFSReader
 from src.utils.parsers.game_data.KFSItemsParser import KFSItemsParser
@@ -152,6 +153,7 @@ class DefaultInstaller:
 
 	def _install_game_resource_processors(self):
 		self._container.kfs_extractor.override(providers.Singleton(KFSExtractor))
+		self._container.game_data_extractor.override(providers.Singleton(GameDataExtractor))
 		self._container.kfs_reader.override(providers.Singleton(KFSReader))
 		self._container.kfs_localization_parser.override(providers.Singleton(KFSLocalizationParser))
 		self._container.kfs_items_parser.override(providers.Singleton(KFSItemsParser))

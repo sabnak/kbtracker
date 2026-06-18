@@ -17,7 +17,7 @@ from src.domain.game.dto.ScanResults import ScanResults
 from src.domain.game.events.ResourceType import ResourceType
 from src.domain.game.events.ScanEventType import ScanEventType
 from src.domain.game.events.ScanProgressEvent import ScanProgressEvent
-from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.utils.parsers.game_data.IGameDataExtractor import IGameDataExtractor
 
 
 class ScannerService:
@@ -31,7 +31,7 @@ class ScannerService:
 		units_scanner_service: IUnitsScannerService = Provide[Container.units_scanner_service],
 		atom_map_scanner_service: IEntityFromLocalizationService[AtomMap] = Provide[Container.atom_map_scanner_service],
 		actor_scanner_service: IEntityFromLocalizationService[Actor] = Provide[Container.actor_scanner_service],
-		kfs_extractor: IKFSExtractor = Provide[Container.kfs_extractor],
+		game_data_extractor: IGameDataExtractor = Provide[Container.game_data_extractor],
 		config: Config = Provide[Container.config]
 	):
 		self._game_repository = game_repository
@@ -41,7 +41,7 @@ class ScannerService:
 		self._units_scanner = units_scanner_service
 		self._atom_map_scanner = atom_map_scanner_service
 		self._actor_scanner = actor_scanner_service
-		self._kfs_extractor = kfs_extractor
+		self._game_data_extractor = game_data_extractor
 		self._config = config
 
 	def scan_game_files_stream(
@@ -78,17 +78,17 @@ class ScannerService:
 			# Update last_scan_time at start of scan
 			self._game_repository.update_last_scan_time(game_id, datetime.now())
 
-			# Extract archives ONCE
+			# Extract archives and copy loose session files ONCE
 			yield ScanProgressEvent(
 				event_type=ScanEventType.EXTRACTION_STARTED,
-				message="Extracting game archives..."
+				message="Extracting game data..."
 			)
 
-			self._kfs_extractor.extract_archives(game)
+			self._game_data_extractor.extract(game)
 
 			yield ScanProgressEvent(
 				event_type=ScanEventType.EXTRACTION_COMPLETED,
-				message="Archive extraction complete"
+				message="Game data extraction complete"
 			)
 
 			# Step 1: Scan localizations
@@ -216,14 +216,14 @@ class ScannerService:
 
 			# Clean up temporary extracted files
 			# if game:
-			# 	self._kfs_extractor.cleanup_extraction(game)
+			# 	self._game_data_extractor.cleanup(game)
 
 			return results
 
 		except Exception as e:
 			# Clean up temporary extracted files on error
 			# if game:
-			# 	self._kfs_extractor.cleanup_extraction(game)
+			# 	self._game_data_extractor.cleanup(game)
 			# Emit error event with structured error data
 			yield ScanProgressEvent(
 				event_type=ScanEventType.SCAN_ERROR,

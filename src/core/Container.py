@@ -72,6 +72,7 @@ class Container(containers.DeclarativeContainer):
 	schema_management_service = providers.AbstractFactory(ISchemaManagementService)
 
 	# Data extractors and parsers
+	game_data_extractor = providers.AbstractSingleton()
 	kfs_extractor = providers.AbstractSingleton()
 	kfs_reader = providers.AbstractSingleton()
 	kfs_items_parser = providers.AbstractSingleton()
