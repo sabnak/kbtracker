@@ -53,16 +53,15 @@
 
 Приложение использует SQLite — отдельный сервер баз данных не нужен. Python 3.13 установится автоматически, если его ещё нет в системе.
 
-#### Шаг 1: Скачайте три файла в одну папку
+#### Шаг 1: Скачайте два файла в одну папку
 
 Скачайте в одну папку (например, `C:/Games/KBTracker`):
-- [setup.bat](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/setup.bat)
-- [setup.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/setup.ps1)
-- [common.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/common.ps1)
+- [install.bat](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/install.bat)
+- [install.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/install.ps1)
 
 #### Шаг 2: Запустите установку
 
-Дважды кликните по **`setup.bat`**.
+Дважды кликните по **`install.bat`**.
 
 Установщик задаст всего два вопроса — **папку установки** и **порт приложения**. У обоих есть значения по умолчанию, поэтому можно просто нажимать Enter:
 
@@ -84,7 +83,7 @@ http://localhost:9333
 
 #### Обновление
 
-Откройте папку установки, зайдите в подпапку `local` и дважды кликните по **`update.bat`**. Обновятся код и зависимости; база данных, `.env` и виртуальное окружение останутся нетронутыми. После обновления перезапустите приложение ярлыком на рабочем столе.
+Откройте папку установки, зайдите в подпапку `local` и дважды кликните по **`install.bat`**. Скрипт обнаружит существующую установку и обновит только код и зависимости; база данных, `.env` и виртуальное окружение останутся нетронутыми. После обновления перезапустите приложение ярлыком на рабочем столе.
 
 ### Установка через Docker
 
@@ -304,16 +303,15 @@ Two installation methods are available:
 
 The application runs on SQLite — no separate database server is required. Python 3.13 is installed automatically if it is missing.
 
-#### Step 1: Download three files into one folder
+#### Step 1: Download two files into one folder
 
 Download these files into a single folder (e.g., `C:/Games/KBTracker`):
-- [setup.bat](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/setup.bat)
-- [setup.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/setup.ps1)
-- [common.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/common.ps1)
+- [install.bat](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/install.bat)
+- [install.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/install.ps1)
 
 #### Step 2: Run the installer
 
-Double-click **`setup.bat`**.
+Double-click **`install.bat`**.
 
 The installer asks just two questions — the **installation directory** and the **application port**. Both have default values, so you can simply press Enter:
 
@@ -335,7 +333,7 @@ From now on, start the app with the **KBTracker** shortcut on your Desktop. To s
 
 #### Updating
 
-Open the installation folder, go into the `local` subfolder, and double-click **`update.bat`**. The source code and dependencies are refreshed; the database, `.env`, and virtual environment are left untouched. Restart the app via the Desktop shortcut after updating.
+Open the installation folder, go into the `local` subfolder, and double-click **`install.bat`**. The script detects the existing installation and refreshes only the source code and dependencies; the database, `.env`, and virtual environment are left untouched. Restart the app via the Desktop shortcut after updating.
 
 ### Installation via Docker
 

@@ -12,13 +12,13 @@ $EnvFile     = Join-Path $ProjectRoot ".env"
 
 # --- Validate installation ---------------------------------------------------
 if (-not (Test-Path $EnvFile)) {
-    Write-Host "Setup has not been run. Please run setup.ps1 first." -ForegroundColor Red
+    Write-Host "Setup has not been run. Please run install.ps1 first." -ForegroundColor Red
     Read-Host "Press Enter to exit"
     exit 1
 }
 
 if (-not (Test-Path $VenvPython)) {
-    Write-Host "Virtual environment not found. Please run setup.ps1 first." -ForegroundColor Red
+    Write-Host "Virtual environment not found. Please run install.ps1 first." -ForegroundColor Red
     Read-Host "Press Enter to exit"
     exit 1
 }
