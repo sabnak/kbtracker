@@ -1,3 +1,7 @@
+from dependency_injector.wiring import Provide, inject
+
+from src.core.Container import Container
+from src.domain.app.interfaces.IGameRepository import IGameRepository
 from src.domain.base.factories.PydanticEntityFactory import PydanticEntityFactory
 from src.domain.exceptions import EntityNotFoundException
 from src.domain.base.repositories.CrudRepository import CrudRepository
@@ -8,6 +12,14 @@ from src.domain.game.repositories.mappers.ProfileMapper import ProfileMapper
 
 
 class ProfileRepository(CrudRepository[ProfileEntity, ProfileMapper], IProfileRepository):
+
+	@inject
+	def __init__(
+		self,
+		game_repository: IGameRepository = Provide[Container.game_repository]
+	):
+		super().__init__()
+		self._game_repository = game_repository
 
 	def _entity_to_mapper(self, entity: ProfileEntity) -> ProfileMapper:
 		"""
@@ -137,8 +149,13 @@ class ProfileRepository(CrudRepository[ProfileEntity, ProfileMapper], IProfileRe
 		if mapper.last_corrupted_data:
 			corrupted_data = MissedShopsData(**mapper.last_corrupted_data)
 
+		# Profiles live in the per-game database; the owning game is stored as a
+		# plain game_id and loaded from the shared app database (no cross-db FK).
+		game = self._game_repository.get_by_id(mapper.game_id) if mapper.game_id else None
+
 		return PydanticEntityFactory.create_entity(
 			ProfileEntity,
 			mapper,
-			last_corrupted_data=corrupted_data
+			last_corrupted_data=corrupted_data,
+			game=game
 		)
