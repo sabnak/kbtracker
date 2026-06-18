@@ -53,11 +53,10 @@
 
 Приложение использует SQLite — отдельный сервер баз данных не нужен. Python 3.13 установится автоматически, если его ещё нет в системе.
 
-#### Шаг 1: Скачайте два файла в одну папку
+#### Шаг 1: Скачайте установщик
 
-Скачайте в одну папку (например, `C:/Games/KBTracker`):
+Скачайте один файл в папку, откуда хотите установить приложение (например, `C:/Games`):
 - [install.bat](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/install.bat)
-- [install.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/install.ps1)
 
 #### Шаг 2: Запустите установку
 
@@ -303,11 +302,10 @@ Two installation methods are available:
 
 The application runs on SQLite — no separate database server is required. Python 3.13 is installed automatically if it is missing.
 
-#### Step 1: Download two files into one folder
+#### Step 1: Download the installer
 
-Download these files into a single folder (e.g., `C:/Games/KBTracker`):
+Download a single file into the folder you want to install from (e.g., `C:/Games`):
 - [install.bat](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/install.bat)
-- [install.ps1](https://raw.githubusercontent.com/sabnak/kbtracker/main/local/install.ps1)
 
 #### Step 2: Run the installer
 
