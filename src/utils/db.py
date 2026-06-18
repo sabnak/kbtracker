@@ -37,6 +37,10 @@ def _enable_sqlite_pragmas(engine: Engine) -> None:
 	  an fsync on every commit, which is the dominant cost when scanning writes
 	  many rows in separate transactions. Safe for a single-user local app.
 	- ``busy_timeout``: wait instead of failing immediately on a locked database.
+	- ``case_sensitive_like=ON``: lets SQLite use the (binary) kb_id index for
+	  prefix ``LIKE`` queries instead of full-scanning the localization table.
+	  Safe here: kb_ids are lowercase identifiers and case-insensitive text
+	  search uses ``ilike`` (which lowers both operands).
 
 	:param engine:
 		SQLite engine to attach the pragma listener to
@@ -49,6 +53,7 @@ def _enable_sqlite_pragmas(engine: Engine) -> None:
 		cursor.execute("PRAGMA journal_mode=WAL")
 		cursor.execute("PRAGMA synchronous=NORMAL")
 		cursor.execute("PRAGMA busy_timeout=5000")
+		cursor.execute("PRAGMA case_sensitive_like=ON")
 		cursor.close()
 
 

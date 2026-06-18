@@ -131,6 +131,11 @@ class LocalizationRepository(
 		"""
 		Search localizations by kb_id pattern using LIKE or regex
 
+		The LIKE patterns escape literal underscores with a backslash, so the
+		query is issued with ``ESCAPE '\\'``. This both matches correctly and
+		lets SQLite use the kb_id index for the literal prefix (the regex branch
+		uses the PostgreSQL-only ``~`` operator and is not supported on SQLite).
+
 		:param pattern:
 			kb_id pattern to search for (use % for LIKE wildcards, or regex pattern)
 		:param use_regex:
@@ -145,7 +150,7 @@ class LocalizationRepository(
 				).all()
 			else:
 				mappers = session.query(LocalizationMapper).filter(
-					LocalizationMapper.kb_id.like(pattern)
+					LocalizationMapper.kb_id.like(pattern, escape="\\")
 				).all()
 			return [self._mapper_to_entity(m) for m in mappers]
 
