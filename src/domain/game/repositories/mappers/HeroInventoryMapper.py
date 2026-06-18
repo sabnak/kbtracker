@@ -11,6 +11,6 @@ class HeroInventoryMapper(Base):
 	product_id = Column(Integer, primary_key=True)
 	product_type = Column(Enum(InventoryEntityType), primary_key=True, nullable=False)
 	count = Column(Integer, nullable=False, default=1)
-	profile_id = Column(Integer, ForeignKey("profile.id"), primary_key=True)
+	profile_id = Column(Integer, ForeignKey("profile.id", ondelete="CASCADE"), primary_key=True)
 
 	profile = relationship("ProfileMapper", back_populates="hero_inventory")

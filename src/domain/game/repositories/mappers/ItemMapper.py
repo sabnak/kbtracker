@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ARRAY, ForeignKey
+from sqlalchemy import Column, Integer, String, JSON, ForeignKey
 from sqlalchemy.orm import relationship
 from src.domain.base.repositories.mappers.base import Base
 from src.domain.game.entities.ShopProductType import ShopProductType
@@ -10,8 +10,8 @@ class ItemMapper(Base):
 	id = Column(Integer, primary_key=True, autoincrement=True)
 	kb_id = Column(String, nullable=False, unique=True)
 	price = Column(Integer, nullable=False, default=0)
-	propbits = Column(ARRAY(String), nullable=True)
-	tiers = Column(ARRAY(String), nullable=True)
+	propbits = Column(JSON, nullable=True)
+	tiers = Column(JSON, nullable=True)
 	item_set_id = Column(Integer, ForeignKey("item_set.id"), nullable=True)
 	level = Column(Integer, nullable=False, default=1)
 

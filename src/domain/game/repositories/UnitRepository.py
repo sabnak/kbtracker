@@ -1,4 +1,4 @@
-from sqlalchemy import desc, asc, Numeric
+from sqlalchemy import desc, asc
 
 from src.domain.base.factories.PydanticEntityFactory import PydanticEntityFactory
 from src.domain.base.repositories.CrudRepository import CrudRepository
@@ -221,19 +221,19 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			if filters.min_initiative is not None:
 				query = query.filter(UnitMapper.initiative >= filters.min_initiative)
 
-			# Filter by resistance values (JSONB queries)
+			# Filter by resistance values (JSON path queries)
 			if filters.min_resistance_fire is not None:
-				query = query.filter(UnitMapper.resistance['fire'].astext.cast(Numeric) >= filters.min_resistance_fire)
+				query = query.filter(UnitMapper.resistance['fire'].as_float() >= filters.min_resistance_fire)
 			if filters.min_resistance_magic is not None:
-				query = query.filter(UnitMapper.resistance['magic'].astext.cast(Numeric) >= filters.min_resistance_magic)
+				query = query.filter(UnitMapper.resistance['magic'].as_float() >= filters.min_resistance_magic)
 			if filters.min_resistance_poison is not None:
-				query = query.filter(UnitMapper.resistance['poison'].astext.cast(Numeric) >= filters.min_resistance_poison)
+				query = query.filter(UnitMapper.resistance['poison'].as_float() >= filters.min_resistance_poison)
 			if filters.min_resistance_glacial is not None:
-				query = query.filter(UnitMapper.resistance['glacial'].astext.cast(Numeric) >= filters.min_resistance_glacial)
+				query = query.filter(UnitMapper.resistance['glacial'].as_float() >= filters.min_resistance_glacial)
 			if filters.min_resistance_physical is not None:
-				query = query.filter(UnitMapper.resistance['physical'].astext.cast(Numeric) >= filters.min_resistance_physical)
+				query = query.filter(UnitMapper.resistance['physical'].as_float() >= filters.min_resistance_physical)
 			if filters.min_resistance_astral is not None:
-				query = query.filter(UnitMapper.resistance['astral'].astext.cast(Numeric) >= filters.min_resistance_astral)
+				query = query.filter(UnitMapper.resistance['astral'].as_float() >= filters.min_resistance_astral)
 
 			# Filter by level (exact match)
 			if filters.level is not None:

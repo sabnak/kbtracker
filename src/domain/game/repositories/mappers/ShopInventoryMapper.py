@@ -14,6 +14,6 @@ class ShopInventoryMapper(Base):
 	shop_id = Column(Integer, primary_key=True, nullable=True)
 	shop_type = Column(Enum(ShopType), primary_key=True, nullable=False)
 	location = Column(String(255), primary_key=True)
-	profile_id = Column(Integer, ForeignKey("profile.id"), primary_key=True)
+	profile_id = Column(Integer, ForeignKey("profile.id", ondelete="CASCADE"), primary_key=True)
 
 	profile = relationship("ProfileMapper", back_populates="shop_inventory")

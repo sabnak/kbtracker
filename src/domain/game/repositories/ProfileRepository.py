@@ -5,10 +5,9 @@ from src.domain.game.interfaces.IProfileRepository import IProfileRepository
 from src.domain.game.entities.ProfileEntity import ProfileEntity
 from src.domain.game.entities.MissedShopsData import MissedShopsData
 from src.domain.game.repositories.mappers.ProfileMapper import ProfileMapper
-from src.domain.app.repositories.GameRepository import GameRepository
 
 
-class ProfilePostgresRepository(CrudRepository[ProfileEntity, ProfileMapper], IProfileRepository):
+class ProfileRepository(CrudRepository[ProfileEntity, ProfileMapper], IProfileRepository):
 
 	def _entity_to_mapper(self, entity: ProfileEntity) -> ProfileMapper:
 		"""

@@ -1,7 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, String, Integer, DateTime, Boolean, ForeignKey
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Column, String, Integer, DateTime, Boolean, JSON
 from sqlalchemy.orm import relationship
 
 from src.domain.base.repositories.mappers.base import Base
@@ -18,10 +17,9 @@ class ProfileMapper(Base):
 	created_at = Column(DateTime, nullable=False, default=datetime.now())
 	last_scan_time = Column(DateTime, nullable=True)
 	last_save_timestamp = Column(Integer, nullable=True)
-	last_corrupted_data = Column(JSONB, nullable=True)
+	last_corrupted_data = Column(JSON, nullable=True)
 	is_auto_scan_enabled = Column(Boolean, nullable=False, default=False)
-	game_id = Column(Integer, ForeignKey('public.game.id'), nullable=False)
+	game_id = Column(Integer, nullable=False)
 
-	shop_inventory = relationship("ShopInventoryMapper", back_populates="profile")
-	hero_inventory = relationship("HeroInventoryMapper", back_populates="profile")
-	game = relationship("GameMapper", foreign_keys=[game_id])
+	shop_inventory = relationship("ShopInventoryMapper", back_populates="profile", passive_deletes=True)
+	hero_inventory = relationship("HeroInventoryMapper", back_populates="profile", passive_deletes=True)

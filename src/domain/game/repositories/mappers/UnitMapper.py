@@ -1,5 +1,4 @@
-from sqlalchemy import Column, Integer, String
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Column, Integer, String, JSON
 from sqlalchemy.orm import relationship
 
 from src.domain.base.repositories.mappers.base import Base
@@ -13,8 +12,8 @@ class UnitMapper(Base):
 	kb_id = Column(String(255), nullable=False, unique=True)
 	name = Column(String(255), nullable=False)
 	unit_class = Column(String(50), nullable=False)
-	params = Column(JSONB, nullable=False)
-	main = Column(JSONB, nullable=False)
+	params = Column(JSON, nullable=False)
+	main = Column(JSON, nullable=False)
 	cost = Column(Integer, nullable=True)
 	krit = Column(Integer, nullable=True)
 	race = Column(String(100), nullable=True)
@@ -28,9 +27,9 @@ class UnitMapper(Base):
 	defenseup = Column(Integer, nullable=True)
 	initiative = Column(Integer, nullable=True)
 	leadership = Column(Integer, nullable=True)
-	resistance = Column(JSONB, nullable=True)
-	features = Column(JSONB, nullable=True)
-	attacks = Column(JSONB, nullable=True)
+	resistance = Column(JSON, nullable=True)
+	features = Column(JSON, nullable=True)
+	attacks = Column(JSON, nullable=True)
 
 	shop_inventory_sale = relationship(
 		"ShopInventoryMapper",

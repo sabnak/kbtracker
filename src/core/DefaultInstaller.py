@@ -50,10 +50,10 @@ from src.domain.game.services.ScannerService import ScannerService
 from src.domain.app.services.SchemaManagementService import SchemaManagementService
 from src.domain.game.services.SpellsScannerService import SpellsScannerService
 from src.domain.game.services.UnitsScannerService import UnitsScannerService
-from src.domain.game.repositories.ProfilePostgresRepository import ProfilePostgresRepository
+from src.domain.game.repositories.ProfileRepository import ProfileRepository
 from src.domain.game.services.ProfileService import ProfileService
 from src.domain.game.services.SaveFileService import SaveFileService
-from src.utils.db import create_db_engine
+from src.utils.db import create_db_engine, configure_game_databases
 from src.domain.base.repositories.mappers.base import Base
 from src.utils.parsers.save_data.SaveDataParser import SaveDataParser
 from src.utils.parsers.save_data.SaveFileDecompressor import SaveFileDecompressor
@@ -82,9 +82,11 @@ class DefaultInstaller:
 		self._install_services()
 
 	def _install_db(self) -> None:
-		database_url = os.getenv("DATABASE_URL")
+		data_dir = self._resolve_database_dir()
+		os.makedirs(data_dir, exist_ok=True)
 
-		db_engine = create_db_engine(database_url)
+		app_db_path = os.path.join(data_dir, "app.db")
+		db_engine = create_db_engine(f"sqlite:///{app_db_path}")
 
 		tables = [GameMapper.__table__, MetaMapper.__table__]
 		Base.metadata.create_all(bind=db_engine, tables=tables)
@@ -92,6 +94,22 @@ class DefaultInstaller:
 		self._container.db_session_factory.override(
 			providers.Factory(sessionmaker, autocommit=False, autoflush=False, bind=db_engine)
 		)
+
+		configure_game_databases(data_dir)
+
+	def _resolve_database_dir(self) -> str:
+		"""
+		Resolve the directory that holds the SQLite database files
+
+		:return:
+			Absolute path to the database directory
+		"""
+		configured = os.getenv("DATABASE_DIR")
+		if configured:
+			return configured
+
+		project_root = Path(__file__).parent.parent.parent
+		return str(project_root / "db")
 
 	def _install_services(self):
 
@@ -157,7 +175,7 @@ class DefaultInstaller:
 		self._container.localization_repository.override(providers.Singleton(LocalizationRepository))
 		self._container.shop_inventory_repository.override(providers.Singleton(ShopInventoryRepository))
 		self._container.hero_inventory_repository.override(providers.Singleton(HeroInventoryRepository))
-		self._container.profile_repository.override(providers.Singleton(ProfilePostgresRepository))
+		self._container.profile_repository.override(providers.Singleton(ProfileRepository))
 		self._container.spell_repository.override(providers.Singleton(SpellRepository))
 		self._container.unit_repository.override(providers.Singleton(UnitRepository))
 		self._container.atom_map_repository.override(providers.Singleton(

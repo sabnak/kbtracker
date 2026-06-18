@@ -1,9 +1,17 @@
-from sqlalchemy import create_engine, text
+import os
+
+from sqlalchemy import create_engine, event
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, Session
+
 from src.domain.base.repositories.mappers.base import Base
 
+# Tables that live in the shared application database (app.db).
+# Every other mapped table is game-specific and lives in a per-game database file.
+_APP_TABLE_NAMES: set[str] = {"game", "meta"}
 
-def create_db_engine(database_url: str):
+
+def create_db_engine(database_url: str) -> Engine:
 	"""
 	Create database engine
 
@@ -12,10 +20,32 @@ def create_db_engine(database_url: str):
 	:return:
 		SQLAlchemy engine
 	"""
-	return create_engine(database_url, echo=False)
+	engine = create_engine(database_url, echo=False)
+	if engine.dialect.name == "sqlite":
+		_enable_sqlite_foreign_keys(engine)
+	return engine
 
 
-def init_db(engine) -> None:
+def _enable_sqlite_foreign_keys(engine: Engine) -> None:
+	"""
+	Enable foreign key enforcement on every SQLite connection
+
+	SQLite does not enforce foreign keys unless ``PRAGMA foreign_keys`` is set
+	per connection. Required for the ``ON DELETE CASCADE`` behaviour of the
+	shop_inventory and hero_inventory tables.
+
+	:param engine:
+		SQLite engine to attach the pragma listener to
+	:return:
+	"""
+	@event.listens_for(engine, "connect")
+	def _set_sqlite_pragma(dbapi_connection, connection_record):
+		cursor = dbapi_connection.cursor()
+		cursor.execute("PRAGMA foreign_keys=ON")
+		cursor.close()
+
+
+def init_db(engine: Engine) -> None:
 	"""
 	Initialize database and create all tables
 
@@ -26,7 +56,7 @@ def init_db(engine) -> None:
 	Base.metadata.create_all(bind=engine)
 
 
-def get_db_session(session_factory) -> Session:
+def get_db_session(session_factory: sessionmaker[Session]) -> Session:
 	"""
 	Get database session
 
@@ -38,51 +68,108 @@ def get_db_session(session_factory) -> Session:
 	return session_factory()
 
 
-class SchemaContextSession:
+def _game_tables() -> list:
 	"""
-	Session wrapper that sets search_path to a specific game schema
-	"""
+	Get the list of game-specific tables (everything except the app tables)
 
-	def __init__(self, session: Session, schema_name: str):
-		self._session = session
-		self._schema_name = schema_name
-		self._original_commit = session.commit
-
-	def __enter__(self):
-		self._set_search_path()
-		self._session.commit = self._commit_with_schema_reset
-		return self._session
-
-	def __exit__(self, exc_type, exc_val, exc_tb):
-		self._session.commit = self._original_commit
-		self._session.close()
-
-	def _set_search_path(self):
-		"""
-		Set search_path to game schema
-		"""
-		self._session.execute(text(f"SET search_path TO {self._schema_name}"))
-
-	def _commit_with_schema_reset(self):
-		"""
-		Commit and re-set search_path (PostgreSQL resets it after commit)
-		"""
-		self._original_commit()
-		self._set_search_path()
-
-
-def create_schema_session(
-	session_factory: sessionmaker[Session],
-	schema_name: str
-) -> SchemaContextSession:
-	"""
-	Create session with search_path set to game schema
-
-	:param session_factory:
-		Session factory
-	:param schema_name:
-		Schema name (e.g., game_1)
 	:return:
-		Schema context session
+		Tables that belong in a per-game database
 	"""
-	return SchemaContextSession(session_factory(), schema_name)
+	return [
+		table
+		for name, table in Base.metadata.tables.items()
+		if name not in _APP_TABLE_NAMES
+	]
+
+
+class GameDatabaseRegistry:
+	"""
+	Lazily creates and caches one SQLite database (engine + session factory)
+	per game, stored as ``<data_dir>/<schema_name>.db``
+	"""
+
+	def __init__(self, data_dir: str):
+		self._data_dir = data_dir
+		self._engines: dict[str, Engine] = {}
+		self._session_factories: dict[str, sessionmaker[Session]] = {}
+
+	def _db_path(self, schema_name: str) -> str:
+		return os.path.join(self._data_dir, f"{schema_name}.db")
+
+	def get_session_factory(self, schema_name: str) -> sessionmaker[Session]:
+		"""
+		Get (creating on first use) the session factory for a game database
+
+		:param schema_name:
+			Game schema name (e.g. game_1), used as the database file name
+		:return:
+			Session factory bound to the game's database
+		"""
+		if schema_name not in self._session_factories:
+			self._session_factories[schema_name] = self._build(schema_name)
+		return self._session_factories[schema_name]
+
+	def ensure_database(self, schema_name: str) -> None:
+		"""
+		Ensure the game database file exists with all game tables created
+
+		:param schema_name:
+			Game schema name
+		:return:
+		"""
+		self.get_session_factory(schema_name)
+
+	def drop(self, schema_name: str) -> None:
+		"""
+		Dispose the game's engine and delete its database file
+
+		:param schema_name:
+			Game schema name
+		:return:
+		"""
+		engine = self._engines.pop(schema_name, None)
+		if engine is not None:
+			engine.dispose()
+		self._session_factories.pop(schema_name, None)
+
+		db_path = self._db_path(schema_name)
+		if os.path.exists(db_path):
+			os.remove(db_path)
+
+	def _build(self, schema_name: str) -> sessionmaker[Session]:
+		os.makedirs(self._data_dir, exist_ok=True)
+		engine = create_db_engine(f"sqlite:///{self._db_path(schema_name)}")
+		Base.metadata.create_all(bind=engine, tables=_game_tables())
+		self._engines[schema_name] = engine
+		return sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+_GAME_DB_REGISTRY: GameDatabaseRegistry | None = None
+
+
+def configure_game_databases(data_dir: str) -> GameDatabaseRegistry:
+	"""
+	Configure the process-wide game database registry
+
+	:param data_dir:
+		Directory where per-game database files are stored
+	:return:
+		The configured registry
+	"""
+	global _GAME_DB_REGISTRY
+	_GAME_DB_REGISTRY = GameDatabaseRegistry(data_dir)
+	return _GAME_DB_REGISTRY
+
+
+def get_game_database_registry() -> GameDatabaseRegistry:
+	"""
+	Get the process-wide game database registry
+
+	:return:
+		The configured registry
+	:raises RuntimeError:
+		When the registry has not been configured yet
+	"""
+	if _GAME_DB_REGISTRY is None:
+		raise RuntimeError("Game database registry is not configured")
+	return _GAME_DB_REGISTRY

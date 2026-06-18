@@ -11,7 +11,7 @@ from src.domain.exceptions import (
 	DuplicateEntityException,
 	DatabaseOperationException
 )
-from src.utils.db import create_schema_session
+from src.utils.db import get_game_database_registry
 from src.web.dependencies.game_context import GameContext
 
 TEntity = TypeVar("TEntity")
@@ -32,14 +32,16 @@ class CrudRepository(ABC, Generic[TEntity, TMapper]):
 
 	def _get_session(self):
 		"""
-		Get session with schema context if available
+		Get session for the active game database if a game context is set,
+		otherwise a session on the shared application database
 
 		:return:
-			Session or SchemaContextSession
+			Database session
 		"""
 		context = GAME_CONTEXT.get()
 		if context:
-			return create_schema_session(self._session_factory, context.schema_name)
+			factory = get_game_database_registry().get_session_factory(context.schema_name)
+			return factory()
 		return self._session_factory()
 
 	@abstractmethod
