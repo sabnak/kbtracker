@@ -133,20 +133,21 @@ class LocalizationRepository(
 
 		The LIKE patterns escape literal underscores with a backslash, so the
 		query is issued with ``ESCAPE '\\'``. This both matches correctly and
-		lets SQLite use the kb_id index for the literal prefix (the regex branch
-		uses the PostgreSQL-only ``~`` operator and is not supported on SQLite).
+		lets SQLite use the kb_id index for the literal prefix. The regex branch
+		uses the ``REGEXP`` operator, backed by the ``regexp()`` function
+		registered on each SQLite connection.
 
 		:param pattern:
 			kb_id pattern to search for (use % for LIKE wildcards, or regex pattern)
 		:param use_regex:
-			If True, use PostgreSQL regex matching (~), otherwise use LIKE
+			If True, use regex matching (REGEXP), otherwise use LIKE
 		:return:
 			List of matching localizations
 		"""
 		with self._get_session() as session:
 			if use_regex:
 				mappers = session.query(LocalizationMapper).filter(
-					LocalizationMapper.kb_id.op('~')(pattern)
+					LocalizationMapper.kb_id.op('REGEXP')(pattern)
 				).all()
 			else:
 				mappers = session.query(LocalizationMapper).filter(

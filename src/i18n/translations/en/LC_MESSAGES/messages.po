@@ -221,7 +221,7 @@ msgid "ui.item.regex_placeholder"
 msgstr "e.g., .*magic.*|.*spell.*"
 
 msgid "ui.item.regex_help"
-msgstr "PostgreSQL regex pattern (case-insensitive)"
+msgstr "Regular expression"
 
 msgid "ui.item.item_set_label"
 msgstr "Item Set"
@@ -500,6 +500,9 @@ msgstr "No spells found. Scan game files first to populate the database."
 
 msgid "ui.unit.title_for"
 msgstr "Units for"
+
+msgid "ui.unit.name_regex_label"
+msgstr "Name (Regex)"
 
 msgid "ui.unit.min_cost_label"
 msgstr "Min Cost"

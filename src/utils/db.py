@@ -1,4 +1,5 @@
 import os
+import re
 
 from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Engine
@@ -9,6 +10,26 @@ from src.domain.base.repositories.mappers.base import Base
 # Tables that live in the shared application database (app.db).
 # Every other mapped table is game-specific and lives in a per-game database file.
 _APP_TABLE_NAMES: set[str] = {"game", "meta"}
+
+
+def _sqlite_regexp(pattern: str, value: str | None) -> bool:
+	"""
+	Case-insensitive REGEXP implementation for SQLite
+
+	SQLite parses the ``REGEXP`` operator but leaves the backing function
+	undefined, so it must be registered per connection. Case-insensitivity
+	mirrors PostgreSQL's ``~*`` operator that the queries previously used.
+
+	:param pattern:
+		Regular expression pattern (right operand of ``REGEXP``)
+	:param value:
+		Column value being tested (left operand of ``REGEXP``)
+	:return:
+		True when the pattern matches anywhere in the value
+	"""
+	if value is None:
+		return False
+	return re.search(pattern, value, re.IGNORECASE) is not None
 
 
 def create_db_engine(database_url: str) -> Engine:
@@ -42,6 +63,9 @@ def _enable_sqlite_pragmas(engine: Engine) -> None:
 	  Safe here: kb_ids are lowercase identifiers and case-insensitive text
 	  search uses ``ilike`` (which lowers both operands).
 
+	The ``regexp()`` function is also registered here so the ``REGEXP`` operator
+	(used for the item hint pattern search) resolves to a Python ``re`` match.
+
 	:param engine:
 		SQLite engine to attach the pragma listener to
 	:return:
@@ -55,6 +79,7 @@ def _enable_sqlite_pragmas(engine: Engine) -> None:
 		cursor.execute("PRAGMA busy_timeout=5000")
 		cursor.execute("PRAGMA case_sensitive_like=ON")
 		cursor.close()
+		dbapi_connection.create_function("regexp", 2, _sqlite_regexp)
 
 
 def init_db(engine: Engine) -> None:

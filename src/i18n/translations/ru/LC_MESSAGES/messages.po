@@ -225,7 +225,7 @@ msgid "ui.item.regex_placeholder"
 msgstr "например: .*магия.*|.*заклинание.*"
 
 msgid "ui.item.regex_help"
-msgstr "Шаблон PostgreSQL regex (без учёта регистра)"
+msgstr "Регулярное выражение"
 
 msgid "ui.item.item_set_label"
 msgstr "Набор предметов"
@@ -508,6 +508,9 @@ msgstr ""
 
 msgid "ui.unit.title_for"
 msgstr "Юниты для"
+
+msgid "ui.unit.name_regex_label"
+msgstr "Имя (Regex)"
 
 msgid "ui.unit.min_cost_label"
 msgstr "Мин. стоимость"

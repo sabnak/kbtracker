@@ -201,6 +201,10 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			if unit_class:
 				query = query.filter(UnitMapper.unit_class == unit_class.value)
 
+			# Filter by name (case-insensitive regex)
+			if filters.name_regex:
+				query = query.filter(UnitMapper.name.op('REGEXP')(filters.name_regex))
+
 			# Filter by cost range
 			if filters.min_cost is not None:
 				query = query.filter(UnitMapper.cost >= filters.min_cost)

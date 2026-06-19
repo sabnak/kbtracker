@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 class UnitFilterDto(BaseModel):
 	profile_id: int | None = None
+	name_regex: str | None = None
 	min_cost: int | None = None
 	max_cost: int | None = None
 	min_attack: int | None = None

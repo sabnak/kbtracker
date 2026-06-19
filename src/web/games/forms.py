@@ -75,6 +75,7 @@ class SpellFilterForm(BaseModel):
 
 class UnitFilterForm(BaseModel):
 	profile_id: OptionalInt = None
+	name_regex: str = ""
 	min_cost: OptionalInt = None
 	max_cost: OptionalInt = None
 

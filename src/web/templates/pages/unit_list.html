@@ -38,6 +38,21 @@
 					</div>
 					{% endif %}
 
+					<!-- Row: Name Regex Search -->
+					<div class="row g-3 mb-3">
+						<div class="col-md-6">
+							<label for="name_regex" class="form-label">{{ _('ui.unit.name_regex_label') }}</label>
+							<input
+								type="text"
+								class="form-control"
+								id="name_regex"
+								name="name_regex"
+								placeholder="{{ _('ui.item.regex_placeholder') }}"
+								value="{{ filters.name_regex }}">
+							<div class="form-text">{{ _('ui.item.regex_help') }}</div>
+						</div>
+					</div>
+
 					<!-- Row 2: Cost Filters -->
 					<div class="row g-3 mb-3">
 						<div class="col-md-2">
@@ -227,6 +242,12 @@
 				</form>
 			</div>
 		</div>
+
+		{% if error %}
+		<div class="alert alert-danger">
+			<strong>{{ _('ui.item.error_label') }}:</strong> {{ error }}
+		</div>
+		{% endif %}
 
 		<!-- Units Count Info -->
 		{% if units %}
@@ -476,7 +497,7 @@
 
 				// Preserve filter parameters
 				const filters = [
-					'profile_id', 'min_cost', 'max_cost',
+					'profile_id', 'name_regex', 'min_cost', 'max_cost',
 					'min_attack', 'min_krit', 'min_hitpoint', 'min_defense', 'min_speed', 'min_initiative',
 					'min_resistance_fire', 'min_resistance_magic', 'min_resistance_poison',
 					'min_resistance_glacial', 'min_resistance_physical', 'min_resistance_astral',

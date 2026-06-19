@@ -1,4 +1,5 @@
 import json
+import re
 import traceback
 from collections.abc import Generator
 
@@ -663,9 +664,21 @@ async def list_units(
 	allowed_sort_orders = ["asc", "desc"]
 	sort_direction = sort_order.lower() if sort_order.lower() in allowed_sort_orders else "asc"
 
+	# Normalize and validate the name regex upfront so an invalid pattern
+	# surfaces as a form error instead of failing mid-query for every row
+	name_regex = filters.name_regex.strip() if filters.name_regex.strip() else None
+	error_message = None
+	if name_regex is not None:
+		try:
+			re.compile(name_regex)
+		except re.error as e:
+			error_message = f"Invalid regex pattern: {e}"
+			name_regex = None
+
 	# Convert form to DTO
 	filter_dto = UnitFilterDto(
 		profile_id=selected_profile_id,
+		name_regex=name_regex,
 		min_cost=filters.min_cost,
 		max_cost=filters.max_cost,
 		min_attack=filters.min_attack,
@@ -683,13 +696,16 @@ async def list_units(
 		level=filters.level
 	)
 
-	# Fetch units with filters
-	units = unit_repository.search_with_filters(
-		filters=filter_dto,
-		unit_class=UnitClass.CHESSPIECE,
-		sort_by=sort_field,
-		sort_order=sort_direction
-	)
+	# Fetch units with filters (skip when the regex was rejected above)
+	if error_message:
+		units = []
+	else:
+		units = unit_repository.search_with_filters(
+			filters=filter_dto,
+			unit_class=UnitClass.CHESSPIECE,
+			sort_by=sort_field,
+			sort_order=sort_direction
+		)
 
 	# Fetch shop data (only when profile selected)
 	shops_for_sale = {}
@@ -718,7 +734,8 @@ async def list_units(
 			"selected_profile_id": selected_profile_id,
 			"shops_for_sale": shops_for_sale,
 			"shops_garrison": shops_garrison,
-			"filters": filters
+			"filters": filters,
+			"error": error_message
 		}
 	)
 

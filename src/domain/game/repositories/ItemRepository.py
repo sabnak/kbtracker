@@ -219,7 +219,7 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 		:param level:
 			Optional level filter (exact match)
 		:param hint_regex:
-			Optional PostgreSQL regex pattern for hint field
+			Optional case-insensitive regex pattern for hint field
 		:param propbits:
 			Optional list of propbit values (OR logic - matches items with ANY of the specified propbits)
 		:param item_set_id:
@@ -274,7 +274,7 @@ class ItemRepository(CrudRepository[Item, ItemMapper], IItemRepository):
 				query = query.filter(ItemMapper.level == level)
 
 			if hint_regex:
-				query = query.filter(HintLocalization.text.op('~*')(hint_regex))
+				query = query.filter(HintLocalization.text.op('REGEXP')(hint_regex))
 
 			if propbits:
 				from sqlalchemy import or_
