@@ -23,6 +23,3 @@ services:
 networks:
   kbtracker-network:
     driver: bridge
-
-volumes:
-  postgres_data:
