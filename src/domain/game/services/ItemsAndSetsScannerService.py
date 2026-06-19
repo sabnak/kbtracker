@@ -50,9 +50,10 @@ class ItemsAndSetsScannerService(IItemsAndSetsScannerService):
 				for item in items:
 					try:
 						item.item_set_id = created_set.id
-					except Exception:
-						self._logger.error(f"Error while setting item set id: {item_set}")
+					except AttributeError:
+						self._logger.error(f"Error while setting item set id. Item: {item}, set: {item_set}")
 						raise
+						continue
 				created_items = self._item_repository.create_batch(items)
 				all_items.extend(created_items)
 

@@ -36,19 +36,22 @@ class LocFactory(ILocFactory):
 			if self._EXACT_NAME.search(kb_id):
 				name_count += 1
 				if name_count > 1:
-					raise Exception(f"Duplicate _name suffix found in localizations: {kb_id}")
+					Warning(f"Duplicate _name suffix found in localizations: {kb_id}")
+					continue
 				name = loc.text
 
 			elif self._EXACT_HINT.search(kb_id):
 				hint_count += 1
 				if hint_count > 1:
-					raise Exception(f"Duplicate _hint suffix found in localizations: {kb_id}")
+					Warning(f"Duplicate _hint suffix found in localizations: {kb_id}")
+					continue
 				hint = loc.text
 
 			elif self._EXACT_DESC.search(kb_id):
 				desc_count += 1
 				if desc_count > 1:
-					raise Exception(f"Duplicate _desc suffix found in localizations: {kb_id}")
+					Warning(f"Duplicate _desc suffix found in localizations: {kb_id}")
+					continue
 				desc = loc.text
 
 			elif self._INDEXED_DESC.search(kb_id):
@@ -57,7 +60,8 @@ class LocFactory(ILocFactory):
 			elif self._EXACT_TEXT.search(kb_id):
 				text_count += 1
 				if text_count > 1:
-					raise Exception(f"Duplicate _text suffix found in localizations: {kb_id}")
+					Warning(f"Duplicate _text suffix found in localizations: {kb_id}")
+					continue
 				text = loc.text
 
 			elif self._INDEXED_TEXT.search(kb_id):
@@ -66,7 +70,8 @@ class LocFactory(ILocFactory):
 			elif self._EXACT_HEADER.search(kb_id):
 				header_count += 1
 				if header_count > 1:
-					raise Exception(f"Duplicate _header suffix found in localizations: {kb_id}")
+					Warning(f"Duplicate _header suffix found in localizations: {kb_id}")
+					continue
 				header = loc.text
 
 		return LocStrings(

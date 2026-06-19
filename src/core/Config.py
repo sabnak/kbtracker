@@ -31,12 +31,22 @@ class Config(BaseSettings):
 		LocalizationConfig(file="orcs_rage", tag="units"),
 		LocalizationConfig(file="units_features", tag="units_features"),
 		LocalizationConfig(file="units_specials", tag="units_specials"),
+
 		LocalizationConfig(file="spells", tag="spells"),
 		LocalizationConfig(file="new_spells", tag="spells"),
 		LocalizationConfig(file="atoms_info", tag="atoms_info"),
 		LocalizationConfig(file="map", tag="maps"),
 		LocalizationConfig(file="actors", tag="actors"),
+
+		# Princess Rise
+		LocalizationConfig(file="chaos_dragon", tag="units_features"),
+		LocalizationConfig(file="extension_units", tag="units_specials"),
+		LocalizationConfig(file="unsport", tag="units_specials"),
+		LocalizationConfig(file="base_mechanics", tag="spells"),
 	]
+	# localization_config: list[LocalizationConfig] = [
+	# 	LocalizationConfig(file="*")
+	# ]
 	supported_games: list[GameConfig] = [
 		GameConfig(
 			name="Легенда / The Legend",
@@ -72,6 +82,10 @@ class Config(BaseSettings):
 				GameCampaignConfig(
 					name="Красные пески / Red Sands",
 					session="red_sands"
+				),
+				GameCampaignConfig(
+					name="Расцвет принцесы / The Princess Rise",
+					session="princess_rise"
 				)
 			]
 		),
