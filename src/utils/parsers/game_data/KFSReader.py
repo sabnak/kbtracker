@@ -62,7 +62,6 @@ class KFSReader(IKFSReader):
 			If no files match pattern or directory not found
 		"""
 		loc_dir = os.path.join(self._config.tmp_dir, f'game_{game_id}', 'loc')
-		print(f"Loc dir: {loc_dir}, patterns: {patterns}")
 		return self._read_files_from_dir(loc_dir, patterns, encoding)
 
 	def _read_files_from_dir(
@@ -94,7 +93,7 @@ class KFSReader(IKFSReader):
 		if not os.path.exists(directory):
 			raise FileNotFoundError(f"Directory not found: {directory}")
 
-		# Expand glob patterns to actual filenames
+		# Expand glob patterns to actual file paths across all priority directories
 		paths = self._expand_patterns(directory, patterns)
 
 		if not paths:
@@ -102,8 +101,11 @@ class KFSReader(IKFSReader):
 				f"No files found matching patterns {patterns} in directory '{directory}'"
 			)
 
+		# Order by ascending read priority: loose-session files first, kfs data last.
+		ordered_paths = self._order_by_priority(directory, paths)
+
 		results = []
-		for path in paths:
+		for path in ordered_paths:
 			content = self._read_file(path, encoding)
 			results.append(content)
 
@@ -112,29 +114,63 @@ class KFSReader(IKFSReader):
 	@staticmethod
 	def _expand_patterns(directory: str, patterns: list[str]) -> list[str]:
 		"""
-		Expand glob patterns to actual filenames (searches recursively in all subdirectories)
+		Expand glob patterns to matching file paths (searches all priority subdirectories)
 
 		:param directory:
 			Directory path
 		:param patterns:
 			List of filenames or glob patterns
 		:return:
-			Sorted list of unique filenames (basenames only)
+			List of unique matching file paths
 		"""
 		all_files = []
 
 		for pattern in patterns:
 			# Build recursive pattern to search all subdirectories
 			full_pattern = os.path.join(directory, '**', pattern)
+			all_files += glob.glob(full_pattern, recursive=True)
 
-			# Expand glob pattern recursively
-			matched_paths = glob.glob(full_pattern, recursive=True)
-			print(f"Matched paths: {matched_paths}")
-			all_files += matched_paths
+		return list(set(all_files))
 
-		print(f"All files: {all_files}")
-		# Return sorted list
-		return sorted(set(all_files))
+	@staticmethod
+	def _order_by_priority(directory: str, paths: list[str]) -> list[str]:
+		"""
+		Order matched files by ascending read priority
+
+		Files are extracted into ``<priority>-<session>`` subdirectories. Sorting by
+		ascending priority puts the lowest-priority source (loose session) first and
+		the highest-priority source (kfs data) last. Consumers that take the first
+		match therefore get the loose-session override, while consumers that merge
+		several files let the later (kfs data) file overwrite the earlier ones.
+
+		:param directory:
+			Root directory the paths were matched under
+		:param paths:
+			Matching file paths to order
+		:return:
+			Paths ordered by ascending priority, then file name
+		"""
+		return sorted(
+			paths,
+			key=lambda path: (KFSReader._priority_of(directory, path), os.path.basename(path))
+		)
+
+	@staticmethod
+	def _priority_of(directory: str, path: str) -> int:
+		"""
+		Read the numeric read-priority encoded in a file's ``<priority>-<session>`` directory
+
+		:param directory:
+			Root directory the path was matched under
+		:param path:
+			File path inside a priority subdirectory
+		:return:
+			Numeric priority (higher wins), or 0 when no prefix is present
+		"""
+		relative = os.path.relpath(path, directory)
+		top_component = relative.split(os.sep)[0]
+		prefix = top_component.split('-', 1)[0]
+		return int(prefix) if prefix.isdigit() else 0
 
 	def _read_file(
 		self,

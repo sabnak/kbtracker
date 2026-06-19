@@ -32,12 +32,12 @@ class TestKFSExtractor:
 		assert os.path.exists(os.path.join(extraction_root, 'loc'))
 
 		# Check that session subdirectories exist
-		assert os.path.exists(os.path.join(extraction_root, 'data', 'darkside'))
-		assert os.path.exists(os.path.join(extraction_root, 'loc', 'darkside'))
+		assert os.path.exists(os.path.join(extraction_root, 'data', '2-darkside'))
+		assert os.path.exists(os.path.join(extraction_root, 'loc', '2-darkside'))
 
 		# Check that files were extracted to correct session subdirectories
-		assert os.path.exists(os.path.join(extraction_root, 'data', 'darkside', 'items.txt'))
-		assert os.path.exists(os.path.join(extraction_root, 'loc', 'darkside', 'rus_items.lng'))
+		assert os.path.exists(os.path.join(extraction_root, 'data', '2-darkside', 'items.txt'))
+		assert os.path.exists(os.path.join(extraction_root, 'loc', '2-darkside', 'rus_items.lng'))
 
 		# Cleanup
 		shutil.rmtree(extraction_root, ignore_errors=True)
@@ -120,7 +120,7 @@ class TestKFSExtractor:
 		assert os.path.isdir(data_dir)
 
 		# Should contain session subdirectory with items.txt
-		session_dir = os.path.join(data_dir, 'darkside')
+		session_dir = os.path.join(data_dir, '2-darkside')
 		assert os.path.exists(session_dir)
 		items_file = os.path.join(session_dir, 'items.txt')
 		assert os.path.exists(items_file)
@@ -163,7 +163,7 @@ class TestKFSExtractor:
 
 		# Check data directory - should contain session subdirectories
 		data_dir = os.path.join(extraction_root, 'data')
-		assert os.path.exists(os.path.join(data_dir, 'darkside')), "Session subdirectory missing in data/"
+		assert os.path.exists(os.path.join(data_dir, '2-darkside')), "Session subdirectory missing in data/"
 
 		# Check that files within session subdirectories are flat (no nested directories)
 		for session_name in os.listdir(data_dir):
@@ -175,7 +175,7 @@ class TestKFSExtractor:
 
 		# Check loc directory - should contain session subdirectories
 		loc_dir = os.path.join(extraction_root, 'loc')
-		assert os.path.exists(os.path.join(loc_dir, 'darkside')), "Session subdirectory missing in loc/"
+		assert os.path.exists(os.path.join(loc_dir, '2-darkside')), "Session subdirectory missing in loc/"
 
 		# Check that files within session subdirectories are flat (no nested directories)
 		for session_name in os.listdir(loc_dir):
@@ -197,7 +197,7 @@ class TestKFSExtractor:
 		loc_dir = os.path.join(extraction_root, 'loc')
 
 		# Should have .lng files in session subdirectory
-		assert os.path.exists(os.path.join(loc_dir, 'darkside', 'rus_items.lng'))
+		assert os.path.exists(os.path.join(loc_dir, '2-darkside', 'rus_items.lng'))
 
 		# Data directory session subdirectories should NOT have .lng files
 		data_dir = os.path.join(extraction_root, 'data')
@@ -234,11 +234,11 @@ class TestKFSExtractor:
 
 		# Files should be extracted to session subdirectories
 		assert os.path.exists(extraction_root)
-		assert os.path.exists(os.path.join(extraction_root, 'data', 'darkside'))
-		assert os.path.exists(os.path.join(extraction_root, 'loc', 'darkside'))
+		assert os.path.exists(os.path.join(extraction_root, 'data', '2-darkside'))
+		assert os.path.exists(os.path.join(extraction_root, 'loc', '2-darkside'))
 
 		# Session subdirectory should contain files
-		session_data_dir = os.path.join(extraction_root, 'data', 'darkside')
+		session_data_dir = os.path.join(extraction_root, 'data', '2-darkside')
 		assert len(os.listdir(session_data_dir)) > 0, "Session data directory is empty"
 
 		# Cleanup

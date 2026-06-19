@@ -9,6 +9,7 @@ from src.core.Config import Config
 from src.core.Container import Container
 from src.domain.app.entities.Game import Game
 from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.utils.parsers.game_data.ReadPriority import ReadPriority
 
 
 class KFSExtractor(IKFSExtractor):
@@ -35,16 +36,26 @@ class KFSExtractor(IKFSExtractor):
 
 		game_path = self._resolve_game_path(game.path)
 
-		# Extract main data archive to data/ subdirectory
+		# Extract main data archive (highest read priority)
 		data_archive_paths = self._get_data_archive_paths(game_path)
 		if data_archive_paths:
-			self._extract_to_session(data_archive_paths, extraction_root, "data", "1")
+			self._extract_to_session(
+				data_archive_paths,
+				extraction_root,
+				"data",
+				ReadPriority.KFS_DATA.as_prefix()
+			)
 
-		# Extract session-specific archives
-		for i, session in enumerate(game.sessions):
+		# Extract session-specific archives (all share the kfs-session priority)
+		for session in game.sessions:
 			session_archive_paths = self._get_session_archive_paths(game_path, session)
 			if session_archive_paths:
-				self._extract_to_session(session_archive_paths, extraction_root, session, str(i + 2))
+				self._extract_to_session(
+					session_archive_paths,
+					extraction_root,
+					session,
+					ReadPriority.KFS_SESSION.as_prefix()
+				)
 
 		return extraction_root
 

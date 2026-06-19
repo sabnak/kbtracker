@@ -8,6 +8,7 @@ from src.core.Container import Container
 from src.domain.app.entities.Game import Game
 from src.utils.parsers.game_data.IGameDataExtractor import IGameDataExtractor
 from src.utils.parsers.game_data.IKFSExtractor import IKFSExtractor
+from src.utils.parsers.game_data.ReadPriority import ReadPriority
 
 
 class GameDataExtractor(IGameDataExtractor):
@@ -39,10 +40,20 @@ class GameDataExtractor(IGameDataExtractor):
 		extraction_root = self._kfs_extractor.extract_archives(game)
 		game_path = self._resolve_game_path(game.path)
 
-		self._copy_loose_files(self._data_source(game_path), extraction_root, "data")
+		self._copy_loose_files(
+			self._data_source(game_path),
+			extraction_root,
+			"data",
+			ReadPriority.LOOSE_DATA.as_prefix()
+		)
 		for session in game.sessions:
 			session_source = self._session_source(game_path, session)
-			self._copy_loose_files(session_source, extraction_root, session)
+			self._copy_loose_files(
+				session_source,
+				extraction_root,
+				session,
+				ReadPriority.LOOSE_SESSION.as_prefix()
+			)
 
 		return extraction_root
 
@@ -99,7 +110,8 @@ class GameDataExtractor(IGameDataExtractor):
 		self,
 		source_dir: str,
 		extraction_root: str,
-		session_name: str
+		session_name: str,
+		prefix: str
 	) -> None:
 		"""
 		Copy loose data/localization files from a source directory into the flat structure
@@ -114,12 +126,14 @@ class GameDataExtractor(IGameDataExtractor):
 			Root extraction directory (/tmp/game_<game.id>/)
 		:param session_name:
 			Session name used to namespace the target subdirectory
+		:param prefix:
+			Read-priority prefix for the target subdirectory (see ReadPriority)
 		"""
 		if not os.path.isdir(source_dir):
 			return
 
-		data_dir = os.path.join(extraction_root, 'data', f"loose-{session_name}")
-		loc_dir = os.path.join(extraction_root, 'loc', f"loose-{session_name}")
+		data_dir = os.path.join(extraction_root, 'data', f"{prefix}-{session_name}")
+		loc_dir = os.path.join(extraction_root, 'loc', f"{prefix}-{session_name}")
 
 		for root, _, files in os.walk(source_dir):
 			for filename in files:
