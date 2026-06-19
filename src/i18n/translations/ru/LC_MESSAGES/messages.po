@@ -521,6 +521,24 @@ msgstr "Мин"
 msgid "ui.unit.max_cost_label"
 msgstr "Макс. стоимость"
 
+msgid "ui.unit.cost_group_title"
+msgstr "Стоимость"
+
+msgid "ui.unit.attributes_group_title"
+msgstr "Атрибуты (мин. значения)"
+
+msgid "ui.unit.min_gold_label"
+msgstr "Мин. золото"
+
+msgid "ui.unit.max_gold_label"
+msgstr "Макс. золото"
+
+msgid "ui.unit.min_leadership_label"
+msgstr "Мин. лидерство"
+
+msgid "ui.unit.max_leadership_label"
+msgstr "Макс. лидерство"
+
 msgid "ui.unit.max_placeholder"
 msgstr "Макс"
 

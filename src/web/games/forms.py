@@ -78,6 +78,8 @@ class UnitFilterForm(BaseModel):
 	name_regex: str = ""
 	min_cost: OptionalInt = None
 	max_cost: OptionalInt = None
+	min_leadership: OptionalInt = None
+	max_leadership: OptionalInt = None
 
 	# Numeric attribute filters (min values)
 	min_attack: OptionalInt = None

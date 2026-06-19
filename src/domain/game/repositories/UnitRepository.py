@@ -211,6 +211,12 @@ class UnitRepository(CrudRepository[Unit, UnitMapper], IUnitRepository):
 			if filters.max_cost is not None:
 				query = query.filter(UnitMapper.cost <= filters.max_cost)
 
+			# Filter by leadership range
+			if filters.min_leadership is not None:
+				query = query.filter(UnitMapper.leadership >= filters.min_leadership)
+			if filters.max_leadership is not None:
+				query = query.filter(UnitMapper.leadership <= filters.max_leadership)
+
 			# Filter by numeric attributes (min values)
 			if filters.min_attack is not None:
 				query = query.filter(UnitMapper.attack >= filters.min_attack)

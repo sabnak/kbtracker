@@ -681,6 +681,8 @@ async def list_units(
 		name_regex=name_regex,
 		min_cost=filters.min_cost,
 		max_cost=filters.max_cost,
+		min_leadership=filters.min_leadership,
+		max_leadership=filters.max_leadership,
 		min_attack=filters.min_attack,
 		min_krit=filters.min_krit,
 		min_hitpoint=filters.min_hitpoint,

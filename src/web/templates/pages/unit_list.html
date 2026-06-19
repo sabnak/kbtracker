@@ -53,10 +53,15 @@
 						</div>
 					</div>
 
-					<!-- Row 2: Cost Filters -->
+					<!-- Cost Group -->
+					<div class="row mb-2">
+						<div class="col-12">
+							<h6 class="mb-0">{{ _('ui.unit.cost_group_title') }}</h6>
+						</div>
+					</div>
 					<div class="row g-3 mb-3">
 						<div class="col-md-2">
-							<label for="min_cost" class="form-label">{{ _('ui.unit.min_cost_label') }}</label>
+							<label for="min_cost" class="form-label">{{ _('ui.unit.min_gold_label') }}</label>
 							<input
 								type="number"
 								class="form-control"
@@ -66,7 +71,7 @@
 								value="{{ filters.min_cost if filters.min_cost else '' }}">
 						</div>
 						<div class="col-md-2">
-							<label for="max_cost" class="form-label">{{ _('ui.unit.max_cost_label') }}</label>
+							<label for="max_cost" class="form-label">{{ _('ui.unit.max_gold_label') }}</label>
 							<input
 								type="number"
 								class="form-control"
@@ -74,6 +79,33 @@
 								name="max_cost"
 								min="0"
 								value="{{ filters.max_cost if filters.max_cost else '' }}">
+						</div>
+						<div class="col-md-2">
+							<label for="min_leadership" class="form-label">{{ _('ui.unit.min_leadership_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="min_leadership"
+								name="min_leadership"
+								min="0"
+								value="{{ filters.min_leadership if filters.min_leadership else '' }}">
+						</div>
+						<div class="col-md-2">
+							<label for="max_leadership" class="form-label">{{ _('ui.unit.max_leadership_label') }}</label>
+							<input
+								type="number"
+								class="form-control"
+								id="max_leadership"
+								name="max_leadership"
+								min="0"
+								value="{{ filters.max_leadership if filters.max_leadership else '' }}">
+						</div>
+					</div>
+
+					<!-- Attributes Group -->
+					<div class="row mb-2">
+						<div class="col-12">
+							<h6 class="mb-0">{{ _('ui.unit.attributes_group_title') }}</h6>
 						</div>
 					</div>
 
@@ -497,7 +529,7 @@
 
 				// Preserve filter parameters
 				const filters = [
-					'profile_id', 'name_regex', 'min_cost', 'max_cost',
+					'profile_id', 'name_regex', 'min_cost', 'max_cost', 'min_leadership', 'max_leadership',
 					'min_attack', 'min_krit', 'min_hitpoint', 'min_defense', 'min_speed', 'min_initiative',
 					'min_resistance_fire', 'min_resistance_magic', 'min_resistance_poison',
 					'min_resistance_glacial', 'min_resistance_physical', 'min_resistance_astral',

@@ -513,6 +513,24 @@ msgstr "Min"
 msgid "ui.unit.max_cost_label"
 msgstr "Max Cost"
 
+msgid "ui.unit.cost_group_title"
+msgstr "Cost"
+
+msgid "ui.unit.attributes_group_title"
+msgstr "Attributes (MIN values)"
+
+msgid "ui.unit.min_gold_label"
+msgstr "Min Gold"
+
+msgid "ui.unit.max_gold_label"
+msgstr "Max Gold"
+
+msgid "ui.unit.min_leadership_label"
+msgstr "Min Leadership"
+
+msgid "ui.unit.max_leadership_label"
+msgstr "Max Leadership"
+
 msgid "ui.unit.max_placeholder"
 msgstr "Max"
 

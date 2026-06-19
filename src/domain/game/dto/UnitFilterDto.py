@@ -6,6 +6,8 @@ class UnitFilterDto(BaseModel):
 	name_regex: str | None = None
 	min_cost: int | None = None
 	max_cost: int | None = None
+	min_leadership: int | None = None
+	max_leadership: int | None = None
 	min_attack: int | None = None
 	min_krit: int | None = None
 	min_hitpoint: int | None = None
